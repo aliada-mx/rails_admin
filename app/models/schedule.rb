@@ -14,9 +14,9 @@ class Schedule < ActiveRecord::Base
 
   scope :available_in_zone, -> (zone) { where(zone: zone, status: 'available') }
 
-  # state_machine :state, :initial => :available do
+  state_machine :status, :initial => :available do
 
-  # end
+  end
 
   def self.create_schedule_interval(start_date, end_date, aliada)
     schedules = []

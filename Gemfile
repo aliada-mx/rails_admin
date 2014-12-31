@@ -8,7 +8,7 @@ gem 'rails', '4.2.0'
 # Use sqlite3 as the database for Active Record
 gem 'pg'
 # Use SCSS for stylesheets
-
+gem 'state_machine'
 
 # ASSETS
 #
