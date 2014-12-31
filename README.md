@@ -9,9 +9,9 @@ The recommended way to run the app is in a contained gemset using rvm.
     ```
     https://rvm.io/rvm/install
     ```
-2. Install ruby 2.1.1
+2. Install ruby 2.1.5
     ```
-    rvm install 2.1.1
+    rvm install 2.1.5
     ```
 3. Create a gemset
     ```
