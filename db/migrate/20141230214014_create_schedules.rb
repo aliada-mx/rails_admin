@@ -4,6 +4,7 @@ class CreateSchedules < ActiveRecord::Migration
       t.belongs_to :zone, index: true
       t.belongs_to :user, index: true
       t.string :status
+      t.datetime :datetime
       t.belongs_to :service, index: true
 
       t.timestamps null: false

@@ -36,4 +36,21 @@ group :development, :test do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+
+  # Silent the assets from the logs
+  gem 'quiet_assets', '~> 1.0.3'
+end
+
+group :test do
+  # Testing framework
+  gem 'rspec-rails', '~> 3.0.1'
+
+  # Functional testing
+  gem 'capybara'
+
+  # Factories
+  gem 'factory_girl'
+
+  # Testing coverage
+  gem 'simplecov', :require => false
 end
