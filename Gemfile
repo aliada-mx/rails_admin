@@ -9,6 +9,8 @@ gem 'rails', '4.2.0'
 gem 'pg'
 # Use SCSS for stylesheets
 gem 'state_machine'
+# Settings management
+gem "rails-settings-cached", "0.4.1"
 
 # ASSETS
 #
