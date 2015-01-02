@@ -3,8 +3,8 @@ class ScheduleInterval
 
   include ActiveModel::Validations
 
-  validate :schedules_valid
   validate :schedules_presence
+  validate :schedules_valid
   validate :schedules_continuity
   validate :schedules_inside_working_hours
 

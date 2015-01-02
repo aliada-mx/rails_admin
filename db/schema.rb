@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141231190235) do
+ActiveRecord::Schema.define(version: 20150102202500) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,8 +19,18 @@ ActiveRecord::Schema.define(version: 20141231190235) do
   create_table "addresses", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "postal_code_id"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.text     "address"
+    t.integer  "number"
+    t.integer  "interior_number"
+    t.text     "between_streets"
+    t.text     "colony"
+    t.string   "state"
+    t.text     "municipality"
+    t.string   "postal_code"
+    t.float    "latitude"
+    t.float    "longitude"
   end
 
   add_index "addresses", ["postal_code_id"], name: "index_addresses_on_postal_code_id", using: :btree
