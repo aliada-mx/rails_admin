@@ -28,7 +28,6 @@ ActiveRecord::Schema.define(version: 20150102202500) do
     t.text     "colony"
     t.string   "state"
     t.text     "municipality"
-    t.string   "postal_code"
     t.float    "latitude"
     t.float    "longitude"
   end

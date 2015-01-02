@@ -28,9 +28,10 @@ gem 'jbuilder', '~> 2.0'
 # Easy file attachment management for ActiveRecord
 gem 'paperclip'
 
-# ASSETS
+# TEMPLATING
 #
 gem "haml-rails"
+gem 'formtastic'
 
 
 group :development, :test do
@@ -59,4 +60,10 @@ group :test do
 
   # Testing coverage
   gem 'simplecov', :require => false
+
+  # Clean database after each test
+  gem 'database_cleaner'
+
+  # Open the browser
+  gem 'launchy'
 end
