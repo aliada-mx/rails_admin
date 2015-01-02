@@ -12,6 +12,15 @@ class ScheduleInterval
     @schedules = schedules
   end
 
+  def self.create_from_range(start_date, end_date, aliada)
+    schedules = []
+    (start_date.to_i .. end_date.to_i).step(1.hour) do |date|
+      schedules.push(Schedule.create(datetime: Time.at(date), user: aliada))
+    end
+
+    new(schedules)
+  end
+
   def schedules_presence
     message = 'Make sure you pass a non empty list of schedules'
 
@@ -40,19 +49,13 @@ class ScheduleInterval
   end
 
   def schedules_inside_working_hours
-    
     message = 'Make sure the schedules passed are within on hour each'
+    
     first = @schedules.first
     last = @schedules.last
     
-    if (!first.nil? && !last.nil?)
-      if (first.datetime.hour < Setting.beginning_of_aliadas_day) || (last.datetime.hour > Setting.end_of_aliadas_day)
-        errors.add(:base, message)
-      end
-    else
+    if (first.datetime.hour < Setting.beginning_of_aliadas_day) || (last.datetime.hour > Setting.end_of_aliadas_day)
       errors.add(:base, message)
     end
   end
-  
-  
 end

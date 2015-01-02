@@ -6,17 +6,16 @@ describe 'ScheduleInterval' do
   let(:aliada){ create(:aliada) }
   
   describe '#create' do
-    it 'should be valid with a valid schedules block' do
-      schedule_interval = Schedule.create_schedule_interval(start_date, end_date, aliada)
+    it 'should be valid with a valid schedules  intervals' do
+      schedule_interval = ScheduleInterval.create_from_range(start_date, end_date, aliada)
       
       expect(schedule_interval).to be_valid
     end
 
-    it 'should not be valid with an unordered schedules block' do
-      schedule_interval = Schedule.create_schedule_interval(end_date, start_date, aliada)
-      expect(schedule_interval).not_to be_valid
+    it 'should not be possible to create invalid schedules intervals' do
+      schedule_interval = ScheduleInterval.create_from_range(end_date, start_date, aliada)
+
+      expect{ schedule_interval.valid? }.to raise_error
     end
-    
-    
   end
 end

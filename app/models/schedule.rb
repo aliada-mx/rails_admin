@@ -18,12 +18,4 @@ class Schedule < ActiveRecord::Base
 
   end
 
-  def self.create_schedule_interval(start_date, end_date, aliada)
-    schedules = []
-    (start_date.to_i .. end_date.to_i).step(1.hour) do |date|
-      schedules.push(create(datetime: Time.at(date), user: aliada))
-    end
-
-    ScheduleInterval.new(schedules)
-  end
 end
