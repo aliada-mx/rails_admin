@@ -3,6 +3,7 @@ class ScheduleInterval
 
   include ActiveModel::Validations
 
+  validate :schedules_valid
   validate :schedules_presence
   validate :schedules_continuity
   validate :schedules_inside_working_hours
@@ -15,7 +16,7 @@ class ScheduleInterval
   def self.create_from_range(start_date, end_date, aliada)
     schedules = []
     (start_date.to_i .. end_date.to_i).step(1.hour) do |date|
-      schedules.push(Schedule.create(datetime: Time.at(date), user: aliada))
+      schedules.push(Schedule.new(datetime: Time.at(date), aliada: aliada, ))
     end
 
     new(schedules)
@@ -57,5 +58,15 @@ class ScheduleInterval
     if (first.datetime.hour < Setting.beginning_of_aliadas_day) || (last.datetime.hour > Setting.end_of_aliadas_day)
       errors.add(:base, message)
     end
+  end
+
+  def schedules_valid
+    message = 'Make sure all schedules include aliada and a datetime'
+
+    errors.add(:base, message) unless @schedules.all?(&:valid?)
+  end
+
+  def save_schedules
+    @schedules.map(&:save)
   end
 end

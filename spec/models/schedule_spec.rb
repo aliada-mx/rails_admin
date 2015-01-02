@@ -7,7 +7,7 @@ describe 'Schedule' do
   let!(:schedule) { create(:schedule, 
                           zone: zone,
                           service: service,
-                          user: aliada) }
+                          aliada: aliada) }
 
   describe '#available_in_zone' do
     it 'should be listed as available' do

@@ -6,4 +6,9 @@ class Service < ActiveRecord::Base
   belongs_to :recurrence
 
   has_many :schedules
+
+  validate :schedule_possible
+
+  def schedule_possible
+  end
 end
