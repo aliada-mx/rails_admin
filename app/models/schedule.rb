@@ -6,7 +6,8 @@ class Schedule < ActiveRecord::Base
     ['on-transit','En movimiento'],
   ]
 
-  validates_presence_of [:user_id, :datetime, :status]
+  validates_presence_of [:user_id, :status]
+  validates :datetime, presence: true, uniqueness: { scope: [:user_id, :datetime] }
 
   belongs_to :zone
   belongs_to :aliada, -> {where(role: 'aliada')}, class_name: 'User', foreign_key: :user_id
@@ -24,5 +25,4 @@ class Schedule < ActiveRecord::Base
     def default_values
       self.status ||= "available"
     end
-
 end
