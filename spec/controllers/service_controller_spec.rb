@@ -1,7 +1,6 @@
-require 'test_helper'
-
 feature 'ServiceController' do
   let!(:zone) { create(:zone) }
+  let!(:service_type) { create(:service_type) }
   let!(:postal_code) { create(:postal_code, 
                               :zoned, 
                               zone: zone,

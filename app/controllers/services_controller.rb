@@ -7,7 +7,8 @@ class ServicesController < ApplicationController
     @postal_code = PostalCode.find(params[:postal_code_id])
     @zone = Zone.find_by_postal_code(@postal_code)
     @address = Address.new(postal_code_id: @postal_code.id)
-    @service = Service.new(zone_id: @zone.id)
+    @service_type = ServiceType.first
+    @service = Service.new(zone_id: @zone.id, service_type_id: @service_type.id)
   end
 
   def create
@@ -19,6 +20,7 @@ class ServicesController < ApplicationController
   private
   def service_params
       params.require(:service).permit(:zone_id, 
+                                      :service_type_id,
                                       address_attributes: [
                                         :address,         
                                         :between_streets,   

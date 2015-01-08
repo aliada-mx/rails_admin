@@ -1,5 +1,6 @@
 = semantic_form_for @service, url: create_service_path do |f|
   = f.input :zone_id, as: :hidden
+  = f.input :service_type_id, as: :hidden
   = f.semantic_fields_for :address, @address do |address_form|
     = address_form.input :postal_code_id, as: :hidden
     = address_form.input :latitude, as: :hidden

@@ -1,4 +1,4 @@
-require 'test_helper'
+
 
 describe 'Zone' do
   let!(:zone) { create(:zone) }

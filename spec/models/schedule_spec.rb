@@ -1,5 +1,3 @@
-require 'test_helper'
-
 describe 'Schedule' do
   let!(:service) { create(:service) }
   let!(:zone) { create(:zone) }
@@ -11,8 +9,8 @@ describe 'Schedule' do
 
   describe '#available_in_zone' do
     it 'should be listed as available' do
-      expect(Schedule.available_in_zone(zone)).not_to be_empty
-      expect(Schedule.available_in_zone(zone).pluck(:id)).to include(schedule.id)
+      expect(Schedule.available.in_zone(zone)).not_to be_empty
+      expect(Schedule.available.in_zone(zone).pluck(:id)).to include(schedule.id)
     end
   end
 end

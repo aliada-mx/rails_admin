@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150102202500) do
+ActiveRecord::Schema.define(version: 20150106191650) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,11 +110,11 @@ ActiveRecord::Schema.define(version: 20150102202500) do
 
   create_table "recurrences", force: :cascade do |t|
     t.integer  "user_id"
-    t.string   "day_of_week"
-    t.integer  "hour"
     t.string   "status"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.datetime "starting_datetime"
+    t.integer  "periodicity"
   end
 
   add_index "recurrences", ["user_id"], name: "index_recurrences_on_user_id", using: :btree
@@ -130,6 +130,7 @@ ActiveRecord::Schema.define(version: 20150102202500) do
   end
 
   add_index "schedules", ["service_id"], name: "index_schedules_on_service_id", using: :btree
+  add_index "schedules", ["user_id", "datetime"], name: "index_schedules_on_user_id_and_datetime", unique: true, using: :btree
   add_index "schedules", ["user_id"], name: "index_schedules_on_user_id", using: :btree
   add_index "schedules", ["zone_id"], name: "index_schedules_on_zone_id", using: :btree
 
@@ -143,10 +144,10 @@ ActiveRecord::Schema.define(version: 20150102202500) do
 
   create_table "service_types", force: :cascade do |t|
     t.string   "name"
-    t.string   "periodicity"
-    t.integer  "price"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.integer  "periodicity"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+    t.integer  "price_per_hour"
   end
 
   create_table "services", force: :cascade do |t|
@@ -156,8 +157,11 @@ ActiveRecord::Schema.define(version: 20150102202500) do
     t.integer  "service_type_id"
     t.integer  "price"
     t.integer  "recurrence_id"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
+    t.decimal  "billable_hours",       precision: 10, scale: 3
+    t.decimal  "hours_before_service", precision: 10, scale: 3
+    t.decimal  "hours_after_service",  precision: 10, scale: 3
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
