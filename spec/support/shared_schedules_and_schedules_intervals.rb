@@ -15,6 +15,6 @@ shared_context 'schedules and schedules intervals' do
     @six_hours_schedule_interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime)
     @eight_hours_schedule_interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime + 1.hours)
     @two_hours_schedule_interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime - 4.hours)
-    @six_available_schedules = Schedule.available
+    @six_available_schedules = Schedule.available.ordered_by_user_datetime
   end
 end

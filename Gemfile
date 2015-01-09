@@ -10,7 +10,7 @@ gem 'pg'
 # Use SCSS for stylesheets
 gem 'state_machine'
 # Settings management
-gem "rails-settings-cached", "0.4.1"
+gem "settingslogic"
 
 # ASSETS
 #
@@ -56,7 +56,7 @@ group :test do
   gem 'capybara'
 
   # Factories
-  gem 'factory_girl'
+  gem 'factory_girl_rails'
 
   # Testing coverage
   gem 'simplecov', :require => false
@@ -66,4 +66,7 @@ group :test do
 
   # Open the browser
   gem 'launchy'
+
+  # Profiling
+  gem 'ruby-prof'
 end

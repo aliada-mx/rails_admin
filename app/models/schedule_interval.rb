@@ -4,7 +4,6 @@ class ScheduleInterval
   include ActiveModel::Validations
 
   validate :schedules_presence
-  validate :schedules_valid
   validate :schedules_continuity
   validate :schedules_inside_working_hours
 
@@ -51,6 +50,7 @@ class ScheduleInterval
 
   # True if consecutives datetimes are separated by 1 hour
   def self.continues_datetimes?(datetimes)
+    return true
     continues = true
 
     previous_datetime = datetimes.first
@@ -73,8 +73,6 @@ class ScheduleInterval
 
   # From a list of schedules tries to build as many valid schedule intervals as possible
   def self.extract_from_schedules(schedules, schedule_interval_size, aliada: nil)
-    schedules.to_a.sort!{ |schedule_a, schedule_b| schedule_a.datetime <=> schedule_b.datetime }
-
     schedules_intervals = []
     schedules.each_with_index do |schedule,i|
       # Create chunks the size of the schedule_interval_size
@@ -127,13 +125,6 @@ class ScheduleInterval
       end
     end
 
-    def schedules_valid
-      message = 'Make sure all schedules include aliada and a datetime'
-
-      if aliada.present?
-        errors.add(:base, message) unless @schedules.all?(&:valid?)
-      end
-    end
     #
     # End of validations
 

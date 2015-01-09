@@ -26,6 +26,7 @@ RSpec.configure do |config|
   config.include TestingSupport::DriverHelpers
 
   config.before(:suite) do
+
     # Test all factories validity
     FactoryGirl.lint
 

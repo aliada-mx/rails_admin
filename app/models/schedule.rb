@@ -16,6 +16,7 @@ class Schedule < ActiveRecord::Base
   scope :available, -> {where(status: 'available')}
   scope :in_zone, -> (zone) { where(zone: zone) }
   scope :in_datetimes, -> (datetimes) { where(datetime: datetimes) }
+  scope :ordered_by_user_datetime, -> { order(:user_id, :datetime) }
 
   state_machine :status, :initial => 'available' do
     transition 'available' => 'busy', on: :move_to_busy
@@ -29,7 +30,11 @@ class Schedule < ActiveRecord::Base
 
   private
     def default_values
-      self.status ||= "available"
+      # If we query for schedules with select and we dont
+      # include the status we can't give it a default value
+      if self.respond_to? :status
+        self.status ||= "available"
+      end
     end
 
 end

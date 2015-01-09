@@ -37,7 +37,7 @@ class ScheduleChecker
     end
 
     # Receives
-    # available_schedules: persisted available schedules 
+    # available_schedules: persisted available schedules ordered by user, datetime
     # schedule_interval: a proposed interval that should fit 
     #
     # returns {'aliada_id' => [available_schedule_interval, available_schedule_interval]}
@@ -64,10 +64,10 @@ class ScheduleChecker
     # Returns
     # {'aliada_id' => [schedule_interval, schedule_interval]}
     def self.unique_per_aliada(available_schedules, wanted_schedule_interval)
-      unique_aliadas_available_schedules = available_schedules.uniq { |schedule| schedule.aliada_id }
-
       aliadas_schedules_intervals = {}
-      unique_aliadas_available_schedules.each do |schedule|
+
+      available_schedules.each do |schedule|
+        next if aliadas_schedules_intervals.has_key? schedule.aliada_id
         aliada_schedules = available_schedules.select { |s| s.aliada_id == schedule.aliada_id }
 
         aliada_schedules_intervals = ScheduleInterval.extract_from_schedules(aliada_schedules, wanted_schedule_interval.size, aliada: schedule.aliada)
