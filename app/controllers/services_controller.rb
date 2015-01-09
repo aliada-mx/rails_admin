@@ -21,6 +21,17 @@ class ServicesController < ApplicationController
   def service_params
       params.require(:service).permit(:zone_id, 
                                       :service_type_id,
+                                      :billable_hours,
+                                      :bathrooms,                     
+                                      :bedrooms,                      
+                                      :aliada_entry_instruction,      
+                                      :cleaning_products_instruction, 
+                                      :cleaning_utensils_instruction, 
+                                      :trash_location_instruction,    
+                                      :special_attention_instruction, 
+                                      :special_equipment_instruction, 
+                                      :do_not_touch_instruction,      
+                                      :special_instructions,          
                                       address_attributes: [
                                         :address,         
                                         :between_streets,   

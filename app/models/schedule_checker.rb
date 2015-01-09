@@ -12,7 +12,7 @@ class ScheduleChecker
   end
 
   def possible?
-    recurrent ? recurrent_possible? : one_time_possible?
+    true
   end
 
   private
@@ -34,18 +34,6 @@ class ScheduleChecker
         end
       end
       dates
-    end
-
-    def available_schedules
-      Schedule.available.in_datetimes(datetime_list)
-    end
-
-    def recurrent_possible?
-      # @schedule_intervals available_schedules
-    end
-
-    def one_time_possible?
-      # @schedule_intervals available_schedules
     end
 
     # Receives

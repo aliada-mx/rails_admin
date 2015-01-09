@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150106191650) do
+ActiveRecord::Schema.define(version: 20150109003521) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -157,11 +157,21 @@ ActiveRecord::Schema.define(version: 20150106191650) do
     t.integer  "service_type_id"
     t.integer  "price"
     t.integer  "recurrence_id"
-    t.datetime "created_at",                                    null: false
-    t.datetime "updated_at",                                    null: false
-    t.decimal  "billable_hours",       precision: 10, scale: 3
-    t.decimal  "hours_before_service", precision: 10, scale: 3
-    t.decimal  "hours_after_service",  precision: 10, scale: 3
+    t.datetime "created_at",                                             null: false
+    t.datetime "updated_at",                                             null: false
+    t.decimal  "billable_hours",                precision: 10, scale: 3
+    t.decimal  "hours_before_service",          precision: 10, scale: 3
+    t.decimal  "hours_after_service",           precision: 10, scale: 3
+    t.integer  "bathrooms"
+    t.integer  "bedrooms"
+    t.text     "aliada_entry_instruction"
+    t.string   "cleaning_products_instruction"
+    t.text     "cleaning_utensils_instruction"
+    t.text     "trash_location_instruction"
+    t.text     "special_attention_instruction"
+    t.text     "special_equipment_instruction"
+    t.text     "do_not_touch_instruction"
+    t.text     "special_instructions"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree

@@ -8,7 +8,7 @@ class Service < ActiveRecord::Base
   belongs_to :recurrence
   has_many :schedules
 
-  # validates_presence_of :billable_hours
+  validates_presence_of :billable_hours
   validate :service_type_exists
 
   accepts_nested_attributes_for :address
@@ -28,8 +28,11 @@ class Service < ActiveRecord::Base
   end
 
   def service_schedule_possible?
+    message = 'Lo sentimos esa fecha no es posible'
+
     schedule_checker = ScheduleChecker.new(self)
-    schedule_checker.possible?
+    
+    errors.add(:base, message) unless schedule_checker.possible?
   end
 
   def total_hours
