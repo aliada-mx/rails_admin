@@ -3,15 +3,24 @@ class ScheduleInterval
 
   include ActiveModel::Validations
 
-  validate :schedules_presence
-  validate :schedules_continuity
-  validate :schedules_inside_working_hours
+  validate :all_validations
 
-  attr_accessor :schedules, :aliada
+  attr_accessor :schedules, :aliada, :skip_validations
 
-  def initialize(schedules, aliada: nil)
-    @schedules = schedules
-    @aliada = aliada
+  def initialize(schedules, aliada_id: nil, skip_validations: false)
+    # Because the users of this class might reuse the passed array we must ensure
+    # we get our own duplicate
+    @schedules = schedules.dup
+    @aliada_id = aliada_id
+    @skip_validations = skip_validations
+  end
+
+  def beginning_of_interval
+    @schedules.first.datetime
+  end
+
+  def ending_of_interval
+    @schedules.last.datetime
   end
 
   # The number of hours it spans to
@@ -50,7 +59,6 @@ class ScheduleInterval
 
   # True if consecutives datetimes are separated by 1 hour
   def self.continues_datetimes?(datetimes)
-    return true
     continues = true
 
     previous_datetime = datetimes.first
@@ -71,25 +79,6 @@ class ScheduleInterval
     continues
   end
 
-  # From a list of schedules tries to build as many valid schedule intervals as possible
-  def self.extract_from_schedules(schedules, schedule_interval_size, aliada: nil)
-    schedules_intervals = []
-    schedules.each_with_index do |schedule,i|
-      # Create chunks the size of the schedule_interval_size
-      continues_schedules = schedules[i..i+schedule_interval_size-1]
-
-      break if continues_schedules.size < schedule_interval_size
-
-      schedule_interval = ScheduleInterval.new(continues_schedules, aliada: aliada)
-
-      if schedule_interval.valid?
-        schedules_intervals.push(schedule_interval) 
-      end
-    end
-
-    schedules_intervals
-  end
-  
   def fit_in(other_schedule_interval)
     @schedules.size <= other_schedule_interval.size
   end
@@ -99,9 +88,22 @@ class ScheduleInterval
     available_schedules.select { |aliada_schedule| schedules_datetimes.include?(aliada_schedule.datetime) }
   end
 
+  # returns a list of the schedules datetimes
+  def schedules_datetimes
+    @schedules.map(&:datetime)
+  end
+
   private
     # Validations
     #
+    def all_validations
+      unless skip_validations
+        schedules_presence
+        schedules_continuity
+        schedules_inside_working_hours
+      end
+    end
+  
     def schedules_presence
       message = 'Make sure you pass a non empty list of schedules'
 
@@ -124,13 +126,5 @@ class ScheduleInterval
         errors.add(:base, message)
       end
     end
-
-    #
     # End of validations
-
-     
-    # returns a list of the schedules datetimes
-    def schedules_datetimes
-      @schedules.map(&:datetime)
-    end
 end

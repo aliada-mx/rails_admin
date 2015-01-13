@@ -30,14 +30,4 @@ describe 'ScheduleInterval' do
       expect(@schedule_interval.hours_long).to eql 5
     end
   end
-
-  describe '#extract_from_schedules' do
-    include_context 'schedules and schedules intervals' 
-
-    it 'divides the schedules into evenly sized schedule intervals' do
-      # In a span of 6 available hours you can fit 5 pairs of 2 hours
-      expect(ScheduleInterval.extract_from_schedules(@six_available_schedules, 2).size).to be 5
-      expect(ScheduleInterval.extract_from_schedules(@six_available_schedules, 2).first.size).to be 2
-    end
-  end
 end

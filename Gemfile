@@ -69,4 +69,7 @@ group :test do
 
   # Profiling
   gem 'ruby-prof'
+
+  # Manipulate time in your tests
+  gem 'timecop'
 end

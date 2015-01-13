@@ -7,9 +7,9 @@ shared_context 'schedules and schedules intervals' do
   before do
     6.times do |i|
       # switch chosen aliada
-      chosen_alida = i > 2 ? aliada : other_aliada
+      chosen_aliada = i > 2 ? aliada : other_aliada
 
-      create(:schedule, datetime: starting_datetime + i.hour, status: 'available', aliada: chosen_alida)
+      create(:schedule, datetime: starting_datetime + i.hour, status: 'available', aliada: chosen_aliada)
     end
 
     @six_hours_schedule_interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime)

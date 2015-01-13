@@ -35,46 +35,97 @@ class ScheduleChecker
       end
       dates
     end
-
+     
+    # It will try to build as many schedules intervals that matches the requested hours
+    # on the same week day per aliada
+    #
     # Receives
-    # available_schedules: persisted available schedules ordered by user, datetime
+    # available_schedules: persisted available schedules ordered by aliada_id, datetime
     # schedule_interval: a proposed interval that should fit 
     #
     # returns {'aliada_id' => [available_schedule_interval, available_schedule_interval]}
-    def self.fits_in_schedules(available_schedules, wanted_schedule_interval)
+    def self.check_datetimes(available_schedules, requested_schedule_interval)
       return false if available_schedules.empty? || 
-                      wanted_schedule_interval.empty? || 
-                      available_schedules.size < wanted_schedule_interval.size
+                      requested_schedule_interval.empty? || 
+                      available_schedules.size < requested_schedule_interval.size
 
-      available_per_aliada = ScheduleChecker.unique_per_aliada(available_schedules, wanted_schedule_interval)
+      #
+      # Set a default array to store our available schedule intervals
+      available_for_booking = Hash.new{ |h,k| h[k] = [] }
 
-      available_for_booking = {}
-      available_per_aliada.each do |aliada_id, aliadas_schedules_intervals|
-        aliadas_schedules_intervals.each do |aliada_schedule_interval|
-          available_for_booking[aliada_id] = aliada_schedule_interval if wanted_schedule_interval.fit_in(aliada_schedule_interval)
+      requested_starting_datetime = requested_schedule_interval.beginning_of_interval
+      requested_ending_datetime = requested_schedule_interval.ending_of_interval
+
+      # It will hold schedules that are time consecutive growing in size
+      # until the desired size of schedule is matched
+      continues_schedules = []
+
+      # Track schedules in pairs to see if they are continuous 
+      previous_schedule = available_schedules.first
+
+      # Because the schedules are sorted we can safely asume that if one of
+      # the schedules doesnt match, none will for this aliada so we track it
+      banned_aliada_id = nil
+
+      # We could use each_with_index but thats a generated on the fly method
+      # and thats really slow
+      available_schedules.each do |schedule|
+        current_aliada_id = schedule.user_id
+
+        if banned_aliada_id == current_aliada_id
+          next
         end
+
+        if continues_schedules.empty?
+          # We can't start a continuity without at least one schedule
+          continues_schedules.push(schedule)
+          # Keep tracking 
+          previous_schedule = schedule
+          next
+        end
+
+        # Do we have a pair of continues schedules?
+        # belonging to the same aliada_id?
+        # and within our wanted interval range?
+        # on the same week day?
+        if (schedule.datetime - previous_schedule.datetime) == 1.hour && 
+            schedule.aliada_id == previous_schedule.aliada_id &&
+            schedule.datetime.hour >= requested_starting_datetime.hour &&
+            schedule.datetime.hour <= requested_ending_datetime.hour &&
+            schedule.datetime.wday == requested_starting_datetime.wday
+
+          continues_schedules.push(schedule)
+        else
+          # We don't want to eliminate the start of a potential continuity
+          if continues_schedules.size > 1
+            # We lost our continuity, so reset our temporary list
+            continues_schedules = []
+
+            # Since our schedules are sorted by aliada and datetime we can safely asume that this
+            # aliada won't have schedules available again
+            banned_aliada_id = current_aliada_id
+          end
+        end
+        
+        # If we build enough continues schedules SUCCESS!
+        # we found availability, save it
+        if continues_schedules.size == requested_schedule_interval.size
+          available_schedule_interval = ScheduleInterval.new(continues_schedules, aliada_id: current_aliada_id)
+
+          if available_schedule_interval.valid?
+            available_for_booking[current_aliada_id].push(available_schedule_interval)
+          end
+
+          # We can safely asume we won't find more with this aliada
+          banned_aliada_id = current_aliada_id
+          # Start a new succession
+          continues_schedules = []
+        end
+
+        previous_schedule = schedule
       end
       
       available_for_booking
-    end
 
-    # Receives
-    # available_schedules: persisted available schedules 
-    #
-    # Returns
-    # {'aliada_id' => [schedule_interval, schedule_interval]}
-    def self.unique_per_aliada(available_schedules, wanted_schedule_interval)
-      aliadas_schedules_intervals = {}
-
-      available_schedules.each do |schedule|
-        next if aliadas_schedules_intervals.has_key? schedule.aliada_id
-        aliada_schedules = available_schedules.select { |s| s.aliada_id == schedule.aliada_id }
-
-        aliada_schedules_intervals = ScheduleInterval.extract_from_schedules(aliada_schedules, wanted_schedule_interval.size, aliada: schedule.aliada)
-
-        aliadas_schedules_intervals[schedule.aliada_id] = aliada_schedules_intervals
-      end
-
-      aliadas_schedules_intervals
     end
 end
