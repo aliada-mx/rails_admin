@@ -13,7 +13,13 @@ describe 'Recurrence' do
 
   describe '#to_schedule_intervals' do
     before :each do
+      Timecop.freeze(starting_datetime)
+
       @schedule_intervals = recurrence.to_schedule_intervals(6.hours)
+    end
+
+    after do
+      Timecop.return
     end
 
     it 'should have valid schedule intervals ending datetimes' do
@@ -21,7 +27,7 @@ describe 'Recurrence' do
     end
 
     it 'should have a correct number of schedule intervals' do
-      expect(@schedule_intervals.size).to eql 10
+      expect(@schedule_intervals.size).to eql 9
     end
   end
 end

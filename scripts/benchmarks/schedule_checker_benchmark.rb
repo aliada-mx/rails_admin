@@ -1,4 +1,4 @@
-require 'benchmark'
+require 'database_cleaner'
 require 'launchy'
 require 'ruby-prof'
 require 'factory_girl_rails'
@@ -39,27 +39,27 @@ def setup(aliadas_number, schedules_number)
 end
 
 def tear_down
-  Schedule.all.destroy_all
-  User.all.destroy_all
+  DatabaseCleaner.strategy = :truncation
+  DatabaseCleaner.start
+  DatabaseCleaner.clean
 end
 
 def run
   report_file = "profiles/ScheduleChecker.html"
   six_hours_schedule_interval = ScheduleInterval.build_from_range(STARTING_DATETIME, ENDING_DATETIME)
-  available_schedules = Schedule.available.ordered_by_user_datetime
+  available_schedules = Schedule.available.ordered_by_user_datetime.to_a
 
   result = RubyProf.profile do
-    ScheduleChecker.fits_in_schedules(available_schedules, six_hours_schedule_interval)
+    puts ScheduleChecker.check_datetimes(available_schedules, six_hours_schedule_interval)
   end
 
   result.eliminate_methods!([/Integer#times/])
   result.eliminate_methods!([/Array#each/])
+  result.eliminate_methods!([/Kernel#public_send/])
   printer = RubyProf::GraphHtmlPrinter.new(result)
   File.open(report_file, 'w') { |file| printer.print(file) }
   
   Launchy.open( File.join("file:///", File.expand_path(report_file)))
-  # pp Benchmark.measure {
-  # }
 end
 
 def perform(aliadas_number, schedules_number)
