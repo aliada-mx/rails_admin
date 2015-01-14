@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  root to: 'statics#home'
+  get 'como-funciona', to: 'statics#how_it_works', as: :how_it_works
+  get 'precios', to: 'statics#prices', as: :prices
+  get 'faq', to: 'statics#faq', as: :faq
+  get 'terminos', to: 'statics#terms', as: :terms
+  get 'privacidad', to: 'statics#privacy', as: :privacy
+
   resources :aliadas
 
   scope :servicios do
@@ -8,4 +15,9 @@ Rails.application.routes.draw do
   end
 
   resources :schedules
+
+  resource :user, path: 'perfil' do
+    get 'visitas-proximas', to: 'users#next_services', as: :next_services
+    get 'historial', to: 'users#previous_services', as: :previous_services
+  end
 end

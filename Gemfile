@@ -27,6 +27,8 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 # Easy file attachment management for ActiveRecord
 gem 'paperclip'
+# Bootstrap
+gem 'bootstrap-sass'
 
 # TEMPLATING
 #
@@ -46,6 +48,10 @@ group :development, :test do
 
   # Silent the assets from the logs
   gem 'quiet_assets', '~> 1.0.3'
+
+  # Guard to compile as file changes
+  gem 'guard-sass', require: false
+  gem 'guard-livereload', require: false
 end
 
 group :test do
