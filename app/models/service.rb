@@ -1,4 +1,11 @@
 class Service < ActiveRecord::Base
+  STATUSES = [
+    ['pending','Pendiente por realizarse'],
+    ['in-progress','En progreso..'],
+    ['finished','Terminado'],
+    ['payed','Pagado'],
+    ['canceled','Cancelado'],
+  ]
   attr_accessor :starting_datetime, :week_day
 
   belongs_to :zone
@@ -16,9 +23,13 @@ class Service < ActiveRecord::Base
 
   after_initialize :set_defaults
 
+  state_machine :status, :initial => 'pending' do
+  end
+
   def set_defaults
-    self.hours_before_service ||= Setting.hours_before_service
-    self.hours_after_service ||= Setting.hours_after_service 
+    self.status ||= 'pending' if self.respond_to? :status
+    self.hours_before_service ||= Setting.hours_before_service if self.respond_to? :hours_before_service 
+    self.hours_after_service ||= Setting.hours_after_service if self.respond_to? :hours_after_service 
   end
 
   def service_type_exists

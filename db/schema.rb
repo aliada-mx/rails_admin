@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150109003521) do
+ActiveRecord::Schema.define(version: 20150114001315) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -172,6 +172,7 @@ ActiveRecord::Schema.define(version: 20150109003521) do
     t.text     "special_equipment_instruction"
     t.text     "do_not_touch_instruction"
     t.text     "special_instructions"
+    t.string   "status"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
