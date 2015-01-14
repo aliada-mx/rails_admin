@@ -1,0 +1,2 @@
+class AliadasController < ApplicationController
+end

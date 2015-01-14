@@ -10,7 +10,7 @@ gem 'pg'
 # Use SCSS for stylesheets
 gem 'state_machine'
 # Settings management
-gem "rails-settings-cached", "0.4.1"
+gem "settingslogic"
 
 # ASSETS
 #
@@ -28,9 +28,10 @@ gem 'jbuilder', '~> 2.0'
 # Easy file attachment management for ActiveRecord
 gem 'paperclip'
 
-# ASSETS
+# TEMPLATING
 #
 gem "haml-rails"
+gem 'formtastic'
 
 
 group :development, :test do
@@ -55,8 +56,20 @@ group :test do
   gem 'capybara'
 
   # Factories
-  gem 'factory_girl'
+  gem 'factory_girl_rails'
 
   # Testing coverage
   gem 'simplecov', :require => false
+
+  # Clean database after each test
+  gem 'database_cleaner'
+
+  # Open the browser
+  gem 'launchy'
+
+  # Profiling
+  gem 'ruby-prof'
+
+  # Manipulate time in your tests
+  gem 'timecop'
 end

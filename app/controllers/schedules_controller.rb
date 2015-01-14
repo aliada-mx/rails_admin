@@ -14,5 +14,9 @@ class SchedulesController < ApplicationController
     if params[:zone_id].present?
       @schedules = @schedules.where(zone_id: params[:zone_id])
     end
+
+    respond_to do |format|
+      format.json { render json: @schedules }
+     end
   end
 end

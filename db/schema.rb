@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150105180050) do
+ActiveRecord::Schema.define(version: 20150114001315) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,7 +28,6 @@ ActiveRecord::Schema.define(version: 20150105180050) do
     t.text     "colony"
     t.string   "state"
     t.text     "municipality"
-    t.string   "postal_code"
     t.float    "latitude"
     t.float    "longitude"
   end
@@ -111,11 +110,11 @@ ActiveRecord::Schema.define(version: 20150105180050) do
 
   create_table "recurrences", force: :cascade do |t|
     t.integer  "user_id"
-    t.string   "day_of_week"
-    t.integer  "hour"
     t.string   "status"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.datetime "starting_datetime"
+    t.integer  "periodicity"
   end
 
   add_index "recurrences", ["user_id"], name: "index_recurrences_on_user_id", using: :btree
@@ -145,10 +144,10 @@ ActiveRecord::Schema.define(version: 20150105180050) do
 
   create_table "service_types", force: :cascade do |t|
     t.string   "name"
-    t.string   "periodicity"
-    t.integer  "price"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.integer  "periodicity"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+    t.integer  "price_per_hour"
   end
 
   create_table "services", force: :cascade do |t|
@@ -158,8 +157,22 @@ ActiveRecord::Schema.define(version: 20150105180050) do
     t.integer  "service_type_id"
     t.integer  "price"
     t.integer  "recurrence_id"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",                                             null: false
+    t.datetime "updated_at",                                             null: false
+    t.decimal  "billable_hours",                precision: 10, scale: 3
+    t.decimal  "hours_before_service",          precision: 10, scale: 3
+    t.decimal  "hours_after_service",           precision: 10, scale: 3
+    t.integer  "bathrooms"
+    t.integer  "bedrooms"
+    t.text     "aliada_entry_instruction"
+    t.string   "cleaning_products_instruction"
+    t.text     "cleaning_utensils_instruction"
+    t.text     "trash_location_instruction"
+    t.text     "special_attention_instruction"
+    t.text     "special_equipment_instruction"
+    t.text     "do_not_touch_instruction"
+    t.text     "special_instructions"
+    t.string   "status"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree

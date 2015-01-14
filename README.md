@@ -48,3 +48,18 @@ The recommended way to run the app is in a contained gemset using rvm.
     ```
     rails server
     ```
+
+### To run the benchmarks
+
+1. Open the console
+    ```
+    rails console
+    ```
+2. Load the benchmark in question
+    ```
+    load 'scripts/benchmarks/schedule_checker_benchmark.rb'
+    ```
+3. A perform method is available, warning it will DESTROY all the schedules and users. When its done it will open a browser with the report. If you make changes make sure to run the tests to ensure correctness.
+    ```
+    perform(aliadas_number, schedules_number)
+    ```

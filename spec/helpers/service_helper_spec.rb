@@ -1,4 +1,4 @@
-require 'test_helper'
+
 
 # Specs in this file have access to a helper object that includes
 # the ServiceHelper. For example:
