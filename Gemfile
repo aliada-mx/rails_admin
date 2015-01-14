@@ -29,11 +29,15 @@ gem 'jbuilder', '~> 2.0'
 gem 'paperclip'
 # Bootstrap
 gem 'bootstrap-sass'
+# Sass framework
+gem 'compass-rails'
 
 # TEMPLATING
 #
 gem "haml-rails"
 gem 'formtastic'
+# Better template nesting
+gem 'nestive'
 
 
 group :development, :test do
