@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150114001315) do
+ActiveRecord::Schema.define(version: 20150120220052) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,15 +21,16 @@ ActiveRecord::Schema.define(version: 20150114001315) do
     t.integer  "postal_code_id"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
-    t.text     "address"
+    t.text     "street"
     t.integer  "number"
     t.integer  "interior_number"
     t.text     "between_streets"
     t.text     "colony"
     t.string   "state"
-    t.text     "municipality"
     t.float    "latitude"
     t.float    "longitude"
+    t.string   "city"
+    t.text     "references"
   end
 
   add_index "addresses", ["postal_code_id"], name: "index_addresses_on_postal_code_id", using: :btree
@@ -74,10 +75,25 @@ ActiveRecord::Schema.define(version: 20150114001315) do
 
   add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
 
+  create_table "extra_services", force: :cascade do |t|
+    t.integer  "extra_id"
+    t.integer  "service_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "extras", force: :cascade do |t|
+    t.string   "name"
+    t.decimal  "hours",      precision: 10, scale: 3
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+  end
+
   create_table "payment_methods", force: :cascade do |t|
     t.integer  "code_type_id"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.string   "name"
   end
 
   add_index "payment_methods", ["code_type_id"], name: "index_payment_methods_on_code_type_id", using: :btree
@@ -130,7 +146,6 @@ ActiveRecord::Schema.define(version: 20150114001315) do
   end
 
   add_index "schedules", ["service_id"], name: "index_schedules_on_service_id", using: :btree
-  add_index "schedules", ["user_id", "datetime"], name: "index_schedules_on_user_id_and_datetime", unique: true, using: :btree
   add_index "schedules", ["user_id"], name: "index_schedules_on_user_id", using: :btree
   add_index "schedules", ["zone_id"], name: "index_schedules_on_zone_id", using: :btree
 
@@ -148,6 +163,7 @@ ActiveRecord::Schema.define(version: 20150114001315) do
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
     t.integer  "price_per_hour"
+    t.string   "display_name"
   end
 
   create_table "services", force: :cascade do |t|
@@ -157,22 +173,18 @@ ActiveRecord::Schema.define(version: 20150114001315) do
     t.integer  "service_type_id"
     t.integer  "price"
     t.integer  "recurrence_id"
-    t.datetime "created_at",                                             null: false
-    t.datetime "updated_at",                                             null: false
-    t.decimal  "billable_hours",                precision: 10, scale: 3
-    t.decimal  "hours_before_service",          precision: 10, scale: 3
-    t.decimal  "hours_after_service",           precision: 10, scale: 3
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
+    t.decimal  "billable_hours",       precision: 10, scale: 3
+    t.decimal  "hours_before_service", precision: 10, scale: 3
+    t.decimal  "hours_after_service",  precision: 10, scale: 3
     t.integer  "bathrooms"
     t.integer  "bedrooms"
-    t.text     "aliada_entry_instruction"
-    t.string   "cleaning_products_instruction"
-    t.text     "cleaning_utensils_instruction"
-    t.text     "trash_location_instruction"
-    t.text     "special_attention_instruction"
-    t.text     "special_equipment_instruction"
-    t.text     "do_not_touch_instruction"
     t.text     "special_instructions"
     t.string   "status"
+    t.date     "date"
+    t.time     "time"
+    t.integer  "payment_method_id"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
@@ -181,16 +193,10 @@ ActiveRecord::Schema.define(version: 20150114001315) do
   add_index "services", ["user_id"], name: "index_services_on_user_id", using: :btree
   add_index "services", ["zone_id"], name: "index_services_on_zone_id", using: :btree
 
-  create_table "settings", force: :cascade do |t|
-    t.string   "var",                   null: false
-    t.text     "value"
-    t.integer  "thing_id"
-    t.string   "thing_type", limit: 30
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "table_extras_services", force: :cascade do |t|
+    t.integer "extra_id"
+    t.integer "service_id"
   end
-
-  add_index "settings", ["thing_type", "thing_id", "var"], name: "index_settings_on_thing_type_and_thing_id_and_var", unique: true, using: :btree
 
   create_table "user_zones", force: :cascade do |t|
     t.integer  "user_id"
@@ -207,6 +213,8 @@ ActiveRecord::Schema.define(version: 20150114001315) do
     t.string   "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "full_name"
+    t.string   "phone"
   end
 
   create_table "zones", force: :cascade do |t|

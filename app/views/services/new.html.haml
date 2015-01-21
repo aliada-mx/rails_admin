@@ -1,27 +1,35 @@
-= semantic_form_for @service, url: create_service_path do |f|
-  = f.input :zone_id, as: :hidden
-  = f.input :service_type, as: :radio, collection: ServiceType.all
-  = f.input :billable_hours
-  = f.input :bathrooms
-  = f.input :bedrooms 
-  = f.input :aliada_entry_instruction 
-  = f.input :cleaning_products_instruction 
-  = f.input :cleaning_utensils_instruction 
-  = f.input :trash_location_instruction 
-  = f.input :special_attention_instruction 
-  = f.input :special_equipment_instruction 
-  = f.input :do_not_touch_instruction 
-  = f.input :special_instructions 
-  = f.semantic_fields_for :address, @address do |address_form|
-    = address_form.input :postal_code_id, as: :hidden
-    = address_form.input :latitude, as: :hidden
-    = address_form.input :longitude, as: :hidden
-    = address_form.input :address
-    = address_form.input :number
-    = address_form.input :interior_number
-    = address_form.input :between_streets
-    = address_form.input :colony
-    = address_form.input :state
-    = address_form.input :municipality
-  = f.actions do
-    = f.action :submit, as: :button, label: 'Crear servicio'
+= form_for @service, url: create_service_path do |f|
+  = f.hidden_field :zone_id
+  = f.text_field :bathrooms
+  = f.text_field :bedrooms 
+  = f.collection_check_boxes :extra_ids, Extra.all, :id, :name
+  = f.text_field :billable_hours
+  = f.text_area :special_instructions 
+
+  = f.fields_for :address, @address do |address_form|
+    = address_form.hidden_field :postal_code_id, as: :hidden
+    = address_form.text_area :street
+    = address_form.text_field :interior_number
+    = address_form.text_field :number
+    = address_form.text_area :colony
+    = address_form.text_area :between_streets
+    = address_form.text_field :postal_code, value: :code
+    = address_form.text_area :state
+    = address_form.text_field :city
+    = address_form.text_area :references
+
+    = address_form.hidden_field :latitude, as: :hidden
+    = address_form.hidden_field :longitude, as: :hidden
+
+  = f.fields_for :user, @user do |user_form|
+    = user_form.text_field :full_name
+    = user_form.text_field :email
+    = user_form.text_field :phone
+
+  = f.collection_radio_buttons :service_type_id, ServiceType.all, :id, :name
+  %div.calendario
+    calendario
+
+  = f.collection_radio_buttons :payment_method_id, PaymentMethod.all, :id, :name
+
+  = f.submit 'Confirmar servicio'

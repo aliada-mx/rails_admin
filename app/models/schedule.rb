@@ -7,7 +7,7 @@ class Schedule < ActiveRecord::Base
   ]
 
   validates :datetime, presence: true, uniqueness: { scope: [:user_id, :datetime] }
-  validates_presence_of [:user_id, :datetime, :status]
+  validates_presence_of [:datetime, :status]
   validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[0] } }
 
   belongs_to :zone
@@ -27,6 +27,19 @@ class Schedule < ActiveRecord::Base
 
   def aliada_id
     user_id
+  end
+
+  def self.build_recurrent(datetime, hours, aliada)
+
+  end
+
+  def self.build_one_timer(datetime, hours, aliada)
+    schedule_interval = ScheduleInterval.build_from_range(datetime, datetime + hours.hours, use_persisted: true)
+    if schedule_interval.valid?
+      return schedule_interval.persist_schedules!
+    else
+      return false
+    end
   end
 
   private

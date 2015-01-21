@@ -12,7 +12,9 @@ class ServicesController < ApplicationController
   end
 
   def create
-    @service = Service.create!(service_params)
+    @service = Service.create(service_params)
+    @service.create_user
+    @service.create_schedules
 
     redirect_to show_service_path(@service.id)
   end
@@ -20,30 +22,34 @@ class ServicesController < ApplicationController
   private
   def service_params
       params.require(:service).permit(:zone_id, 
-                                      :service_type_id,
-                                      :billable_hours,
                                       :bathrooms,                     
                                       :bedrooms,                      
-                                      :aliada_entry_instruction,      
-                                      :cleaning_products_instruction, 
-                                      :cleaning_utensils_instruction, 
-                                      :trash_location_instruction,    
-                                      :special_attention_instruction, 
-                                      :special_equipment_instruction, 
-                                      :do_not_touch_instruction,      
+                                      {extra_ids: []},
+                                      :billable_hours,
                                       :special_instructions,          
+                                      :service_type_id,
+                                      :date,
+                                      :time,
+                                      :payment_method_id,
                                       address_attributes: [
-                                        :address,         
-                                        :between_streets,   
-                                        :colony,          
+                                        :street,         
                                         :interior_number, 
+                                        :number,          
+                                        :colony,          
+                                        :between_streets,   
+                                        :postal_code_id,
                                         :latitude,        
                                         :longitude, 
-                                        :municipality,    
-                                        :number,          
-                                        :postal_code_id,
                                         :state,           
+                                        :city,    
+                                        :references,
+                                      ],
+                                      user_attributes: [
+                                        :full_name,
+                                        :email,
+                                        :phone,
                                       ],
                                      )
+
   end
 end

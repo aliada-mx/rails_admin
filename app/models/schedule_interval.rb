@@ -41,20 +41,32 @@ class ScheduleInterval
     size == 0
   end
 
-  def persist_schedules
+  def persist_schedules!
     @schedules.map(&:save)
+    self
   end
 
-  def self.build_from_range(starting_datetime, ending_datetime)
+  def self.build_from_range(starting_datetime, ending_datetime, aliada: nil, use_persisted_schedules: false)
     schedules = []
     (starting_datetime.to_i .. ending_datetime.to_i).step(1.hour) do |date|
       # If we reached the end...
       break if ending_datetime.to_i == date
 
-      schedules.push(Schedule.new(datetime: Time.at(date)))
+      datetime = Time.at(date)
+
+      if use_persisted_schedules
+        schedule = Schedule.find_by_datetime_and_user_id(datetime, aliada.id)
+      else
+        schedule = Schedule.new(datetime: datetime, aliada: aliada)
+      end
+      schedules.push(schedule)
     end
 
-    new(schedules)
+    if aliada
+      new(schedules, aliada.id)
+    else
+      new(schedules)
+    end
   end
 
   # True if consecutives datetimes are separated by 1 hour
@@ -103,13 +115,13 @@ class ScheduleInterval
         schedules_inside_working_hours
       end
     end
-  
+
     def schedules_presence
       message = 'Make sure you pass a non empty list of schedules'
 
       errors.add(:base, message) if @schedules.first.nil? || !@schedules.all?{ |s| s.instance_of?(Schedule) }
     end
-    
+
     def schedules_continuity
       message = 'Make sure the schedules passed are within on hour each'
 
@@ -118,10 +130,10 @@ class ScheduleInterval
 
     def schedules_inside_working_hours
       message = 'Make sure the schedules passed are within on hour each'
-      
+
       first_hour = @schedules.first.datetime.hour
       last_hour = @schedules.last.datetime.hour
-      
+
       if (first_hour < Setting.beginning_of_aliadas_day) || (last_hour > Setting.end_of_aliadas_day)
         errors.add(:base, message)
       end

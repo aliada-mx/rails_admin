@@ -35,7 +35,6 @@ gem 'compass-rails'
 # TEMPLATING
 #
 gem "haml-rails"
-gem 'formtastic'
 # Better template nesting
 gem 'nestive'
 
