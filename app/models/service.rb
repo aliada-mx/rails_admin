@@ -18,8 +18,8 @@ class Service < ActiveRecord::Base
   has_many :extra_services
   has_many :extras, through: :extra_services
 
-  validates_presence_of [:billable_hours, :date, :time]
-  validate :time_is_hour_o_clock
+  # validates_presence_of [:billable_hours, :date, :time]
+  # validate :time_is_hour_o_clock
   validate :service_type_exists
 
   accepts_nested_attributes_for :address
@@ -45,15 +45,15 @@ class Service < ActiveRecord::Base
 
   end
 
-  def create_schedules(aliada)
-    datetime = Datetime.new(date.year, date.month, date.day, time.hour, time.min, time.sec)
+  # def create_schedules(aliada)
+  #   datetime = Datetime.new(date.year, date.month, date.day, time.hour, time.min, time.sec)
 
-    if service_type.recurrent?
-      return recurrency.to_schedule_intervals
-    else
-      return Schedule.build_one_timer(datetime, total_hours, aliada)
-    end
-  end
+  #   if service_type.recurrent?
+  #     return recurrency.to_schedule_intervals
+  #   else
+  #     return Schedule.build_one_timer(datetime, total_hours, aliada)
+  #   end
+  # end
 
   def create_update_recurrency
 
@@ -66,17 +66,9 @@ class Service < ActiveRecord::Base
     errors.add(:service_type, message) unless ServiceType.exists? service_type_id
   end
 
-  def time_is_hour_o_clock
-    message = 'Los servicios solo pueden crearse en horas cerradas'
+  # def time_is_hour_o_clock
+  #   message = 'Los servicios solo pueden crearse en horas cerradas'
 
-    errors.add(:time, message) if time.min != 0 || time.sec != 0
-  end
-
-  def service_schedule_possible?
-    message = 'Lo sentimos esa fecha no es posible'
-
-    schedule_checker = ScheduleChecker.new(self)
-    
-    errors.add(:base, message) unless schedule_checker.possible?
-  end
+  #   errors.add(:time, message) if time.min != 0 || time.sec != 0
+  # end
 end

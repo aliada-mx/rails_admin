@@ -30,6 +30,10 @@
   %div.calendario
     calendario
 
+  -#
+    = f.date_field :date, value: I18n.l(f.object.date), format: :date_format
+    = f.time_field :time, value: I18n.l(f.object.time), format: :time_format
+
   = f.collection_radio_buttons :payment_method_id, PaymentMethod.all, :id, :name
 
   = f.submit 'Confirmar servicio'

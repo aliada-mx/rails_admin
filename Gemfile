@@ -38,6 +38,8 @@ gem "haml-rails"
 # Better template nesting
 gem 'nestive'
 
+# AUTHENTICATION
+gem 'devise'
 
 group :development, :test do
   # Call 'pry' anywhere in the code to stop execution and get a debugger console

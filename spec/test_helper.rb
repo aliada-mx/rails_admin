@@ -18,6 +18,8 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 Rails.logger.level = 4
 
 RSpec.configure do |config|
+  DatabaseCleaner.strategy = :truncation
+
   # Avoid having to write FactoryGirl.create
   config.include FactoryGirl::Syntax::Methods
   # Route helpers
@@ -40,6 +42,10 @@ RSpec.configure do |config|
   config.before(:each) do
     # Track transactions
     DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
   end
 
   config.after(:each) do

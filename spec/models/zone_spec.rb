@@ -1,4 +1,4 @@
-
+require 'test_helper'
 
 describe 'Zone' do
   let!(:zone) { create(:zone) }
@@ -9,7 +9,7 @@ describe 'Zone' do
 
   describe '#find_by_code' do
     it 'should find a zone by the postal code' do
-      expect(Zone.find_by_postal_code(postal_code)).to eql zone
+      expect(Zone.find_by_code('11800')).to eql zone
     end
   end
 end

@@ -12,9 +12,9 @@ class ServicesController < ApplicationController
   end
 
   def create
-    @service = Service.create(service_params)
-    @service.create_user
-    @service.create_schedules
+    @service = Service.create!(service_params)
+    # @service.create_user
+    # @service.create_schedules
 
     redirect_to show_service_path(@service.id)
   end

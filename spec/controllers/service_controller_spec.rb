@@ -34,6 +34,9 @@ feature 'ServiceController' do
       choose "service_payment_method_id_#{payment_method.id}"
       choose "service_service_type_id_#{one_time_service.id}"
 
+      # fill_in 'service_date', with: 'Benito Juarez' 
+      # fill_in 'service_time', with: 'Benito Juarez' 
+
       click_button 'Confirmar servicio'
 
       address = Address.first

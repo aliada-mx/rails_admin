@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   get 'terminos', to: 'statics#terms', as: :terms
   get 'privacidad', to: 'statics#privacy', as: :privacy
 
+  devise_for :users
+
   resources :aliadas
 
   scope :servicio do
@@ -14,10 +16,10 @@ Rails.application.routes.draw do
     get ':service_id', to: 'services#show', as: :show_service, service_id: /\d+/
   end
 
-  resources :schedules
-
   resource :user, path: 'perfil' do
     get 'visitas-proximas', to: 'users#next_services', as: :next_services
     get 'historial', to: 'users#previous_services', as: :previous_services
   end
+
+  resources :schedules
 end
