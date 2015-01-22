@@ -20,15 +20,19 @@ Rails.logger.level = 4
 RSpec.configure do |config|
   DatabaseCleaner.strategy = :truncation
 
+  # Authentication helpers
+  config.include TestingSupport::DeviseHelpers
+
   # Avoid having to write FactoryGirl.create
   config.include FactoryGirl::Syntax::Methods
+
   # Route helpers
   config.include Rails.application.routes.url_helpers
+
   # Test driver helpers
   config.include TestingSupport::DriverHelpers
 
   config.before(:suite) do
-
     # Test all factories validity
     FactoryGirl.lint
 
@@ -48,7 +52,7 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.after(:each) do
+  config.after(:suite) do
     DatabaseCleaner.clean
   end
 end

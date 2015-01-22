@@ -7,13 +7,14 @@
   = f.text_area :special_instructions 
 
   = f.fields_for :address, @address do |address_form|
+    = address_form.hidden_field :id, as: :hidden, value: @address.id
     = address_form.hidden_field :postal_code_id, as: :hidden
     = address_form.text_area :street
     = address_form.text_field :interior_number
     = address_form.text_field :number
     = address_form.text_area :colony
     = address_form.text_area :between_streets
-    = address_form.text_field :postal_code, value: :code
+    = address_form.text_field :postal_code, value: @postal_code.code
     = address_form.text_area :state
     = address_form.text_field :city
     = address_form.text_area :references
@@ -22,7 +23,8 @@
     = address_form.hidden_field :longitude, as: :hidden
 
   = f.fields_for :user, @user do |user_form|
-    = user_form.text_field :full_name
+    = user_form.text_field :first_name
+    = user_form.text_field :last_name
     = user_form.text_field :email
     = user_form.text_field :phone
 
@@ -30,9 +32,8 @@
   %div.calendario
     calendario
 
-  -#
-    = f.date_field :date, value: I18n.l(f.object.date), format: :date_format
-    = f.time_field :time, value: I18n.l(f.object.time), format: :time_format
+  = f.date_field :date
+  = f.time_field :time
 
   = f.collection_radio_buttons :payment_method_id, PaymentMethod.all, :id, :name
 

@@ -6,11 +6,12 @@ class Service < ActiveRecord::Base
     ['payed','Pagado'],
     ['canceled','Cancelado'],
   ]
-  attr_accessor :postal_code
+  attr_accessor :postal_code, :time, :date
 
   belongs_to :zone
   belongs_to :address
-  belongs_to :user
+  belongs_to :user, inverse_of: :services
+  belongs_to :aliada, inverse_of: :services
   belongs_to :service_type
   belongs_to :recurrence
   belongs_to :payment_method
@@ -18,12 +19,10 @@ class Service < ActiveRecord::Base
   has_many :extra_services
   has_many :extras, through: :extra_services
 
-  # validates_presence_of [:billable_hours, :date, :time]
-  # validate :time_is_hour_o_clock
+  validates_presence_of [:billable_hours, :datetime]
+  validate :datetime_is_hour_o_clock
   validate :service_type_exists
-
-  accepts_nested_attributes_for :address
-  accepts_nested_attributes_for :user
+  validates_presence_of [:address, :user, :aliada]
 
   after_initialize :set_defaults
   before_save :create_update_recurrency
@@ -41,22 +40,22 @@ class Service < ActiveRecord::Base
     hours_before_service + billable_hours + hours_after_service
   end
 
-  def create_user
-
+  def create_schedules
+    if service_type.recurrent?
+      return recurrence.to_schedule_intervals(total_hours, aliada)
+    else
+      return Schedule.build_one_timer(datetime, total_hours, aliada)
+    end
   end
 
-  # def create_schedules(aliada)
-  #   datetime = Datetime.new(date.year, date.month, date.day, time.hour, time.min, time.sec)
-
-  #   if service_type.recurrent?
-  #     return recurrency.to_schedule_intervals
-  #   else
-  #     return Schedule.build_one_timer(datetime, total_hours, aliada)
-  #   end
-  # end
-
   def create_update_recurrency
+    return unless service_type.recurrent?
 
+    unless recurrence.present?
+      Recurrence.create!(user_id: user_id, 
+                         aliada_id: aliada_id, 
+                         periodicity: service_type.periodicity)
+    end
   end
 
   # Validations
@@ -66,9 +65,10 @@ class Service < ActiveRecord::Base
     errors.add(:service_type, message) unless ServiceType.exists? service_type_id
   end
 
-  # def time_is_hour_o_clock
-  #   message = 'Los servicios solo pueden crearse en horas cerradas'
+  def datetime_is_hour_o_clock
+    message = 'Los servicios solo pueden crearse en horas cerradas'
 
-  #   errors.add(:time, message) if time.min != 0 || time.sec != 0
-  # end
+    errors.add(:datetime, message) if datetime.min != 0 || datetime.sec != 0
+  end
+  
 end

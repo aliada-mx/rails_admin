@@ -1,7 +1,8 @@
 class Recurrence < ActiveRecord::Base
-  include Aliada::GeneralHelpers::DatetimeSupport
+  include AliadaSupport::GeneralHelpers::DatetimeSupport
 
   belongs_to :user
+  belongs_to :aliada
 
   validates_presence_of :user
 
@@ -18,14 +19,18 @@ class Recurrence < ActiveRecord::Base
   end
 
   # Turn the recurrence into an array of not-persisted-in-db schedule intervals
-  def to_schedule_intervals(schedule_interval_hours_size)
+  def to_schedule_intervals(schedule_interval_hours_size, aliada, use_persisted_schedules: true)
     schedule_intervals = []
     current_datetime = starting_datetime
 
     while current_datetime < ending_datetime do
       end_of_schedule_interval = current_datetime + schedule_interval_hours_size
+      schedule_interval = ScheduleInterval.build_from_range(current_datetime, 
+                                                            end_of_schedule_interval,
+                                                            aliada: aliada,
+                                                            use_persisted_schedules: use_persisted_schedules)
 
-      schedule_intervals.push(ScheduleInterval.build_from_range(current_datetime , end_of_schedule_interval))
+      schedule_intervals.push(schedule_interval)
 
       current_datetime += periodicity.days
     end

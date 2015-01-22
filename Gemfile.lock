@@ -95,6 +95,8 @@ GEM
     em-websocket (0.5.1)
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
+    erb2haml (0.1.5)
+      html2haml
     erubis (2.7.0)
     eventmachine (1.0.4)
     execjs (2.2.2)
@@ -300,6 +302,7 @@ DEPENDENCIES
   compass-rails
   database_cleaner
   devise
+  erb2haml
   factory_girl_rails
   guard-livereload
   guard-sass

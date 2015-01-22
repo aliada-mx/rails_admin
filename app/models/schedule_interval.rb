@@ -41,7 +41,7 @@ class ScheduleInterval
     size == 0
   end
 
-  def persist_schedules!
+  def persist!
     @schedules.map(&:save)
     self
   end
@@ -55,7 +55,7 @@ class ScheduleInterval
       datetime = Time.at(date)
 
       if use_persisted_schedules
-        schedule = Schedule.find_by_datetime_and_user_id(datetime, aliada.id)
+        schedule = Schedule.find_by_datetime_and_aliada_id(datetime, aliada.id)
       else
         schedule = Schedule.new(datetime: datetime, aliada: aliada)
       end

@@ -57,6 +57,9 @@ group :development, :test do
   # Guard to compile as file changes
   gem 'guard-sass', require: false
   gem 'guard-livereload', require: false
+
+  # Convert erb to haml
+  gem 'erb2haml'
 end
 
 group :test do

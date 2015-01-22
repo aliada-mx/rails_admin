@@ -1,5 +1,7 @@
 FactoryGirl.define do
   factory :service, class: Service do
+    association :user, factory: :user
+    association :aliada, factory: :aliada
     association :address, factory: :address
     billable_hours 3.0
     status 'pending'

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150120220052) do
+ActiveRecord::Schema.define(version: 20150122160625) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,7 +27,6 @@ ActiveRecord::Schema.define(version: 20150120220052) do
     t.text     "between_streets"
     t.text     "colony"
     t.string   "state"
-    t.text     "municipality"
     t.float    "latitude"
     t.float    "longitude"
     t.string   "city"
@@ -36,6 +35,11 @@ ActiveRecord::Schema.define(version: 20150120220052) do
 
   add_index "addresses", ["postal_code_id"], name: "index_addresses_on_postal_code_id", using: :btree
   add_index "addresses", ["user_id"], name: "index_addresses_on_user_id", using: :btree
+
+  create_table "aliadas", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "code_types", force: :cascade do |t|
     t.integer  "value"
@@ -132,6 +136,7 @@ ActiveRecord::Schema.define(version: 20150120220052) do
     t.datetime "updated_at",        null: false
     t.datetime "starting_datetime"
     t.integer  "periodicity"
+    t.integer  "aliada_id"
   end
 
   add_index "recurrences", ["user_id"], name: "index_recurrences_on_user_id", using: :btree
@@ -144,6 +149,7 @@ ActiveRecord::Schema.define(version: 20150120220052) do
     t.integer  "service_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "aliada_id"
   end
 
   add_index "schedules", ["service_id"], name: "index_schedules_on_service_id", using: :btree
@@ -183,9 +189,9 @@ ActiveRecord::Schema.define(version: 20150120220052) do
     t.integer  "bedrooms"
     t.text     "special_instructions"
     t.string   "status"
-    t.date     "date"
-    t.time     "time"
     t.integer  "payment_method_id"
+    t.integer  "aliada_id"
+    t.datetime "datetime"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
@@ -212,9 +218,8 @@ ActiveRecord::Schema.define(version: 20150120220052) do
   create_table "users", force: :cascade do |t|
     t.string   "role"
     t.string   "email"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string   "full_name"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
     t.string   "phone"
     t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"
@@ -225,6 +230,8 @@ ActiveRecord::Schema.define(version: 20150120220052) do
     t.datetime "last_sign_in_at"
     t.inet     "current_sign_in_ip"
     t.inet     "last_sign_in_ip"
+    t.string   "first_name"
+    t.string   "last_name"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

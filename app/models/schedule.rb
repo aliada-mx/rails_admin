@@ -6,12 +6,12 @@ class Schedule < ActiveRecord::Base
     ['on-transit','En movimiento'],
   ]
 
-  validates :datetime, presence: true, uniqueness: { scope: [:user_id, :datetime] }
+  validates :datetime, presence: true
   validates_presence_of [:datetime, :status]
   validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[0] } }
 
   belongs_to :zone
-  belongs_to :aliada, -> {where(role: 'aliada')}, class_name: 'User', foreign_key: :user_id
+  belongs_to :aliada
   belongs_to :service
 
   scope :available, -> {where(status: 'available')}
@@ -25,18 +25,10 @@ class Schedule < ActiveRecord::Base
 
   after_initialize :default_values
 
-  def aliada_id
-    user_id
-  end
-
-  def self.build_recurrent(datetime, hours, aliada)
-
-  end
-
   def self.build_one_timer(datetime, hours, aliada)
     schedule_interval = ScheduleInterval.build_from_range(datetime, datetime + hours.hours, use_persisted: true)
     if schedule_interval.valid?
-      return schedule_interval.persist_schedules!
+      return schedule_interval.persist!
     else
       return false
     end

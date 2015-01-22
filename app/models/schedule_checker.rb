@@ -70,7 +70,7 @@ class ScheduleChecker
       # We could use each_with_index but thats a generated on the fly method
       # and thats really slow
       available_schedules.each do |schedule|
-        current_aliada_id = schedule.user_id
+        current_aliada_id = schedule.aliada_id
 
         if banned_aliada_id == current_aliada_id
           next

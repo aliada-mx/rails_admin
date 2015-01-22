@@ -1,4 +1,4 @@
-module Aliada
+module AliadaSupport
   module GeneralHelpers
     module DatetimeSupport
       def next_week
