@@ -1,0 +1,66 @@
+<section class="main" >
+    <div class="custom-calendar-wrap">
+	<div id="custom-inner" class="custom-inner">
+	    <div class="custom-header clearfix">
+		<nav>
+		    <span id="custom-prev" class="custom-prev"></span>
+		    <span id="custom-next" class="custom-next"></span>
+		</nav>
+		<h2 id="custom-month" class="custom-month">ENERO</h2>
+		<h3 id="custom-year" class="custom-year">2015</h3>
+	    </div>
+	    <div id="calendar" class="fc-calendar-container">
+	    </div>
+	    <div id="cal-hours">
+		
+	    </div>
+	</div>
+    </div>
+    <script>
+     var twoDigit = function(s){
+	 s = s.toString();
+	 if(s.length == 1)
+	     return "0"+s;
+	 
+	 return s;
+     }
+     
+     var fulldata = <%= raw @dates_parsed %>;
+     
+
+    
+     $('#calendar').calendario({
+	 month : 1,
+	 year: 2015,
+	 caldata: fulldata,
+	 weekabbrs : ['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'],
+	 months : ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	 displayMonthAbbr : true,
+	 
+	 displayWeekAbbr : true,
+
+	 onDayClick : function($el, $content, dateProperties) { 
+	     
+	     $('#cal-hours').empty();
+	     //Marca el dia como seleccionado
+	     $('.fc-selected-day').removeClass("fc-selected-day");
+	     $el.addClass( "fc-selected-day");
+
+	     //Pasa de 1-1-2015 a 01-01-2015
+	     dateClicked = twoDigit(dateProperties.month) + "-" + 
+			   twoDigit(dateProperties.day) + "-" +
+			   dateProperties.year;
+
+	     if (fulldata[dateClicked]){
+		 //Borra las horas
+		 
+		 //Pinta cada hora del dia seleccionado
+		 fulldata[dateClicked].forEach(function(h){
+		     $('#cal-hours').append('<button>'+ h  +'</button>')});
+	     }
+	     
+	     
+	     return false;}
+     });
+    </script>
+</section>
