@@ -24,18 +24,19 @@
 	 
 	 return s;
      }
-     
+     //Variable con las fechas y la disponibilidad de cada uno
      var fulldata = <%= raw @dates_parsed %>;
      
-
-    
-     $('#calendar').calendario({
+     
+     
+     cal = $('#calendar').calendario({
 	 month : 1,
 	 year: 2015,
 	 caldata: fulldata,
 	 weekabbrs : ['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'],
 	 months : ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-	 displayMonthAbbr : true,
+	 
+	 displayMonthAbbr : false,
 	 
 	 displayWeekAbbr : true,
 
@@ -61,6 +62,22 @@
 	     
 	     
 	     return false;}
+     });
+     
+     //Pon mes y año como va
+     $month = $( '#custom-month' ).html( cal.getMonthName() ),
+	 $year = $( '#custom-year' ).html( cal.getYear() );
+     
+     function updateMonthYear() {				
+	 $month.html( cal.getMonthName() );
+	 $year.html( cal.getYear() );
+     }
+     
+     $( '#custom-next' ).on( 'click', function() {
+	 cal.gotoNextMonth( updateMonthYear );
+     });
+     $( '#custom-prev' ).on( 'click', function() {
+	 cal.gotoPreviousMonth( updateMonthYear );
      });
     </script>
 </section>
