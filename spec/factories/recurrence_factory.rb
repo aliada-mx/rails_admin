@@ -1,6 +1,7 @@
 FactoryGirl.define do
   factory :recurrence, class: Recurrence do
-    starting_datetime Time.zone.now
+    weekday 'monday'
+    hour 7
     association :user, factory: :user
     periodicity 7
   end

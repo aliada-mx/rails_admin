@@ -1,40 +1,52 @@
 class Recurrence < ActiveRecord::Base
   include AliadaSupport::GeneralHelpers::DatetimeSupport
 
+  validates_presence_of [:weekday, :hour]
+  validates_presence_of :user
+  validates :weekday, inclusion: {in: Time.weekdays.map{ |days| days[0] } }
+  validates :hour, inclusion: {in: [*0..23] } 
+
   belongs_to :user
   belongs_to :aliada
 
-  validates_presence_of :user
-
-  def day_of_week
-    starting_datetime.try(:wday)
+  def wday
+    Time.weekdays.select{ |day| day[0] == weekday }.first.second
   end
 
-  def hour
-    starting_datetime.try(:hour)
-  end
-
-  def ending_datetime
+  def get_ending_datetime
     Time.zone.now + Setting.future_horizon_months.months
   end
 
-  # Turn the recurrence into an array of not-persisted-in-db schedule intervals
-  def to_schedule_intervals(schedule_interval_hours_size, aliada, use_persisted_schedules: true)
+  # Returns the datetime for the next service
+  def next_datetime
+    if Time.zone.now.wday == weekday
+      Time.zone.now.change(hour: hour)
+    else
+      next_weekday(weekday).change(hour: hour)
+    end
+  end
+
+  # Turn the recurrence into an array of schedule intervals
+  # optionally creating them on db if they dont exist
+  def to_schedule_intervals(schedule_interval_seconds_long, create: false, conditions: {})
+    beginning_of_schedule_interval = next_datetime
+    end_of_schedule_interval = beginning_of_schedule_interval + schedule_interval_seconds_long
+
+    ending_datetime = get_ending_datetime
+
     schedule_intervals = []
-    current_datetime = starting_datetime
-
-    while current_datetime < ending_datetime do
-      end_of_schedule_interval = current_datetime + schedule_interval_hours_size
-      schedule_interval = ScheduleInterval.build_from_range(current_datetime, 
-                                                            end_of_schedule_interval,
-                                                            aliada: aliada,
-                                                            use_persisted_schedules: use_persisted_schedules)
-
+    while end_of_schedule_interval < ending_datetime do
+      if create
+        schedule_interval = ScheduleInterval.create_from_range(beginning_of_schedule_interval, end_of_schedule_interval, conditions: conditions)
+      else
+        schedule_interval = ScheduleInterval.get_from_range(beginning_of_schedule_interval, end_of_schedule_interval, conditions: conditions)
+      end
       schedule_intervals.push(schedule_interval)
 
-      current_datetime += periodicity.days
+      beginning_of_schedule_interval += periodicity.days
+      end_of_schedule_interval += periodicity.days
     end
-    
+
     schedule_intervals
   end
 end

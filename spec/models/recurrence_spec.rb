@@ -1,13 +1,19 @@
 describe 'Recurrence' do
-  let(:starting_datetime) { Time.parse('01 Jan 2015 00:00:00 UTC +00:00') }
+  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 00:00:00') }
 
   let(:aliada){ create(:aliada) }
-  let(:recurrence) { build(:recurrence, starting_datetime: starting_datetime ) }
+  let(:recurrence) { build(:recurrence, weekday: starting_datetime.weekday, hour: starting_datetime.hour ) }
   let(:service) { build(:service, billable_hours: 3, hours_before_service: 2, hours_after_service: 2) }
 
-  describe '#day_of_week' do
+  before do
+    6.times do |i|
+      create(:schedule, datetime: starting_datetime + i.hours)
+    end
+  end
+
+  describe '#wday' do
     it 'should be tuesday' do
-      expect(recurrence.day_of_week).to eql 4
+      expect(recurrence.wday).to eql 4
     end
   end
 
@@ -23,11 +29,11 @@ describe 'Recurrence' do
     end
 
     it 'should have valid schedule intervals ending datetimes' do
-      expect(@schedule_intervals.first.ending_datetime.hour).to eql (starting_datetime + 5.hours).hour
+      expect(@schedule_intervals.first.ending_of_interval.hour).to eql (starting_datetime + 5.hours).hour
     end
 
     it 'should have a correct number of schedule intervals' do
-      expect(@schedule_intervals.size).to eql 9
+      expect(@schedule_intervals.size).to eql 4
     end
   end
 end

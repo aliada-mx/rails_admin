@@ -15,8 +15,6 @@ require 'database_cleaner'
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
-Rails.logger.level = 4
-
 RSpec.configure do |config|
   DatabaseCleaner.strategy = :truncation
 

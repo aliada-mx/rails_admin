@@ -1,12 +1,11 @@
 class Schedule < ActiveRecord::Base
   STATUSES = [
     ['available','Disponible'],
-    ['not-available','No disponible'],
+    ['booked','Reservado para un servicio'],
     ['busy','Ocupada'],
     ['on-transit','En movimiento'],
   ]
 
-  validates :datetime, presence: true
   validates_presence_of [:datetime, :status]
   validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[0] } }
 
@@ -15,24 +14,17 @@ class Schedule < ActiveRecord::Base
   belongs_to :service
 
   scope :available, -> {where(status: 'available')}
+  scope :booked, -> {where(status: 'booked')}
   scope :in_zone, -> (zone) { where(zone: zone) }
-  scope :in_datetimes, -> (datetimes) { where(datetime: datetimes) }
-  scope :ordered_by_user_datetime, -> { order(:user_id, :datetime) }
+  scope :in_the_future, -> (datetimes) { where("datetime > ?", Time.zone.now) }
+  scope :ordered_by_aliada_datetime, -> { order(:aliada_id, :datetime) }
 
   state_machine :status, :initial => 'available' do
-    transition 'available' => 'busy', on: :move_to_busy
+    transition 'available' => 'booked', on: :book
   end
 
   after_initialize :default_values
 
-  def self.build_one_timer(datetime, hours, aliada)
-    schedule_interval = ScheduleInterval.build_from_range(datetime, datetime + hours.hours, use_persisted: true)
-    if schedule_interval.valid?
-      return schedule_interval.persist!
-    else
-      return false
-    end
-  end
 
   private
     def default_values

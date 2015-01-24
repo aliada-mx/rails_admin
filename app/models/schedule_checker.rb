@@ -49,32 +49,21 @@ class ScheduleChecker
                       requested_schedule_interval.empty? || 
                       available_schedules.size < requested_schedule_interval.size
 
-      #
-      # Set a default array to store our available schedule intervals
+      # Set a default array to store the return value of this function
       available_for_booking = Hash.new{ |h,k| h[k] = [] }
 
       requested_starting_datetime = requested_schedule_interval.beginning_of_interval
       requested_ending_datetime = requested_schedule_interval.ending_of_interval
 
-      # It will hold schedules that are time consecutive growing in size
+      # hold schedules that are time consecutive growing in size
       # until the desired size of schedule is matched
       continues_schedules = []
 
       # Track schedules in pairs to see if they are continuous 
       previous_schedule = available_schedules.first
 
-      # Because the schedules are sorted we can safely asume that if one of
-      # the schedules doesnt match, none will for this aliada so we track it
-      banned_aliada_id = nil
-
-      # We could use each_with_index but thats a generated on the fly method
-      # and thats really slow
       available_schedules.each do |schedule|
         current_aliada_id = schedule.aliada_id
-
-        if banned_aliada_id == current_aliada_id
-          next
-        end
 
         if continues_schedules.empty?
           # We can't start a continuity without at least one schedule
@@ -92,32 +81,31 @@ class ScheduleChecker
             schedule.aliada_id == previous_schedule.aliada_id &&
             schedule.datetime.hour >= requested_starting_datetime.hour &&
             schedule.datetime.hour <= requested_ending_datetime.hour &&
-            schedule.datetime.wday == requested_starting_datetime.wday
+            schedule.datetime.wday == requested_starting_datetime.wday 
 
           continues_schedules.push(schedule)
         else
+          # puts "puts no hay continuidad el schedule anterior es #{previous_schedule.attributes} el actual es #{schedule.attributes} \n"
+          
           # We don't want to eliminate the start of a potential continuity
+          # so we asume a continues_schedules of size 1 is ok
           if continues_schedules.size > 1
             # We lost our continuity, so reset our temporary list
             continues_schedules = []
-
-            # Since our schedules are sorted by aliada and datetime we can safely asume that this
-            # aliada won't have schedules available again
-            banned_aliada_id = current_aliada_id
           end
         end
         
         # If we build enough continues schedules SUCCESS!
         # we found availability, save it
         if continues_schedules.size == requested_schedule_interval.size
-          available_schedule_interval = ScheduleInterval.new(continues_schedules, aliada_id: current_aliada_id)
+          available_schedule_interval = ScheduleInterval.new(continues_schedules)
 
           if available_schedule_interval.valid?
             available_for_booking[current_aliada_id].push(available_schedule_interval)
+          else
+            Rails.logger.fatal "Schedules are not continuos the inteval could not be saved #{available_schedule_interval.errors}"
           end
 
-          # We can safely asume we won't find more with this aliada
-          banned_aliada_id = current_aliada_id
           # Start a new succession
           continues_schedules = []
         end

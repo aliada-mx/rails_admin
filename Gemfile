@@ -41,6 +41,12 @@ gem 'nestive'
 # AUTHENTICATION
 gem 'devise'
 
+# Time pargin
+gem 'chronic'
+
+# Logging
+gem "lograge"
+
 group :development, :test do
   # Call 'pry' anywhere in the code to stop execution and get a debugger console
   gem 'pry-rails'

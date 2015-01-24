@@ -14,7 +14,7 @@ module AliadaWebApp
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
-    # config.time_zone = 'Central Time (US & Canada)'
+    config.time_zone = 'Mexico City'
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
@@ -26,6 +26,21 @@ module AliadaWebApp
 
     config.generators do |g|
       g.test_framework :rspec
+    end
+
+    # Logging
+    log_level = String(ENV['LOG_LEVEL'] || "info").upcase
+    config.logger = Logger.new(STDOUT)
+    config.logger.level = Logger.const_get(log_level)
+    config.log_level = log_level
+
+    config.lograge.enabled = true
+    config.lograge.custom_options = lambda do |event|
+      params = event.payload[:params].reject do |k|
+        ['controller', 'action'].include? k
+      end
+
+      { "params" => params }
     end
   end
 end

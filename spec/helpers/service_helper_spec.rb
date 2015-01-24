@@ -10,7 +10,7 @@ RSpec.describe ServiceHelper, :type => :helper do
     end
 
     it 'returns the a new address' do
-      expect(helper.suggest_address(user, other_postal_code).attributes).to eq(Address.new.attributes)
+      expect(helper.suggest_address(user, other_postal_code).attributes).to eq(Address.new(postal_code_id: other_postal_code.id).attributes)
     end
   end
 end

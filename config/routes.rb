@@ -11,8 +11,10 @@ Rails.application.routes.draw do
   resources :aliadas
 
   scope :servicio do
-    post 'nuevo', to: 'services#new', as: :new_service
+    post 'inicial', to: 'services#initial', as: :initial_service
     post 'create', to: 'services#create', as: :create_service
+
+    get 'nuevo', to: 'services#new', as: :new_service
     get ':service_id', to: 'services#show', as: :show_service, service_id: /\d+/
   end
 

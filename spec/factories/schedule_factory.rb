@@ -2,7 +2,6 @@ FactoryGirl.define do
   factory :schedule, class: Schedule do
     status 'available'
     datetime Time.now    
-    association :aliada, factory: :aliada
 
     trait :with_service do
       transient do

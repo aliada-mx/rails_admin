@@ -2,7 +2,7 @@ describe 'ScheduleChecker' do
   describe '#dates_available' do
     let!(:aliada){ create(:aliada) }
     let!(:other_aliada){ create(:aliada) }
-    starting_datetime = Time.now.utc.change({hour: 7})
+    starting_datetime = Time.zone.now.change({hour: 7})
     ending_datetime = starting_datetime + 6.hour
 
     before do
@@ -13,8 +13,8 @@ describe 'ScheduleChecker' do
         create(:schedule, datetime: starting_datetime + i.hour, status: 'available', aliada: other_aliada)
       end
 
-      @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours)
-      @available_schedules = Schedule.available.ordered_by_user_datetime
+      @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours, conditions: {aliada_id: aliada.id})
+      @available_schedules = Schedule.available.ordered_by_aliada_datetime
     end
 
     it 'finds an available datetime' do

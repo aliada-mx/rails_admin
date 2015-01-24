@@ -1,4 +1,5 @@
 feature 'ServiceController' do
+  starting_datetime = Time.now.utc.change({hour: 13})
   let!(:aliada) { create(:aliada) }
   let!(:zone) { create(:zone) }
   let!(:recurrent_service) { create(:service_type) }
@@ -11,42 +12,49 @@ feature 'ServiceController' do
   let!(:extra_2){ create(:extra, name: 'Limpieza de refri')}
   let!(:payment_method){ create(:payment_method)}
 
+  before do
+    5.times do |i|
+      create(:schedule, datetime: starting_datetime + i.hours, aliada: aliada)
+    end
+  end
+
   context '#new' do
     it 'creates a new service' do
       expect(Address.all.count).to be 0
       expect(Service.all.count).to be 0
       expect(User.all.count).to be 0
       expect(Aliada.all.count).to be 1
+      expect(Schedule.available.count).to be 5
 
       with_rack_test_driver do
-        page.driver.submit :post, new_service_path, {postal_code_id: postal_code.id}
+        page.driver.submit :post, initial_service_path, {postal_code_id: postal_code.id}
       end
 
-      fill_in 'service_billable_hours', with: '1'
+      fill_in 'service_billable_hours', with: '3'
       fill_in 'service_bathrooms', with: '1'
       fill_in 'service_bedrooms', with: '1'
 
       check 'service_extra_ids_1'
 
       fill_in 'service_special_instructions', with: 'nada'
-      fill_in 'service_address_street', with: 'Calle de las aliadas'
-      fill_in 'service_address_number', with: '1' 
-      fill_in 'service_address_interior_number', with: '2' 
-      fill_in 'service_address_between_streets', with: 'Calle de los aliados, calle de los bifes' 
-      fill_in 'service_address_colony', with: 'Roma' 
-      fill_in 'service_address_state', with: 'DF' 
-      fill_in 'service_address_city', with: 'Benito Juarez' 
+      fill_in 'service_address_attributes_street', with: 'Calle de las aliadas'
+      fill_in 'service_address_attributes_number', with: '1' 
+      fill_in 'service_address_attributes_interior_number', with: '2' 
+      fill_in 'service_address_attributes_between_streets', with: 'Calle de los aliados, calle de los bifes' 
+      fill_in 'service_address_attributes_colony', with: 'Roma' 
+      fill_in 'service_address_attributes_state', with: 'DF' 
+      fill_in 'service_address_attributes_city', with: 'Benito Juarez' 
 
-      fill_in 'service_user_first_name', with: 'Guillermo' 
-      fill_in 'service_user_last_name', with: 'Siliceo' 
-      fill_in 'service_user_email', with: 'guillermo.siliceo@gmail.com' 
-      fill_in 'service_user_phone', with: '5585519954' 
+      fill_in 'service_user_attributes_first_name', with: 'Guillermo' 
+      fill_in 'service_user_attributes_last_name', with: 'Siliceo' 
+      fill_in 'service_user_attributes_email', with: 'guillermo.siliceo@gmail.com' 
+      fill_in 'service_user_attributes_phone', with: '5585519954' 
 
       choose "service_payment_method_id_#{payment_method.id}"
       choose "service_service_type_id_#{one_time_service.id}"
 
-      fill_in 'service_date', with: 'Benito Juarez' 
-      fill_in 'service_time', with: 'Benito Juarez' 
+      fill_in 'service_date', with: starting_datetime.strftime('%Y-%m-%d')
+      fill_in 'service_time', with: starting_datetime.strftime('%H:%M')
 
       click_button 'Confirmar servicio'
 
@@ -68,7 +76,7 @@ feature 'ServiceController' do
       expect(address.city).to eql 'Benito Juarez'
 
       expect(service.zone_id).to eql zone.id
-      expect(service.billable_hours).to eql 1
+      expect(service.billable_hours).to eql 3
       expect(service.bathrooms).to eql 1
       expect(service.bedrooms).to eql 1
       expect(service.special_instructions).to eql 'nada'
@@ -79,45 +87,9 @@ feature 'ServiceController' do
       expect(user.last_name).to eql 'Siliceo'
       expect(user.email).to eql 'guillermo.siliceo@gmail.com'
       expect(user.phone).to eql '5585519954'
-    end
 
-    context 'logged in users' do
-      let!(:user) { create(:user, 
-                           first_name: 'Alex',
-                           email: 'alex@aliada.mx',
-                           last_name: 'Teutli',
-                           phone: '01800-Aliado')}
-      let!(:address){ create(:address, user: user, postal_code: postal_code)}
-
-      before :each do
-        login_as(user)
-
-        with_rack_test_driver do
-          page.driver.submit :post, new_service_path, {postal_code_id: postal_code.id}
-        end
-      end
-
-      it 'shows them their saved data' do
-        expect(page).to have_field 'service_user_first_name', with: 'Alex'
-        expect(page).to have_field 'service_user_last_name', with: 'Teutli'
-        expect(page).to have_field 'service_user_email', with: 'alex@aliada.mx'
-        expect(page).to have_field 'service_user_phone', with: '01800-Aliado'
-      end
-
-      it 'allows them to update it' do
-        fill_in 'service_user_first_name', with: 'Alejandro'
-        fill_in 'service_user_last_name', with: 'Teu'
-        fill_in 'service_user_email', with: 'alejandro@aliada.mx'
-        fill_in 'service_user_phone', with: '01800-Aliado-yay'
-        
-        click_button 'Confirmar servicio'
-
-        user.reload
-        expect(user.first_name).to eql 'Alejandro'
-        expect(user.last_name).to eql 'Teu'
-        expect(user.email).to eql 'alejandro@aliada.mx'
-        expect(user.phone).to eql '01800-Aliado-yay'
-      end
+      expect(Schedule.available.count).to be 0
+      expect(Schedule.booked.count).to be 5
     end
   end
 end

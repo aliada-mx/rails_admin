@@ -1,5 +1,3 @@
-
-
 describe 'ScheduleInterval' do
   let(:starting_datetime){ Time.now.utc.change({hour: 13})}
   let(:ending_datetime){ starting_datetime + 6.hour}

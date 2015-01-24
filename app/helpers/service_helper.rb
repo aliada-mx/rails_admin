@@ -7,7 +7,7 @@ module ServiceHelper
     if addresses.exists?
       addresses.first
     else
-      Address.new(postal_code_id: @postal_code.id)
+      Address.new(postal_code_id: postal_code.id)
     end
   end
 end
