@@ -8,6 +8,11 @@
   font-style: normal;
 }
 
+.fc-selected-recurrencias span.fc-date{
+    background-color:aqua;
+    color: red;
+}
+
 .fc-content span.fc-date{
     color:#000;
 }

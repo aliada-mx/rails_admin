@@ -41,30 +41,49 @@
 	 displayWeekAbbr : true,
 
 	 onDayClick : function($el, $content, dateProperties) { 
-	     
+	     //Erase the hours from the previously selected day
 	     $('#cal-hours').empty();
-	     //Marca el dia como seleccionado
+
+	     //Mark the current day as selected and remove the previous one
 	     $('.fc-selected-day').removeClass("fc-selected-day");
 	     $el.addClass( "fc-selected-day");
 
-	     //Pasa de 1-1-2015 a 01-01-2015
+	     //Convert from 1-1-2015 to 01-01-2015
 	     dateClicked = twoDigit(dateProperties.month) + "-" + 
 			   twoDigit(dateProperties.day) + "-" +
 			   dateProperties.year;
 
 	     if (fulldata[dateClicked]){
-		 //Borra las horas
-		 
-		 //Pinta cada hora del dia seleccionado
+		 //Render each hour of the selected date
 		 fulldata[dateClicked].forEach(function(h){
 		     $('#cal-hours').append('<button>'+ h  +'</button>')});
 	     }
 	     
 	     
+	     //Pinta recurrencias
+	     if(true){
+		 //Erase the class from the previous selection
+		 $('.fc-selected-recurrencias').removeClass('fc-selected-recurrencias');
+
+		 //Get the day and day-of-the-week from the selected element
+		 dia = parseInt($el.children('span.fc-date').text());
+		 diaSemana = $el.children('span.fc-weekday').text();
+		 
+		 //Select days below the selected date and add class fc-selected-recurrencias
+		 $('div.fc-row div').filter( function(index, elemen){
+		     
+		     diaEl = parseInt($(elemen).children('span.fc-date').text());
+		     diaSemanaEl = $(elemen).children('span.fc-weekday').text();
+		     
+		     return ((diaEl >= dia) && (diaSemanaEl === diaSemana));
+		     
+		 }).addClass('fc-selected-recurrencias');
+	     }
+	     
 	     return false;}
      });
      
-     //Pon mes y año como va
+     //update Month and year
      $month = $( '#custom-month' ).html( cal.getMonthName() ),
 	 $year = $( '#custom-year' ).html( cal.getYear() );
      
@@ -72,7 +91,7 @@
 	 $month.html( cal.getMonthName() );
 	 $year.html( cal.getYear() );
      }
-     
+     //Event handlers
      $( '#custom-next' ).on( 'click', function() {
 	 cal.gotoNextMonth( updateMonthYear );
      });
