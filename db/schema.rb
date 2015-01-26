@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150124044918) do
+ActiveRecord::Schema.define(version: 20150126205120) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -138,6 +138,7 @@ ActiveRecord::Schema.define(version: 20150124044918) do
     t.integer  "aliada_id"
     t.string   "weekday"
     t.integer  "hour"
+    t.integer  "total_hours"
   end
 
   add_index "recurrences", ["user_id"], name: "index_recurrences_on_user_id", using: :btree
@@ -207,7 +208,7 @@ ActiveRecord::Schema.define(version: 20150124044918) do
   end
 
   create_table "tickets", force: :cascade do |t|
-    t.string   "type"
+    t.string   "classification"
     t.integer  "relevant_object_id"
     t.string   "relevant_object_type"
     t.text     "message"

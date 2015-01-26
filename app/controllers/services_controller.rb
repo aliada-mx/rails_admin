@@ -13,13 +13,8 @@ class ServicesController < ApplicationController
     @postal_code = PostalCode.find(params[:postal_code_id])
     @zone = Zone.find_by_postal_code(@postal_code)
 
-    if user_signed_in?
-      @user = current_user
-      @address = suggest_address(@user, @postal_code)
-    else
-      @user = User.new
-      @address = Address.new(postal_code_id: @postal_code.id)
-    end
+    @user = User.new
+    @address = Address.new(postal_code_id: @postal_code.id)
 
     @service_type = ServiceType.first
     @service = Service.new(user: @user,
@@ -30,16 +25,8 @@ class ServicesController < ApplicationController
 
   def create
     @service = Service.new(service_params)
-
-    aliada_availability = Aliada.best_for_service(@service)
-    # Log missing aliada
-    if aliada_availability[:id].nil?
-      Ticket.create_warning message: "No se encontró una aliada para el servicio", 
-                            action_needed: "Asigna una aliada al servicio",
-                            relevant_object: @service
-    end
-    @service.book_with!(aliada_availability)
     @service.save!
+    @service.book_aliada!
 
     redirect_to show_service_path(@service.id)
   end

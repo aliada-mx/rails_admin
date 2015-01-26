@@ -50,7 +50,7 @@ def run
   available_schedules = Schedule.available.ordered_by_user_datetime.to_a
 
   result = RubyProf.profile do
-    puts ScheduleChecker.check_datetimes(available_schedules, six_hours_schedule_interval)
+    puts ScheduleChecker.match_schedules(available_schedules, six_hours_schedule_interval)
   end
 
   result.eliminate_methods!([/Integer#times/])

@@ -28,7 +28,7 @@ class Recurrence < ActiveRecord::Base
 
   # Turn the recurrence into an array of schedule intervals
   # optionally creating them on db if they dont exist
-  def to_schedule_intervals(schedule_interval_seconds_long, create: false, conditions: {})
+  def to_schedule_intervals(schedule_interval_seconds_long, conditions: {})
     beginning_of_schedule_interval = next_datetime
     end_of_schedule_interval = beginning_of_schedule_interval + schedule_interval_seconds_long
 
@@ -36,11 +36,8 @@ class Recurrence < ActiveRecord::Base
 
     schedule_intervals = []
     while end_of_schedule_interval < ending_datetime do
-      if create
-        schedule_interval = ScheduleInterval.create_from_range(beginning_of_schedule_interval, end_of_schedule_interval, conditions: conditions)
-      else
-        schedule_interval = ScheduleInterval.get_from_range(beginning_of_schedule_interval, end_of_schedule_interval, conditions: conditions)
-      end
+      schedule_interval = ScheduleInterval.build_from_range(beginning_of_schedule_interval, end_of_schedule_interval, conditions: conditions)
+
       schedule_intervals.push(schedule_interval)
 
       beginning_of_schedule_interval += periodicity.days

@@ -1,28 +1,44 @@
 describe 'ScheduleChecker' do
   describe '#dates_available' do
+    let!(:zone){ create(:zone) }
     let!(:aliada){ create(:aliada) }
     let!(:other_aliada){ create(:aliada) }
     starting_datetime = Time.zone.now.change({hour: 7})
     ending_datetime = starting_datetime + 6.hour
 
     before do
-      30.times do |i|
-        create(:schedule, datetime: starting_datetime + i.hour, status: 'available', aliada: aliada)
+      Timecop.freeze(starting_datetime)
+
+      7.times do |i|
+        create(:schedule, datetime: starting_datetime + i.hour, status: 'available', aliada: aliada, zone: zone)
       end
-      30.times do |i|
-        create(:schedule, datetime: starting_datetime + i.hour, status: 'available', aliada: other_aliada)
+      7.times do |i|
+        create(:schedule, datetime: starting_datetime + i.hour, status: 'available', aliada: other_aliada, zone: zone)
       end
 
       @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours, conditions: {aliada_id: aliada.id})
-      @available_schedules = Schedule.available.ordered_by_aliada_datetime
+      @before_availability_schedule_interval = ScheduleInterval.build_from_range(starting_datetime - 1.hour, ending_datetime)
+      @after_availability_schedule_interval = ScheduleInterval.build_from_range(starting_datetime + 7.hour, ending_datetime + 7.hour)
+
+      @service = double(to_schedule_intervals: [@schedule_interval], 
+                        to_schedule_interval: @schedule_interval,
+                        zone: zone,
+                        recurrent?: false)
+      @checker = ScheduleChecker.new(@service)
+    end
+
+    after do
+      Timecop.return
     end
 
     it 'finds an available datetime' do
-      expect(ScheduleChecker.check_datetimes(@available_schedules, @schedule_interval)).to be_present
+      available_schedules = @checker.match_schedules
+
+      expect(available_schedules).to be_present
     end
 
     it 'returns a list of schedule intervals with aliadas ids' do
-      available_schedules = ScheduleChecker.check_datetimes(@available_schedules, @schedule_interval)
+      available_schedules = @checker.match_schedules
 
       expect(available_schedules.size).to be 2
       expect(available_schedules.has_key? aliada.id).to be true
@@ -35,21 +51,30 @@ describe 'ScheduleChecker' do
     end
 
     it 'doesnt find an available datetime when the available schedules have holes in the continuity' do
-      @available_schedules.delete(Schedule.where(datetime: starting_datetime + 1.hour))
+      Schedule.where(datetime: starting_datetime + 1.hour).destroy_all
+      available_schedules = @checker.match_schedules
       
-      expect(ScheduleChecker.check_datetimes(@available_schedules, @schedule_interval)).to be_empty
+      expect(available_schedules).to be_empty
     end
 
     it 'doesnt find an available datetime when the requested hour happens before the available schedules' do
-      @unavailable_schedule_interval = ScheduleInterval.build_from_range(starting_datetime - 1.hour, ending_datetime)
+      service = double(to_schedule_intervals: [@before_availability_schedule_interval],
+                       to_schedule_interval: @before_availability_schedule_interval,
+                       zone: zone,
+                       recurrent?: false)
+      available_schedules = ScheduleChecker.new(service).match_schedules
       
-      expect(ScheduleChecker.check_datetimes(@available_schedules, @unavailable_schedule_interval)).to be_empty
+      expect(available_schedules).to be_empty
     end
     
     it 'doesnt find an available datetime when the requested hour happens after the available schedules' do
-      @unavailable_schedule_interval = ScheduleInterval.build_from_range(starting_datetime + 7.hour, ending_datetime + 7.hour)
+      service = double(to_schedule_intervals: [@after_availability_schedule_interval],
+                       to_schedule_interval: @after_availability_schedule_interval,
+                       zone: zone,
+                       recurrent?: false)
+      available_schedules = ScheduleChecker.new(service).match_schedules
       
-      expect(ScheduleChecker.check_datetimes(@available_schedules, @unavailable_schedule_interval)).to be_empty
+      expect(available_schedules).to be_empty
     end
   end
 end
