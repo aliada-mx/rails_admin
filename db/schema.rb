@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150126205120) do
+ActiveRecord::Schema.define(version: 20150127003525) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -139,12 +139,12 @@ ActiveRecord::Schema.define(version: 20150126205120) do
     t.string   "weekday"
     t.integer  "hour"
     t.integer  "total_hours"
+    t.integer  "zone_id"
   end
 
   add_index "recurrences", ["user_id"], name: "index_recurrences_on_user_id", using: :btree
 
   create_table "schedules", force: :cascade do |t|
-    t.integer  "zone_id"
     t.integer  "user_id"
     t.string   "status"
     t.datetime "datetime"
@@ -152,11 +152,11 @@ ActiveRecord::Schema.define(version: 20150126205120) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "aliada_id"
+    t.integer  "zone_id"
   end
 
   add_index "schedules", ["service_id"], name: "index_schedules_on_service_id", using: :btree
   add_index "schedules", ["user_id"], name: "index_schedules_on_user_id", using: :btree
-  add_index "schedules", ["zone_id"], name: "index_schedules_on_zone_id", using: :btree
 
   create_table "scores", force: :cascade do |t|
     t.integer  "user_id"
@@ -270,7 +270,6 @@ ActiveRecord::Schema.define(version: 20150126205120) do
   add_foreign_key "recurrences", "users"
   add_foreign_key "schedules", "services"
   add_foreign_key "schedules", "users"
-  add_foreign_key "schedules", "zones"
   add_foreign_key "scores", "users"
   add_foreign_key "services", "addresses"
   add_foreign_key "services", "recurrences"
