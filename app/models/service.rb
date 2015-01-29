@@ -62,6 +62,7 @@ class Service < ActiveRecord::Base
       date = Time.zone.parse(self.date)
       time = Time.zone.parse(self.time)
 
+      Chronic.time_class = Time.zone
       self.datetime = Chronic.parse "#{self.date} #{self.time}"
     end
   end
@@ -154,6 +155,7 @@ class Service < ActiveRecord::Base
 
     first_hour = datetime.hour
     last_hour = ending_datetime.hour
+
     working_range = [*Setting.beginning_of_aliadas_day..Setting.end_of_aliadas_day]
 
     unless working_range.include?(first_hour) && working_range.include?(last_hour)
