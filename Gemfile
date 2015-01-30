@@ -32,6 +32,10 @@ gem 'bootstrap-sass'
 # Sass framework
 gem 'compass-rails'
 
+gem 'resque'
+gem 'resque-scheduler'
+gem 'resque-web', require: 'resque_web'
+
 # TEMPLATING
 #
 gem "haml-rails"
@@ -44,8 +48,10 @@ gem 'devise'
 # Time pargin
 gem 'chronic'
 
-# Logging
-gem "lograge"
+group :production do
+  # Logging
+  gem "lograge"
+end
 
 group :development, :test do
   # Call 'pry' anywhere in the code to stop execution and get a debugger console
