@@ -1,4 +1,7 @@
 class User < ActiveRecord::Base
+  #Required to enable token authentication
+  acts_as_token_authenticatable
+
   ROLES = [
     ['client', 'Cliente'],
     ['aliada', 'Aliada'],
