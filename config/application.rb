@@ -27,20 +27,6 @@ module AliadaWebApp
     config.generators do |g|
       g.test_framework :rspec
     end
-
-    # Logging
-    log_level = String(ENV['LOG_LEVEL'] || "info").upcase
-    config.logger = Logger.new(STDOUT)
-    config.logger.level = Logger.const_get(log_level)
-    config.log_level = log_level
-
-    config.lograge.enabled = true
-    config.lograge.custom_options = lambda do |event|
-      params = event.payload[:params].reject do |k|
-        ['controller', 'action'].include? k
-      end
-
-      { "params" => params }
-    end
+     
   end
 end

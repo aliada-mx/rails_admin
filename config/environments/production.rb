@@ -29,7 +29,7 @@ Rails.application.configure do
   # config.assets.css_compressor = :sass
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
+  config.assets.compile = true 
 
   # Asset digests allow you to set far-future HTTP expiration dates on all assets,
   # yet still be able to expire them through the digest params.
@@ -46,7 +46,7 @@ Rails.application.configure do
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
-  config.log_level = :debug
+  config.log_level = :info
 
   # Prepend all log lines with the following tags.
   # config.log_tags = [ :subdomain, :uuid ]
@@ -76,4 +76,20 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Logging
+  log_level = String(ENV['LOG_LEVEL'] || "info").upcase
+  config.logger = Logger.new(STDOUT)
+  config.logger.level = Logger.const_get(log_level)
+  config.log_level = log_level
+
+  # Lograge
+  config.lograge.enabled = true
+    config.lograge.custom_options = lambda do |event|
+      params = event.payload[:params].reject do |k|
+        ['controller', 'action'].include? k
+      end
+
+      { "params" => params }
+    end
 end
