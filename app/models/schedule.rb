@@ -16,7 +16,7 @@ class Schedule < ActiveRecord::Base
   belongs_to :service
 
   # Scopes
-  scope :available, -> { where(status: 'available').where('aliada_id IS NOT NULL') }
+  scope :available, -> { where(status: 'available').where('user_id IS NULL') }
   scope :booked, -> {  where(status: 'booked') }
   scope :in_zone, -> (zone) { where(zone: zone) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }

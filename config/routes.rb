@@ -26,7 +26,7 @@ Rails.application.routes.draw do
   resources :schedules
 
   # Resque-web
-  # TODO: protect with authentication
+  # TODO: protect with devise authentication
   #authenticate :admin do...
   require "resque_web"
   ResqueWeb::Engine.eager_load!

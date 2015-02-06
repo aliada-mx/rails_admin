@@ -10,7 +10,7 @@ namespace :resque do
 
   task 'setup_schedule' => :setup do
     require 'resque-scheduler'
-    Resque.schedule = YAML.load_file('config/test_schedule.yml')
+    Resque.schedule = YAML.load_file('config/schedule.yml')
   end
 
   task :scheduler_setup => :setup_schedule
