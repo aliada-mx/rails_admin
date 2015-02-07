@@ -14,7 +14,7 @@ class Recurrence < ActiveRecord::Base
   end
 
   def get_ending_datetime
-    Time.zone.now + Setting.future_horizon_months.months
+    Time.zone.now + Setting.time_horizon_days.day
   end
 
   # Returns the datetime for the next service

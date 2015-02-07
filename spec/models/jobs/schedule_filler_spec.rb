@@ -2,7 +2,7 @@ describe 'Schedule Filler' do
 
   # Preconditions:
   let(:starting_datetime){ Time.zone.parse('01 Jan 2015 00:00:00') }
-  let(:recurrence_service_datetime) { Time.zone.parse('05 Jan 2015 07:00:00') }
+  let(:recurrence_service_datetime) { Time.zone.parse('04 Jan 2015 07:00:00') }
   total_available_hours = 8
   total_service_hours = 3
   # aliada recurrence
@@ -41,7 +41,7 @@ describe 'Schedule Filler' do
       expect(Schedule.available.in_the_future.count).to be (total_available_hours - total_service_hours)
       expect(Schedule.booked.in_the_future.count).to be total_service_hours
       # Check the specific date of the future schedule
-      expect(Schedule.booked.in_the_future.first.datetime).to eql (starting_datetime + Setting.future_horizon_months.month + recurrence_service_datetime.hour.hour + 1.day) 
+      expect(Schedule.booked.in_the_future.first.datetime).to eql (starting_datetime + Setting.time_horizon_days.day + recurrence_service_datetime.hour.hour + 1.day) 
       # Check the service date created for the client's recurrence in the future
       expect(Service.last.datetime).not_to be first_service.datetime
       # Check that it has been created using the mst recent created service

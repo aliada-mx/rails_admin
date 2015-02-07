@@ -9,7 +9,7 @@ class ScheduleFiller
   end
 
   def self.fill_schedule
-    today_in_the_future = DateTime.now.beginning_of_day + Setting.future_horizon_months.month + 1.day 
+    today_in_the_future = Time.zone.now.beginning_of_day + Setting.time_horizon_days.day + 1.day 
 
     fill_aliadas_availability today_in_the_future
 

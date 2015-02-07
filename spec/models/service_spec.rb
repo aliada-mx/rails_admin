@@ -23,7 +23,7 @@ feature 'Service' do
   end
 
   before(:each, recurrent: false) do
-    ending_datetime = Time.zone.now + Setting.future_horizon_months.months
+    ending_datetime = Time.zone.now + Setting.time_horizon_days.day
     current_datetime = starting_datetime
 
     5.times.each do |i|
@@ -34,7 +34,7 @@ feature 'Service' do
   # Create the needed schedules
   before(:each, recurrent: true) do
     current_datetime = starting_datetime
-    ending_datetime = starting_datetime + Setting.future_horizon_months.months
+    ending_datetime = starting_datetime + Setting.time_horizon_days.day
 
     while current_datetime < ending_datetime do
       Rails.logger.debug "puts Building schedules current_datetime #{current_datetime} and ending_datetime #{ending_datetime}"
@@ -59,7 +59,7 @@ feature 'Service' do
 
     it 'allows it to mark recurrent service schedules´ as booked', recurrent: true do
       available_schedules = Schedule.available_for_booking(zone)
-      expect(available_schedules.count).to be 744 
+      expect(available_schedules.count).to be 720 
       expect(Schedule.booked.count).to be 0
 
       service.service_type = recurrent_service
@@ -68,7 +68,7 @@ feature 'Service' do
       service.book_aliada!
 
       expect(Schedule.booked.count).to be 25 
-      expect(available_schedules.count).to be 719
+      expect(available_schedules.count).to be 695
     end
   end
 
