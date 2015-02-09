@@ -32,6 +32,11 @@ gem 'bootstrap-sass'
 # Sass framework
 gem 'compass-rails'
 
+gem 'unicorn'
+gem 'resque'
+gem 'resque-scheduler'
+gem 'resque-web', require: 'resque_web'
+
 # TEMPLATING
 #
 gem "haml-rails"
@@ -44,8 +49,10 @@ gem 'devise'
 # Time pargin
 gem 'chronic'
 
-# Logging
-gem "lograge"
+group :production do
+  # Logging
+  gem "lograge"
+end
 
 # Support for add_foreing_key 
 gem 'foreigner'

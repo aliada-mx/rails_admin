@@ -2,19 +2,19 @@ class Recurrence < ActiveRecord::Base
   include AliadaSupport::GeneralHelpers::DatetimeSupport
 
   validates_presence_of [:weekday, :hour]
-  validates_presence_of :user
   validates :weekday, inclusion: {in: Time.weekdays.map{ |days| days[0] } }
   validates :hour, inclusion: {in: [*0..23] } 
 
   belongs_to :user
   belongs_to :aliada
+  belongs_to :zone
 
   def wday
     Time.weekdays.select{ |day| day[0] == weekday }.first.second
   end
 
   def get_ending_datetime
-    Time.zone.now + Setting.future_horizon_months.months
+    Time.zone.now + Setting.time_horizon_days.day
   end
 
   # Returns the datetime for the next service
@@ -46,4 +46,5 @@ class Recurrence < ActiveRecord::Base
 
     schedule_intervals
   end
+
 end

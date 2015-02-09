@@ -1,0 +1,4 @@
+fill_schedule_table:
+  cron: "0 0 * * *"
+  class: "ScheduleFiller"
+  description: "Makes sure the schedule structure is always available 30 days from today."

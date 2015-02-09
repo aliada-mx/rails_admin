@@ -58,7 +58,7 @@ class Service < ActiveRecord::Base
   end
 
   def combine_date_time
-    if self.time.present? and self.date.present?
+    if self.time.present? && self.date.present?
       date = Time.zone.parse(self.date)
       time = Time.zone.parse(self.time)
 
@@ -102,7 +102,7 @@ class Service < ActiveRecord::Base
 
     if schedules_intervals.present? && aliada_id.present?
       schedules_intervals.each do |schedule_interval|
-        schedule_interval.book_schedules!(aliada_id: aliada_id, user_id: user_id)
+        schedule_interval.book_schedules!(aliada_id: aliada_id, user_id: user_id, service_id: self.id)
       end
 
       assign!

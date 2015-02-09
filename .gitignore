@@ -20,3 +20,12 @@ coverage/
 profiles/
 #ignore emacs temp files
 \#*#
+
+# Local temp files
+/.sass-cache
+*.swp
+*.swn
+*.swm
+*.swo
+*.*~
+*~
