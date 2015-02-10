@@ -1,9 +1,10 @@
 class Recurrence < ActiveRecord::Base
-  include AliadaSupport::GeneralHelpers::DatetimeSupport
+  include AliadaSupport::DatetimeSupport
 
   validates_presence_of [:weekday, :hour]
   validates :weekday, inclusion: {in: Time.weekdays.map{ |days| days[0] } }
   validates :hour, inclusion: {in: [*0..23] } 
+  validates_numericality_of :periodicity, greater_than: 1
 
   belongs_to :user
   belongs_to :aliada

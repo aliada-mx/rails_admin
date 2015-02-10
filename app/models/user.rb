@@ -7,8 +7,13 @@ class User < ActiveRecord::Base
   validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
 
   include UsersHelper
-  has_many :services, inverse_of: :user
-  has_many :addresses, inverse_of: :user
+  has_many :services
+  has_many :addresses
+  has_and_belongs_to_many :banned_aliadas,
+                          class_name: 'User',
+                          join_table: :banned_aliada_users,
+                          foreing_key: :user_id,
+                          association_foreign_key: :aliada_id
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -16,8 +21,11 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   before_validation :ensure_password
-  default_scope { where("role != ?", 'aliada') }
   before_validation :set_default_role
+
+  def past_aliadas
+    services.in_the_past.joins(:aliada).order('aliada_id').map(&:aliada)
+  end
 
   def set_default_role
     self.role ||= 'client' if self.respond_to? :role

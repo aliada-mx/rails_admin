@@ -54,8 +54,11 @@ group :production do
   gem "lograge"
 end
 
-# Support for add_foreing_key 
+# Support for add_foreing_key (we downgraded from 4.2 to 4.1)
 gem 'foreigner'
+
+# Inverte <=> operator for sortings
+gem 'invert'
 
 group :development, :test do
   # Call 'pry' anywhere in the code to stop execution and get a debugger console
