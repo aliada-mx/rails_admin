@@ -29,7 +29,7 @@ describe 'Aliada' do
     end
 
     it 'returns the total work hours until horizon for alidas without services' do
-      expect(aliada.busy_services_hours).to be 434
+      expect(aliada.busy_services_hours).to be 420
     end
 
     it 'returns the total work hours minus number of services hours until horizon for alidas' do
@@ -37,13 +37,13 @@ describe 'Aliada' do
       service_2 = create(:service, datetime: starting_datetime + 4.hours, billable_hours: 3)
       aliada.services << service_1
       aliada.services << service_2
-      expect(aliada.busy_services_hours).to eql 425
+      expect(aliada.busy_services_hours).to eql 411
     end
 
     it 'returns the total work hours minus number of services hours until horizon for alidas' do
       service = create(:service, datetime: starting_datetime + 1.hour, billable_hours: 3)
       aliada.services << service
-      expect(aliada.busy_services_hours).to eql 429
+      expect(aliada.busy_services_hours).to eql 415
     end
   end
 

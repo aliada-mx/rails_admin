@@ -51,11 +51,12 @@ class ScheduleInterval
     @schedules.map(&:save!)
   end
 
-  def book_schedules!(aliada_id: nil, user_id: nil)
+  def book_schedules!(aliada_id: nil, user_id: nil, service_id: nil)
     @schedules.each do |schedule|
       schedule.aliada_id = aliada_id
       schedule.user_id = user_id
-      if aliada_id.present? && user_id.present?
+      schedule.service_id = service_id
+      if aliada_id.present? && user_id.present? && service_id.present?
         schedule.book!
       end
       schedule.save!

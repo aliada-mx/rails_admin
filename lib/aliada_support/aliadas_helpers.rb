@@ -2,7 +2,7 @@ module AliadaSupport
   module AliadasHelpers
     # As far as Aliada.mx sees
     def horizon
-      Time.zone.now + Setting.future_horizon_months.months
+      Time.zone.now + Setting.time_horizon_days.days
     end
 
     def businesshours_until_horizon

@@ -73,7 +73,6 @@ class Service < ActiveRecord::Base
 
   def combine_date_time
     if self.time.present? && self.date.present?
-
       Chronic.time_class = Time.zone
       self.datetime = Chronic.parse "#{self.date} #{self.time}"
     end
@@ -106,7 +105,7 @@ class Service < ActiveRecord::Base
   # the recurrence
   def days_count_to_end_of_recurrency
     current_datetime = Time.zone.now
-    ending_datetime = current_datetime + Setting.future_horizon_months.months
+    ending_datetime = current_datetime + Setting.time_horizon_days.days
     
     periodicity = recurrence.periodicity.days
     count = 0
@@ -137,7 +136,7 @@ class Service < ActiveRecord::Base
 
     if schedules_intervals.present? && aliada.present?
       schedules_intervals.each do |schedule_interval|
-        schedule_interval.book_schedules!(aliada_id: aliada.id, user_id: user_id)
+        schedule_interval.book_schedules!(aliada_id: aliada.id, user_id: user_id, service_id: self.id)
       end
       assign!
     else

@@ -46,7 +46,7 @@ feature 'ServiceController' do
         page.driver.submit :post, initial_service_path, {postal_code_id: postal_code.id}
       end
       expect(User.where('role != ?', 'aliada').count).to be 0
-      expect(Schedule.available.count).to be 20
+      expect(Schedule.available.count).to be 25
 
       fill_service_form(payment_method, one_time_service, starting_datetime, extra_1)
 
@@ -82,7 +82,7 @@ feature 'ServiceController' do
       expect(user.email).to eql 'guillermo.siliceo@gmail.com'
       expect(user.phone).to eql '5585519954'
 
-      expect(Schedule.available.count).to be 15
+      expect(Schedule.available.count).to be 20
       expect(Schedule.booked.count).to be 5
     end
 
@@ -92,7 +92,7 @@ feature 'ServiceController' do
       end
 
       expect(User.where('role != ?', 'aliada').count).to be 0
-      expect(Schedule.available.count).to be 20
+      expect(Schedule.available.count).to be 25
 
       fill_service_form(payment_method, recurrent_service, starting_datetime, extra_1)
 
@@ -129,7 +129,7 @@ feature 'ServiceController' do
       expect(user.phone).to eql '5585519954'
 
       expect(Schedule.available.count).to be 0
-      expect(Schedule.booked.count).to be 20
+      expect(Schedule.booked.count).to be 25
     end
   end
 end

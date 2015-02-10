@@ -84,7 +84,7 @@ feature 'Service' do
   describe '#days_count_to_end_of_recurrency' do
     it 'returns the correct number of days 5 thursdays on january 2015' do
       expect(starting_datetime).to eql Time.zone.parse('01 Jan 2015 07:00:00')
-      expect(Setting.future_horizon_months).to be 1
+      expect(Setting.time_horizon_days).to be 30
       expect(service.days_count_to_end_of_recurrency).to be 5
     end
   end

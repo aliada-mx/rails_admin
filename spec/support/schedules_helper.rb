@@ -9,7 +9,7 @@ module TestingSupport
     end
 
     def create_recurrent!(starting_datetime, hours: hours, periodicity: periodicity, conditions: {})
-      ending_datetime = Time.zone.now + Setting.future_horizon_months.months
+      ending_datetime = Time.zone.now + Setting.time_horizon_days.days
 
       intervals = []
       while starting_datetime < ending_datetime do

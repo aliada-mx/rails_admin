@@ -24,4 +24,13 @@ Rails.application.routes.draw do
   end
 
   resources :schedules
+
+  # Resque-web
+  # TODO: protect with devise authentication
+  #authenticate :admin do...
+  require "resque_web"
+  ResqueWeb::Engine.eager_load!
+  AliadaWebApp::Application.routes.draw do
+    mount ResqueWeb::Engine => "/resque_web"
+  end
 end

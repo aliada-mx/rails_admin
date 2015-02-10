@@ -157,13 +157,13 @@ describe 'ScheduleChecker' do
 
         expect(aliadas_availability.size).to be 3
         expect(aliadas_availability[aliada.id].first.beginning_of_interval).to eql starting_datetime
-        expect(aliadas_availability[aliada.id].size).to be 4
+        expect(aliadas_availability[aliada.id].size).to be 5
 
         expect(aliadas_availability[aliada_2.id].first.beginning_of_interval).to eql starting_datetime
-        expect(aliadas_availability[aliada_2.id].size).to be 4
+        expect(aliadas_availability[aliada_2.id].size).to be 5
 
         expect(aliadas_availability[aliada_3.id].first.beginning_of_interval).to eql starting_datetime
-        expect(aliadas_availability[aliada_3.id].size).to be 4
+        expect(aliadas_availability[aliada_3.id].size).to be 5
       end
 
       it 'doesnt find availability when the available schedules have holes in the continuity' do
@@ -172,12 +172,12 @@ describe 'ScheduleChecker' do
         
         expect(aliadas_availability.size).to be 2
         expect(aliadas_availability[aliada.id].first.beginning_of_interval).to eql starting_datetime
-        expect(aliadas_availability[aliada.id].size).to be 4
+        expect(aliadas_availability[aliada.id].size).to be 5
 
         expect(aliadas_availability[aliada_2.id].size).to be 0
 
         expect(aliadas_availability[aliada_3.id].first.beginning_of_interval).to eql starting_datetime
-        expect(aliadas_availability[aliada_3.id].size).to be 4
+        expect(aliadas_availability[aliada_3.id].size).to be 5
       end
 
       it 'doesnt find an available datetime when the requested hour happens before the available schedules' do
@@ -187,7 +187,7 @@ describe 'ScheduleChecker' do
                          to_schedule_interval: before_availability_schedule_interval,
                          user: @user,
                          recurrence: @recurrence,
-                         days_count_to_end_of_recurrency: 4,
+                         days_count_to_end_of_recurrency: 5,
                          one_timer?: true,
                          zone: zone,
                          recurrent?: false)
@@ -202,7 +202,7 @@ describe 'ScheduleChecker' do
                          to_schedule_interval: after_availability_schedule_interval,
                          user: @user,
                          recurrence: @recurrence,
-                         days_count_to_end_of_recurrency: 4,
+                         days_count_to_end_of_recurrency: 5,
                          zone: zone,
                          one_timer?: true,
                          recurrent?: false)
