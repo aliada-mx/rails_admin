@@ -1,5 +1,6 @@
 feature 'ServiceController' do
   include TestingSupport::ServiceControllerHelper
+  include TestingSupport::SchedulesHelper
 
   starting_datetime = Time.zone.now.change({hour: 13})
   let!(:aliada) { create(:aliada) }
@@ -17,9 +18,7 @@ feature 'ServiceController' do
   before do
     Timecop.freeze(starting_datetime)
 
-    5.times do |i|
-      create(:schedule, datetime: starting_datetime + i.hours, zone: zone, aliada: aliada)
-    end
+    create_recurrent!(starting_datetime, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada})
 
     expect(Address.all.count).to be 0
     expect(Service.all.count).to be 0
@@ -46,8 +45,8 @@ feature 'ServiceController' do
       with_rack_test_driver do
         page.driver.submit :post, initial_service_path, {postal_code_id: postal_code.id}
       end
-      expect(User.all.count).to be 0
-      expect(Schedule.available.count).to be 5
+      expect(User.where('role != ?', 'aliada').count).to be 0
+      expect(Schedule.available.count).to be 20
 
       fill_service_form(payment_method, one_time_service, starting_datetime, extra_1)
 
@@ -83,7 +82,7 @@ feature 'ServiceController' do
       expect(user.email).to eql 'guillermo.siliceo@gmail.com'
       expect(user.phone).to eql '5585519954'
 
-      expect(Schedule.available.count).to be 0
+      expect(Schedule.available.count).to be 15
       expect(Schedule.booked.count).to be 5
     end
 
@@ -92,13 +91,8 @@ feature 'ServiceController' do
         page.driver.submit :post, initial_service_path, {postal_code_id: postal_code.id}
       end
 
-      5.times do |i|
-        create(:schedule, datetime: starting_datetime + i.hours + recurrent_service.periodicity.days,
-               zone: zone,
-               aliada: aliada)
-      end
-      expect(User.all.count).to be 0
-      expect(Schedule.available.count).to be 10
+      expect(User.where('role != ?', 'aliada').count).to be 0
+      expect(Schedule.available.count).to be 20
 
       fill_service_form(payment_method, recurrent_service, starting_datetime, extra_1)
 
@@ -135,7 +129,7 @@ feature 'ServiceController' do
       expect(user.phone).to eql '5585519954'
 
       expect(Schedule.available.count).to be 0
-      expect(Schedule.booked.count).to be 10
+      expect(Schedule.booked.count).to be 20
     end
   end
 end

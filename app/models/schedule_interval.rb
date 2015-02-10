@@ -38,12 +38,17 @@ class ScheduleInterval
 
   # Returns the time difference between the beginning two schedule intervals
   def -(other_schedule_interval)
+    return nil unless other_schedule_interval.is_a?(ScheduleInterval)
     beginning_of_interval - other_schedule_interval.beginning_of_interval
   end
 
   # returns a list of the schedules datetimes
   def schedules_datetimes
     @schedules.map(&:datetime)
+  end
+
+  def persist!
+    @schedules.map(&:save!)
   end
 
   def book_schedules!(aliada_id: nil, user_id: nil)

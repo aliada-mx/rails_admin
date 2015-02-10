@@ -12,7 +12,7 @@ class Schedule < ActiveRecord::Base
 
   # Associations
   belongs_to :zone
-  belongs_to :aliada
+  belongs_to :aliada 
   belongs_to :service
 
   # Scopes
@@ -27,11 +27,11 @@ class Schedule < ActiveRecord::Base
     transition 'available' => 'booked', on: :book
   end
 
-  after_initialize :default_values
+  after_initialize :set_default_values
 
 
   private
-    def default_values
+    def set_default_values
       # If we query for schedules with select and we dont
       # include the status we can't give it a default value
       if self.respond_to? :status

@@ -27,6 +27,11 @@ class Service < ActiveRecord::Base
   accepts_nested_attributes_for :user
   accepts_nested_attributes_for :address
 
+  # Scopes
+  scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
+  scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
+  scope :on_day, -> (datetime) { where('datetime >= ?', datetime.beginning_of_day).where('datetime <= ?', datetime.end_of_day) } 
+
   # Validations
   validates_presence_of [:billable_hours, :datetime]
   validate :datetime_is_hour_o_clock
@@ -49,18 +54,25 @@ class Service < ActiveRecord::Base
 
   # Ask service_type to answer recurrent? method for us
   delegate :recurrent?, to: :service_type
+  delegate :one_timer?, to: :service_type
 
   # Callbacks
   def set_defaults
     self.status ||= 'created' if self.respond_to? :status
-    self.hours_before_service ||= Setting.hours_before_service if self.respond_to? :hours_before_service
-    self.hours_after_service ||= Setting.hours_after_service if self.respond_to? :hours_after_service
+    self.hours_before_service ||= get_hours_before_service if self.respond_to? :hours_before_service
+    self.hours_after_service ||= get_hours_after_service if self.respond_to? :hours_after_service
+  end
+
+  def get_hours_before_service
+    Setting.beginning_of_aliadas_day == datetime.try(:hour) ? 0 : Setting.hours_before_service
+  end
+
+  def get_hours_after_service
+    Setting.end_of_aliadas_day == datetime.try(:hour) ? 0 : Setting.hours_after_service
   end
 
   def combine_date_time
-    if self.time.present? and self.date.present?
-      date = Time.zone.parse(self.date)
-      time = Time.zone.parse(self.time)
+    if self.time.present? && self.date.present?
 
       Chronic.time_class = Time.zone
       self.datetime = Chronic.parse "#{self.date} #{self.time}"
@@ -70,7 +82,7 @@ class Service < ActiveRecord::Base
   def ensure_recurrence
     return unless recurrent?
 
-    if recurrence.blank?
+    if self.recurrence.blank?
       self.recurrence = Recurrence.create!(user_id: user_id,
                                            periodicity: service_type.periodicity,
                                            total_hours: total_hours,
@@ -90,26 +102,47 @@ class Service < ActiveRecord::Base
     hours_before_service + billable_hours + hours_after_service
   end
 
+  # Starting now how many days we'll provide service to the end of
+  # the recurrence
+  def days_count_to_end_of_recurrency
+    current_datetime = Time.zone.now
+    ending_datetime = current_datetime + Setting.future_horizon_months.months
+    
+    periodicity = recurrence.periodicity.days
+    count = 0
+
+    while current_datetime < ending_datetime
+      current_datetime += periodicity
+      count +=1
+    end
+    count
+  end
+
   def ending_datetime
     datetime + total_hours.hours
   end
 
-  def book_aliada!
-    aliada_availability = find_aliada_availability
+  # The datetime that effectively starts consuming an aliada's real time
+  def beginning_datetime
+    datetime - hours_before_service.hours
+  end
 
-    aliada_id = aliada_availability[:id]
-    schedules_intervals = aliada_availability[:schedules_intervals]
+  def book_aliada! 
+    aliadas_availability = ScheduleChecker.find_aliadas_availability(self)
 
-    if schedules_intervals.present? && aliada_id.present?
+    aliada_availability = AliadaChooser.find_aliada_availability(aliadas_availability, self)
+
+    aliada = aliada_availability[:aliada]
+    schedules_intervals = aliada_availability[:availability]
+
+    if schedules_intervals.present? && aliada.present?
       schedules_intervals.each do |schedule_interval|
-        schedule_interval.book_schedules!(aliada_id: aliada_id, user_id: user_id)
+        schedule_interval.book_schedules!(aliada_id: aliada.id, user_id: user_id)
       end
-
       assign!
     else
       mark_as_missing!
     end
-
     save!
   end
 
@@ -131,10 +164,6 @@ class Service < ActiveRecord::Base
 
   def to_schedule_interval
     to_schedule_intervals.first
-  end
-
-  def find_aliada_availability
-    Aliada.best_for_service(self)
   end
 
   # Validations

@@ -9,7 +9,7 @@ FactoryGirl.define do
     end
 
     after :create do |postal_code, evaluator|
-      PostalCodeZone.create(postal_code: postal_code, zone: evaluator.zone)
+      postal_code.zones << evaluator.zone
     end
   end
 end
