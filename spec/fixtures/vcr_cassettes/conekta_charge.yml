@@ -1,0 +1,59 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=3000&card=tok_test_visa_4242&currency=MXN&description=fake%20test%20product&reference_id=1
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - Conekta/v1 RubyBindings/0.5.1
+      X-Conekta-Client-User-Agent:
+      - '{"bindings_version":"0.5.1","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
+        Kernel Version 13.4.0: Sun Aug 17 19:50:11 PDT 2014; root:xnu-2422.115.4~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      Accept:
+      - application/vnd.conekta-v1.0.0+json
+      Accept-Language:
+      - es
+      Content-Length:
+      - '0'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Conekta-Media-Type:
+      - conekta-v1.0.0; format=json
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 13 Feb 2015 01:03:07 GMT
+      Etag:
+      - '"45f0f73e28ad86fc54577ee5a12364c2"'
+      Server:
+      - nginx/1.1.19
+      Status:
+      - 200 OK
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Request-Id:
+      - 085bff99222db6f2566d3c1bd421c499
+      X-Runtime:
+      - '4.572293'
+      Content-Length:
+      - '640'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: '{"id":"54dd4d4624122936be0010fb","livemode":false,"created_at":1423789382,"status":"paid","currency":"MXN","description":"fake
+        test product","reference_id":"1","failure_code":null,"failure_message":null,"monthly_installments":null,"object":"charge","amount":3000,"paid_at":1423789387,"fee":391,"customer_id":"","refunds":[],"payment_method":{"name":"Jorge
+        Lopez","exp_month":"12","exp_year":"19","auth_code":"271607","object":"card_payment","type":"credit","last4":"4242","brand":"visa","issuer":"","account_type":"","country":"US","fraud_score":null,"fraud_indicators":[]},"details":{"name":null,"phone":null,"email":null,"line_items":[]}}'
+    http_version: 
+  recorded_at: Fri, 13 Feb 2015 01:02:51 GMT
+recorded_with: VCR 2.9.3

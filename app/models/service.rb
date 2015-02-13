@@ -9,8 +9,9 @@ class Service < ActiveRecord::Base
     ['canceled','Cancelado'],
   ]
 
-  # Associations
-  attr_accessor :postal_code, :time, :date
+  # accessors for forms
+  attr_accessor :postal_code, :time, :date, :payment_method_id, :conekta_temporary_token
+
   belongs_to :address
   belongs_to :aliada, inverse_of: :services
   belongs_to :payment_method
@@ -41,8 +42,6 @@ class Service < ActiveRecord::Base
 
   # Callbacks
   after_initialize :set_defaults
-  after_initialize :combine_date_time
-  before_save :ensure_recurrence
 
   # State machine
   state_machine :status, :initial => 'created' do
@@ -72,13 +71,11 @@ class Service < ActiveRecord::Base
   end
 
   def combine_date_time
-    if self.time.present? && self.date.present?
-      Chronic.time_class = Time.zone
-      self.datetime = Chronic.parse "#{self.date} #{self.time}"
-    end
+    Chronic.time_class = Time.zone
+    self.datetime = Chronic.parse "#{self.date} #{self.time}"
   end
 
-  def ensure_recurrence
+  def ensure_recurrence!
     return unless recurrent?
 
     if self.recurrence.blank?
@@ -163,6 +160,20 @@ class Service < ActiveRecord::Base
 
   def to_schedule_interval
     to_schedule_intervals.first
+  end
+
+  def self.create_initial(service_params)
+    service = Service.new(service_params)
+    service.combine_date_time
+    service.ensure_recurrence!
+    service.save!
+
+    user = service.user
+    user.create_first_payment_provider!(service_params[:payment_method_id])
+    user.ensure_first_payment!(service_params)
+
+    service.book_aliada!
+    service
   end
 
   # Validations

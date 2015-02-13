@@ -10,10 +10,16 @@ require 'capybara/rspec'
 require 'capybara/rails'
 require 'factory_girl'
 require 'database_cleaner'
+require 'webmock/rspec'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+
+VCR.configure do |config|
+  config.cassette_library_dir = "spec/fixtures/vcr_cassettes"
+  config.hook_into :webmock # or :fakeweb
+end
 
 RSpec.configure do |config|
   DatabaseCleaner.strategy = :truncation
@@ -23,6 +29,9 @@ RSpec.configure do |config|
 
   # Avoid having to write FactoryGirl.create
   config.include FactoryGirl::Syntax::Methods
+
+  # Syntax candy over capybara uglyness
+  config.include TestingSupport::CapybaraHelpers
 
   # Route helpers
   config.include Rails.application.routes.url_helpers

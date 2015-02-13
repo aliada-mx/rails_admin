@@ -1,5 +1,3 @@
-
-
-RSpec.describe AliadasController, :type => :controller do
+describe AliadasController, :type => :controller do
 
 end

@@ -25,5 +25,6 @@ module AliadaWebApp
       g.test_framework :rspec
     end
      
+    Conekta.api_key = Rails.application.secrets.conekta_secret_key
   end
 end

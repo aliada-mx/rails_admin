@@ -1,0 +1,5 @@
+= text_field_tag nil, nil, data: {'conekta' => 'card[name]'}
+= text_field_tag nil, nil, data: {'conekta' => 'card[number]'}
+= select_tag nil, options_for_select([*1..12], 1), data: {'conekta' => 'card[exp_month]'}
+= select_tag nil, options_for_select([*2015..2030], 1), data: {'conekta' => 'card[exp_year]'}
+= text_field_tag nil, nil, data: {'conekta' => 'card[cvc]'}
