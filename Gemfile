@@ -11,6 +11,12 @@ gem 'pg'
 gem 'state_machine'
 # Settings management
 gem "settingslogic"
+# Server
+gem 'unicorn'
+# Background jobs
+gem 'resque'
+gem 'resque-scheduler'
+gem 'resque-web', require: 'resque_web'
 
 # ASSETS
 #
@@ -32,11 +38,6 @@ gem 'bootstrap-sass'
 # Sass framework
 gem 'compass-rails'
 
-gem 'unicorn'
-gem 'resque'
-gem 'resque-scheduler'
-gem 'resque-web', require: 'resque_web'
-
 # TEMPLATING
 #
 gem "haml-rails"
@@ -48,6 +49,12 @@ gem 'devise'
 
 # Time pargin
 gem 'chronic'
+
+# PAYMENT SYSTEMS
+gem 'conekta'
+
+# Forms
+gem 'reform'
 
 group :production do
   # Logging
@@ -105,4 +112,10 @@ group :test do
 
   # Manipulate time in your tests
   gem 'timecop'
+
+  # Mocking requests
+  gem 'webmock'
+
+  # Record requests to be replayed on tests
+  gem 'vcr'
 end

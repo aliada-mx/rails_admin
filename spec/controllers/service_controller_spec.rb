@@ -1,6 +1,7 @@
 feature 'ServiceController' do
   include TestingSupport::ServiceControllerHelper
   include TestingSupport::SchedulesHelper
+  include TestingSupport::SharedExpectations::ConektaCardExpectations
 
   starting_datetime = Time.zone.now.change({hour: 13})
   let!(:aliada) { create(:aliada) }
@@ -13,7 +14,8 @@ feature 'ServiceController' do
                               code: '11800') }
   let!(:extra_1){ create(:extra, name: 'Lavanderia')}
   let!(:extra_2){ create(:extra, name: 'Limpieza de refri')}
-  let!(:payment_method){ create(:payment_method)}
+  let!(:conekta_card){ create(:payment_method)}
+    
 
   before do
     Timecop.freeze(starting_datetime)
@@ -23,13 +25,14 @@ feature 'ServiceController' do
     expect(Address.all.count).to be 0
     expect(Service.all.count).to be 0
     expect(Aliada.all.count).to be 1
+
   end
 
   after do
     Timecop.return
   end
 
-  context '#initial' do
+  describe '#initial' do
     it 'redirects the logged in user to new service' do
       user = create(:user)
 
@@ -37,99 +40,120 @@ feature 'ServiceController' do
       with_rack_test_driver do
         page.driver.submit :post, initial_service_path, {postal_code_id: postal_code.id}
       end
-      
-      expect(current_path).to eq new_service_path
     end
 
-    it 'creates a new one time service' do
-      with_rack_test_driver do
-        page.driver.submit :post, initial_service_path, {postal_code_id: postal_code.id}
+    context 'Skipping the payment logic' do
+      before do
+        expect(User.where('role != ?', 'aliada').count).to be 0
+        expect(Schedule.available.count).to be 25
+
+        User.any_instance.stub(:create_payment_provider!).and_return(nil)
+        User.any_instance.stub(:ensure_first_payment!).and_return(nil)
+
+        with_rack_test_driver do
+          page.driver.submit :post, initial_service_path, {postal_code_id: postal_code.id}
+        end
+
+        expect(current_path).to eq initial_service_path
       end
-      expect(User.where('role != ?', 'aliada').count).to be 0
-      expect(Schedule.available.count).to be 25
 
-      fill_service_form(payment_method, one_time_service, starting_datetime, extra_1)
+      after do
+        service = Service.first
+        address = service.address
+        user = service.user
+        extras = service.extras
 
-      click_button 'Confirmar servicio'
+        expect(extras).to include extra_1
+        expect(current_path).to eq show_service_path(service.id)
 
-      service = Service.first
-      address = service.address
-      user = service.user
-      extras = service.extras
+        expect(address.street).to eql 'Calle de las aliadas'
+        expect(address.number).to eql 1
+        expect(address.interior_number).to eql 2
+        expect(address.between_streets).to eql 'Calle de los aliados, calle de los bifes'
+        expect(address.colony).to eql 'Roma'
+        expect(address.state).to eql 'DF'
+        expect(address.city).to eql 'Benito Juarez'
 
-      expect(extras).to include extra_1
+        expect(service.zone_id).to eql zone.id
+        expect(service.billable_hours).to eql 3
+        expect(service.bathrooms).to eql 1
+        expect(service.bedrooms).to eql 1
+        expect(service.special_instructions).to eql 'nada'
 
-      expect(current_path).to eq show_service_path(service.id)
+        expect(user.first_name).to eql 'Guillermo'
+        expect(user.last_name).to eql 'Siliceo'
+        expect(user.email).to eql 'guillermo.siliceo@gmail.com'
+        expect(user.phone).to eql '5585519954'
+      end
 
-      expect(address.street).to eql 'Calle de las aliadas'
-      expect(address.number).to eql 1
-      expect(address.interior_number).to eql 2
-      expect(address.between_streets).to eql 'Calle de los aliados, calle de los bifes'
-      expect(address.colony).to eql 'Roma'
-      expect(address.state).to eql 'DF'
-      expect(address.city).to eql 'Benito Juarez'
+      it 'creates a new one time service' do
+        fill_service_form(conekta_card, one_time_service, starting_datetime, extra_1)
 
-      expect(service.zone_id).to eql zone.id
-      expect(service.billable_hours).to eql 3
-      expect(service.bathrooms).to eql 1
-      expect(service.bedrooms).to eql 1
-      expect(service.special_instructions).to eql 'nada'
-      expect(service.payment_method_id).to eql payment_method.id
-      expect(service.service_type_id).to eql one_time_service.id
+        click_button 'Confirmar servicio'
 
-      expect(user.first_name).to eql 'Guillermo'
-      expect(user.last_name).to eql 'Siliceo'
-      expect(user.email).to eql 'guillermo.siliceo@gmail.com'
-      expect(user.phone).to eql '5585519954'
+        service = Service.first
 
-      expect(Schedule.available.count).to be 20
-      expect(Schedule.booked.count).to be 5
+        expect(service.service_type_id).to eql one_time_service.id
+        expect(Schedule.available.count).to be 20
+        expect(Schedule.booked.count).to be 5
+      end
+
+      it 'creates a new recurrent service' do
+        fill_service_form(conekta_card, recurrent_service, starting_datetime, extra_1)
+
+        click_button 'Confirmar servicio'
+
+        service = Service.first
+
+        expect(service.service_type_id).to eql recurrent_service.id
+        expect(Schedule.available.count).to be 0
+        expect(Schedule.booked.count).to be 25
+      end
     end
 
-    it 'creates a new recurrent service' do
-      with_rack_test_driver do
-        page.driver.submit :post, initial_service_path, {postal_code_id: postal_code.id}
+    context 'with real payment method' do
+      before do
+        expect(User.count).to be 0
+        expect(Payment.count).to be 0
+        expect(ConektaCard.count).to be 0
+        expect(PaymentProviderChoice.count).to be 0
+
+        with_rack_test_driver do
+          page.driver.submit :post, initial_service_path, {postal_code_id: postal_code.id}
+        end
       end
 
-      expect(User.where('role != ?', 'aliada').count).to be 0
-      expect(Schedule.available.count).to be 25
+      it 'creates a pre-authorization payment when choosing conekta' do
+        fill_service_form(conekta_card, one_time_service, starting_datetime, extra_1)
 
-      fill_service_form(payment_method, recurrent_service, starting_datetime, extra_1)
+        fill_hidden_input 'service_conekta_temporary_token', with: 'tok_test_visa_4242'
 
-      click_button 'Confirmar servicio'
+        VCR.use_cassette('initial_service_conekta_card') do
+          click_button 'Confirmar servicio'
+        end
 
-      service = Service.first
-      address = service.address
-      user = service.user
-      extras = service.extras
+        payment = Payment.first
+        conekta_card = ConektaCard.first
+        payment_provider_choice = PaymentProviderChoice.first
+        user = User.first
 
-      expect(extras).to include extra_1
+        expect(Payment.count).to be 1
+        expect(ConektaCard.count).to be 1
+        expect(PaymentProviderChoice.count).to be 1
+        expect(User.count).to be 1
 
-      expect(current_path).to eq show_service_path(service.id)
+        expect(payment.provider).to eql conekta_card
+        expect(payment.user).to eql user
+        expect(payment.amount).to eql 3
+        expect(payment).to be_paid
 
-      expect(address.street).to eql 'Calle de las aliadas'
-      expect(address.number).to eql 1
-      expect(address.interior_number).to eql 2
-      expect(address.between_streets).to eql 'Calle de los aliados, calle de los bifes'
-      expect(address.colony).to eql 'Roma'
-      expect(address.state).to eql 'DF'
-      expect(address.city).to eql 'Benito Juarez'
+        expects_it_to_be_complete_and_valid(conekta_card)
+        expect(conekta_card).to be_preauthorized
 
-      expect(service.zone_id).to eql zone.id
-      expect(service.billable_hours).to eql 3
-      expect(service.bathrooms).to eql 1
-      expect(service.bedrooms).to eql 1
-      expect(service.special_instructions).to eql 'nada'
-      expect(service.payment_method_id).to eql payment_method.id
-      expect(service.service_type_id).to eql recurrent_service.id
-
-      expect(user.first_name).to eql 'Guillermo'
-      expect(user.last_name).to eql 'Siliceo'
-      expect(user.email).to eql 'guillermo.siliceo@gmail.com'
-      expect(user.phone).to eql '5585519954'
-
-      expect(Schedule.available.count).to be 0
-      expect(Schedule.booked.count).to be 25
+        expect(payment_provider_choice.user).to eql user
+        expect(payment_provider_choice).to eql payment_provider_choice
+        expect(payment_provider_choice.provider).to eql conekta_card
+      end
     end
   end
 end

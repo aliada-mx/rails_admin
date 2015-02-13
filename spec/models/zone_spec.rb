@@ -1,5 +1,3 @@
-require 'test_helper'
-
 describe 'Zone' do
   let!(:zone) { create(:zone) }
   let!(:postal_code) { create(:postal_code, 

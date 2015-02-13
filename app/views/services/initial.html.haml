@@ -1,4 +1,5 @@
 = form_for @service, url: create_service_path do |f|
+  = f.hidden_field :conekta_temporary_token
   = f.hidden_field :zone_id
   = f.text_field :bathrooms
   = f.text_field :bedrooms 

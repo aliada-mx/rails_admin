@@ -18,7 +18,9 @@ class Aliada < User
   # must have services.datetime >= Time.zone.now.beginning_of_day
   scope :for_booking, ->(aliadas_ids) { where(id: aliadas_ids).eager_load(:services) }
 
-  default_scope { where('users.role = ?', 'aliada') }
+  def self.default_scope 
+    where('users.role = ?', 'aliada')
+  end
 
   # Return the last service an aliada has before the one we are passing
   # on the same day

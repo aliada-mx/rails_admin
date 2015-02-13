@@ -4,6 +4,10 @@ defaults: &defaults
   hours_before_service: 1 # Minimal amount of time it takes an aliada to reach a service destination
   hours_after_service: 1 # Minimal amount of time after a service is done needed for each aliada
   time_horizon_days: 30 # How far in the future we build schedules and look for datetime data
+  payment_providers: [
+    ['Tarjeta con Conekta', 'ConektaCard'], 
+    ['Método de pago de prueba', 'TestPaymentMethod'], 
+  ]
 
 development:
   <<: *defaults

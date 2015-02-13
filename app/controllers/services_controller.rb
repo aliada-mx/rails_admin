@@ -24,9 +24,7 @@ class ServicesController < ApplicationController
   end
 
   def create
-    @service = Service.new(service_params)
-    @service.save!
-    @service.book_aliada!
+    @service = Service.create_initial(service_params)
 
     redirect_to show_service_path(@service.id)
   end
@@ -43,6 +41,7 @@ class ServicesController < ApplicationController
                                       :date,
                                       :time,
                                       :payment_method_id,
+                                      :conekta_temporary_token,
                                       user_attributes: [
                                         :first_name,
                                         :last_name,

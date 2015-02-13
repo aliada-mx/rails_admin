@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150205221633) do
+ActiveRecord::Schema.define(version: 20150212171139) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -77,6 +77,20 @@ ActiveRecord::Schema.define(version: 20150205221633) do
   add_index "codes", ["code_type_id"], name: "index_codes_on_code_type_id", using: :btree
   add_index "codes", ["user_id"], name: "index_codes_on_user_id", using: :btree
 
+  create_table "conekta_cards", force: true do |t|
+    t.string   "token"
+    t.string   "last4"
+    t.string   "exp_month"
+    t.string   "exp_year"
+    t.boolean  "active"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "preauthorized"
+    t.string   "customer_id"
+    t.string   "brand"
+    t.string   "name"
+  end
+
   create_table "documents", force: true do |t|
     t.integer  "user_id"
     t.string   "file_file_name",    limit: nil
@@ -104,22 +118,32 @@ ActiveRecord::Schema.define(version: 20150205221633) do
   end
 
   create_table "payment_methods", force: true do |t|
-    t.integer  "code_type_id"
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.string   "name",         limit: nil
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.string   "name",                  limit: nil
+    t.string   "payment_provider_type"
   end
 
-  add_index "payment_methods", ["code_type_id"], name: "index_payment_methods_on_code_type_id", using: :btree
+  create_table "payment_provider_choices", id: false, force: true do |t|
+    t.integer "payment_provider_id"
+    t.integer "user_id"
+    t.boolean "default"
+    t.string  "payment_provider_type"
+  end
+
+  add_index "payment_provider_choices", ["user_id", "default"], name: "index_payment_provider_choices_on_user_id_and_default", unique: true, using: :btree
 
   create_table "payments", force: true do |t|
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
+    t.integer  "payment_provider_id"
+    t.decimal  "amount",                precision: 8, scale: 4
+    t.string   "status"
+    t.text     "api_raw_response"
     t.integer  "user_id"
-    t.integer  "payment_method_id"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.string   "payment_provider_type"
   end
 
-  add_index "payments", ["payment_method_id"], name: "index_payments_on_payment_method_id", using: :btree
   add_index "payments", ["user_id"], name: "index_payments_on_user_id", using: :btree
 
   create_table "postal_code_zones", force: true do |t|
@@ -202,7 +226,6 @@ ActiveRecord::Schema.define(version: 20150205221633) do
     t.integer  "bedrooms"
     t.text     "special_instructions"
     t.string   "status",               limit: nil
-    t.integer  "payment_method_id"
     t.integer  "aliada_id"
     t.datetime "datetime"
   end
@@ -267,11 +290,6 @@ ActiveRecord::Schema.define(version: 20150205221633) do
   add_foreign_key "codes", "users", name: "fk_rails_0cc1e79270"
 
   add_foreign_key "documents", "users", name: "fk_rails_8492e5f484"
-
-  add_foreign_key "payment_methods", "code_types", name: "fk_rails_a96fea7b5a"
-
-  add_foreign_key "payments", "payment_methods", name: "fk_rails_bce7901cda"
-  add_foreign_key "payments", "users", name: "fk_rails_dda9bb2cf6"
 
   add_foreign_key "postal_code_zones", "postal_codes", name: "fk_rails_42b87c0f50"
   add_foreign_key "postal_code_zones", "zones", name: "fk_rails_0b1be18d68"
