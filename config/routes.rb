@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount RailsAdmin::Engine => 'aliadadmin', as: 'rails_admin'
+
   root to: 'statics#home'
   get 'como-funciona', to: 'statics#how_it_works', as: :how_it_works
   get 'precios', to: 'statics#prices', as: :prices
@@ -6,21 +8,24 @@ Rails.application.routes.draw do
   get 'terminos', to: 'statics#terms', as: :terms
   get 'privacidad', to: 'statics#privacy', as: :privacy
 
-  devise_for :users
+  devise_for :users, path: '', path_names: {
+    sign_in: :login,
+    sign_out: :logout
+  }
 
   resources :aliadas
 
   scope :servicio do
     post 'inicial', to: 'services#initial', as: :initial_service
     post 'create', to: 'services#create', as: :create_service
-
-    get 'nuevo', to: 'services#new', as: :new_service
-    get ':service_id', to: 'services#show', as: :show_service, service_id: /\d+/
   end
 
-  resource :user, path: 'perfil' do
+  resource :users, path: 'perfil/:user_id' do
     get 'visitas-proximas', to: 'users#next_services', as: :next_services
     get 'historial', to: 'users#previous_services', as: :previous_services
+
+    get 'servicio/nuevo', to: 'services#new', as: :new_service
+    get 'servicio/:service_id', to: 'services#show', as: :show_service, service_id: /\d+/
   end
 
   resources :schedules

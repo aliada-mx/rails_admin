@@ -2,7 +2,7 @@ describe 'ConektaCard' do
   include TestingSupport::SharedExpectations::ConektaCardExpectations
 
   let!(:card){ create(:conekta_card) } 
-  let!(:user){ create(:user, phone: '123456', first_name: 'Test', last_name: 'User') } 
+  let!(:user){ create(:user, phone: '123456', first_name: 'Test', last_name: 'User', email: 'user-39@aliada.mx') } 
   let(:token){ 'tok_test_visa_4242' }
   let(:fake_product){ double(price_for_conekta: 3000,
                              description: 'fake test product',

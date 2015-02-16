@@ -66,7 +66,5 @@ class ScheduleFiller
         ScheduleInterval.new(schedules).book_schedules!(aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, service_id: service.id)
       end
     end
-
   end
- 
 end

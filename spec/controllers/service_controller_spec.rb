@@ -40,6 +40,8 @@ feature 'ServiceController' do
       with_rack_test_driver do
         page.driver.submit :post, initial_service_path, {postal_code_id: postal_code.id}
       end
+
+      expect(current_path).to eql new_service_users_path(user)
     end
 
     context 'Skipping the payment logic' do
@@ -64,7 +66,6 @@ feature 'ServiceController' do
         extras = service.extras
 
         expect(extras).to include extra_1
-        expect(current_path).to eq show_service_path(service.id)
 
         expect(address.street).to eql 'Calle de las aliadas'
         expect(address.number).to eql 1

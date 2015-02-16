@@ -1,44 +1,45 @@
 class Service < ActiveRecord::Base
-  STATUSES = [
-    ['created','Creado'],
-    ['aliada_assigned','Aliada asignada'],
-    ['aliada_missing','Sin aliada'],
-    ['in-progress','En progreso..'],
-    ['finished','Terminado'],
-    ['payed','Pagado'],
-    ['canceled','Cancelado'],
-  ]
+  include Presenters::ServicePresenter
 
+  STATUSES = [
+    ['Creado','created'],
+    ['Aliada asignada', 'aliada_assigned'],
+    ['Sin aliada', 'aliada_missing'],
+    ['En progreso..', 'in-progress'],
+    ['Terminado', 'finished'],
+    ['Pagado', 'paid'],
+    ['Cancelado', 'canceled'],
+  ]
   # accessors for forms
   attr_accessor :postal_code, :time, :date, :payment_method_id, :conekta_temporary_token
 
   belongs_to :address
-  belongs_to :aliada, inverse_of: :services
+  belongs_to :user, inverse_of: :services, foreign_key: :user_id
+  belongs_to :aliada, inverse_of: :services, foreign_key: :aliada_id
   belongs_to :payment_method
   belongs_to :recurrence
   belongs_to :service_type
-  belongs_to :user, inverse_of: :services
   belongs_to :zone
   has_many :extra_services
   has_many :extras, through: :extra_services
   has_many :schedules
   has_many :tickets, as: :relevant_object
 
-  # Nested attributes
   accepts_nested_attributes_for :user
   accepts_nested_attributes_for :address
 
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
-  scope :on_day, -> (datetime) { where('datetime >= ?', datetime.beginning_of_day).where('datetime <= ?', datetime.end_of_day) } 
 
+  scope :on_day, -> (datetime) { where('datetime >= ?', datetime.beginning_of_day).where('datetime <= ?', datetime.end_of_day) } 
   # Validations
-  validates_presence_of [:billable_hours, :datetime]
   validate :datetime_is_hour_o_clock
   validate :datetime_within_working_hours
   validate :service_type_exists
-  validates_presence_of [:address, :user, :zone]
+  validates_presence_of :address, :user, :zone, :billable_hours, :datetime, :service_type
+  validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
+
 
   # Callbacks
   after_initialize :set_defaults
@@ -184,7 +185,7 @@ class Service < ActiveRecord::Base
   end
 
   def datetime_is_hour_o_clock
-    message = 'Los servicios solo pueden crearse en horas cerradas'
+    message = 'Los servicios solo pueden crearse en horas en punto'
 
     errors.add(:datetime, message) if datetime.min != 0 || datetime.sec != 0
   end
@@ -200,5 +201,23 @@ class Service < ActiveRecord::Base
     unless working_range.include?(first_hour) && working_range.include?(last_hour)
       errors.add(:datetime, message)
     end
+  end
+
+  rails_admin do
+    label_plural 'servicios'
+    navigation_label 'Operación'
+    navigation_icon 'icon-home'
+    list do
+      sort_by :datetime
+
+      field :user_link do
+        virtual?
+      end
+      field :datetime do
+        sort_reverse false
+      end
+      field :status
+    end
+
   end
 end

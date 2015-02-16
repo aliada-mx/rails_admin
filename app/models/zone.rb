@@ -12,4 +12,11 @@ class Zone < ActiveRecord::Base
   def self.find_by_code(code)
     Zone.joins(:postal_codes).where('postal_codes.code = ?', code).try(:first)
   end
+
+  rails_admin do
+    label_plural 'zonas'
+    navigation_label 'Contenidos'
+    navigation_icon 'icon-globe'
+
+  end
 end

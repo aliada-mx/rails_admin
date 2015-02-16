@@ -52,4 +52,9 @@ class ConektaCard < ActiveRecord::Base
     self.save!
   end
 
+  rails_admin do
+    label_plural 'tarjetas de Conekta'
+    parent PaymentMethod
+    navigation_icon 'icon-chevron-right'
+  end
 end

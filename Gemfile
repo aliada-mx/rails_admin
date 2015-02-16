@@ -17,6 +17,8 @@ gem 'unicorn'
 gem 'resque'
 gem 'resque-scheduler'
 gem 'resque-web', require: 'resque_web'
+# Support for add_foreing_key (we downgraded from 4.2 to 4.1)
+gem 'foreigner'
 
 # ASSETS
 #
@@ -44,7 +46,7 @@ gem "haml-rails"
 # Better template nesting
 gem 'nestive'
 
-# AUTHENTICATION
+# Authentication
 gem 'devise'
 
 # Time pargin
@@ -53,23 +55,31 @@ gem 'chronic'
 # PAYMENT SYSTEMS
 gem 'conekta'
 
-# Forms
-gem 'reform'
 
 group :production do
   # Logging
   gem "lograge"
 end
 
-# Support for add_foreing_key (we downgraded from 4.2 to 4.1)
-gem 'foreigner'
-
 # Inverte <=> operator for sortings
 gem 'invert'
+
+# ADMIN
+gem 'rails_admin', github: 'sferik/rails_admin'
+# gem 'rails_admin'
+# permissions
+gem 'cancancan'
 
 group :development, :test do
   # Call 'pry' anywhere in the code to stop execution and get a debugger console
   gem 'pry-rails'
+  # Automatically call pry on exception
+  gem 'pry-rescue'
+  # Browse the stack on pry
+  gem 'pry-stack_explorer'
+
+  # Improve rails error displaying
+  gem 'better_errors'
 
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'
@@ -86,6 +96,7 @@ group :development, :test do
 
   # Convert erb to haml
   gem 'erb2haml'
+
 end
 
 group :test do

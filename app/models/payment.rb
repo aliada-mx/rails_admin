@@ -24,4 +24,14 @@ class Payment < ActiveRecord::Base
   def provider
     payment_provider
   end
+
+  rails_admin do
+    label_plural 'pagos'
+    navigation_label 'Operación'
+    navigation_icon 'icon-shopping-cart'
+
+    configure :api_raw_response do
+      visible false
+    end
+  end
 end
