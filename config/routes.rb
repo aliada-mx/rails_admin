@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'aliadadmin', to: redirect('aliadadmin/ticket')
   mount RailsAdmin::Engine => 'aliadadmin', as: 'rails_admin'
 
   root to: 'statics#home'

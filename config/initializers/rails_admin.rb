@@ -1,6 +1,3 @@
-# Register actions
-RailsAdmin::Config::Actions.register(:tickets_list, RailsAdmin::Config::Actions::TicketsList)
-
 RailsAdmin.config do |config|
   # By default rails admin does not support Inet fields so we force it
   class RailsAdmin::Config::Fields::Types::Inet < RailsAdmin::Config::Fields::Base
@@ -23,7 +20,6 @@ RailsAdmin.config do |config|
     delete
     show_in_app
 
-    tickets_list
     ## With an audit adapter, you can add:
     # history_index
     # history_show
