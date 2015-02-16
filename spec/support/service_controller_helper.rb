@@ -1,7 +1,7 @@
 module TestingSupport
   module ServiceControllerHelper
     def fill_service_form(payment_method, service_type, starting_datetime, extra)
-      fill_in 'service_billable_hours', with: '3'
+      fill_hidden_input 'service_billable_hours', with: '3' 
       fill_in 'service_bathrooms', with: '1'
       fill_in 'service_bedrooms', with: '1'
 

@@ -1,9 +1,7 @@
 class ServicesController < ApplicationController
-  include ServiceHelper
+  layout 'two_columns'
 
-  def show
-    @service = Service.find_by_id(params[:id])
-  end
+  include ServiceHelper
 
   def initial
     if user_signed_in?
@@ -21,6 +19,16 @@ class ServicesController < ApplicationController
                            zone: @zone,
                            service_type: @service_type,
                            address: @address)
+
+  end
+
+  def new
+  end
+
+  def update
+  end
+
+  def edit
   end
 
   def create
