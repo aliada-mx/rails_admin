@@ -18,13 +18,17 @@ class Aliada < User
   # must have services.datetime >= Time.zone.now.beginning_of_day
   scope :for_booking, ->(aliadas_ids) { where(id: aliadas_ids).eager_load(:services) }
 
+  # We override the default_scope class method so the user default scope from
+  # which we inherited does not override ours
   def self.default_scope 
     where('users.role = ?', 'aliada')
   end
 
-  # Return the last service an aliada has before the one we are passing
-  # on the same day
-  def previous_service(current_service)
+  def next_service
+    services.in_the_future.last
+  end
+  
+  def previous_service(current_service) # On the same day
     services.to_a.select{ |service| service.datetime >= current_service.datetime.beginning_of_day }
                  .select{ |service| service.datetime < current_service.datetime }
                  .sort_by(&:created_at)
@@ -57,5 +61,58 @@ class Aliada < User
 
   def busy_services_hours
     businesshours_until_horizon - service_hours
+  end
+
+  rails_admin do
+    label_plural 'aliadas'
+    navigation_label 'Personas'
+    navigation_icon 'icon-heart'
+    # Rails admin believes that the parent is the user
+    # so it adds the aliada navigation link below the user
+    # by setting to Object we override that
+    parent Object
+
+    configure :name do
+      virtual?
+      read_only
+    end
+
+    configure :next_service do
+      virtual?
+    end
+
+    show do
+      include_all_fields
+    end
+
+    list do
+      field :name
+      field :phone
+      field :next_service
+    end
+
+    edit do
+      field :role
+      field :first_name
+      field :last_name
+      field :phone
+      group :login do
+        active false
+        field :password
+        field :password_confirmation
+        field :current_sign_in_at
+        field :sign_in_count
+        field :last_sign_in_at
+        field :last_sign_in_ip
+        field :current_sign_in_ip
+        field :remember_created_at
+        field :reset_password_sent_at
+      end
+      exclude_fields :payment_provider_choices,
+                     :schedules,
+                     :aliada_zones,
+                     :banned_aliadas,
+                     :banned_users
+    end
   end
 end

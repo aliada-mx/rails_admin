@@ -1,4 +1,8 @@
 class Recurrence < ActiveRecord::Base
+  OWNERS = [
+    'aliada',
+    'user'
+  ]
   include AliadaSupport::DatetimeSupport
 
   validates_presence_of [:weekday, :hour]
@@ -9,6 +13,12 @@ class Recurrence < ActiveRecord::Base
   belongs_to :user
   belongs_to :aliada
   belongs_to :zone
+
+  default_scope { where(owner: 'user') }
+
+  def owner_enum
+    OWNERS
+  end
 
   def wday
     Time.weekdays.select{ |day| day[0] == weekday }.first.second
@@ -48,4 +58,13 @@ class Recurrence < ActiveRecord::Base
     schedule_intervals
   end
 
+  rails_admin do
+    label_plural 'recurrencias'
+    navigation_label 'Operación'
+    navigation_icon 'icon-repeat'
+
+    configure :owner do
+      visible false
+    end
+  end
 end

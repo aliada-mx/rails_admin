@@ -6,6 +6,5 @@ FactoryGirl.define do
     association :aliada, factory: :aliada
     association :zone, factory: :zone
     total_hours 3
-
   end
 end

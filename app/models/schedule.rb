@@ -29,6 +29,11 @@ class Schedule < ActiveRecord::Base
 
   after_initialize :set_default_values
 
+  rails_admin do
+    label_plural 'horas de servicio'
+    navigation_label 'Operación'
+    navigation_icon 'icon-calendar'
+  end
 
   private
     def set_default_values
@@ -38,4 +43,5 @@ class Schedule < ActiveRecord::Base
         self.status ||= "available"
       end
     end
+
 end

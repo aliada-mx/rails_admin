@@ -1,3 +1,22 @@
+GIT
+  remote: git://github.com/sferik/rails_admin.git
+  revision: 2f4fc32a879ffba19f0bb9e1cbb8b0a078e20c46
+  specs:
+    rails_admin (0.6.6)
+      builder (~> 3.1)
+      coffee-rails (~> 4.0)
+      font-awesome-rails (>= 3.0, < 5)
+      haml (~> 4.0)
+      jquery-rails (>= 3.0, < 5)
+      jquery-ui-rails (~> 5.0)
+      kaminari (~> 0.14)
+      nested_form (~> 0.3)
+      rack-pjax (~> 0.7)
+      rails (~> 4.0)
+      remotipart (~> 1.0)
+      safe_yaml (~> 1.0)
+      sass-rails (>= 4.0, < 6)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -33,12 +52,17 @@ GEM
       execjs
       json
     bcrypt (3.1.10)
+    better_errors (2.1.1)
+      coderay (>= 1.0.0)
+      erubis (>= 2.6.6)
+      rack (>= 0.9.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     bootstrap-sass (3.3.3)
       autoprefixer-rails (>= 5.0.0.1)
       sass (>= 3.2.19)
     builder (3.2.2)
+    cancancan (1.10.1)
     capybara (2.4.4)
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
@@ -77,12 +101,11 @@ GEM
       compass (~> 1.0.0)
       sass-rails (<= 5.0.1)
       sprockets (< 2.13)
-    conekta (0.5.1)
+    conekta (0.5.2)
       bundler (~> 1.3)
       faraday
       json
       rake
-      rspec
       sys-uname
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
@@ -96,9 +119,6 @@ GEM
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
-    disposable (0.0.9)
-      representable (~> 2.0)
-      uber
     docile (1.1.5)
     em-websocket (0.5.1)
       eventmachine (>= 0.12.9)
@@ -116,6 +136,8 @@ GEM
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.6)
+    font-awesome-rails (4.3.0.0)
+      railties (>= 3.2, < 5.0)
     foreigner (1.7.2)
       activerecord (>= 3.0.0)
     formatador (0.2.5)
@@ -152,6 +174,7 @@ GEM
       ruby_parser (~> 3.5)
     http_parser.rb (0.6.0)
     i18n (0.7.0)
+    interception (0.5)
     invert (0.1.0)
     jbuilder (2.2.6)
       activesupport (>= 3.0.0, < 5)
@@ -159,7 +182,12 @@ GEM
     jquery-rails (3.1.2)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
+    jquery-ui-rails (5.0.3)
+      railties (>= 3.2.16)
     json (1.8.2)
+    kaminari (0.16.3)
+      actionpack (>= 3.0.0)
+      activesupport (>= 3.0.0)
     kgio (2.9.3)
     launchy (2.4.3)
       addressable (~> 2.3)
@@ -182,6 +210,7 @@ GEM
     multi_json (1.10.1)
     multipart-post (2.0.0)
     nenv (0.2.0)
+    nested_form (0.3.2)
     nestive (0.6.0)
       rails (>= 3.0.0)
     nokogiri (1.6.6.2)
@@ -202,9 +231,18 @@ GEM
       slop (~> 3.4)
     pry-rails (0.3.3)
       pry (>= 0.9.10)
+    pry-rescue (1.4.1)
+      interception (>= 0.5)
+      pry
+    pry-stack_explorer (0.4.9.1)
+      binding_of_caller (>= 0.7)
+      pry (>= 0.9.11)
     quiet_assets (1.0.3)
       railties (>= 3.1, < 5.0)
     rack (1.5.2)
+    rack-pjax (0.8.0)
+      nokogiri (~> 1.5)
+      rack (~> 1.1)
     rack-protection (1.5.3)
       rack
     rack-test (0.6.3)
@@ -232,15 +270,7 @@ GEM
     redis (3.2.1)
     redis-namespace (1.5.1)
       redis (~> 3.0, >= 3.0.4)
-    reform (1.2.6)
-      activemodel
-      disposable (~> 0.0.5)
-      representable (~> 2.1.0)
-      uber (~> 0.0.11)
-    representable (2.1.5)
-      multi_json
-      nokogiri
-      uber (~> 0.0.7)
+    remotipart (1.2.1)
     responders (1.1.2)
       railties (>= 3.2, < 4.2)
     resque (1.25.2)
@@ -260,10 +290,6 @@ GEM
       resque
       sass-rails
       twitter-bootstrap-rails
-    rspec (3.0.0)
-      rspec-core (~> 3.0.0)
-      rspec-expectations (~> 3.0.0)
-      rspec-mocks (~> 3.0.0)
     rspec-core (3.0.4)
       rspec-support (~> 3.0.0)
     rspec-expectations (3.0.4)
@@ -280,13 +306,13 @@ GEM
       rspec-mocks (~> 3.0.0)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.4)
-    ruby-prof (0.15.3)
+    ruby-prof (0.15.4)
     ruby_parser (3.6.4)
       sexp_processor (~> 4.1)
     rufus-scheduler (3.0.9)
       tzinfo
     safe_yaml (1.0.4)
-    sass (3.4.11)
+    sass (3.4.12)
     sass-rails (5.0.1)
       railties (>= 4.0.0, < 5.0)
       sass (~> 3.1)
@@ -306,7 +332,7 @@ GEM
       rack-protection (~> 1.4)
       tilt (~> 1.3, >= 1.3.4)
     slop (3.6.0)
-    spring (1.3.1)
+    spring (1.3.2)
     sprockets (2.12.3)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -334,7 +360,6 @@ GEM
       railties (~> 4.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    uber (0.0.13)
     uglifier (2.7.0)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
@@ -362,7 +387,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  better_errors
   bootstrap-sass
+  cancancan
   capybara
   chronic
   coffee-rails (~> 4.1.0)
@@ -385,9 +412,11 @@ DEPENDENCIES
   paperclip
   pg
   pry-rails
+  pry-rescue
+  pry-stack_explorer
   quiet_assets (~> 1.0.3)
   rails (= 4.1.9)
-  reform
+  rails_admin!
   resque
   resque-scheduler
   resque-web

@@ -7,7 +7,7 @@ class ServicesController < ApplicationController
 
   def initial
     if user_signed_in?
-      redirect_to new_service_path
+      redirect_to new_service_users_path(current_user)
     end
 
     @postal_code = PostalCode.find(params[:postal_code_id])
@@ -24,9 +24,9 @@ class ServicesController < ApplicationController
   end
 
   def create
-    @service = Service.create_initial(service_params)
+    service = Service.create_initial(service_params)
 
-    redirect_to show_service_path(@service.id)
+    redirect_to show_service_users_path(service.user.id, service.id)
   end
 
   private

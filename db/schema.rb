@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150212171139) do
+ActiveRecord::Schema.define(version: 20150215004406) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 20150212171139) do
     t.text     "references"
     t.decimal  "latitude",                    precision: 10, scale: 7
     t.decimal  "longitude",                   precision: 10, scale: 7
+    t.integer  "aliada_id"
   end
 
   add_index "addresses", ["postal_code_id"], name: "index_addresses_on_postal_code_id", using: :btree
@@ -173,6 +174,7 @@ ActiveRecord::Schema.define(version: 20150212171139) do
     t.integer  "hour"
     t.integer  "total_hours"
     t.integer  "zone_id"
+    t.string   "owner"
   end
 
   add_index "recurrences", ["user_id"], name: "index_recurrences_on_user_id", using: :btree
