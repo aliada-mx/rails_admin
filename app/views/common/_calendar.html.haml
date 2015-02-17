@@ -1,0 +1,17 @@
+%section.main
+  .custom-calendar-wrap
+    #custom-inner.custom-inner
+      .custom-header.clearfix
+        %nav
+          %span#custom-prev.custom-prev
+          %span#custom-next.custom-next
+        %h2#custom-month.custom-month ENERO
+        %h3#custom-year.custom-year 2015
+      #calendar.fc-calendar-container
+      #cal-hours
+
+= append :javascript do
+  :javascript
+    aliada.dates = JSON.parse('#{raw @dates_parsed}');
+
+  = javascript_include_tag 'modules/calendario'

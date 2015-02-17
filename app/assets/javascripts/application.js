@@ -10,6 +10,7 @@
 // Read Sprockets README (https://github.com/sstephenson/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require jquery_ujs
 //= require jquery
+//= require modernizr.custom.63321
+//= jquery.calendario
 //= require_self

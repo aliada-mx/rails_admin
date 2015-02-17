@@ -2,12 +2,13 @@ Rails.application.routes.draw do
   get 'aliadadmin', to: redirect('aliadadmin/ticket')
   mount RailsAdmin::Engine => 'aliadadmin', as: 'rails_admin'
 
-  root to: 'statics#home'
-  get 'como-funciona', to: 'statics#how_it_works', as: :how_it_works
-  get 'precios', to: 'statics#prices', as: :prices
-  get 'faq', to: 'statics#faq', as: :faq
-  get 'terminos', to: 'statics#terms', as: :terms
-  get 'privacidad', to: 'statics#privacy', as: :privacy
+  root to: 'static_pages#home'
+  get 'como-funciona', to: 'static_pages#how_it_works', as: :how_it_works
+  get 'precios', to: 'static_pages#prices', as: :prices
+  get 'faq', to: 'static_pages#faq', as: :faq
+  get 'terminos', to: 'static_pages#terms', as: :terms
+  get 'privacidad', to: 'static_pages#privacy', as: :privacy
+  get 'patrones', to: 'static_pages#pattern_dictionary'
 
   devise_for :users, path: '', path_names: {
     sign_in: :login,
@@ -17,7 +18,7 @@ Rails.application.routes.draw do
   resources :aliadas
 
   scope :servicio do
-    post 'inicial', to: 'services#initial', as: :initial_service
+    get 'inicial', to: 'services#initial', as: :initial_service
     post 'create', to: 'services#create', as: :create_service
   end
 

@@ -1,4 +1,4 @@
-class StaticsController < ApplicationController
+class StaticPagesController < ApplicationController
   def home
   end
 
@@ -15,5 +15,8 @@ class StaticsController < ApplicationController
   end
 
   def privacy
+  end
+
+  def pattern_dictionary
   end
 end

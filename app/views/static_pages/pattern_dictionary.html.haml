@@ -1,0 +1,156 @@
+// home.html.haml
+%h2
+  ¿Qué servicios ofrecen las aliadas?
+
+%h3
+  ¿Porqué utilizar Aliada? (home)
+
+// services/edit.html.haml
+%form.one-timer
+  color: $green
+  background-color: $green
+  // Todos los demas elementos heredan color de este
+
+// Login
+%a.iconized.facebook
+  Usa tus datos de Facebook
+
+// _step_1_duration.html.haml
+%h1
+  Cuéntanos más de tu casa (duration)
+
+%h4
+  Dinos cuánto tiempo necesitas a la aliada (duration)
+
+= select_tag 'horas', options_for_select( ['2.5 horas (55 m2)', '1'] )
+
+%a.small-letters
+  No sabes los metros cuadrados
+
+.counter
+  text_field_tag 'cuartos'
+  %span.plus-sign
+  %span.less-sign
+
+%fieldset.checkboxes.large
+  = collection_check_boxes(:service, :extras_ids,  [1, 'Planchado'], [2, 'Lavado'], :first, :second)
+
+// previous_services.html.haml
+
+%table
+  %tr
+    %th
+      Fecha
+    %th
+      Duración
+    %th
+      Aliada Asignada
+    %th
+      Pago
+    %th
+      Estimado
+    %th
+      Calificación
+  %tr
+    %td
+      Jue, 4 de Agosto
+    %td
+      4 horas
+    %td
+      Aidé López
+    %td
+      -
+    %td
+      $200
+    %td
+      %form.service
+        = collection_radio_boxes(:service, :alida_entry,  [1, 'Estaré en casa'], [2, 'Dejaré las llaves con el guardia/portero'], :first, :second)
+
+// _step_5_success.html.haml
+%fieldset.radiobuttons.small
+  = collection_radio_boxes(:service, :alida_entry,  [1, 'Estaré en casa'], [2, 'Dejaré las llaves con el guardia/portero'], :first, :second)
+
+%textarea.expandable{placeholder: 'Donde depositará la basura'}
+  
+// _step_3_visit_info.html.haml
+%fieldset.radiobuttons.large
+  = collection_radio_boxes(:service, :service_type,  [1, 'Sólo una vez'], [2, 'Cada Semana'], :first, :second)
+
+%fieldset.radiobuttons.medium
+  = collection_radio_boxes(:service, :time,  [1, '9:00'], [2, '10:00'], :first, :second)
+
+%button.call-to-action.large
+  Siguiente
+
+%p.small-letters
+  Un mensaje en chiquito
+
+// _step_4_payment.html.haml
+%form.credit-card
+  pendiente
+
+.promotional-code
+  %a
+    APLICAR
+  = text_field_tag 'promo-code', placeholder: 'código promocional'
+
+// next_services.html.haml
+%a.iconized.user
+  Mi cuenta
+
+%a.button.call-to-action.small
+  Programar nueva visita
+
+%a.button-medium.active
+  Próximas visitas
+
+%a.button-medium
+  Historia de visitas
+
+%a.button-medium.iconized.wand
+  Historia de visitas
+
+  // Green or purple
+.service-card.one-time
+.service-card.recurrent
+  .head
+    .badge
+      Recurrente
+      %icon.recurrent
+    .title
+      Todos los jueves
+      .small-letters
+        a partir del 23 de enero
+  .body
+    = render partial: 'summary'
+
+  .foot
+    %a.button.iconized.edit
+      Modificar servicio
+    .numbers
+     %span.hours 4 horas
+     %span.cash $65
+
+.empty-card
+  %a
+    Programa una nueva visita
+
+.credits
+  %span.iconized.help
+    Crédito
+  %div.cash
+    %100
+
+// recurrences/index.html.haml
+
+.header.recurrent
+  .badge
+    Recurrente
+    %icon.recurrent
+  .title
+    Todos los jueves
+    .small-letters
+      apartir del 23 de enero
+  .actions
+    %a.action
+      Modificar todas las visitas próximas

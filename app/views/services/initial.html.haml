@@ -1,11 +1,11 @@
 = form_for @service, url: create_service_path do |initial_service_form|
 
   - ['duration', 'personal_info', 'visit_info', 'payment', 'success'].each_with_index do |step_name, step|
-    = render partial: "services/initial/step_#{step+1}_#{step_name}", 
-      locals: {:initial_service_form => initial_service_form,
-               :@user => @user,
-               :@address => @address,
-               :@postal_code => @postal_code}
+
+    = render partial: "services/initial/step_#{step+1}_#{step_name}", locals: {:initial_service_form => initial_service_form,
+                                                                               :@user => @user,
+                                                                               :@address => @address,
+                                                                               :@postal_code => @postal_code}
 
   = initial_service_form.submit 'Confirmar servicio'
 
