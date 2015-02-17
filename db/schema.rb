@@ -281,9 +281,6 @@ ActiveRecord::Schema.define(version: 20150215004406) do
     t.datetime "updated_at",             null: false
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
-
   Foreigner.load
   add_foreign_key "addresses", "postal_codes", name: "fk_rails_176653fe2c"
   add_foreign_key "addresses", "users", name: "fk_rails_adf64c847b"

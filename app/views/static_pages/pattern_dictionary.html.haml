@@ -33,7 +33,8 @@
   %span.less-sign
 
 %fieldset.checkboxes.large
-  = collection_check_boxes(:service, :extras_ids,  [1, 'Planchado'], [2, 'Lavado'], :first, :second)
+  = check_box_tag :service_extras_ids, 'Planchado', 1
+  = check_box_tag :service_extras_ids, 'lavado', 1
 
 // previous_services.html.haml
 
@@ -64,20 +65,24 @@
       $200
     %td
       %form.service
-        = collection_radio_boxes(:service, :alida_entry,  [1, 'Estaré en casa'], [2, 'Dejaré las llaves con el guardia/portero'], :first, :second)
+        = radio_button_tag :service_aliada_entry, '', 1, class: 'full'
+        = radio_button_tag :service_aliada_entry, '', 2, class: 'empty'
 
 // _step_5_success.html.haml
 %fieldset.radiobuttons.small
-  = collection_radio_boxes(:service, :alida_entry,  [1, 'Estaré en casa'], [2, 'Dejaré las llaves con el guardia/portero'], :first, :second)
+  = radio_button_tag :service_aliada_entry, 'Estaré en casa', 1
+  = radio_button_tag :service_aliada_entry, 'Dejaré las llaves con el guardia', 2
 
 %textarea.expandable{placeholder: 'Donde depositará la basura'}
   
 // _step_3_visit_info.html.haml
 %fieldset.radiobuttons.large
-  = collection_radio_boxes(:service, :service_type,  [1, 'Sólo una vez'], [2, 'Cada Semana'], :first, :second)
+  = radio_button_tag :service_aliada_entry, 'Sólo una vez', 1
+  = radio_button_tag :service_aliada_entry, 'Cada semana', 2
 
 %fieldset.radiobuttons.medium
-  = collection_radio_boxes(:service, :time,  [1, '9:00'], [2, '10:00'], :first, :second)
+  = radio_button_tag :service_aliada_entry, '9:00', 1
+  = radio_button_tag :service_aliada_entry, '10:00', 2
 
 %button.call-to-action.large
   Siguiente
@@ -122,14 +127,14 @@
       .small-letters
         a partir del 23 de enero
   .body
-    = render partial: 'summary'
+    = render partial: 'common/summary'
 
   .foot
     %a.button.iconized.edit
       Modificar servicio
     .numbers
-     %span.hours 4 horas
-     %span.cash $65
+      %span.hours 4 horas
+      %span.cash $65
 
 .empty-card
   %a
