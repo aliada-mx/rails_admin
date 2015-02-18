@@ -17,6 +17,7 @@ class Zone < ActiveRecord::Base
     label_plural 'zonas'
     navigation_label 'Contenidos'
     navigation_icon 'icon-globe'
+    weight -4
 
   end
 end
