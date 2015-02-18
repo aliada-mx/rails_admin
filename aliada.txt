@@ -1,0 +1,48 @@
+_______
+
+  zonas
+
+  old.zonas.nombre -> new.zones.name
+
+_______
+
+  cp
+
+  old.cp.cp -> new.postal_code.code
+  _create_postal_code
+  old.cp.zonas_id *-> new.postal_code_zones.zone_id + new.postal_code_zones.postal_code_id
+  _create_postal_code_zones
+
+_______
+
+  aliadas - user con role aliada
+
+  old.aliadas.uuid
+  old.aliadas.elim *borrado* 
+  old.aliadas.nombres -> users.fist_name
+  old.aliadas.apellidos -> users.last_name
+  old.aliadas.email -> users.email
+  old.aliadas.password *-> users.encrypted_password * REVISAR O NULIFICAR
+  old.aliadas.telefono -> users.phone
+  old.aliadas.direccion -> *no se utiliza
+
+_______
+
+  aliadas_has_zones 
+  old.aliadas_has_zones.aliadas_id -> aliada_zones.aliada_id
+  old.aliadas_has_zones.zonas_id -> aliada_zones.zone_id
+
+_______
+
+  clientes - user con role cliente
+
+    old.clientes.email -> new.users.email
+    old.clientes.password *-> new.users.encrypted_password * REVISAR O NULIFICAR
+    old.clientes.nombre *-> new.users.first_name - new.users.last_name
+    old.clientes.telefono -> new.users.phone
+    old.clientes.imagen -> *no se usará 
+    old.clientes.estatus -> * no se usará
+    old.clientes.saldo -> * new.users.credits * FALTA <-- agregar 
+_______
+
+  clientes_has_direcciones -> -- tomar la direcci

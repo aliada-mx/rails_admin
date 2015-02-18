@@ -7,7 +7,6 @@ class User < ActiveRecord::Base
     ['aliada', 'Aliada'],
     ['admin', 'Admin'],
   ]
-  validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
 
   has_many :services, inverse_of: :user, foreign_key: :user_id
   has_many :addresses
@@ -27,7 +26,8 @@ class User < ActiveRecord::Base
   before_validation :ensure_password
   before_validation :set_default_role
 
-  default_scope { where('users.role in (?)', ['client', 'admin'])}
+  validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
+  default_scope { where('users.role != ?', 'aliada')}
 
   def create_first_payment_provider!(payment_method_id)
     payment_method = PaymentMethod.find(payment_method_id)
