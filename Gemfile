@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-
+source 'https://rails-assets.org'
 
 # BASE
 #
@@ -39,6 +39,12 @@ gem 'paperclip'
 gem 'bootstrap-sass'
 # Sass framework
 gem 'compass-rails'
+ 
+# BOWER
+#
+gem 'rails-assets-underscore'
+gem 'rails-assets-knockout'
+
 
 # TEMPLATING
 #
