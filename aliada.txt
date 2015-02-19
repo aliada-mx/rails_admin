@@ -1,5 +1,124 @@
 _______
 
+*  zonas
+
+  old.zonas.nombre -> new.zones.name
+
+_______
+
+*  cp
+
+  old.cp.cp -> new.postal_code.code
+  _create_postal_code
+  old.cp.zonas_id *-> new.postal_code_zones.zone_id + new.postal_code_zones.postal_code_id
+  _create_postal_code_zones
+
+_______
+
+*  aliadas - user con role aliada
+
+  old.aliadas.uuid
+  old.aliadas.elim *borrado* 
+  old.aliadas.nombres -> users.fist_name
+  old.aliadas.apellidos -> users.last_name
+  old.aliadas.email -> users.email
+  old.aliadas.password *-> users.encrypted_password * REVISAR O NULIFICAR
+  old.aliadas.telefono -> users.phone
+  old.aliadas.direccion -> *no se utiliza
+
+_______
+
+*  aliadas_has_zones 
+  old.aliadas_has_zones.aliadas_id -> aliada_zones.aliada_id
+  old.aliadas_has_zones.zonas_id -> aliada_zones.zone_id
+
+_______
+
+*  clientes - user con role cliente
+
+    old.clientes.email -> new.users.email
+    old.clientes.password *-> new.users.encrypted_password * REVISAR O NULIFICAR
+    old.clientes.nombre *-> new.users.first_name - new.users.last_name
+    old.clientes.telefono -> new.users.phone
+    old.clientes.imagen -> *no se usará 
+    old.clientes.estatus -> * no se usará
+    old.clientes.saldo -> * new.users.credits * FALTA <-- agregar 
+_______
+
+*  clientes_has_direcciones -> -- tomar la dirección más reciente por cliente
+
+     
+    `clientes_has_direcciones`.`clientes_id` -> user_id
+    `clientes_has_direcciones`.`direccion` -> street
+    `clientes_has_direcciones`.`numero` -> number
+    `clientes_has_direcciones`.`numero_int` -> interior_number
+    `clientes_has_direcciones`.`entre_calles` -> between_streets
+    `clientes_has_direcciones`.`colonia` -> colony
+    `clientes_has_direcciones`.`estado` -> state
+    `clientes_has_direcciones`.`delegacion` -> city
+    `clientes_has_direcciones`.`cp` -> cp ID
+    `clientes_has_direcciones`.`latitud` -> latitude
+    `clientes_has_direcciones`.`longitud` -> longitude
+    `clientes_has_direcciones`.`created` -> 
+    `clientes_has_direcciones`.`modified` -> 
+    `clientes_has_direcciones`.`elim` -> 
+    `clientes_has_direcciones`.`referencia` - > reference
+
+_______
+
+  metodospagos
+
+    t.string   "token" -
+    t.string   "last4" 'XXXX'
+    t.string   "exp_month" '00'
+    t.string   "exp_year" '00'
+    t.boolean  "active" true
+    t.boolean  "preauthorized" true
+    t.string   "customer_id"
+    t.string   "brand" - 'other'
+    t.string   "name" - cliente.first_name y cliente.last_name
+
+    `metodospagos`.`clientes_id` -> user_id
+    `metodospagos`.`principal` - nil
+    `metodospagos`.`TOKEN` -> token
+    `metodospagos`.`VENDOR`,
+    `metodospagos`.`CLIENT_ID` -> customer_id && USER.conekta_customer_id
+    `metodospagos`.`ERRORS_LOG`
+
+    CREAR OBJETO PAYMENTPROVIDERCHOICE <- e instanciarlos como ConektaCard (payment_provider_type)
+
+______
+
+  horarios
+
+  old.horarios.aliadas_id *-> new.recurrences.aliada_id
+  old.horarios.dia *-> new.recurrences.weekday
+  old.horarios.hora *-> new.recurrences.hour  
+                        new.recurrences.status - ignorado
+                        new.recurrences.periodicity - 7 
+                        new.recurrences.user_id - ignorado
+                        new.recurrences.zone_id - ignorado
+                        new.recurrences.owner - 'aliada'
+
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "periodicity"
+    t.integer  "aliada_id"
+    t.string   "weekday"
+    t.integer  "hour"
+    t.integer  "total_hours"
+    t.integer  "zone_id"
+    t.string   "owner"
+
+______
+
+  calificaciones
+
+**********************
+
+
+_______
+
   zonas
 
   old.zonas.nombre -> new.zones.name
@@ -15,34 +134,88 @@ _______
 
 _______
 
-  aliadas - user con role aliada
+  horarios
 
-  old.aliadas.uuid
-  old.aliadas.elim *borrado* 
-  old.aliadas.nombres -> users.fist_name
-  old.aliadas.apellidos -> users.last_name
-  old.aliadas.email -> users.email
-  old.aliadas.password *-> users.encrypted_password * REVISAR O NULIFICAR
-  old.aliadas.telefono -> users.phone
-  old.aliadas.direccion -> *no se utiliza
+  old.horarios.aliadas_id *-> new.recurrences.aliada_id
+  old.horarios.dia *-> new.recurrences.weekday
+  old.horarios.hora *-> new.recurrences.hour
 
 _______
 
-  aliadas_has_zones 
-  old.aliadas_has_zones.aliadas_id -> aliada_zones.aliada_id
-  old.aliadas_has_zones.zonas_id -> aliada_zones.zone_id
+  aliadas - falta tabla en nuevo esquema
+
+  uuid
+  elim 
+  nombres
+  apellidos
+  email
+  password
+  telefono
+  direccion
 
 _______
 
-  clientes - user con role cliente
+  aliadas_has_zones - se creará tabla en nuevo esquema? o la pasamos a recurrencias?
+
+_______
+
+  calificaciones
+
+    old.calificaciones.clientes_id -> new.scores.user_id
+    old.calificaciones.aliadas_id -> new.scores.aliada_id * FALTA
+    old.calificaciones.comentario -> new.scores.comment * FALTA
+    old.calificaciones.calificacion -> new.scores.score * FALTA
+
+
+_______
+
+  clientes
 
     old.clientes.email -> new.users.email
     old.clientes.password *-> new.users.encrypted_password * REVISAR O NULIFICAR
     old.clientes.nombre *-> new.users.first_name - new.users.last_name
     old.clientes.telefono -> new.users.phone
-    old.clientes.imagen -> *no se usará 
-    old.clientes.estatus -> * no se usará
-    old.clientes.saldo -> * new.users.credits * FALTA <-- agregar 
+    old.clientes.imagen -> * FALTA
+    old.clientes.saldo -> * FALTA
+
 _______
 
-  clientes_has_direcciones -> -- tomar la direcci
+  agenda
+
+  old.agenda.fecha + old.agenda.hora -> new.schedules.datetime
+  old.agenda.alidas_id *-> new.schedules.aliada_id
+  old.agenda.clientes_id *-> new.schedules.user_id
+  old.agenda.duracion *-> new.services.billable_hours (CAMBIAR A BILLED_HOURS)
+  old.agenda.duracion_aprox *-> FALTA - new.services.estimated_hours 
+
+  SERVICE - BILLABLE HOURS
+
+  old.agenda.pagado 
+  old.agenda.TOKEN   se repite en recurrencias -> crear y pasar a 'conekta_create_card', que no existe
+  old.agenda.METODO
+
+  old.agenda.recamaras -> new.services.bedrooms
+  old.agenda.banos -> new.services.bathrooms
+  old.agenda.incluir_productos_limpieza + old.agenda.indicacion_entrada_aliada + old.agenda.indicacion_donde_utensilios_limpieza + old.agenda.indicacion_donde_basura + old.agenda.indicacion_especial_atencion + old.agenda.indicacion_equipo_especial + old.agenda.indicacion_no_tocar + old.agenda.indicacion_instrucciones_esp *-> new.services.special_instructions
+
+  old.agenda.recurrencias_id *-> new.services.recurrence_id
+  old.agenda.elim -> ?
+
+_______
+
+  recurrencias (sale de haber creado ya schedules para aliadas)
+
+    old.recurrencias.cp *-> new.recurrences.zone
+    old.recurrencias.monday + old.recurrencias.tuesday + old.recurrencias.wednesday + old.recurrencias.thursday + old.recurrencias.friday + old.recurrencias.saturday + old.recurrencias.sunday *-> new.recurrences.weekday
+    old.recurrencias.fecha -> ? 
+    old.recurrencias.hora -> new.recurrences.hour
+    old.recurrencias.aliadas_id *-> new.recurrences.aliada_id
+    old.recurrencias.clientes_id *-> new.recurrences.user_id
+    old.recurrencias.duracion_aprox
+    old.recurrencias.recamaras
+    old.recurrencias.banos
+    old.recurrencias.incluir_productos_limpieza + indicacion_entrada_aliada + indicacion_donde_utensilios_limpieza + indicacion_donde_basura + + indicacion_especial_atencion + indicacion_no_tocar + indicacion_instrucciones_esp -> servicio primero
+
+    old.recurrencias.TOKEN   se repite en recurrencias -> crear y pasar a 'conekta_create_card' 
+    old.recurrencias.METODO
+
