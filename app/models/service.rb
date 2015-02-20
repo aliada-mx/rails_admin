@@ -1,6 +1,5 @@
 class Service < ActiveRecord::Base
   include Presenters::ServicePresenter
-
   STATUSES = [
     ['Creado','created'],
     ['Aliada asignada', 'aliada_assigned'],

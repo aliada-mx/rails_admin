@@ -211,3 +211,7 @@ es:
       long: ! '%d de %B de %Y %H:%M'
       short: ! '%d de %b %H:%M'
     pm: pm
+  conekta: 
+    card_created_successfully: 'Guardamos exitosamente tu tarjeta'
+    customer_not_found: "No se encontró el cliente conekta del usuario %{user_id}" 
+    card_creation_failed: "No se pudo agregar nueva tarjeta de conekta para el usuario %{user-id} " 

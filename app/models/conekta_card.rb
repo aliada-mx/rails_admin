@@ -1,4 +1,16 @@
 class ConektaCard < ActiveRecord::Base
+  def self.create_for_user!(user, temporary_token)
+    conekta_customer = Conekta::Customer.find(user.conekta_customer_id)
+
+    api_card = conekta_customer.create_card(:token => temporary_token)
+
+    conekta_card = ConektaCard.create!
+    conekta_card.update_from_api_card(eval(api_card.inspect))
+    conekta_card.preauthorize!(user)
+
+    user.create_payment_provider_choice(conekta_card).provider
+  end
+
   def create_customer(user, temporary_token)
     customer = Conekta::Customer.create({
       name: user.name,
@@ -6,18 +18,25 @@ class ConektaCard < ActiveRecord::Base
       phone: user.phone,
       cards: [temporary_token] 
     })
+
+    user.update_attribute(:conekta_customer_id, customer.id)
     update_from_customer!(customer)
+    customer
+  end
+
+  def update_from_api_card(card_attributes)
+    card_attributes = card_attributes.rename_keys({'id' => 'token'})
+    card_attributes.except!('created_at', 'object', 'address')
+
+    self.update_attributes(card_attributes)
+    self
   end
 
   def update_from_customer!(customer)
     customer_hash = eval(customer.inspect)
     
     card_attributes = customer_hash['cards'].first
-    card_attributes = card_attributes.rename_keys({'id' => 'token'})
-    card_attributes.except!('created_at', 'object')
-
-    self.update_attributes(card_attributes)
-    self
+    update_from_api_card(card_attributes)
   end
 
   def charge!(product)
@@ -45,11 +64,13 @@ class ConektaCard < ActiveRecord::Base
                                        description: "Pre-autorización de tarjeta #{id}",
                                        reference_id: self.id})
     conekta_charge = charge!(preauthorization)
+
     payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
     payment.pay!
 
     self.preauthorized = true
     self.save!
+    self
   end
 
   rails_admin do

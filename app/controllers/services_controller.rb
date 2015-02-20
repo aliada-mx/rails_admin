@@ -59,7 +59,6 @@ class ServicesController < ApplicationController
                                       :date,
                                       :time,
                                       :payment_method_id,
-                                      :conekta_temporary_token,
                                       user_attributes: [
                                         :first_name,
                                         :last_name,
@@ -79,6 +78,7 @@ class ServicesController < ApplicationController
                                         :state,
                                         :city,
                                         :references,
-                                      ])
+                                      ]).merge({conekta_temporary_token: params[:conekta_temporary_token] })
+                                      
   end
 end

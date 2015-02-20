@@ -127,9 +127,9 @@ feature 'ServiceController' do
       it 'creates a pre-authorization payment when choosing conekta' do
         fill_service_form(conekta_card, one_time_service, starting_datetime, extra_1)
 
-        fill_hidden_input 'service_conekta_temporary_token', with: 'tok_test_visa_4242'
+        fill_hidden_input 'conekta_temporary_token', with: 'tok_test_visa_4242'
 
-        VCR.use_cassette('initial_service_conekta_card') do
+        VCR.use_cassette('initial_service_conekta_card', match_requests_on: [:method, :conekta_preauthorization]) do
           click_button 'Confirmar servicio'
         end
 

@@ -8,7 +8,7 @@ class Ability
     if current_user.persisted?
       can do |action, subject_class, subject|
         if subject_class == User
-          if [:read, :update, :next_services, :previous_services].include? action
+          if [:read, :update, :next_services, :previous_services, :edit].include? action
             if current_user.admin?
               true
             elsif subject.present? # subject is the user being edited, read, updated...
