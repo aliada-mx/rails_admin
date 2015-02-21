@@ -114,6 +114,10 @@ es:
         bedrooms: recámaras
       service_type:
       ticket:
+        relevant_object: Servicio
+        message: error
+        action_needed: acción sugerida
+        classification: tipo de ticket
       zones:
   admin:
     home:
