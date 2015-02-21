@@ -13,7 +13,7 @@ describe 'AliadaAvailability' do
                                    zone: zone_1,
                                    service_type: one_time_service_type,
                                    datetime: starting_datetime,
-                                   billable_hours: 3,
+                                   billed_hours: 3,
                                    address: address_1) }
   let!(:recurrent_service){ create(:service,
                                    user: user,
@@ -21,7 +21,7 @@ describe 'AliadaAvailability' do
                                    zone: zone_1,
                                    service_type: recurrent_service_type,
                                    datetime: starting_datetime,
-                                   billable_hours: 3,
+                                   billed_hours: 3,
                                    address: address_1) }
 
   context 'For a one time service' do

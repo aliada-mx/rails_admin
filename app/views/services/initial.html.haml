@@ -4,7 +4,7 @@
   = f.text_field :bathrooms
   = f.text_field :bedrooms 
   = f.collection_check_boxes :extra_ids, Extra.all, :id, :name
-  = f.text_field :billable_hours
+  = f.text_field :billed_hours
   = f.text_area :special_instructions 
 
   = f.fields_for :address, @address do |address_form|

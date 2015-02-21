@@ -37,7 +37,7 @@ class Service < ActiveRecord::Base
   validate :datetime_is_hour_o_clock
   validate :datetime_within_working_hours
   validate :service_type_exists
-  validates_presence_of :address, :user, :zone, :billable_hours, :datetime, :service_type
+  validates_presence_of :address, :user, :zone, :billed_hours, :datetime, :service_type
   validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
 
 
@@ -96,7 +96,7 @@ class Service < ActiveRecord::Base
   end
 
   def total_hours
-    hours_before_service + billable_hours + hours_after_service
+    hours_before_service + billed_hours + hours_after_service
   end
 
   # Starting now how many days we'll provide service to the end of

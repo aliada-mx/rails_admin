@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150219010145) do
+ActiveRecord::Schema.define(version: 20150220234936) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -132,7 +132,7 @@ ActiveRecord::Schema.define(version: 20150219010145) do
     t.string  "payment_provider_type"
   end
 
-  add_index "payment_provider_choices", ["user_id", "default"], name: "index_payment_provider_choices_on_user_id_and_default", unique: true, using: :btree
+  add_index "payment_provider_choices", ["user_id", "default"], name: "index_payment_provider_choices_on_user_id_and_default", unique: true, where: "(\"default\" = true)", using: :btree
 
   create_table "payments", force: true do |t|
     t.datetime "created_at",                                    null: false
@@ -226,7 +226,7 @@ ActiveRecord::Schema.define(version: 20150219010145) do
     t.integer  "recurrence_id"
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
-    t.decimal  "billable_hours",       precision: 10, scale: 3
+    t.decimal  "billed_hours",         precision: 10, scale: 3
     t.decimal  "hours_before_service", precision: 10, scale: 3
     t.decimal  "hours_after_service",  precision: 10, scale: 3
     t.integer  "bathrooms"
@@ -235,6 +235,7 @@ ActiveRecord::Schema.define(version: 20150219010145) do
     t.string   "status"
     t.integer  "aliada_id"
     t.datetime "datetime"
+    t.decimal  "estimated_hours",      precision: 10, scale: 3
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree

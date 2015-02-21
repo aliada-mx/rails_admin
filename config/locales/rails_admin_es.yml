@@ -107,7 +107,7 @@ es:
         price: monto
         service_type: tipo de servicio
         recurrence: recurrencia
-        billable_hours: horas cobrables
+        billed_hours: horas cobradas
         hours_before_service: horas antes del servicio
         hours_after_service: horas después del servicio
         bathrooms: baños
