@@ -1,0 +1,13 @@
+= extends :application do
+
+  %header
+    = render partial: 'common/inner_header'
+
+  %nav
+    = area :navigation
+
+  %main
+    = yield
+
+  %aside
+    = area :sidebar

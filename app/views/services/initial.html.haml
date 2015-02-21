@@ -1,40 +1,16 @@
-= form_for @service, url: create_service_path do |f|
-  = f.hidden_field :conekta_temporary_token
-  = f.hidden_field :zone_id
-  = f.text_field :bathrooms
-  = f.text_field :bedrooms 
-  = f.collection_check_boxes :extra_ids, Extra.all, :id, :name
-  = f.text_field :billable_hours
-  = f.text_area :special_instructions 
+= form_for @service, url: create_service_path do |initial_service_form|
 
-  = f.fields_for :address, @address do |address_form|
-    = address_form.hidden_field :postal_code_id, as: :hidden
-    = address_form.text_area :street
-    = address_form.text_field :interior_number
-    = address_form.text_field :number
-    = address_form.text_area :colony
-    = address_form.text_area :between_streets
-    = address_form.text_field :postal_code, value: @postal_code.code
-    = address_form.text_area :state
-    = address_form.text_field :city
-    = address_form.text_area :references
+  - ['duration', 'personal_info', 'visit_info', 'payment', 'success'].each_with_index do |step_name, step|
 
-    = address_form.hidden_field :latitude, as: :hidden
-    = address_form.hidden_field :longitude, as: :hidden
+    = render partial: "services/initial/step_#{step+1}_#{step_name}", locals: {:initial_service_form => initial_service_form,
+                                                                               :@user => @user,
+                                                                               :@address => @address,
+                                                                               :@postal_code => @postal_code}
 
-  = f.fields_for :user, @user do |user_form|
-    = user_form.text_field :first_name
-    = user_form.text_field :last_name
-    = user_form.text_field :email
-    = user_form.text_field :phone
+  = initial_service_form.submit 'Confirmar servicio'
 
-  = f.collection_radio_buttons :service_type_id, ServiceType.all, :id, :name
-  %div.calendario
-    calendario
+= replace :sidebar do
+  = render partial: 'services/initial/summary'
 
-  = f.date_field :date
-  = f.time_field :time
-
-  = f.collection_radio_buttons :payment_method_id, PaymentMethod.all, :id, :name
-
-  = f.submit 'Confirmar servicio'
+= append :javascript do
+  = javascript_include_tag 'initial'

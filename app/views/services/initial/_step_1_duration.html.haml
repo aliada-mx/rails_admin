@@ -1,0 +1,4 @@
+= initial_service_form.text_field :bathrooms
+= initial_service_form.text_field :bedrooms 
+= initial_service_form.hidden_field :billable_hours
+= initial_service_form.collection_check_boxes :extra_ids, Extra.all, :id, :name

@@ -1,1 +1,8 @@
-@import 'statics/home';
+@import 'common/base';
+
+// Controllers
+@import 'static_pages';
+@import 'services';
+@import 'recurrences';
+@import 'users';
+

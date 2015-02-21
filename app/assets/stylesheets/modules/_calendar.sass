@@ -1,0 +1,259 @@
+@import 'common/variables'
+@import "compass/css3/border-radius"
+@import "compass/css3/transition"
+
+//colors
+$color_alto_approx: #dddddd
+$white: white
+$color_fiord_approx: #495468
+$color_dove_gray_approx: #686a6e
+
+//fonts
+$font_0: fontawesome-selected
+
+.extend_1 
+  float: left
+  height: 100%
+  width: calc(100%/7)
+  position: relative
+
+//original selectors
+//.content-reveal a, .content-reveal span
+.extend_2 
+  font-size: 22px
+  padding: 10px 30px
+  display: block
+
+
+.fc-content 
+  div 
+    display: none
+
+
+
+.fc-calendar-container 
+  position: relative
+  height: 285px
+  width: auto
+  padding-bottom: 10px
+
+.calendar-wrap 
+  margin: 10px auto
+  position: relative
+  overflow: hidden
+  width: 450px
+  border: 1px solid $dark_gray
+
+.fc-calendar 
+  color: $color_dove_gray_approx
+  width: 100%
+  height: 100%
+  .fc-head 
+    height: 30px
+    line-height: 30px
+    background: transparent
+    color: $green
+    font-weight: bold
+    text-transform: uppercase
+    font-size: 12px
+    background-color: $light_green
+    > div 
+      @extend .extend_1
+      text-align: center
+      &:last-child 
+        border-right: none
+
+
+
+  .fc-body 
+    position: relative
+    width: 100%
+    height: calc(100% - 30px)
+
+  .fc-row 
+    width: 100%
+    .fc-selected-recurrences span
+      +border-radius(20px)
+      border-color: $green
+      border-style: dotted
+      border-width: 2px
+
+    .fc-selected-day 
+      &:hover
+        span.fc-date
+          color: $white !important
+      span.fc-date
+        background: $green
+        color: white
+    > 
+      div 
+        @extend .extend_1
+        overflow: hidden
+        position: relative
+        background: $white
+        cursor: pointer
+        text-align: center
+        &:hover
+          span.fc-date
+            color: $green
+        > 
+          span 
+            &.fc-date 
+              width: 30px
+              height: 30px
+              font-size: 20px
+              display: inline-block
+              font-weight: 400
+              pointer-events: none
+              line-height: 28px
+              top: 7px
+              position: relative
+            &.fc-weekday 
+              padding-left: 5px
+              display: none
+
+
+          div 
+            a 
+              display: none
+              font-size: 22px
+
+            span 
+              display: none
+              font-size: 22px
+
+
+
+        &.fc-today 
+          > span.fc-date 
+            text-decoration: underline
+
+
+        &.fc-out 
+          opacity: 0.6
+
+        &:last-child 
+          border-right: none
+
+        &:empty 
+          background: transparent
+
+        &.fc-content:after 
+          content: "\00B7"
+          text-align: center
+          width: 20px
+          margin-left: -10px
+          position: absolute
+          color: $color_alto_approx
+          font-size: 70px
+          line-height: 20px
+          left: 50%
+          bottom: 3px
+
+        &.fc-content:hover:after 
+          color: $green
+
+      div.fc-today 
+        &.fc-content:after 
+          color: $green
+
+        &.fc-content:hover:after 
+          color: $white
+
+
+
+
+.inner 
+  background: $white
+  &:before 
+    content: ""
+    width: 99%
+    height: 50%
+    position: absolute
+    bottom: -4px
+    left: 0.5%
+    z-index: -1
+
+  &:after 
+    height: 50%
+    position: absolute
+    content: ""
+    width: 98%
+    bottom: -7px
+    left: 1%
+    z-index: -2
+
+
+.header 
+  background: $white
+  padding: 5px 10px 15px 20px
+  position: relative
+  .month
+    text-align: center
+    color: $color_fiord_approx
+    font-weight: 300
+    font-size: 18px
+    margin-top: 10px
+
+  nav 
+    span 
+      position: absolute
+      top: 17px
+      width: 30px
+      height: 30px
+      color: transparent
+      cursor: pointer
+      margin: 0 1px
+      font-size: 20px
+      line-height: 30px
+      -webkit-touch-callout: none
+      -webkit-user-select: none
+      -khtml-user-select: none
+      -moz-user-select: none
+      -ms-user-select: none
+      &:first-child 
+        left: 5px
+
+      &:last-child 
+        right: 5px
+
+      &:before 
+        font-family: $font_0
+        color: $green
+        position: absolute
+        text-align: center
+        width: 100%
+
+      &.prev:before 
+        content: "\276E"
+
+      &.next:before 
+        content: "\276F"
+
+
+    span:hover:before 
+      color: $color_fiord_approx
+
+
+@media screen and(max-width: 400px) 
+  .fc-calendar-container 
+    height: 295px
+
+  .fc-calendar .fc-row > div > span.fc-date 
+    font-size: 15px
+
+.fc-four-rows .fc-row 
+  height: 25%
+
+.fc-five-rows .fc-row 
+  height: 20%
+
+.fc-six-rows .fc-row 
+  height: calc(100%/6)
+
+.ie9 .fc-calendar 
+  .fc-row > div 
+    width: 14.2%
+
+  .fc-head > div 
+    width: 14.2%
