@@ -1,4 +1,80 @@
 @import 'reset'
 @import 'typography'
+@import 'variables'
+@import "mixins"
 
 @import 'modules/calendar'
+
+a, input
+  outline: 0 !important
+
+footer
+  background-color: $darkest-gray
+  color: white
+  padding: 4rem 0
+
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder
+  color: $light_gray
+
+input::-moz-placeholder, textarea::-moz-placeholder
+  color: $light_gray
+
+input:-ms-input-placeholder, textarea:-ms-input-placeholder
+  color: $light_gray
+
+input:-moz-placeholder, textarea:-moz-placeholder
+  color: $light_gray
+
+.action-button
+  border-radius: 3px
+  box-sizing: border-box
+  display: inline-block
+  vertical-align: top
+
+.action-button-pink
+  @extend .action-button
+  +action-button-color($pink)
+
+.action-button-green
+  @extend .action-button
+  +action-button-color($light_green)
+
+.action-button-gray
+  @extend .action-button
+  +action-button-color($medium_gray)
+
+
+.biggest
+  font-size: 7rem
+  font-weight: 600
+  letter-spacing: -3px
+
+.container
+  max-width: 960px
+
+.description
+  font-weight: 600
+  +font-size(1.8)
+
+.logo
+  max-width: 130px
+  width: 100%
+
+.size-fill-up
+  +font-size(1.5)
+  width: 100%
+
+.size-large
+  +font-size(1.2)
+  padding: 10px 16px
+  width: 219px
+
+.size-medium
+  +font-size(1)
+  padding: 6px 12px
+  width: 180px
+
+.size-small
+  +font-size(0.8)
+  padding: 5px 10px
+  width: 90px
