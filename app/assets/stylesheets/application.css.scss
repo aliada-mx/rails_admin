@@ -1,5 +1,9 @@
 @import 'common/base';
 
+// Boostrap
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
 // Controllers
 @import 'static_pages';
 @import 'services';
