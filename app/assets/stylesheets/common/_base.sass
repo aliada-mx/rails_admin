@@ -3,33 +3,65 @@
 @import 'variables'
 @import "mixins"
 
+// Boostrap
+@import 'bootstrap-sprockets'
+@import 'bootstrap'
+
+@import 'common/two_columns'
+@import 'common/one_column'
+
 @import 'modules/calendar'
 
 a, input
   outline: 0 !important
+
+a.small-letters
+  text-decoration: underline
+  color: $green
+  +rem(font-size, 1rem)
+
+h1
+  color: $green
+  font-weight: 600
+
+p.iconized
+  background-position: 0
+  background-repeat: no-repeat
+  background-size: 20px
+  position: relative
+  left: -40px
+  padding-left: 40px
+  &.instructions
+    background-image: image-url('instructions.png')
 
 footer
   background-color: $darkest-gray
   color: white
   padding: 4rem 0
 
-input::-webkit-input-placeholder, textarea::-webkit-input-placeholder
-  color: $light_gray
-
-input::-moz-placeholder, textarea::-moz-placeholder
-  color: $light_gray
-
-input:-ms-input-placeholder, textarea:-ms-input-placeholder
-  color: $light_gray
-
-input:-moz-placeholder, textarea:-moz-placeholder
-  color: $light_gray
+input
+  +input-placeholder()
+    color: $light_gray
 
 .action-button
   border-radius: 3px
   box-sizing: border-box
   display: inline-block
   vertical-align: top
+  &.size-large
+    +rem(font-size, 1.2rem)
+    padding: 10px 16px
+    width: 219px
+
+  &.size-medium
+    +rem(font-size, 1rem)
+    padding: 6px 12px
+    width: 180px
+
+  &.size-small
+    +rem(font-size, 0.8rem)
+    padding: 5px 10px
+    width: 90px
 
 .action-button-pink
   @extend .action-button
@@ -43,38 +75,17 @@ input:-moz-placeholder, textarea:-moz-placeholder
   @extend .action-button
   +action-button-color($medium_gray)
 
-
-.biggest
-  font-size: 7rem
-  font-weight: 600
-  letter-spacing: -3px
-
 .container
   max-width: 960px
 
 .description
   font-weight: 600
-  +font-size(1.8)
+  +rem(font-size, 1.8rem)
 
 .logo
   max-width: 130px
   width: 100%
 
 .size-fill-up
-  +font-size(1.5)
+  +rem(font-size, 1.5rem)
   width: 100%
-
-.size-large
-  +font-size(1.2)
-  padding: 10px 16px
-  width: 219px
-
-.size-medium
-  +font-size(1)
-  padding: 6px 12px
-  width: 180px
-
-.size-small
-  +font-size(0.8)
-  padding: 5px 10px
-  width: 90px

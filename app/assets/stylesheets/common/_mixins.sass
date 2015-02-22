@@ -17,7 +17,38 @@
     color: white
 
 
+@function parseInt($n)
+  @return $n / ($n * 0 + 1)
 
-@mixin font-size($sizeValue: 1.6)
-  font-size: ($sizeValue * 10) + px
-  font-size: $sizeValue + rem
+@mixin rem($property, $values)
+  $px: ()
+  $rem: ()
+  @each $value in $values
+    @if $value == 0 or $value == auto
+      $px: append($px, $value)
+      $rem: append($rem, $value)
+    @else
+      $unit: unit($value)
+      $val: parseInt($value)
+      @if $unit == "px"
+        $px: append($px, $value)
+        $rem: append($rem, $val / 10 + rem)
+      @if $unit == "rem"
+        $px: append($px, $val * 10 + px)
+        $rem: append($rem, $value)
+  @if $px == $rem
+    #{$property}: $px
+  @else
+    #{$property}: $px
+    #{$property}: $rem
+
+@mixin input-placeholder()
+  &::-webkit-input-placeholder
+    @content
+  &:-moz-placeholder
+    @content
+  &::-moz-placeholder
+    @content
+  &:-ms-input-placeholder
+    @content
+

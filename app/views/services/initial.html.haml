@@ -7,10 +7,9 @@
                                                                                :@address => @address,
                                                                                :@postal_code => @postal_code}
 
-  = initial_service_form.submit 'Confirmar servicio'
 
-= replace :sidebar do
-  = render partial: 'services/initial/summary'
+  = replace :sidebar do
+    = render partial: 'services/initial/summary', locals: {initial_service_form: initial_service_form}
 
 = append :javascript do
   = javascript_include_tag 'initial'

@@ -1,0 +1,21 @@
+@import 'bootstrap/mixins/grid'
+@import 'compass/css3/box-shadow'
+@import 'variables'
+
+.container.two-columns
+  header
+    +make-xs-column(36)
+
+  nav
+    +make-xs-column(36)
+
+  main
+    +make-xs-column(36)
+    +make-lg-column(20)
+    +box-shadow($medium-gray 0px 0px 4px)
+
+  aside
+    +make-xs-column(36)
+    +make-lg-column(14)
+    +box-shadow($medium-gray 0px 0px 4px)
+    +make-lg-column-push(1)

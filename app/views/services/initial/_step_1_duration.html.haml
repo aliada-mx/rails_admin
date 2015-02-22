@@ -1,4 +1,35 @@
-= initial_service_form.text_field :bathrooms
-= initial_service_form.text_field :bedrooms 
-= initial_service_form.hidden_field :billable_hours
-= initial_service_form.collection_check_boxes :extra_ids, Extra.all, :id, :name
+%section.step_1_duration.container{data: {bind: 'visible: current_step() == 1'}}
+  = initial_service_form.hidden_field :billable_hours
+
+  .row
+    %h1
+      Cuéntanos más de tu casa
+  .row
+    %h4
+      Dinos cuánto tiempo necesitas a la aliada
+  
+  .row
+    = select_tag 'horas', options_for_select( ['2.5 horas (55 m2)', '1'] )
+
+  .row
+    %a.small-letters
+      No sabes los metros cuadrados
+
+  .row
+    .counter
+      %span.less-sign
+      = initial_service_form.text_field :bathrooms, placeholder: '1 Recamara'
+      %span.plus-sign
+    .counter
+      %span.less-sign
+      = initial_service_form.text_field :bedrooms, placeholder: '1 Baño'
+      %span.plus-sign
+
+  .row
+    %h4
+      Agrega tareas extras (extiende el tiempo de la visita)
+
+  .row
+    %fieldset.checkboxes.large
+      = initial_service_form.collection_check_boxes :extra_ids, Extra.all, :id, :name
+

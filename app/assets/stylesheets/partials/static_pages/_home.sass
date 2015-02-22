@@ -15,8 +15,8 @@ body
 
 
   .header-container
-    margin: 1.5rem 0
-    padding: 1.5rem 0
+    +rem(margin, 1.5rem 0)
+    +rem(padding, 1.5rem 0)
     vertical-align: middle
     width: 100%
 
@@ -29,14 +29,14 @@ body
         display: inline-block
         font-weight: 600
         list-style: none
-        margin: 0.5rem 0 0
+        +rem(margin, 0.5rem 0 0)
         padding: 0
         vertical-align: middle
-        +font-size(1.5)
+        +rem(font-size, 1.5rem)
 
         li
           display: inline-block
-          margin-right: 1.5rem
+          +rem(margin-right, 1.5rem)
           vertical-align: inherit
 
         li:last-child
@@ -48,21 +48,24 @@ body
 
 
   .search-container
-    margin: 10rem 0
-    padding: 1.5rem 0
+    +rem(margin, 10rem 0)
+    +rem(padding, 1.5rem 0)
     vertical-align: middle
     width: 100%
 
     .search-slogan-container
-      margin: 0 0 10rem
+      +rem(margin, 0 0 10rem)
       text-align: center
 
       .slogan
         display: inline-block
 
-        margin: 0 auto 1rem
+        +rem(margin, 0 auto 1rem)
         padding: 0
         position: relative
+        +rem(font-size, 7rem)
+        font-weight: 600
+        letter-spacing: -3px
 
         .shine
           max-width: 15px
@@ -73,10 +76,10 @@ body
 
       .motto
         font-style: italic
-        +font-size(2.5)
+        +rem(font-size, 2.5rem)
 
     .search-form-container
-      margin: 0 0 4rem
+      +rem(margin, 0 0 4rem)
       text-align: center
 
       form
@@ -84,14 +87,14 @@ body
 
         fieldset
           padding: 0
-          +font-size(0)
+          +rem(font-size, 0)
 
           legend
             border: none
             color: white
-            margin: 0 0 1rem
+            +rem(margin, 0 0 1rem)
             text-align: left
-            +font-size(1.8)
+            +rem(font-size, 1.8rem)
 
           ol
             margin: 0
@@ -109,17 +112,17 @@ body
                 display: inline-block
                 height: 60px
                 margin: 0
-                padding: 0 22% 0 2rem
+                +rem(padding, 2rem)
                 vertical-align: top
                 width: 100%
-                +font-size(1.8)
+                +rem(font-size, 1.8rem)
 
               .action-button
                 height: 60px
                 position: absolute
                 right: 0
                 top: 0
-                +font-size(2)
+                +rem(font-size, 2rem)
                 +action-button-color($pink)
 
 
@@ -127,7 +130,7 @@ body
   background-color: $lightest-gray
 
   .media-section-container
-    margin: 3rem 0
+    +rem(margin, 3rem 0)
     text-align: center
 
     .media-logo
@@ -140,7 +143,7 @@ body
         max-height: 40px
 
 .why-section-wrapper
-  padding-bottom: 6rem
+  +rem(padding-bottom, 6rem)
 
   .why-section-container
     text-align: center
@@ -149,24 +152,24 @@ body
       color: $medium_gray
       font-weight: 600
       letter-spacing: -2px
-      margin: 4.5rem 0
-      +font-size(2.8)
+      +rem(margin, 4.5rem 0)
+      +rem(font-size, 2.8rem)
 
     .why-description
       color: $medium_gray
-      margin: 2rem auto 4rem
+      +rem(margin, 2rem auto 4rem)
       max-width: 250px
       @extend .description
 
     img
       display: block
-      margin: 2rem auto
+      +rem(margin, 2rem auto)
       max-width: 90px
       width: 100%
 
 
 .service-section-wrapper
-  padding-bottom: 6rem
+  +rem(padding-bottom, 6rem)
 
   .service-section-container
     text-align: center
@@ -175,23 +178,23 @@ body
       color: $medium_gray
       font-weight: 600
       letter-spacing: -2px
-      margin: 4.5rem 0 1rem
-      +font-size(3.5)
+      +rem(margin, 4.5rem 0 1rem)
+      +rem(font-size, 3.5rem)
 
     .service-subtitle
       color: $medium_gray
       margin: 0 auto 4rem
-      +font-size(1.5)
+      +rem(font-size, 1.5rem)
       @extend .description
 
     .service-description
       color: $green
-      margin: 2rem auto 4rem
+      +rem(margin, 2rem auto 4rem)
       max-width: 150px
       @extend .description
 
     img
       display: block
-      margin: 2rem auto
+      +rem(margin, 2rem auto)
       max-width: 60px
       width: 100%

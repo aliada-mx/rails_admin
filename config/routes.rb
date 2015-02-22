@@ -30,7 +30,7 @@ Rails.application.routes.draw do
     get 'historial', to: 'users#previous_services', as: :previous_services
 
     get 'servicio/nuevo', to: 'services#new', as: :new_service
-    get 'servicio/:service_id', to: 'services#show', as: :show_service, service_id: /\d+/
+    get 'servicio/:service_id', to: 'services#edit', as: :show_service, service_id: /\d+/
 
     post 'conekta_card/create', to: 'conekta_cards#create', as: :create_conekta_card
   end
