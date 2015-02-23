@@ -64,11 +64,6 @@ class ScheduleInterval
   end
 
   def self.build_from_range(starting_datetime, ending_datetime, from_existing: false, conditions: {})
-    Rails.logger.debug "ScheduleInterval::build_from_range"
-    Rails.logger.debug "Passed starting_datetime: #{starting_datetime||'nil'}"
-    Rails.logger.debug "Passed ending_datetime: #{ending_datetime||'nil'}"
-    Rails.logger.debug  "Passed conditions: #{conditions||'nil'}"
-
     schedules = []
     (starting_datetime.to_i .. ending_datetime.to_i).step(1.hour) do |date|
       # If we reached the end...
