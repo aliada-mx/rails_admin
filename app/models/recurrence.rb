@@ -14,6 +14,8 @@ class Recurrence < ActiveRecord::Base
   belongs_to :aliada
   belongs_to :zone
 
+  has_many :services
+
   default_scope { where(owner: 'user') }
 
   def owner_enum
@@ -35,27 +37,6 @@ class Recurrence < ActiveRecord::Base
     else
       next_weekday(weekday).change(hour: hour)
     end
-  end
-
-  # Turn the recurrence into an array of schedule intervals
-  # optionally creating them on db if they dont exist
-  def to_schedule_intervals(schedule_interval_seconds_long, conditions: {})
-    beginning_of_schedule_interval = next_datetime
-    end_of_schedule_interval = beginning_of_schedule_interval + schedule_interval_seconds_long
-
-    ending_datetime = get_ending_datetime
-
-    schedule_intervals = []
-    while end_of_schedule_interval < ending_datetime do
-      schedule_interval = ScheduleInterval.build_from_range(beginning_of_schedule_interval, end_of_schedule_interval, conditions: conditions)
-
-      schedule_intervals.push(schedule_interval)
-
-      beginning_of_schedule_interval += periodicity.days
-      end_of_schedule_interval += periodicity.days
-    end
-
-    schedule_intervals
   end
 
   rails_admin do

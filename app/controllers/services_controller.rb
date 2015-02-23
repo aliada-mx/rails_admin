@@ -59,6 +59,8 @@ class ServicesController < ApplicationController
                                       :date,
                                       :time,
                                       :payment_method_id,
+                                      :conekta_temporary_token,
+                                      :aliada_id,
                                       user_attributes: [
                                         :first_name,
                                         :last_name,

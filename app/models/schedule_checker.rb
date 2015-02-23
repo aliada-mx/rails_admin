@@ -3,11 +3,7 @@ class ScheduleChecker
   def initialize(service)
     @service = service
 
-    if @service.recurrent?
-      @requested_schedule_interval = service.to_schedule_intervals.first
-    elsif @service.one_timer?
-      @requested_schedule_interval = service.to_schedule_interval
-    end
+    @requested_schedule_interval = service.to_schedule_interval
     # Pull the schedules from db
     @available_schedules = Schedule.available_for_booking(service.zone)
 
@@ -23,7 +19,7 @@ class ScheduleChecker
     # until the desired size is reached
     @continuous_schedules = []
      
-    # We accumulate availability per day until the
+    # We accumulate availability per day per aliada until the
     # service availability needs are met
     @availabilities = []
 
@@ -72,8 +68,8 @@ class ScheduleChecker
         next
       end
       
-      # If we build enough continues schedules SUCCESS!
-      # we found availability, save it but lets check first
+      # If we build enough continues schedules
+      # we found availability for a day
       if enough_continuous_schedules?
 
         if @service.recurrent? && broken_continous_intervals?
@@ -135,12 +131,12 @@ class ScheduleChecker
       # Inside hour range
       @current_schedule.datetime.hour >= @requested_starting_hour &&
       @current_schedule.datetime.hour <= @requested_ending_hour &&
-      # Same week day
       @current_schedule.datetime.wday == @requested_wday
     end
 
     def same_aliada?
-      @last_continuous.aliada_id == @current_aliada_id
+      value = @last_continuous.aliada_id == @current_aliada_id
+      value
     end
 
     def enough_continuous_schedules?
@@ -192,5 +188,4 @@ class ScheduleChecker
     def banned_aliada?
       @banned_aliadas_ids.include? @current_aliada_id
     end
-
 end
