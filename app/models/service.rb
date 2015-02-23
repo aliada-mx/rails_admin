@@ -138,8 +138,8 @@ class Service < ActiveRecord::Base
     datetime - hours_before_service.hours
   end
 
-  def book_aliada! 
-    aliadas_availability = ScheduleChecker.find_aliadas_availability(self)
+  def book_aliada!(aliada_id: nil)
+    aliadas_availability = ScheduleChecker.find_aliadas_availability(self, aliada_id: aliada_id)
 
     aliada_availability = AliadaChooser.find_aliada_availability(aliadas_availability, self)
 

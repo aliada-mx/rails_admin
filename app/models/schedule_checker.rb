@@ -1,7 +1,8 @@
 class ScheduleChecker
 
-  def initialize(service)
+  def initialize(service, aliada_id: nil)
     @service = service
+    @chosen_aliada_id = aliada_id
 
     @requested_schedule_interval = service.to_schedule_interval
     # Pull the schedules from db
@@ -30,8 +31,8 @@ class ScheduleChecker
     @banned_aliadas_ids = @service.user.banned_aliadas.map(&:id)
   end
 
-  def self.find_aliadas_availability(service)
-    ScheduleChecker.new(service).match_schedules
+  def self.find_aliadas_availability(service, aliada_id: nil)
+    ScheduleChecker.new(service, aliada_id: aliada_id).match_schedules
   end
      
   # It will try to build as many aliada_availabilities that matches the requested hours
@@ -50,6 +51,10 @@ class ScheduleChecker
     @available_schedules.each do |schedule|
       @current_schedule = schedule
       @current_aliada_id = @current_schedule.aliada_id
+
+      if @chosen_aliada_id.present?
+        skip_aliada! unless @current_aliada_id == @chosen_aliada_id
+      end
 
       if skip_aliada?
         track_aliadas_changing
@@ -135,8 +140,7 @@ class ScheduleChecker
     end
 
     def same_aliada?
-      value = @last_continuous.aliada_id == @current_aliada_id
-      value
+      @last_continuous.aliada_id == @current_aliada_id
     end
 
     def enough_continuous_schedules?

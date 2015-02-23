@@ -211,5 +211,35 @@ describe 'ScheduleChecker' do
         expect(aliadas_availability).to be_empty
       end
     end
+
+    context 'with a pre chosen aliada' do
+      before do
+        Timecop.freeze(starting_datetime)
+
+        create_one_timer!(starting_datetime, hours: 7, conditions: {aliada: aliada, zone: zone} )
+        create_one_timer!(starting_datetime, hours: 7, conditions: {aliada: aliada_2, zone: zone} )
+
+        @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours)
+
+        @service = double(to_schedule_intervals: [@schedule_interval], 
+                          to_schedule_interval: @schedule_interval,
+                          user: @user,
+                          zone: zone,
+                          one_timer?: true,
+                          recurrent?: false)
+        @checker = ScheduleChecker.new(@service, aliada_id: aliada.id)
+      end
+
+      after do
+        Timecop.return
+      end
+      it 'returns only the aliada´s availability' do
+        aliadas_availability = @checker.match_schedules
+
+        expect(aliadas_availability.size).to be 1
+        expect(aliadas_availability[aliada.id].first.beginning_of_interval).to eql starting_datetime
+        expect(aliadas_availability[aliada.id].size).to be 1
+      end
+    end
   end
 end
