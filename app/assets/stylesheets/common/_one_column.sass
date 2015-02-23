@@ -9,6 +9,13 @@
 
   main
     +make-xs-column(12)
+    padding: 42px
 
   aside
     +make-xs-column(12)
+    padding: 42px
+
+@media screen and(max-width: 400px) 
+  .container.two-columns
+    main, aside
+      padding: 10px

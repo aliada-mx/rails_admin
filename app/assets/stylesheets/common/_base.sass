@@ -11,14 +11,30 @@
 @import 'common/one_column'
 
 @import 'modules/calendar'
+@import 'modules/header'
+@import 'modules/summary'
+
+html
+  overflow-y: scroll
+
+body
+  background-color: $lightest_gray
 
 a, input
   outline: 0 !important
 
+a
+  cursor: pointer
+  &.hover
+    text-decoration: underline
+
 a.small-letters
   text-decoration: underline
   color: $green
-  +rem(font-size, 1rem)
+  +rem(font-size, $small-font)
+
+p.small-letters
+  +rem(font-size, $small-font)
 
 h1
   color: $green
@@ -28,16 +44,24 @@ p.iconized
   background-position: 0
   background-repeat: no-repeat
   background-size: 20px
-  position: relative
-  left: -40px
   padding-left: 40px
   &.instructions
     background-image: image-url('instructions.png')
+  &.calendar
+    background-image: image-url('calendar.png')
+  &.clock
+    background-image: image-url('clock.png')
+  &.phone
+    background-image: image-url('phone.png')
+    padding-left: 0px
+
+p.medium
+  +rem(font-size, $medium-font)
 
 footer
   background-color: $darkest-gray
   color: white
-  padding: 4rem 0
+  +rem(padding, 4rem 0)
 
 input
   +input-placeholder()
@@ -75,7 +99,7 @@ input
   @extend .action-button
   +action-button-color($medium_gray)
 
-.container
+.wrapper
   max-width: 960px
 
 .description

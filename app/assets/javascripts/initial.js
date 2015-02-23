@@ -8,7 +8,7 @@
 $(document).ready(function() {
   // KNOCKOUT initialization
   aliada.ko = {
-    current_step: ko.observable(5),
+    current_step: ko.observable(4),
   }
 
   aliada.services.initial.step_1_duration(aliada.ko);

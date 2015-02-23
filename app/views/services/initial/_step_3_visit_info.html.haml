@@ -1,5 +1,17 @@
 %section.step_3_visit_info{data: {bind: 'visible: current_step() == 3'}}
+  %h1
+    ¿Cuándo te visitamos?
+  %p
+    Elige la frecuencia de la visita
   = initial_service_form.collection_radio_buttons :service_type_id, ServiceType.all, :id, :name
+
+  %p.iconized.calendar
+    Elige el día de la visita
   = render partial: 'common/calendar'
+  %p.small-letters
+    Si quieres reservar para más de un día al final podrás hacerlo.
+
+  %p.iconized.clock
+    Selecciona la hora que más te convenga
   = initial_service_form.date_field :date
   = initial_service_form.time_field :time

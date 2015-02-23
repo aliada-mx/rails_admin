@@ -4,18 +4,23 @@
 
 .container.two-columns
   header
-    +make-xs-column(36)
+    +make-xs-column(12)
 
   nav
-    +make-xs-column(36)
+    +make-xs-column(12)
 
   main
-    +make-xs-column(36)
-    +make-lg-column(20)
+    +make-xs-column(12)
+    +make-lg-column(6.8)
     +box-shadow($medium-gray 0px 0px 4px)
+    padding: 42px
 
   aside
-    +make-xs-column(36)
-    +make-lg-column(14)
-    +box-shadow($medium-gray 0px 0px 4px)
-    +make-lg-column-push(1)
+    +make-xs-column(12)
+    +make-lg-column(5.1)
+    +make-lg-column-push(0.1)
+
+@media screen and(max-width: 400px) 
+  .container.two-columns
+    main, aside
+      padding: 10px

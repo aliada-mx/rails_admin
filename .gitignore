@@ -14,7 +14,9 @@
 # Ignore all logfiles and tempfiles.
 /log/*
 !/log/.keep
-/tmp
+tmp/
+**/tmp/
+/tmp/cache/**
 /scripts/migrations
 coverage/
 profiles/
