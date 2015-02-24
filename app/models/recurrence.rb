@@ -1,20 +1,31 @@
 class Recurrence < ActiveRecord::Base
-  include AliadaSupport::GeneralHelpers::DatetimeSupport
+  OWNERS = [
+    'aliada',
+    'user'
+  ]
+  include AliadaSupport::DatetimeSupport
 
   validates_presence_of [:weekday, :hour]
-  validates_presence_of :user
   validates :weekday, inclusion: {in: Time.weekdays.map{ |days| days[0] } }
   validates :hour, inclusion: {in: [*0..23] } 
+  validates_numericality_of :periodicity, greater_than: 1
 
   belongs_to :user
   belongs_to :aliada
+  belongs_to :zone
+
+  default_scope { where(owner: 'user') }
+
+  def owner_enum
+    OWNERS
+  end
 
   def wday
     Time.weekdays.select{ |day| day[0] == weekday }.first.second
   end
 
   def get_ending_datetime
-    Time.zone.now + Setting.future_horizon_months.months
+    Time.zone.now + Setting.time_horizon_days.day
   end
 
   # Returns the datetime for the next service
@@ -45,5 +56,15 @@ class Recurrence < ActiveRecord::Base
     end
 
     schedule_intervals
+  end
+
+  rails_admin do
+    label_plural 'recurrencias'
+    navigation_label 'Operación'
+    navigation_icon 'icon-repeat'
+
+    configure :owner do
+      visible false
+    end
   end
 end

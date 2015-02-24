@@ -7,7 +7,7 @@ class ServicesController < ApplicationController
 
   def initial
     if user_signed_in?
-      redirect_to new_service_path
+      redirect_to new_service_users_path(current_user)
     end
 
     @postal_code = PostalCode.find(params[:postal_code_id])
@@ -24,11 +24,9 @@ class ServicesController < ApplicationController
   end
 
   def create
-    @service = Service.new(service_params)
-    @service.save!
-    @service.book_aliada!
+    service = Service.create_initial(service_params)
 
-    redirect_to show_service_path(@service.id)
+    redirect_to show_service_users_path(service.user.id, service.id)
   end
 
   private
@@ -37,12 +35,13 @@ class ServicesController < ApplicationController
                                       :bathrooms,
                                       :bedrooms,
                                       {extra_ids: []},
-                                      :billable_hours,
+                                      :billed_hours,
                                       :special_instructions,
                                       :service_type_id,
                                       :date,
                                       :time,
                                       :payment_method_id,
+                                      :conekta_temporary_token,
                                       user_attributes: [
                                         :first_name,
                                         :last_name,

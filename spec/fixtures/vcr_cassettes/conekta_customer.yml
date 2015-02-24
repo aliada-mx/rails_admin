@@ -1,0 +1,59 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/customers?cards%5B%5D=tok_test_visa_4242&email=user-39@aliada.mx&name=Test%20User&phone=123456
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - Conekta/v1 RubyBindings/0.5.1
+      X-Conekta-Client-User-Agent:
+      - '{"bindings_version":"0.5.1","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
+        Kernel Version 13.4.0: Sun Aug 17 19:50:11 PDT 2014; root:xnu-2422.115.4~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      Accept:
+      - application/vnd.conekta-v1.0.0+json
+      Accept-Language:
+      - es
+      Content-Length:
+      - '0'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Conekta-Media-Type:
+      - conekta-v1.0.0; format=json
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 13 Feb 2015 01:03:02 GMT
+      Etag:
+      - '"f24d534e4335feb11e8f25973962c406"'
+      Server:
+      - nginx/1.1.19
+      Status:
+      - 200 OK
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Request-Id:
+      - 4ea56192707ba3cedafeb0746d8ac27e
+      X-Runtime:
+      - '0.128234'
+      Content-Length:
+      - '434'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: '{"id":"cus_agMccFCe8GLyVGPuP","email":"user-39@aliada.mx","name":"Test
+        User","phone":"123456","livemode":false,"default_card_id":"card_t6b99vfmkA9Jmzoo","object":"customer","created_at":1423789382,"cards":[{"id":"card_t6b99vfmkA9Jmzoo","created_at":1423789382,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_agMccFCe8GLyVGPuP"}],"subscription":null}'
+    http_version: 
+  recorded_at: Fri, 13 Feb 2015 01:02:46 GMT
+recorded_with: VCR 2.9.3

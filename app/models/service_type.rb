@@ -13,4 +13,11 @@ class ServiceType < ActiveRecord::Base
   def one_timer?
     name == 'one-time'
   end
+
+  rails_admin do
+    label_plural 'tipos de servicio'
+    label_plural 'tipos de servicios'
+    parent Service
+    navigation_icon 'icon-barcode'
+  end
 end

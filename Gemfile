@@ -4,13 +4,22 @@ source 'https://rubygems.org'
 # BASE
 #
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.0'
+gem 'rails', '4.1.9'
 # Use sqlite3 as the database for Active Record
 gem 'pg'
+gem 'mysql2'
 # Use SCSS for stylesheets
 gem 'state_machine'
 # Settings management
 gem "settingslogic"
+# Server
+gem 'unicorn'
+# Background jobs
+gem 'resque'
+gem 'resque-scheduler'
+gem 'resque-web', require: 'resque_web'
+# Support for add_foreing_key (we downgraded from 4.2 to 4.1)
+gem 'foreigner'
 
 # ASSETS
 #
@@ -38,15 +47,30 @@ gem "haml-rails"
 # Better template nesting
 gem 'nestive'
 
-# AUTHENTICATION
+# Authentication
 gem 'devise'
 gem 'simple_token_authentication', '~> 1.0'
 
 # Time pargin
 gem 'chronic'
 
-# Logging
-gem "lograge"
+# PAYMENT SYSTEMS
+gem 'conekta'
+
+
+group :production do
+  # Logging
+  gem "lograge"
+end
+
+# Inverte <=> operator for sortings
+gem 'invert'
+
+# ADMIN
+gem 'rails_admin', github: 'sferik/rails_admin'
+# gem 'rails_admin'
+# permissions
+gem 'cancancan'
 
 
 
@@ -54,6 +78,13 @@ group :development, :test do
   gem 'guard-rspec', require: false
   # Call 'pry' anywhere in the code to stop execution and get a debugger console
   gem 'pry-rails'
+  # Automatically call pry on exception
+  gem 'pry-rescue'
+  # Browse the stack on pry
+  gem 'pry-stack_explorer'
+
+  # Improve rails error displaying
+  gem 'better_errors'
 
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'
@@ -70,6 +101,7 @@ group :development, :test do
 
   # Convert erb to haml
   gem 'erb2haml'
+
 end
 
 group :test do
@@ -96,4 +128,10 @@ group :test do
 
   # Manipulate time in your tests
   gem 'timecop'
+
+  # Mocking requests
+  gem 'webmock'
+
+  # Record requests to be replayed on tests
+  gem 'vcr'
 end

@@ -18,29 +18,13 @@ module AliadaWebApp
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
-    # config.i18n.default_locale = :de
+    config.i18n.default_locale = :es
     config.autoload_paths << Rails.root.join('lib')
-
-    # Do not swallow errors in after_commit/after_rollback callbacks.
-    config.active_record.raise_in_transactional_callbacks = true
 
     config.generators do |g|
       g.test_framework :rspec
     end
-
-    # Logging
-    log_level = String(ENV['LOG_LEVEL'] || "info").upcase
-    config.logger = Logger.new(STDOUT)
-    config.logger.level = Logger.const_get(log_level)
-    config.log_level = log_level
-
-    config.lograge.enabled = true
-    config.lograge.custom_options = lambda do |event|
-      params = event.payload[:params].reject do |k|
-        ['controller', 'action'].include? k
-      end
-
-      { "params" => params }
-    end
+     
+    Conekta.api_key = Rails.application.secrets.conekta_secret_key
   end
 end
