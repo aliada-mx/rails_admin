@@ -140,7 +140,29 @@ body
         display: inline-block
         max-height: 40px
 
+
+.payment-section-wrapper
+  background-color: white
+  +rem(padding, 5rem 0)
+
+  .payment-description
+    text-align: right
+    +rem(font-size, 1.5rem)
+    @extend .description
+
+    p
+      margin: 0
+
+  .payment-logos
+    img
+      display: inline-block
+      max-width: 320px
+      vertical-align: middle
+      width: 100%
+
+
 .why-section-wrapper
+  background-color: white
   +rem(padding-bottom, 6rem)
 
   .why-section-container
@@ -167,6 +189,7 @@ body
 
 
 .service-section-wrapper
+  background-color: white
   +rem(padding-bottom, 6rem)
 
   .service-section-container
@@ -196,3 +219,29 @@ body
       +rem(margin, 2rem auto)
       max-width: 60px
       width: 100%
+
+.warranty-section-wrapper
+  background-color: $lightest-gray
+  text-align: center
+  +rem(padding, 5rem 0)
+
+  .warranty-section-container
+
+    .warranty-logo
+      display: inline-block
+      max-width: 140px
+      vertical-align: middle
+      width: 100%
+      +rem(margin-right, 4rem)
+
+    .warranty-description
+      color: $green
+      display: inline-block
+      font-weight: 400
+      letter-spacing: -2px
+      max-width: 420px
+      text-align: left
+      vertical-align: middle
+      width: 100%
+      +rem(font-size, 3.5rem)
+

@@ -13,12 +13,14 @@
 @import 'modules/calendar'
 @import 'modules/header'
 @import 'modules/summary'
+<<<<<<< HEAD
 @import 'modules/hours_selector'
 @import 'modules/counter'
 
 // Modal
 @import 'vex'
 @import 'vex-theme-plain'
+@import 'modules/service-card'
 
 html
   overflow-y: scroll
@@ -68,6 +70,25 @@ footer
   background-color: $darkest-gray
   color: white
   +rem(padding, 4rem 0)
+  +rem(font-size, 1.4rem)
+
+  .bottom-nav
+    ul
+      margin: 0
+      padding: 0
+
+      li
+        a
+          color: white
+
+  .call-us
+
+    img
+      display: inline-block
+      +rem(margin-right, 1rem)
+
+    p
+      display: inline-block
 
 input
   +input-placeholder

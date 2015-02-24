@@ -1,4 +1,22 @@
-= render partial: 'common/hours_selector'
+.service-card-wrapper.col-lg-6
+  .service-card.recurrent
+    .head
+      .badge
+        Recurrente
+        =image_tag("recurrence.png", {:title => 'Servicio recurrente'})
+      .title
+        Todos los jueves
+      .small-letters
+        a partir del 23 de enero
 
-= append :javascript do
-  = javascript_include_tag 'next_services'
+    .body
+      = render partial: 'common/summary'
+
+    .foot
+      .actions
+        %a.action-button
+          Modificar servicio
+
+      .numbers
+        %span.hours 4 horas
+        %span.cash $65
