@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150219000317) do
+ActiveRecord::Schema.define(version: 20150224214406) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -112,10 +112,18 @@ ActiveRecord::Schema.define(version: 20150219000317) do
   end
 
   create_table "extras", force: true do |t|
-    t.string   "name",       limit: nil
-    t.decimal  "hours",                  precision: 10, scale: 3
-    t.datetime "created_at",                                      null: false
-    t.datetime "updated_at",                                      null: false
+    t.string   "name",                    limit: nil
+    t.decimal  "hours",                               precision: 10, scale: 3
+    t.datetime "created_at",                                                   null: false
+    t.datetime "updated_at",                                                   null: false
+    t.string   "icon_file_name"
+    t.string   "icon_content_type"
+    t.integer  "icon_file_size"
+    t.datetime "icon_updated_at"
+    t.string   "attachment_file_name"
+    t.string   "attachment_content_type"
+    t.integer  "attachment_file_size"
+    t.datetime "attachment_updated_at"
   end
 
   create_table "payment_methods", force: true do |t|

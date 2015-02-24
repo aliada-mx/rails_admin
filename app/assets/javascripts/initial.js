@@ -8,14 +8,18 @@
 $(document).ready(function() {
   // KNOCKOUT initialization
   aliada.ko = {
-    current_step: ko.observable(4),
+    current_step: ko.observable(1),
+    bedrooms: ko.observable(1),
+    bathrooms: ko.observable(1),
+    additional: ko.observable(1),
+    forced_hours: ko.observable(null),
   }
 
-  aliada.services.initial.step_1_duration(aliada.ko);
-  aliada.services.initial.step_2_personal_info(aliada.ko);
-  aliada.services.initial.step_3_visit_info(aliada.ko);
-  aliada.services.initial.step_4_payment(aliada.ko);
-  aliada.services.initial.step_5_success(aliada.ko);
+  aliada.services.initial.step_1_duration(aliada, ko);
+  aliada.services.initial.step_2_personal_info(aliada, ko);
+  aliada.services.initial.step_3_visit_info(aliada, ko);
+  aliada.services.initial.step_4_payment(aliada, ko);
+  aliada.services.initial.step_5_success(aliada, ko);
 
   // Activates knockout.js
   ko.applyBindings(aliada.ko);

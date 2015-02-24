@@ -1,8 +1,13 @@
 //= require jquery
+//= require jquery-ui.min.js
 //= require modernizr.custom.63321
 //= require underscore
 //= require knockout
+//= require vex
+//= require vex.dialog
 //= require_self
+
+vex.defaultOptions.className = 'vex-theme-plain';
 
 log = function(message,object){
     if(window.console){
@@ -18,4 +23,3 @@ log = function(message,object){
         }
     }
 };
-

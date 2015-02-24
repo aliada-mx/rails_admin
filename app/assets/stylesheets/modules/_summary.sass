@@ -1,9 +1,17 @@
 @import 'common/variables'
 
 .summary
-  padding: 42px
+  padding: 42px 20px 20px
   width: 100%
   +box-shadow($medium-gray 0px 0px 4px)
+  background-color: white
+  .foot
+    text-align: right
+    .hours
+      +rem(font-size, $medium-font)
+      +rem(vertical-align, 5px)
+    .cash
+      +rem(font-size, $extra-large-font)
   .promotional-code
     position: relative
     float: right
@@ -14,6 +22,4 @@
       top: 1px
       color: $green
     input[type=text]
-      border: none
-      border-bottom: 1px solid $darkest_gray
       width: 100%

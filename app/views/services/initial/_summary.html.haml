@@ -2,7 +2,10 @@
   %h1
     Resúmen
 
-  .promotional-code
+  .foot
+    %span.hours{data: {bind: 'text: hours()+" horas:"'}}
+    %span.cash{data: {bind: 'text: "$"+price()'}}
+  .promotional-code{data: {bind: 'visible: current_step() == 5'}}
     %a
       APLICAR
     = text_field_tag 'promo-code', nil, placeholder: 'código promocional'

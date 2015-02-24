@@ -13,6 +13,12 @@
 @import 'modules/calendar'
 @import 'modules/header'
 @import 'modules/summary'
+@import 'modules/hours_selector'
+@import 'modules/counter'
+
+// Modal
+@import 'vex'
+@import 'vex-theme-plain'
 
 html
   overflow-y: scroll
@@ -64,8 +70,14 @@ footer
   +rem(padding, 4rem 0)
 
 input
-  +input-placeholder()
+  +input-placeholder
     color: $light_gray
+  &[type=text]
+    border: none
+    border-bottom: 1px solid $dark_gray
+
+.concealed
+  display: none
 
 .action-button
   border-radius: 3px
