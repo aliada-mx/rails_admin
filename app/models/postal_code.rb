@@ -6,5 +6,6 @@ class PostalCode < ActiveRecord::Base
     label_plural 'códigos postales'
     navigation_label 'Contenidos'
     navigation_icon 'icon-envelope'
+    weight -3
   end
 end

@@ -18,9 +18,10 @@ feature 'ServiceController' do
     
 
   before do
-    Timecop.freeze(starting_datetime)
+    Timecop.freeze(starting_datetime - 1.hour)
 
-    create_recurrent!(starting_datetime, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada})
+    # The - 1 hour is needed because this hour is the one the aliada needs to get there from a previous service
+    create_recurrent!(starting_datetime - 1.hour, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada})
 
     expect(Address.all.count).to be 0
     expect(Service.all.count).to be 0
@@ -64,7 +65,9 @@ feature 'ServiceController' do
         address = service.address
         user = service.user
         extras = service.extras
+        service_aliada = service.aliada
 
+        expect(service_aliada).to eql aliada
         expect(extras).to include extra_1
 
         expect(address.street).to eql 'Calle de las aliadas'
@@ -85,6 +88,7 @@ feature 'ServiceController' do
         expect(user.last_name).to eql 'Siliceo'
         expect(user.email).to eql 'guillermo.siliceo@gmail.com'
         expect(user.phone).to eql '5585519954'
+
       end
 
       it 'creates a new one time service' do
@@ -105,6 +109,15 @@ feature 'ServiceController' do
         click_button 'Confirmar servicio'
 
         service = Service.first
+        user = service.user
+        recurrence = service.recurrence
+        recurrence_aliada = recurrence.aliada
+
+        expect(recurrence_aliada).to eql aliada
+        expect(recurrence.user).to eql user
+        expect(recurrence.owner).to eql 'user'
+        expect(recurrence.hour).to eql service.beginning_datetime.hour
+        expect(recurrence.weekday).to eql service.beginning_datetime.weekday
 
         expect(service.service_type_id).to eql recurrent_service.id
         expect(Schedule.available.count).to be 0

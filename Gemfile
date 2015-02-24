@@ -71,8 +71,7 @@ end
 gem 'invert'
 
 # ADMIN
-gem 'rails_admin', github: 'sferik/rails_admin'
-#
+gem 'rails_admin', github: 'grillermo/rails_admin'
 # permissions
 gem 'cancancan'
 

@@ -67,6 +67,7 @@ class Aliada < User
     label_plural 'aliadas'
     navigation_label 'Personas'
     navigation_icon 'icon-heart'
+    weight -8
     # Rails admin believes that the parent is the user
     # so it adds the aliada navigation link below the user
     # by setting to Object we override that
