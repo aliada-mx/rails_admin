@@ -23,5 +23,9 @@ Rails.application.routes.draw do
     get 'historial', to: 'users#previous_services', as: :previous_services
   end
 
+  devise_scope :aliadas do
+    get 'aliadas/servicios/:token', to: 'aliadas#services', as: :servicios_aliadas
+  end
+
   resources :schedules
 end
