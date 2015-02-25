@@ -161,7 +161,7 @@ class Service < ActiveRecord::Base
     ScheduleInterval.build_from_range(beginning_datetime, ending_datetime)
   end
 
-  def self.create_initial(service_params)
+  def self.create_initial!(service_params)
     service = Service.new(service_params)
     service.combine_date_time
     service.save!

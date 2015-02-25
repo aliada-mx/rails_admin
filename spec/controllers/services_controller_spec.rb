@@ -97,6 +97,8 @@ feature 'ServiceController' do
         click_button 'Confirmar servicio'
 
         service = Service.first
+        save_and_open_page
+        expect(service).to be_present
 
         expect(service.service_type_id).to eql one_time_service.id
         expect(Schedule.available.count).to be 20
@@ -109,6 +111,8 @@ feature 'ServiceController' do
         click_button 'Confirmar servicio'
 
         service = Service.first
+        expect(service).to be_present
+
         user = service.user
         recurrence = service.recurrence
         recurrence_aliada = recurrence.aliada

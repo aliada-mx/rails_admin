@@ -43,7 +43,7 @@ class ServicesController < ApplicationController
   end
 
   def create
-    service = Service.create_initial(service_params)
+    service = Service.create_initial!(service_params)
 
     redirect_to show_service_users_path(service.user.id, service.id)
   end
