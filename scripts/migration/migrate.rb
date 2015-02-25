@@ -103,35 +103,40 @@ connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
   else
     type_service = ServiceType.find_or_create_by(name: 'one-time')
   end
- 
-  service = Service.find_or_create_by(status: status_service, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], bedrooms: row["recamaras"], bathrooms: row["banos"], service_type_id: type_service.id, datetime: datetime, special_instructions: row["indicacion_instrucciones_esp"], bring_cleaning_products: (row["incluir_productos_limpieza"] == 1), entrance_instructions: row["indicacion_entrada_aliada"], cleaning_supplies_instructions: row["indicacion_donde_utensilios_limpieza"], garbage_instructions: row["indicacion_donde_basura"], attention_instructions: row["indicacion_especial_atencion"], equipment_instructions: row["indicacion_equipo_especial"], forbidden_instructions: row["indicacion_no_tocar"], hours_before_service: 1, hours_after_service: 1) do |add|
-    add.billed_hours = row["duracion"] ? row["duracion"] : 0
-    add.estimated_hours = row["duracion_aprox"]
-  end
 
-  if service.new_record?
-    #service.save(validate: false)
-    #:address=>["no puede estar en blanco"],
-   #:zone=>["no puede estar en blanco"]}
-    service.save
-    puts "SERVICE #{service.errors.messages.to_yaml} #{service.to_yaml}"
-  end
-  
-  servicios[row["id"]] = service.id
+  if clientes[row["clientes_id"]] and aliadas[row["aliadas_id"]]
 
-  schedule = Schedule.find_or_initialize_by(datetime: datetime, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], status: 'booked', service_id: service.id)
+    address = User.find(clientes[row["clientes_id"]]).addresses.first
 
-  if schedule.new_record?
-    #schedule.save(validate: false)
-    schedule.save
-    puts "SCHEDULE #{schedule.errors.messages.to_yaml}"
-  end
-
-  if row["recurrencias_id"]
-    if not recurrence_with_service[row["recurrencias_id"]]
-      recurrence_with_service[row["recurrencias_id"]] = []
+    service = Service.find_or_initialize_by(status: status_service, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], bedrooms: row["recamaras"], bathrooms: row["banos"], service_type_id: type_service.id, datetime: datetime, special_instructions: row["indicacion_instrucciones_esp"], bring_cleaning_products: (row["incluir_productos_limpieza"] == 1), entrance_instructions: row["indicacion_entrada_aliada"], cleaning_supplies_instructions: row["indicacion_donde_utensilios_limpieza"], garbage_instructions: row["indicacion_donde_basura"], attention_instructions: row["indicacion_especial_atencion"], equipment_instructions: row["indicacion_equipo_especial"], forbidden_instructions: row["indicacion_no_tocar"], hours_before_service: 1, hours_after_service: 1, address_id: address.id, zone_id: address.postal_code.zones.first.id) do |add|
+      add.billed_hours = row["duracion"] ? row["duracion"] : 0
+      add.estimated_hours = row["duracion_aprox"]
     end
-    recurrence_with_service[row["recurrencias_id"]] << service.id
+
+    if service.new_record?
+      #service.save(validate: false)
+      #NO SE ESTÁN SALVANDO SERVICIOS DE HORARIOS VÁLIDOS -- revisar validación
+      service.save
+      puts "SERVICE #{row["id"]} ST #{row["fecha"]} #{row["hora"]} DT #{datetime} -- #{service.errors.messages.to_yaml}" if not service.errors.messages.empty?
+    end
+    
+    servicios[row["id"]] = service.id
+
+    schedule = Schedule.find_or_initialize_by(datetime: datetime, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], status: 'booked', service_id: service.id, zone_id: address.postal_code.zones.first.id)
+
+    if schedule.new_record?
+      #schedule.save(validate: false)
+      schedule.save
+      puts "SCHEDULE #{schedule.errors.messages.to_yaml}" if not schedule.errors.messages.empty?
+    end
+
+    if row["recurrencias_id"]
+      if not recurrence_with_service[row["recurrencias_id"]]
+        recurrence_with_service[row["recurrencias_id"]] = []
+      end
+      recurrence_with_service[row["recurrencias_id"]] << service.id
+    end
+
   end
 
 end
