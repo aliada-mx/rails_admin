@@ -8,12 +8,7 @@
 $(document).ready(function() {
   // KNOCKOUT initialization
   aliada.ko = {
-    current_step: ko.observable(1),
-    bedrooms: ko.observable(1),
-    bathrooms: ko.observable(1),
-    additional: ko.observable(1),
-    forced_hours: ko.observable(null),
-    extras_hours: ko.observable(0),
+    current_step: ko.observable(2),
   }
 
   aliada.services.initial.step_1_duration(aliada, ko);
@@ -21,6 +16,14 @@ $(document).ready(function() {
   aliada.services.initial.step_3_visit_info(aliada, ko);
   aliada.services.initial.step_4_payment(aliada, ko);
   aliada.services.initial.step_5_success(aliada, ko);
+
+  aliada.ko.next_button_text = ko.computed(function(){
+    var current_step = aliada.ko.current_step();
+    if (current_step == 5){
+      return 'Terminar'
+    }
+    return current_step < 4 ? 'Siguiente' : 'Confirmar visita'
+  });
 
   // Activates knockout.js
   ko.applyBindings(aliada.ko);

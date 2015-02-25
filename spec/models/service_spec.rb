@@ -64,7 +64,7 @@ feature 'Service' do
   end
 
   describe '#datetime_within_working_hours' do
-    it 'validates the service doesnt begin  too early' do
+    it 'validates the service doesnt begin too early' do
       too_early = Time.zone.now.change(hour: Setting.beginning_of_aliadas_day - 1)
 
       service.datetime = too_early

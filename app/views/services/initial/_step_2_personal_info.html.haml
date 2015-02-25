@@ -1,23 +1,35 @@
 %section.step_2_personal_info{data: {bind: 'visible: current_step() == 2'}}
   = initial_service_form.hidden_field :zone_id
 
-  = initial_service_form.fields_for :user, @user do |user_form|
-    = user_form.text_field :email
-    = user_form.text_field :first_name
-    = user_form.text_field :last_name
-    = user_form.text_field :phone
+  %h1
+    Tus datos y dirección
+  %h4
+    ¿A dónde enviaremos tu Aliada?
 
-  = initial_service_form.fields_for :address, @address do |address_form|
-    = address_form.hidden_field :postal_code_id, as: :hidden
-    = address_form.text_area :street
-    = address_form.text_field :interior_number
-    = address_form.text_field :number
-    = address_form.text_area :colony
-    = address_form.text_area :between_streets
-    = address_form.text_field :postal_code, value: @postal_code.code
-    = address_form.text_area :state
-    = address_form.text_field :city
-    = address_form.text_area :references
+  .fields
+    .personal-info
+      .facebook-login
+        %icon.user
 
-    = address_form.hidden_field :latitude, as: :hidden
-    = address_form.hidden_field :longitude, as: :hidden
+      = initial_service_form.fields_for :user, @user do |user_form|
+        = user_form.text_field :email, placeholder: 'Correo electrónico', class: 'full-width' 
+        = user_form.text_field :first_name, placeholder: 'Nombres(s)'
+        = user_form.text_field :last_name, placeholder: 'Apellido(s)'
+        = user_form.text_field :phone, placeholder: 'Teléfono (10 digitos)'
+
+    .address
+      = initial_service_form.fields_for :address, @address do |address_form|
+        = address_form.hidden_field :postal_code_id, as: :hidden
+        %icon.house
+        = address_form.text_area :street, placeholder: 'Calle'
+        = address_form.text_field :number, placeholder: 'No. Ext.'
+        %icon.hash
+        = address_form.text_field :interior_number, placeholder: 'No. Int.'
+        = address_form.text_area :colony, placeholder: 'Colonia'
+        = address_form.text_area :between_streets, placeholder: 'Entre calles'
+        = address_form.text_field :postal_code, value: @postal_code.code, placeholder: 'Código postal'
+        = address_form.text_area :state, placeholder: 'Estado/Distrito'
+        = address_form.text_field :city, placeholder: 'Ciudad/Delegación'
+
+        = address_form.hidden_field :latitude, as: :hidden
+        = address_form.hidden_field :longitude, as: :hidden

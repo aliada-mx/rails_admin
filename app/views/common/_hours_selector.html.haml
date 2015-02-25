@@ -1,8 +1,7 @@
 = form.select 'estimated_hours', options_from_collection_for_select(Setting.hours_space_room.to_a, :hours, :text), {}, class: 'selectpicker'
 
-.short-row
-  %a.small-letters.bathroom-bedrooms-toggle-button
-    ¿No sabes los metros cuadrados?
+%a.small-letters.bathroom-bedrooms-toggle-button
+  ¿No sabes los metros cuadrados?
 
 = render partial: 'common/bathroom_bedrooms', locals: {form: form}
 
@@ -12,4 +11,5 @@
     $(".selectpicker").selectBoxIt({
       // Trigger events on original dom element
       aggressiveChange: true,
+      autoWidth: false
     })

@@ -94,7 +94,7 @@ feature 'ServiceController' do
       it 'creates a new one time service' do
         fill_service_form(conekta_card, one_time_service, starting_datetime, extra_1)
 
-        click_button 'Confirmar servicio'
+        click_button 'Confirmar visita'
 
         service = Service.first
         expect(service).to be_present
@@ -107,7 +107,7 @@ feature 'ServiceController' do
       it 'creates a new recurrent service' do
         fill_service_form(conekta_card, recurrent_service, starting_datetime, extra_1)
 
-        click_button 'Confirmar servicio'
+        click_button 'Confirmar visita'
 
         service = Service.first
         expect(service).to be_present
@@ -146,7 +146,7 @@ feature 'ServiceController' do
         fill_hidden_input 'conekta_temporary_token', with: 'tok_test_visa_4242'
 
         VCR.use_cassette('initial_service_conekta_card', match_requests_on: [:method, :conekta_preauthorization]) do
-          click_button 'Confirmar servicio'
+          click_button 'Confirmar visita'
         end
 
         payment = Payment.first

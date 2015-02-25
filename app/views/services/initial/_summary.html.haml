@@ -1,6 +1,22 @@
-.initial.summary
+.initial.summary.one-timer
   %h1
     Resúmen
+
+  %ul
+    %li{data: {bind: 'css: {checked: current_step() >= 1}'}}
+      %span{data: {bind: 'text: "Duración del servicio: "+hours()+" horas"'}}
+      %a.small-letters{data: {bind: 'visible: current_step() > 1'}} 
+        %icon.pencil
+        editar
+
+    %li{data: {bind: 'css: {checked: current_step() >= 2, unchecked: current_step() < 2}'}}
+      %span{data: {bind: 'text: address'}}
+
+    %li{data: {bind: 'css: {checked: current_step() >= 3, unchecked: current_step() < 3}'}}
+      %span{data: {bind: 'text: name_email_phone'}}
+
+    %li{data: {bind: 'css: {checked: current_step() >= 4, unchecked: current_step() < 4}'}}
+      %span{data: {bind: 'text: date_hour'}}
 
   .foot
     %span.hours{data: {bind: 'text: hours()+" horas:"'}}
@@ -11,4 +27,4 @@
     = text_field_tag 'promo-code', nil, placeholder: 'código promocional'
 
 = initial_service_form.submit 'atras', id: 'previous_button'
-= initial_service_form.submit 'Confirmar servicio', id: 'next_button', class: 'action-button-pink size-extra-large'
+= initial_service_form.submit 'Confirmar visita', id: 'next_button', class: 'action-button-pink size-extra-large', data: {bind: 'value: next_button_text'}

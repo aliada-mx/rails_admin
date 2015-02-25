@@ -1,4 +1,13 @@
 aliada.services.initial.step_1_duration = function(aliada, ko){
+
+  _(aliada.ko).extend({
+    bedrooms: ko.observable(1),
+    bathrooms: ko.observable(1),
+    additional: ko.observable(1),
+    forced_hours: ko.observable(null),
+    extras_hours: ko.observable(0),
+  });
+
   aliada.ko.bathrooms_text = ko.computed(function(){
       var sufix = aliada.ko.bathrooms() > 1 ? ' baños' : ' baño'
     return aliada.ko.bathrooms()+sufix

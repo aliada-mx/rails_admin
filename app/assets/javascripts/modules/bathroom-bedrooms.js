@@ -15,7 +15,7 @@ $(function(){
 
     switch(button_action){
       case 'less-bathrooms':
-        var new_bathrooms = bathrooms === 1 ? 0 : bathrooms - 1;
+        var new_bathrooms = bathrooms >= 2 ? bathrooms - 1 : 1;
 
         aliada.ko.bathrooms(new_bathrooms)
         break;
@@ -25,7 +25,7 @@ $(function(){
         aliada.ko.bathrooms(new_bathrooms)
         break;
       case 'less-bedrooms':
-        var new_bedrooms = bedrooms === 1 ? 0 : bedrooms - 1;
+        var new_bedrooms = bedrooms >= 2 ? bedrooms - 1 : 1;
 
         aliada.ko.bedrooms(new_bedrooms)
         break;
