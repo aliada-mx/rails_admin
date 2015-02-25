@@ -21,7 +21,7 @@ connection.query("SELECT * FROM zonas WHERE elim = 0").each do |row|
 end
 
 connection.query("SELECT * FROM cp WHERE elim = 0").each do |row|
-  cp = PostalCode.find_or_create_by(code: row["cp"], name: row["nombre"])
+  cp = PostalCode.find_or_create_by(code: row["cp"].to_s.rjust(5, '0'), name: row["nombre"])
   pcz = PostalCodeZone.find_or_create_by(postal_code_id: cp.id, zone_id: zones[row["zonas_id"]])
 end
 
@@ -49,14 +49,15 @@ connection.query("SELECT * FROM clientes WHERE estatus = 'normal'").each do |row
   clientes[row["id"]] = cliente.id
 end
 
-#TODO: Agregar referencias de latitud y longitud y mapa zoom
 connection.query("SELECT * FROM (SELECT * FROM clientes_has_direcciones WHERE elim = 0 ORDER BY modified DESC) t GROUP BY t.clientes_id").each do |row|
   
-  cp = PostalCode.find_or_create_by(code: row["cp"])
-  address = Address.find_or_create_by(user_id: clientes[row["clientes_id"]], street: row["direccion"], number: row["numero"], interior_number: row["numero_int"], between_streets: row["entre_calles"], colony: row["colonia"], state: row["estado"], city: row["delegacion"], postal_code_id: cp.id,  references: row["referencia"]) do |add|
+  cp = PostalCode.find_or_create_by(code: row["cp"].to_s.rjust(5, '0'))
+  address = Address.find_or_create_by(user_id: clientes[row["clientes_id"]], street: row["direccion"], number: row["numero"], interior_number: row["numero_int"], between_streets: row["entre_calles"], colony: row["colonia"], state: row["estado"], city: row["delegacion"], postal_code_id: cp.id,  references: row["referencia"], map_zoom: row["mapa_zoom"]) do |add|
     #treated separately, because decimal objects are different for find_or_create and were duplicating objects
     add.latitude = row["latitud"]
     add.longitude = row["longitud"]
+    add.references_latitude = row["referencia_latitud"]
+    add.references_longitude = row["referencia_longitud"]
   end
 
 end
@@ -78,11 +79,12 @@ end
 connection.query("SELECT * FROM horarios").each do |row|
   
   if (aliadas[row["aliadas_id"]])
-    recurrence = Recurrence.find_or_create_by(aliada_id: aliadas[row["aliadas_id"]], weekday: row["dia"].downcase, hour: row["hora"].hour, periodicity: 7, owner: 'aliada', total_hours: 1)
+    recurrence = Recurrence.find_or_create_by(aliada_id: aliadas[row["aliadas_id"]], weekday: row["dia"].downcase, hour: row["hora"].hour, periodicity: 7, owner: 'aliada', total_hours: 1, status: nil, user_id: nil, zone_id: nil)
   end
   
 end
 
+# SÓLO SERVICIOS A FUTURO
 connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
  
   datetime = row["fecha"].in_time_zone + row["hora"].hour.hour
@@ -102,14 +104,17 @@ connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
     type_service = ServiceType.find_or_create_by(name: 'one-time')
   end
  
-  # RECURRENCES PENDIENTE
-  service = Service.find_or_initialize_by(status: status_service, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], bedrooms: row["recamaras"], bathrooms: row["banos"], service_type_id: type_service.id, datetime: datetime, special_instructions: row["indicacion_instrucciones_esp"], bring_cleaning_products: (row["incluir_productos_limpieza"] == 1), entrance_instructions: row["indicacion_entrada_aliada"], cleaning_supplies_instructions: row["indicacion_donde_utensilios_limpieza"], garbage_instructions: row["indicacion_donde_basura"], attention_instructions: row["indicacion_especial_atencion"], equipment_instructions: row["indicacion_equipo_especial"], forbidden_instructions: row["indicacion_no_tocar"], hours_before_service: 1, hours_after_service: 1) do |add|
+  service = Service.find_or_create_by(status: status_service, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], bedrooms: row["recamaras"], bathrooms: row["banos"], service_type_id: type_service.id, datetime: datetime, special_instructions: row["indicacion_instrucciones_esp"], bring_cleaning_products: (row["incluir_productos_limpieza"] == 1), entrance_instructions: row["indicacion_entrada_aliada"], cleaning_supplies_instructions: row["indicacion_donde_utensilios_limpieza"], garbage_instructions: row["indicacion_donde_basura"], attention_instructions: row["indicacion_especial_atencion"], equipment_instructions: row["indicacion_equipo_especial"], forbidden_instructions: row["indicacion_no_tocar"], hours_before_service: 1, hours_after_service: 1) do |add|
     add.billed_hours = row["duracion"] ? row["duracion"] : 0
     add.estimated_hours = row["duracion_aprox"]
   end
 
   if service.new_record?
-    service.save(validate: false)
+    #service.save(validate: false)
+    #:address=>["no puede estar en blanco"],
+   #:zone=>["no puede estar en blanco"]}
+    service.save
+    puts "SERVICE #{service.errors.messages.to_yaml} #{service.to_yaml}"
   end
   
   servicios[row["id"]] = service.id
@@ -117,19 +122,28 @@ connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
   schedule = Schedule.find_or_initialize_by(datetime: datetime, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], status: 'booked', service_id: service.id)
 
   if schedule.new_record?
-    schedule.save(validate: false)
+    #schedule.save(validate: false)
+    schedule.save
+    puts "SCHEDULE #{schedule.errors.messages.to_yaml}"
   end
 
   if row["recurrencias_id"]
-    recurrence_with_service[row["recurrencias_id"]] = service.id
+    if not recurrence_with_service[row["recurrencias_id"]]
+      recurrence_with_service[row["recurrencias_id"]] = []
+    end
+    recurrence_with_service[row["recurrencias_id"]] << service.id
   end
 
 end
 
 connection.query("SELECT * FROM recurrencias").each do |row|
 
-  cp = PostalCode.find_or_create_by(code: row["cp"]) # only migrating the first zone associated to the postal_code
-
+  zone = nil
+  if row["cp"] != ""
+    cp = PostalCode.find_or_create_by(code: row["cp"].to_s.rjust(5, '0')) # only migrating the first zone associated to the postal_code
+    zone = cp.zones.first.id
+  end
+ 
   if row["monday"] == 1
     weekday = "monday"
   elsif row["tuesday"] == 1
@@ -148,42 +162,18 @@ connection.query("SELECT * FROM recurrencias").each do |row|
     weekday = ""
   end
 
-  # HOUR = HOUR - 1 | total hours = duracion aprox + 2
-  recurrence = Recurrence.find_or_initialize_by(zone_id: cp.zones.first.id, periodicity: 7, owner: 'user', weekday: )
+  # hour = hour - 1 | total hours = duracion aprox + 2
+  recurrence = Recurrence.find_or_create_by(periodicity: 7, owner: 'user', weekday: weekday, hour: row["hora"].hour - 1, total_hours: row["duracion_aprox"] + 2, user_id: clientes[row["clientes_id"]], aliada_id: aliadas[row["aliadas_id"]], status: nil, zone_id: zone)
+
+  #Actualizar servicios  
+  if recurrence_with_service[row["id"]]
     
-  #recurrence = Recurrence.find_or_create_by(aliada_id: aliadas[row["aliadas_id"]], weekday: row["dia"].downcase, hour: row["hora"].hour, periodicity: 7, owner: 'aliada', total_hours: 1)
-
-
-  t.integer  "user_id"
-    t.string   "status"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-    t.integer  "periodicity"
-    t.integer  "aliada_id"
-    t.string   "weekday"
-    t.integer  "hour"
-    t.integer  "total_hours"
-    *t.integer  "zone_id"
-    t.string   "owner"
-
-#  "recurrencias (sale de haber creado ya schedules para aliadas)
-
-#    old.recurrencias.cp *-> new.recurrences.zone
-#    old.recurrencias.monday + old.recurrencias.tuesday + old.recurrencias.wednesday + old.recurrencias.thursday + old.recurrencias.friday + old.recurrencias.saturday + old.recurrencias.sunday *-> new.recurrences.weekday
-#    old.recurrencias.fecha -> ? 
-#    old.recurrencias.hora -> new.recurrences.hour
-#    old.recurrencias.aliadas_id *-> new.recurrences.aliada_id
-#    old.recurrencias.clientes_id *-> new.recurrences.user_id
-#    old.recurrencias.duracion_aprox
-#    old.recurrencias.recamaras
-#    old.recurrencias.banos
-#    old.recurrencias.incluir_productos_limpieza + indicacion_entrada_aliada + indicacion_donde_utensilios_limpieza + indicacion_donde_basura + + indicacion_especial_atencion + indicacion_no_tocar + indicacion_instrucciones_esp -> servicio primero
-
-#   old.recurrencias.TOKEN   se repite en recurrencias -> crear y pasar a 'conekta_create_card' 
-#    old.recurrencias.METODO"
+    recurrence_with_service[row["id"]].each do |id|
+      Service.find(id).update_attribute(:recurrence_id, recurrence.id)
+    end
+  end
 
 end
-
 
 connection.query("SELECT * FROM calificaciones").each do |row|
 

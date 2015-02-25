@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150223231219) do
+ActiveRecord::Schema.define(version: 20150224200532) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,8 +19,8 @@ ActiveRecord::Schema.define(version: 20150223231219) do
   create_table "addresses", force: true do |t|
     t.integer  "user_id"
     t.integer  "postal_code_id"
-    t.datetime "created_at",                               null: false
-    t.datetime "updated_at",                               null: false
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
     t.text     "street"
     t.string   "number"
     t.string   "interior_number"
@@ -29,9 +29,12 @@ ActiveRecord::Schema.define(version: 20150223231219) do
     t.string   "state"
     t.string   "city"
     t.text     "references"
-    t.decimal  "latitude",        precision: 10, scale: 7
-    t.decimal  "longitude",       precision: 10, scale: 7
+    t.decimal  "latitude",             precision: 10, scale: 7
+    t.decimal  "longitude",            precision: 10, scale: 7
     t.integer  "aliada_id"
+    t.integer  "map_zoom"
+    t.decimal  "references_latitude",  precision: 10, scale: 7
+    t.decimal  "references_longitude", precision: 10, scale: 7
   end
 
   add_index "addresses", ["postal_code_id"], name: "index_addresses_on_postal_code_id", using: :btree

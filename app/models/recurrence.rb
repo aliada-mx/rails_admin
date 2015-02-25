@@ -13,6 +13,7 @@ class Recurrence < ActiveRecord::Base
   belongs_to :user
   belongs_to :aliada
   belongs_to :zone
+  has_many :services
 
   default_scope { where(owner: 'user') }
 

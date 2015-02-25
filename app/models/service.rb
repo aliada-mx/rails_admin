@@ -10,6 +10,7 @@ class Service < ActiveRecord::Base
     ['Pagado', 'paid'],
     ['Cancelado', 'canceled'],
   ]
+  validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
   # accessors for forms
   attr_accessor :postal_code, :time, :date, :payment_method_id, :conekta_temporary_token
 
@@ -38,19 +39,19 @@ class Service < ActiveRecord::Base
   validate :datetime_within_working_hours
   validate :service_type_exists
   validates_presence_of :address, :user, :zone, :billed_hours, :datetime, :service_type
-  validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
 
 
   # Callbacks
   after_initialize :set_defaults
 
+  # TODO: Fix validations, it is only working with :created
   # State machine
-  state_machine :status, :initial => 'created' do
-    transition 'created' => 'aliada_assigned', :on => :assign
-    transition 'created' => 'aliada_missing', :on => :mark_as_missing
+  #state_machine :status, :initial => 'created' do
+  #  transition 'created' => 'aliada_assigned', :on => :assign
+  #  transition 'created' => 'aliada_missing', :on => :mark_as_missing
 
-    after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
-  end
+  #  after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
+  #end
 
   # Ask service_type to answer recurrent? method for us
   delegate :recurrent?, to: :service_type
