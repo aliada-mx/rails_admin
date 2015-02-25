@@ -3,7 +3,7 @@ describe 'Recurrence' do
 
   let(:aliada){ create(:aliada) }
   let(:recurrence) { build(:recurrence, weekday: starting_datetime.weekday, hour: starting_datetime.hour ) }
-  let(:service) { build(:service, billable_hours: 3, hours_before_service: 2, hours_after_service: 2) }
+  let(:service) { build(:service, estimated_hours: 3, hours_before_service: 2, hours_after_service: 2) }
 
   before do
     6.times do |i|

@@ -10,7 +10,7 @@ class PaymentProviderChoice < ActiveRecord::Base
   delegate :charge!, to: :payment_provider
 
   # We limit the polymorphism to valid payment providers classes
-  validates_uniqueness_of :default, scope: :user_id, message: 'Ya hay un método de pago elegido por defecto.'
+  validates_uniqueness_of :default, scope: :user_id, message: 'Ya hay un método de pago elegido por defecto.', conditions: -> { where(default: true) }
 
   def provider
     payment_provider

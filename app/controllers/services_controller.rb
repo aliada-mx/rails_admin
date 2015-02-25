@@ -54,7 +54,7 @@ class ServicesController < ApplicationController
                                       :bathrooms,
                                       :bedrooms,
                                       {extra_ids: []},
-                                      :billable_hours,
+                                      :estimated_hours,
                                       :special_instructions,
                                       :service_type_id,
                                       :date,

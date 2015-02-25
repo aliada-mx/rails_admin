@@ -219,6 +219,7 @@ GEM
     multi_json (1.10.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
+    mysql2 (0.3.18)
     nenv (0.2.0)
     nested_form (0.3.2)
     nestive (0.6.0)
@@ -422,6 +423,7 @@ DEPENDENCIES
   jquery-rails
   launchy
   lograge
+  mysql2
   nestive
   paperclip
   pg

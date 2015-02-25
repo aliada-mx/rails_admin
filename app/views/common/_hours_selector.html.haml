@@ -1,4 +1,4 @@
-= form.select 'billable_hours', options_from_collection_for_select(Setting.hours_space_room.to_a, :hours, :text), {}, class: 'selectpicker'
+= form.select 'estimated_hours', options_from_collection_for_select(Setting.hours_space_room.to_a, :hours, :text), {}, class: 'selectpicker'
 
 .short-row
   %a.small-letters.counter-toggle-button
@@ -9,7 +9,7 @@
 = append :javascript do
   = javascript_include_tag 'jquery.selectBoxIt'
   :javascript
-    $(".selectpicker").selectBoxIt({
+    $("selectpicker").selectBoxIt({
       // Trigger events on original dom element
       aggressiveChange: true,
     })

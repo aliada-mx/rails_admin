@@ -71,15 +71,15 @@ feature 'ServiceController' do
         expect(extras).to include extra_1
 
         expect(address.street).to eql 'Calle de las aliadas'
-        expect(address.number).to eql 1
-        expect(address.interior_number).to eql 2
+        expect(address.number).to eql "1"
+        expect(address.interior_number).to eql "2"
         expect(address.between_streets).to eql 'Calle de los aliados, calle de los bifes'
         expect(address.colony).to eql 'Roma'
         expect(address.state).to eql 'DF'
         expect(address.city).to eql 'Benito Juarez'
 
         expect(service.zone_id).to eql zone.id
-        expect(service.billable_hours).to eql 3
+        expect(service.estimated_hours).to eql 3
         expect(service.bathrooms).to eql 1
         expect(service.bedrooms).to eql 1
         expect(service.special_instructions).to eql 'nada'
@@ -97,7 +97,6 @@ feature 'ServiceController' do
         click_button 'Confirmar servicio'
 
         service = Service.first
-        save_and_open_page
         expect(service).to be_present
 
         expect(service.service_type_id).to eql one_time_service.id
