@@ -26,17 +26,27 @@ class User < ActiveRecord::Base
   before_validation :ensure_password
   before_validation :set_default_role
 
+  default_scope { where('users.role in (?)', ['client', 'admin']) }
+
   validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
-  default_scope { where('users.role != ?', 'aliada')}
 
   def create_first_payment_provider!(payment_method_id)
     payment_method = PaymentMethod.find(payment_method_id)
     payment_provider = payment_method.provider_class.create!
-    PaymentProviderChoice.find_or_create_by!(payment_provider: payment_provider, default: true, user: self)
+
+    create_payment_provider_choice(payment_provider)
+  end
+
+  def create_payment_provider_choice(payment_provider)
+    # Switch the default
+    PaymentProviderChoice.where(user: self).update_all default: false
+
+    # The newest is the default
+    PaymentProviderChoice.create!(payment_provider: payment_provider, default: true, user: self)
   end
 
   def default_payment_provider
-    payment_provider_choices.default
+    payment_provider_choices.default.provider
   end
 
   def past_aliadas

@@ -26,12 +26,21 @@ class Payment < ActiveRecord::Base
   end
 
   rails_admin do
-    label_plural 'pagos'
+    parent Service
+    label_plural 'cobros'
     navigation_label 'Operación'
     navigation_icon 'icon-shopping-cart'
 
     configure :api_raw_response do
       visible false
+    end
+
+    configure :status do
+      read_only true
+    end
+
+    list do
+      include_fields :user, :amount, :status
     end
   end
 end

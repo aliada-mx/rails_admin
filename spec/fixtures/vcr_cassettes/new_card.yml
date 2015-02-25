@@ -1,0 +1,289 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/customers?cards%5B%5D=tok_test_visa_4242&email=user-39@aliada.mx&name=Test%20User&phone=123456
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - Conekta/v1 RubyBindings/0.5.2
+      X-Conekta-Client-User-Agent:
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
+        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      Accept:
+      - application/vnd.conekta-v1.0.0+json
+      Accept-Language:
+      - es
+      Content-Length:
+      - '0'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Conekta-Media-Type:
+      - conekta-v1.0.0; format=json
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 19 Feb 2015 16:42:17 GMT
+      Etag:
+      - '"ee49d21037365e846a08bd0e1d753f17"'
+      Server:
+      - nginx/1.1.19
+      Status:
+      - 200 OK
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Request-Id:
+      - ef9a93636346dd5386c8f40026cccbaa
+      X-Runtime:
+      - '0.295133'
+      Content-Length:
+      - '434'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: '{"id":"cus_M3V9nERCq9qDLZdD1","email":"user-39@aliada.mx","name":"Test
+        User","phone":"123456","livemode":false,"default_card_id":"card_RTQYBFXAu3FL7ALb","object":"customer","created_at":1424364137,"cards":[{"id":"card_RTQYBFXAu3FL7ALb","created_at":1424364137,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"}],"subscription":null}'
+    http_version: 
+  recorded_at: Thu, 19 Feb 2015 16:41:36 GMT
+- request:
+    method: get
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/customers/cus_M3V9nERCq9qDLZdD1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Conekta/v1 RubyBindings/0.5.2
+      X-Conekta-Client-User-Agent:
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
+        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      Accept:
+      - application/vnd.conekta-v1.0.0+json
+      Accept-Language:
+      - es
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Conekta-Media-Type:
+      - conekta-v1.0.0; format=json
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 19 Feb 2015 16:42:07 GMT
+      Etag:
+      - '"ee49d21037365e846a08bd0e1d753f17"'
+      Server:
+      - nginx/1.1.19
+      Status:
+      - 200 OK
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Request-Id:
+      - 18f1ace27e120b1402502f0475a59a56
+      X-Runtime:
+      - '0.049466'
+      Content-Length:
+      - '434'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: '{"id":"cus_M3V9nERCq9qDLZdD1","email":"user-39@aliada.mx","name":"Test
+        User","phone":"123456","livemode":false,"default_card_id":"card_RTQYBFXAu3FL7ALb","object":"customer","created_at":1424364137,"cards":[{"id":"card_RTQYBFXAu3FL7ALb","created_at":1424364137,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"}],"subscription":null}'
+    http_version: 
+  recorded_at: Thu, 19 Feb 2015 16:42:02 GMT
+- request:
+    method: get
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/customers/cus_M3V9nERCq9qDLZdD1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Conekta/v1 RubyBindings/0.5.2
+      X-Conekta-Client-User-Agent:
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
+        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      Accept:
+      - application/vnd.conekta-v1.0.0+json
+      Accept-Language:
+      - es
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Conekta-Media-Type:
+      - conekta-v1.0.0; format=json
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 19 Feb 2015 16:55:05 GMT
+      Etag:
+      - '"ee49d21037365e846a08bd0e1d753f17"'
+      Server:
+      - nginx/1.1.19
+      Status:
+      - 200 OK
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Request-Id:
+      - a065098ac2938d71062abeac34440f40
+      X-Runtime:
+      - '0.047920'
+      Content-Length:
+      - '434'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: '{"id":"cus_M3V9nERCq9qDLZdD1","email":"user-39@aliada.mx","name":"Test
+        User","phone":"123456","livemode":false,"default_card_id":"card_RTQYBFXAu3FL7ALb","object":"customer","created_at":1424364137,"cards":[{"id":"card_RTQYBFXAu3FL7ALb","created_at":1424364137,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"}],"subscription":null}'
+    http_version: 
+  recorded_at: Thu, 19 Feb 2015 16:54:23 GMT
+- request:
+    method: post
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/customers/cus_M3V9nERCq9qDLZdD1/cards?token=tok_test_visa_4242
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - Conekta/v1 RubyBindings/0.5.2
+      X-Conekta-Client-User-Agent:
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
+        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      Accept:
+      - application/vnd.conekta-v1.0.0+json
+      Accept-Language:
+      - es
+      Content-Length:
+      - '0'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      Cache-Control:
+      - no-cache
+      Conekta-Media-Type:
+      - conekta-v1.0.0; format=json
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 19 Feb 2015 16:54:29 GMT
+      Server:
+      - nginx/1.1.19
+      Status:
+      - 200 OK
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Request-Id:
+      - f02d7033978de822b842015ce174aab1
+      X-Runtime:
+      - '0.027017'
+      Content-Length:
+      - '206'
+      Connection:
+      - keep-alive
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"card_pSwoseKzEwBr9SDM","created_at":1390944545,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"}'
+    http_version: 
+  recorded_at: Thu, 19 Feb 2015 16:54:23 GMT
+- request:
+    method: post
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=300&card=card_pSwoseKzEwBr9SDM&currency=MXN&description=Pre-autorizaci%C3%B3n%20de%20tarjeta%2014&reference_id=
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - Conekta/v1 RubyBindings/0.5.2
+      X-Conekta-Client-User-Agent:
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
+        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      Accept:
+      - application/vnd.conekta-v1.0.0+json
+      Accept-Language:
+      - es
+      Content-Length:
+      - '0'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Conekta-Media-Type:
+      - conekta-v1.0.0; format=json
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Mon, 16 Feb 2015 21:19:11 GMT
+      Etag:
+      - '"c6fb4ff08df67fc64caa86263f314fed"'
+      Server:
+      - nginx/1.1.19
+      Status:
+      - 200 OK
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Request-Id:
+      - 0ff592ebf84d6aeccc0abc6e93db687b
+      X-Runtime:
+      - '2.183659'
+      Content-Length:
+      - '672'
+      Connection:
+      - keep-alive
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJpZCI6IjU0ZTI1ZWNjMTljZTg4NzMzZDAwMDIyNCIsImxpdmVtb2RlIjpm
+        YWxzZSwiY3JlYXRlZF9hdCI6MTQyNDEyMTU0OCwic3RhdHVzIjoicGFpZCIs
+        ImN1cnJlbmN5IjoiTVhOIiwiZGVzY3JpcHRpb24iOiJQcmUtYXV0b3JpemFj
+        acOzbiBkZSB0YXJqZXRhIDQiLCJyZWZlcmVuY2VfaWQiOiIiLCJmYWlsdXJl
+        X2NvZGUiOm51bGwsImZhaWx1cmVfbWVzc2FnZSI6bnVsbCwibW9udGhseV9p
+        bnN0YWxsbWVudHMiOm51bGwsIm9iamVjdCI6ImNoYXJnZSIsImFtb3VudCI6
+        MzAwLCJwYWlkX2F0IjoxNDI0MTIxNTUwLCJmZWUiOjI5OSwiY3VzdG9tZXJf
+        aWQiOiJjdXNfaDlUTVh6WUFBc1FNWnFtOHQiLCJyZWZ1bmRzIjpbXSwicGF5
+        bWVudF9tZXRob2QiOnsibmFtZSI6IkpvcmdlIExvcGV6IiwiZXhwX21vbnRo
+        IjoiMTIiLCJleHBfeWVhciI6IjE5IiwiYXV0aF9jb2RlIjoiMzE0MzczIiwi
+        b2JqZWN0IjoiY2FyZF9wYXltZW50IiwidHlwZSI6ImNyZWRpdCIsImxhc3Q0
+        IjoiNDI0MiIsImJyYW5kIjoidmlzYSIsImlzc3VlciI6IiIsImFjY291bnRf
+        dHlwZSI6IiIsImNvdW50cnkiOiJVUyIsImZyYXVkX3Njb3JlIjpudWxsLCJm
+        cmF1ZF9pbmRpY2F0b3JzIjpbXX0sImRldGFpbHMiOnsibmFtZSI6bnVsbCwi
+        cGhvbmUiOm51bGwsImVtYWlsIjpudWxsLCJsaW5lX2l0ZW1zIjpbXX19
+    http_version: 
+  recorded_at: Mon, 16 Feb 2015 19:00:00 GMT
+recorded_with: VCR 2.9.3

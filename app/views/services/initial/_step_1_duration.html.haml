@@ -1,0 +1,14 @@
+%section.step_1_duration{data: {bind: 'visible: current_step() == 1'}}
+  %h1
+    Cuéntanos más de tu casa
+
+  %h4
+    Dinos cuánto tiempo necesitas a la aliada
+
+  = render partial: 'common/hours_selector', locals: {form: initial_service_form}
+
+  %h4
+    Agrega tareas extras (extiende el tiempo de la visita)
+
+  %fieldset.checkboxes.large
+    = initial_service_form.collection_check_boxes :extra_ids, Extra.all, :id, :name

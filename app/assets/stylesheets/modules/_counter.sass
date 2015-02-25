@@ -1,0 +1,31 @@
+@import 'common/mixins'
+@import 'common/variables'
+
+.counter-container
+  width: 100%
+  margin: 10px 0
+  .counter
+    text-align: center
+    display: inline-block
+    +rem(font-size, $large-font)
+    position: relative
+    .less-sign, .plus-sign
+      +rem(font-size, $extra-large-font)
+      color: $green
+      position: absolute
+      cursor: pointer
+      bottom: -4px
+      &:hover
+        color: $faint_green
+    .less-sign
+      left: 15px
+      &:after
+        content: '-'
+    .plus-sign
+      right: 25px
+      &:after
+        content: '+'
+    input[type=text]
+      text-align: center
+      +input-placeholder
+        color: $dark_gray

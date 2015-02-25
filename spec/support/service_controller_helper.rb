@@ -1,9 +1,9 @@
 module TestingSupport
   module ServiceControllerHelper
     def fill_service_form(payment_method, service_type, starting_datetime, extra)
-      fill_in 'service_billed_hours', with: '3'
-      fill_in 'service_bathrooms', with: '1'
-      fill_in 'service_bedrooms', with: '1'
+      select_by_value 3, from: 'service_estimated_hours'
+      fill_hidden_input 'service_bathrooms', with: '1'
+      fill_hidden_input 'service_bedrooms', with: '1'
 
       check "service_extra_ids_#{extra.id}"
 

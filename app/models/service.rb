@@ -1,6 +1,5 @@
 class Service < ActiveRecord::Base
   include Presenters::ServicePresenter
-
   STATUSES = [
     ['Creado','created'],
     ['Aliada asignada', 'aliada_assigned'],
@@ -38,7 +37,7 @@ class Service < ActiveRecord::Base
   validate :datetime_is_hour_o_clock
   validate :datetime_within_working_hours
   validate :service_type_exists
-  validates_presence_of :address, :user, :zone, :billed_hours, :datetime, :service_type
+  validates_presence_of :address, :user, :zone, :estimated_hours, :datetime, :service_type
 
 
   # Callbacks
@@ -46,12 +45,26 @@ class Service < ActiveRecord::Base
 
   # TODO: Fix validations, it is only working with :created
   # State machine
-  #state_machine :status, :initial => 'created' do
-  #  transition 'created' => 'aliada_assigned', :on => :assign
-  #  transition 'created' => 'aliada_missing', :on => :mark_as_missing
+  state_machine :status, :initial => 'created' do
+    transition 'created' => 'aliada_assigned', :on => :assign
+    transition 'created' => 'aliada_missing', :on => :mark_as_missing
 
-  #  after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
-  #end
+    after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
+
+    after_transition on: :assign do |service, transition|
+      aliada = transition.args.first
+
+      service.aliada = aliada
+      service.save!
+
+      if service.recurrent?
+        recurrence = service.recurrence
+        recurrence.aliada = aliada if service.recurrent?
+        recurrence.save!
+      end
+    end
+  end
+
 
   # Ask service_type to answer recurrent? method for us
   delegate :recurrent?, to: :service_type
@@ -84,12 +97,13 @@ class Service < ActiveRecord::Base
       self.recurrence = Recurrence.create!(user_id: user_id,
                                            periodicity: service_type.periodicity,
                                            total_hours: total_hours,
-                                           hour: datetime.hour,
+                                           hour: beginning_datetime.hour,
                                            weekday: datetime.weekday)
+      self.save!
     end
   end
 
-  def create_aliada_missing_ticket
+  def self.create_aliada_missing_ticket
     Ticket.create_warning message: "No se encontró una aliada para el servicio", 
                           action_needed: "Asigna una aliada al servicio",
                           relevant_object: @service
@@ -97,7 +111,7 @@ class Service < ActiveRecord::Base
   end
 
   def total_hours
-    hours_before_service + billed_hours + hours_after_service
+    hours_before_service + estimated_hours + hours_after_service
   end
 
   # Starting now how many days we'll provide service to the end of
@@ -117,7 +131,7 @@ class Service < ActiveRecord::Base
   end
 
   def ending_datetime
-    datetime + total_hours.hours
+    beginning_datetime + total_hours.hours
   end
 
   # The datetime that effectively starts consuming an aliada's real time
@@ -137,38 +151,22 @@ class Service < ActiveRecord::Base
       schedules_intervals.each do |schedule_interval|
         schedule_interval.book_schedules!(aliada_id: aliada.id, user_id: user_id, service_id: self.id)
       end
-      assign!
+      assign!(aliada)
     else
       mark_as_missing!
     end
     save!
   end
 
-  def one_time_schedule_intervals
-    ScheduleInterval.build_from_range(datetime, ending_datetime, from_existing: true)
-  end
-
-  def recurrent_schedule_intervals
-    recurrence.to_schedule_intervals(total_hours.hours)
-  end
-
-  def to_schedule_intervals
-    if service_type.recurrent?
-      recurrent_schedule_intervals
-    else
-      [one_time_schedule_intervals] 
-    end
-  end
-
   def to_schedule_interval
-    to_schedule_intervals.first
+    ScheduleInterval.build_from_range(beginning_datetime, ending_datetime)
   end
 
-  def self.create_initial(service_params)
+  def self.create_initial!(service_params)
     service = Service.new(service_params)
     service.combine_date_time
-    service.ensure_recurrence!
     service.save!
+    service.ensure_recurrence!
 
     user = service.user
     user.create_first_payment_provider!(service_params[:payment_method_id])

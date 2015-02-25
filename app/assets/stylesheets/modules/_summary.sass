@@ -1,0 +1,37 @@
+.summary
+  padding: 42px 20px 20px
+  width: 100%
+  +box-shadow($medium-gray 0px 0px 4px)
+  background-color: white
+  .foot
+    text-align: right
+    .hours
+      +rem(font-size, $medium-font)
+      +rem(vertical-align, 5px)
+    .cash
+      +rem(font-size, $extra-large-font)
+
+  li
+    +rem(margin-bottom, 0.2rem)
+    +rem(padding-left, 2.2rem)
+
+  .checked
+    background: url('check-active-recurrent.png') no-repeat left 4px
+    background-size: 15px 15px
+
+  .unchecked
+    background: none
+
+  .promotional-code
+    position: relative
+    float: right
+    width: 215px
+
+    a
+      position: absolute
+      right: 0
+      top: 1px
+      color: $green
+
+    input[type=text]
+      width: 100%
