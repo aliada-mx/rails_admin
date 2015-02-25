@@ -2,6 +2,7 @@
 @import 'typography'
 @import 'variables'
 @import 'mixins'
+@import 'forms'
 
 // Boostrap
 @import 'bootstrap-sprockets'
@@ -107,16 +108,8 @@ footer
     p
       display: inline-block
 
-input
-  +input-placeholder
-    color: $light_gray
-  &[type=text]
-    border: none
-    border-bottom: 1px solid $dark_gray
-
 .concealed
   display: none
-
 
 .action-button-pink
   +action-button($dark_pink)

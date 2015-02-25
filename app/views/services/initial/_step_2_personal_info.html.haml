@@ -8,28 +8,36 @@
 
   .fields
     .personal-info
-      .facebook-login
-        %icon.user
-
       = initial_service_form.fields_for :user, @user do |user_form|
-        = user_form.text_field :email, placeholder: 'Correo electrónico', class: 'full-width' 
-        = user_form.text_field :first_name, placeholder: 'Nombres(s)'
-        = user_form.text_field :last_name, placeholder: 'Apellido(s)'
-        = user_form.text_field :phone, placeholder: 'Teléfono (10 digitos)'
+        %label.field-row
+          %icon.user
+          = user_form.text_field :email, placeholder: 'Correo electrónico', class: 'full-width' 
+        %label.field-row
+          = user_form.text_field :first_name, placeholder: 'Nombres(s)', class: 'half-width'
+          = user_form.text_field :last_name, placeholder: 'Apellido(s)', class: 'half-width'
+        %label.field-row
+          = user_form.text_field :phone, placeholder: 'Teléfono (10 digitos)'
 
     .address
       = initial_service_form.fields_for :address, @address do |address_form|
-        = address_form.hidden_field :postal_code_id, as: :hidden
-        %icon.house
-        = address_form.text_area :street, placeholder: 'Calle'
-        = address_form.text_field :number, placeholder: 'No. Ext.'
-        %icon.hash
-        = address_form.text_field :interior_number, placeholder: 'No. Int.'
-        = address_form.text_area :colony, placeholder: 'Colonia'
-        = address_form.text_area :between_streets, placeholder: 'Entre calles'
-        = address_form.text_field :postal_code, value: @postal_code.code, placeholder: 'Código postal'
-        = address_form.text_area :state, placeholder: 'Estado/Distrito'
-        = address_form.text_field :city, placeholder: 'Ciudad/Delegación'
+        %label.field-row
+          = address_form.hidden_field :postal_code_id, as: :hidden
+        %label.field-row
+          %icon.house
+          = address_form.text_field :street, placeholder: 'Calle', class: 'full-width'
+        %label.field-row
+          %icon.hash
+          = address_form.text_field :number, placeholder: 'Número Exterior', class: 'half-width'
+          = address_form.text_field :interior_number, placeholder: 'Interior', class: 'half-width important-placeholder'
+        %label.field-row
+          = address_form.text_field :colony, placeholder: 'Colonia', class: 'full-width'
+        %label.field-row
+          = address_form.text_field :between_streets, placeholder: 'Entre calles', class: 'full-width'
+        %label.field-row
+          = address_form.text_field :city, placeholder: 'Ciudad/Delegación', class: 'half-width'
+          = address_form.text_field :state, placeholder: 'Estado/Distrito', class: 'half-width'
+        %label.field-row
+          = address_form.text_field :postal_code, value: @postal_code.code, placeholder: 'Código postal'
 
         = address_form.hidden_field :latitude, as: :hidden
         = address_form.hidden_field :longitude, as: :hidden
