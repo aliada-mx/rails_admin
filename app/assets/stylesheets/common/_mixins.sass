@@ -1,20 +1,52 @@
+@function action-button-background-color($color)
+  @if $color == $dark_pink
+    @return $pink
 
-@mixin action-button-color($color)
+  @if $color == $dark_gray
+    @return $medium_gray
 
-  @if $color == $pink
-    background-color: $pink
-    border: 2px solid $dark_pink
+  @if $color == $green or $color == $purple
+    @return transparent
+
+@function action-button-text-color($color)
+  @if $color == $dark_pink or $color == $dark_gray
+    @return white
+  @return $color
+
+
+@function action-button-hover-background-color($color)
+  @if $color == $dark_pink
+    @return lighten($pink, 4%)
+
+  @return $color
+
+
+@mixin action-button($color)
+  border-radius: 3px
+  box-sizing: border-box
+  display: inline-block
+  text-align: center
+  background-color: action-button-background-color($color)
+  border: 2px solid $color
+  color: action-button-text-color($color)
+  cursor: pointer
+  &:hover
+    background-color: action-button-hover-background-color($color)
     color: white
+    text-decoration: none
+  &.size-large
+    +rem(font-size, 1.7rem)
+    padding: 10px 16px
 
-  @if $color == $light_green
-    background-color: $light_green
-    border: 2px solid $green
-    color: white
+  &.size-medium
+    +rem(font-size, 1rem)
+    padding: 6px 12px
 
-  @if $color == $medium_gray
-    background-color: $medium_gray
-    border: 2px solid $dark_gray
-    color: white
+  &.size-small
+    +rem(font-size, 0.8rem)
+    padding: 5px 10px
+
+
 
 
 @function parseInt($n)
@@ -52,3 +84,5 @@
   &:-ms-input-placeholder
     @content
 
+@mixin prevent-collapse()
+  overflow: hidden

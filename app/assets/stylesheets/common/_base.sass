@@ -1,11 +1,11 @@
 @import 'reset'
 @import 'typography'
 @import 'variables'
-@import "mixins"
+@import 'mixins'
 
 // Boostrap
 @import 'bootstrap-sprockets'
-@import 'bootstrap'
+@import 'common/bootstrap'
 
 @import 'common/two_columns'
 @import 'common/one_column'
@@ -99,37 +99,18 @@ input
 .concealed
   display: none
 
-.action-button
-  border-radius: 3px
-  box-sizing: border-box
-  display: inline-block
-  vertical-align: top
-  &.size-large
-    +rem(font-size, 1.2rem)
-    padding: 10px 16px
-    width: 219px
-
-  &.size-medium
-    +rem(font-size, 1rem)
-    padding: 6px 12px
-    width: 180px
-
-  &.size-small
-    +rem(font-size, 0.8rem)
-    padding: 5px 10px
-    width: 90px
 
 .action-button-pink
-  @extend .action-button
-  +action-button-color($pink)
+  +action-button($dark_pink)
 
 .action-button-green
-  @extend .action-button
-  +action-button-color($light_green)
+  +action-button($green)
 
 .action-button-gray
-  @extend .action-button
-  +action-button-color($medium_gray)
+  +action-button($dark_gray)
+
+.action-button-purple
+  +action-button($purple)
 
 .wrapper
   max-width: 960px

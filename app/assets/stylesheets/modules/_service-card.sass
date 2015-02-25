@@ -13,27 +13,29 @@
   .foot
     background: white
     +rem(padding, 2rem 3rem)
+    +prevent-collapse
 
     .actions
       display: inline-block
       text-align: left
       vertical-align: top
-      width: 49%
+      float: left
+      a
+        +action-button($purple)
 
     .numbers
       display: inline-block
       text-align: right
       vertical-align: bottom
-      width: 50%
+      float: right
 
       .hours
         vertical-align: middle
-        +rem(font-size, 1.6rem)
+        +rem(font-size, $medium-font)
 
       .cash
         vertical-align: middle
-        +rem(font-size, 4rem)
-
+        +rem(font-size, $extra-large-font)
 
 
   .head
@@ -43,8 +45,8 @@
     .badge
       background: transparent
       position: absolute
-      right: 1rem
-      top: 1rem
+      +rem(right, 1rem)
+      +rem(top, 1rem)
 
       img
         display: inline-block
