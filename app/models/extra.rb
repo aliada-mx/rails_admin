@@ -2,9 +2,8 @@ class Extra < ActiveRecord::Base
   has_many :extra_services
   has_many :services, through: :extra_services
 
-  has_attached_file :logo
-  validates_attachment_presence :logo
-  validates_attachment_content_type :logo, content_type: ['image/jpg',
+  has_attached_file :icon
+  validates_attachment_content_type :icon, content_type: ['image/jpg',
                                                           'image/jpeg',
                                                           'image/png',
                                                           'image/gif',

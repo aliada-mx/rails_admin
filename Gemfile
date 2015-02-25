@@ -35,6 +35,8 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 # Easy file attachment management for ActiveRecord
 gem 'paperclip'
+# AWS storage adapter
+gem 'aws-sdk', '~> 1.5.7'
 # Bootstrap
 gem 'bootstrap-sass'
 # Sass framework
