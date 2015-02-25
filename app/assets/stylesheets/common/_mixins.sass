@@ -1,3 +1,19 @@
+@import "compass/css3/border-radius"
+
+@mixin centered()
+  margin: 0 auto
+  display: block
+
+@mixin soft-transition
+  -webkit-transition: all 300ms cubic-bezier(0,.5,.5,1)
+  -moz-transition: all 3000ms cubic-bezier(0,.5,.5,1)
+  -ms-transition: all 300ms cubic-bezier(0,.5,.5,1)
+  -o-transition: all 300ms cubic-bezier(0,.5,.5,1)
+  transition: all 300ms cubic-bezier(0,.5,.5,1)
+
+@mixin round-corners
+  +border-radius(3px)
+
 @function action-button-background-color($color)
   @if $color == $dark_pink
     @return $pink
@@ -22,7 +38,7 @@
 
 
 @mixin action-button($color)
-  border-radius: 3px
+  +round-corners
   box-sizing: border-box
   display: inline-block
   text-align: center
@@ -30,10 +46,17 @@
   border: 2px solid $color
   color: action-button-text-color($color)
   cursor: pointer
+  +soft-transition
   &:hover
     background-color: action-button-hover-background-color($color)
     color: white
     text-decoration: none
+  &.size-extra-large
+    +rem(font-size, $large-font)
+    font-weight: 800
+    padding: 25px
+    width: 100%
+
   &.size-large
     +rem(font-size, 1.7rem)
     padding: 10px 16px
@@ -86,3 +109,4 @@
 
 @mixin prevent-collapse()
   overflow: hidden
+

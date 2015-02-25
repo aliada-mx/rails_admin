@@ -7,14 +7,17 @@
 @import 'bootstrap-sprockets'
 @import 'common/bootstrap'
 
+// Layouts
 @import 'common/two_columns'
 @import 'common/one_column'
 
+// Modules
 @import 'modules/calendar'
 @import 'modules/header'
 @import 'modules/summary'
 @import 'modules/hours_selector'
-@import 'modules/counter'
+@import 'modules/bathroom-bedrooms'
+@import 'modules/extras'
 
 // Modal
 @import 'vex'
@@ -45,6 +48,10 @@ p.small-letters
 
 h1
   color: $green
+  font-weight: 600
+  +rem(font-size, $extra-large-font)
+
+h4
   font-weight: 600
 
 p.iconized

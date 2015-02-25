@@ -8,6 +8,12 @@ class Extra < ActiveRecord::Base
                                                           'image/png',
                                                           'image/gif',
                                                           'image/svg+xml']
+  has_attached_file :contrast_icon
+  validates_attachment_content_type :contrast_icon, content_type: ['image/jpg',
+                                                          'image/jpeg',
+                                                          'image/png',
+                                                          'image/gif',
+                                                          'image/svg+xml']
   
 
   rails_admin do
@@ -18,5 +24,7 @@ class Extra < ActiveRecord::Base
     configure :hours do
       help 'Horas que toma realizar el servicio, decimales aceptados'
     end
+
+    exclude_fields :extra_services, :services
   end
 end

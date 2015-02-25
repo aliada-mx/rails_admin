@@ -1,12 +1,12 @@
 $(function(){
-  var $counter_container = $('.counter-container');
+  var $bathroom_bedrooms_container = $('.bathroom-bedrooms-container');
 
-  $('.counter-toggle-button').click(function(){
-    $counter_container.slideToggle();
+  $('.bathroom-bedrooms-toggle-button').click(function(){
+    $bathroom_bedrooms_container.slideToggle();
     aliada.ko.forced_hours(null);
   })
 
-  $counter_container.on('click',function(e){
+  $bathroom_bedrooms_container.on('click',function(e){
     var $button = $(e.target),
         button_action = $button.data('action');
 

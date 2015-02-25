@@ -13,6 +13,7 @@ $(document).ready(function() {
     bathrooms: ko.observable(1),
     additional: ko.observable(1),
     forced_hours: ko.observable(null),
+    extras_hours: ko.observable(0),
   }
 
   aliada.services.initial.step_1_duration(aliada, ko);
