@@ -48,6 +48,9 @@ class Service < ActiveRecord::Base
   state_machine :status, :initial => 'created' do
     transition 'created' => 'aliada_assigned', :on => :assign
     transition 'created' => 'aliada_missing', :on => :mark_as_missing
+    transition 'created' => 'paid', :on => :pay
+    transition ['created', 'aliada_assigned', 'in-progress'] => 'finished', :on => :finish
+    transition ['created', 'aliada_assigned' ] => 'cancelled', :on => :cancel
 
     after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
 
@@ -64,7 +67,6 @@ class Service < ActiveRecord::Base
       end
     end
   end
-
 
   # Ask service_type to answer recurrent? method for us
   delegate :recurrent?, to: :service_type
