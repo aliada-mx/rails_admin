@@ -34,6 +34,8 @@ Rails.application.routes.draw do
     post 'conekta_card/create', to: 'conekta_cards#create', as: :create_conekta_card
   end
 
+  post 'incomplete_services', to: 'incomplete_services#update', as: :incomplete_services
+
   resources :schedules
 
   # Resque-web

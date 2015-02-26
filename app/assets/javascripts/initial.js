@@ -28,7 +28,7 @@ $(document).ready(function() {
   // Activates knockout.js
   ko.applyBindings(aliada.ko);
 
-  // Handle next step
+  // Handle previous step
   $('#next_button').on('click',function(e){
       e.preventDefault();
 
@@ -49,4 +49,10 @@ $(document).ready(function() {
 
       aliada.ko.current_step(previous_step);
   });
+
+  // Update incomplete service
+  $form = $('#new_service');
+  $form.find('input, select').on('blur change',function(){
+    $form.ajaxSubmit({ url: Routes.incomplete_services_path() })
+  })
 });

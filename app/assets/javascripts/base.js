@@ -7,6 +7,7 @@
 //= require vex.dialog
 //= require bluebird.min
 //= require js-routes
+//= require jquery.form.min
 //= require_self
 
 vex.defaultOptions.className = 'vex-theme-plain';

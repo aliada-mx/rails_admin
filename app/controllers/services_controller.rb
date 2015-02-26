@@ -8,6 +8,7 @@ class ServicesController < ApplicationController
       redirect_to new_service_users_path(current_user)
     end
 
+    @incomplete_service = IncompleteService.create!
     @service = Service.new(user: User.new,
                            service_type: ServiceType.first,
                            address: Address.new)
@@ -38,10 +39,16 @@ class ServicesController < ApplicationController
   def create
     service = Service.create_initial!(service_params)
 
+    IncompleteService.mark_as_complete(incomplete_service_params,service)
+
     redirect_to show_service_users_path(service.user.id, service.id)
   end
 
   private
+  def incomplete_service_params
+    params.require(:incomplete_service).permit(:id)
+  end
+
   def service_params
       params.require(:service).permit(:zone_id,
                                       :bathrooms,
@@ -55,6 +62,7 @@ class ServicesController < ApplicationController
                                       :payment_method_id,
                                       :conekta_temporary_token,
                                       :aliada_id,
+                                      :incomplete_service_id,
                                       user_attributes: [
                                         :first_name,
                                         :last_name,
@@ -62,7 +70,6 @@ class ServicesController < ApplicationController
                                         :phone,
                                       ],
                                       address_attributes: [
-                                        :id,
                                         :street,
                                         :interior_number,
                                         :number,
@@ -74,6 +81,9 @@ class ServicesController < ApplicationController
                                         :state,
                                         :city,
                                         :references,
+                                        :latitude,
+                                        :longitude,
+                                        :map_zoom,
                                       ]).merge({conekta_temporary_token: params[:conekta_temporary_token] })
                                       
   end

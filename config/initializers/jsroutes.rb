@@ -1,3 +1,3 @@
 JsRoutes.setup do |config|
-  config.include = [/inicial/]
+  config.include = [/inicial/, /incomplete/]
 end

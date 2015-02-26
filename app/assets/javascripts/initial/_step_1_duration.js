@@ -38,7 +38,7 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
   });
     
   // Hours selector
-  $('#service_estimated_hours').on('change', function(){
+  $('#hours_space_room_selector').on('change', function(){
     var $selected = $(this).find(':selected');
     var hours = $selected.val();
     aliada.ko.forced_hours(parseFloat(hours));

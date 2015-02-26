@@ -22,7 +22,10 @@
 input
   +input-placeholder
     color: $light_gray
-    font-weight: 800
+    font-weight: 600
+  &.important-placeholder
+    +input-placeholder
+      font-weight: 800
   &[type=text]
     border: none
     border-bottom: 1px solid $dark_gray

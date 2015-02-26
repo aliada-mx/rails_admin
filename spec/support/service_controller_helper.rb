@@ -1,7 +1,8 @@
 module TestingSupport
   module ServiceControllerHelper
-    def fill_service_form(payment_method, service_type, starting_datetime, extra)
-      select_by_value 3, from: 'service_estimated_hours'
+    def fill_service_form(payment_method, service_type, starting_datetime, extra, zone)
+      fill_hidden_input 'service_zone_id', with: zone.id
+      fill_hidden_input 'service_estimated_hours', with: 3
       fill_hidden_input 'service_bathrooms', with: '1'
       fill_hidden_input 'service_bedrooms', with: '1'
 
