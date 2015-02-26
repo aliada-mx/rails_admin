@@ -5,6 +5,8 @@
 //= require knockout
 //= require vex
 //= require vex.dialog
+//= require bluebird.min
+//= require js-routes
 //= require_self
 
 vex.defaultOptions.className = 'vex-theme-plain';

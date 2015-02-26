@@ -39,7 +39,6 @@ class Service < ActiveRecord::Base
   validate :service_type_exists
   validates_presence_of :address, :user, :zone, :estimated_hours, :datetime, :service_type
 
-
   # Callbacks
   after_initialize :set_defaults
 

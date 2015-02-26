@@ -5,18 +5,27 @@
   %ul
     %li{data: {bind: 'css: {checked: current_step() >= 1}'}}
       %span{data: {bind: 'text: "Duración del servicio: "+hours()+" horas"'}}
-      %a.small-letters{data: {bind: 'visible: current_step() > 1'}} 
-        %icon.pencil
+      %a.small-letters{data: {bind: 'visible: current_step() > 1, click: function(){ current_step(1)}'}} 
+        %icon.pencil.small
         editar
 
-    %li{data: {bind: 'css: {checked: current_step() >= 2, unchecked: current_step() < 2}'}}
+    %li{data: {bind: 'css: {checked: is_address_done, unchecked: !is_address_done()}'}}
       %span{data: {bind: 'text: address'}}
+      %a.small-letters{data: {bind: 'visible: is_address_done, click: function(){ current_step(2)}'}} 
+        %icon.pencil.small
+        editar
 
-    %li{data: {bind: 'css: {checked: current_step() >= 3, unchecked: current_step() < 3}'}}
+    %li{data: {bind: 'css: {checked: is_name_email_phone_done, unchecked: !is_name_email_phone_done()}'}}
       %span{data: {bind: 'text: name_email_phone'}}
+      %a.small-letters{data: {bind: 'visible: is_name_email_phone_done, click: function(){ current_step(3)}'}} 
+        %icon.pencil.small
+        editar
 
     %li{data: {bind: 'css: {checked: current_step() >= 4, unchecked: current_step() < 4}'}}
       %span{data: {bind: 'text: date_hour'}}
+      %a.small-letters{data: {bind: 'visible: current_step() > 4, click: function(){ current_step(4)}'}} 
+        %icon.pencil.small
+        editar
 
   .foot
     %span.hours{data: {bind: 'text: hours()+" horas:"'}}

@@ -79,47 +79,20 @@ body
       +rem(margin, 0 0 4rem)
       text-align: center
 
-      form
-        padding: 0
+      legend
+        border: none
+        color: white
+        +rem(margin, 0 0 1rem)
+        +rem(font-size, 1.8rem)
+        width: 100%
 
-        fieldset
-          padding: 0
-          +rem(font-size, 0)
-
-          legend
-            border: none
-            color: white
-            +rem(margin, 0 0 1rem)
-            text-align: left
-            +rem(font-size, 1.8rem)
-
-          ol
-            margin: 0
-            padding: 0
-
-            li
-              margin: 0
-              padding: 0
-              position: relative
-
-              input[type=text]
-                border: 1px solid $light_gray
-                border-radius: 3px
-                color: $dark_gray
-                display: inline-block
-                height: 55px
-                margin: 0
-                +rem(padding, 2rem)
-                vertical-align: top
-                width: 100%
-                +rem(font-size, 1.8rem)
-
-              .action-button
-                position: absolute
-                right: 0
-                top: 0
-                height: 55px
-                +action-button($dark_pink)
+      .action-button-container
+        width: 300px
+        display: inline-block
+        .action-button
+          height: 55px
+          line-height: 0
+          +action-button($dark_pink)
 
 
 .media-section-wrapper
