@@ -1,8 +1,26 @@
 %h1 Tus servicios
 =   @usuario
 - @upcoming_services.each do |i|
-  %p= i.bathrooms
-  %p= i.bedrooms
-  %p= i.status
-  %p= i.attributes
-  %p= i.address.attributes
+  %b= i.datetime.strftime("Dia %d")
+  %p 
+    #{i.address.street} 
+    #{i.address.number} 
+    #{i.address.interior_number}
+  %p 
+    %b Colonia: 
+    #{i.address.colony},
+    #{i.address.city}
+  %img{:src => "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{i.address.latitude},#{i.address.longitude}&zoom=8&markers=#{i.address.latitude},#{i.address.longitude}"}
+  %p 
+    %b Cliente:
+    #{i.user.first_name}
+    #{i.user.last_name}
+  %p
+    %b tel: 
+    #{i.user.phone}
+  %p Entre calles: #{i.address.between_streets}
+  %p Baños:  #{i.bathrooms}
+  %p Cuartos:   #{i.bedrooms}
+  %br
+  %br
+  
