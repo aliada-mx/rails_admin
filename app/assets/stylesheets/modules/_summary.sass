@@ -1,7 +1,7 @@
-.summary
+.summary-container
   width: 100%
   background-color: white
-  +rem(font-size, 1.6rem)
+  +rem(font-size, $medium-font)
   +rem(padding, 0)
   &.initial
     +box-shadow($medium-gray 0px 0px 4px)
@@ -9,19 +9,6 @@
 
   h1
     margin-bottom: 15px
-
-  ul
-    margin-bottom: 15px
-    li
-      +rem(margin-bottom, 0.2rem)
-      +rem(padding-left, 2.2rem)
-      background-repeat: no-repeat
-      background-position: left 4px
-      background-size: 15px 15px
-
-      &.unchecked
-        color: $light_gray
-        background-image: image-url('check.png')
 
   .foot
     text-align: right
@@ -47,11 +34,25 @@
         width: 100%
 
 
-  &.recurrent
-    li.checked
-      background-image: image-url('check-active-recurrent.png')
 
-  &.one-timer
-    li.checked
-      background-image: image-url('check-active.png')
+ul.summary
+  margin-bottom: 15px
+  li
+    +rem(margin-bottom, 0.2rem)
+    +rem(padding-left, 2.2rem)
+    +rem(font-size, $medium-font)
+    background-repeat: no-repeat
+    background-position: left 4px
+    background-size: 15px 15px
 
+    &.unchecked
+      color: $light_gray
+      background-image: image-url('check.png')
+
+.recurrent
+  li.checked
+    background-image: image-url('check-active-recurrent.png')
+
+.one-time
+  li.checked
+    background-image: image-url('check-active.png')

@@ -1,8 +1,8 @@
-.initial.summary.one-timer
+.initial.summary-container.one-time
   %h1
     Resúmen
 
-  %ul
+  %ul.summary
     %li{data: {bind: 'css: {checked: current_step() >= 1}'}}
       %span{data: {bind: 'text: "Duración del servicio: "+hours()+" horas"'}}
       %a.small-letters{data: {bind: 'visible: current_step() > 1, click: function(){ current_step(1)}'}} 
