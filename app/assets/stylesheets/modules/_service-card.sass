@@ -1,9 +1,46 @@
-.recurrent
-  .head
-    background-color: $purple
+.service-card-wrapper
+
+  &:last-child
+    .service-card
+      min-height: 205px
+      margin-bottom: 0
 
 .service-card
+  min-height: 405px
   +box-shadow($medium-gray 0px 0px 4px)
+  +rem(margin-bottom, 4rem)
+
+  &.recurrent
+    .head
+      background-color: $purple
+
+    .foot
+      .actions
+        a
+          +action-button($purple)
+
+  &.one-time
+    .head
+      background-color: $green
+
+    .foot
+      .actions
+        a
+          +action-button($green)
+
+  &.empty
+    box-shadow: none !important
+    border: 3px dashed $pink
+    display: table
+    color: $pink
+    text-align: center
+    width: 100%
+
+    span
+      display: table-cell
+      vertical-align: middle
+      font-weight: 600
+      +rem(font-size,1.5rem)
 
   .body
     background: white
@@ -20,8 +57,6 @@
       text-align: left
       vertical-align: top
       float: left
-      a
-        +action-button($purple)
 
     .numbers
       display: inline-block
@@ -44,6 +79,7 @@
 
     .badge
       background: transparent
+      color: white
       position: absolute
       +rem(right, 1rem)
       +rem(top, 1rem)

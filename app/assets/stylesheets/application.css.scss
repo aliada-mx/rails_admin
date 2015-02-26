@@ -1,5 +1,10 @@
 @import 'common/base';
 
+// Boostrap
+@import "/assets/bootstrap-glyphicons.css";
+@import 'bootstrap-sprockets';
+@import 'common/bootstrap';
+
 // Controllers
 @import 'static_pages';
 @import 'services';
