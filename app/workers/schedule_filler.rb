@@ -119,7 +119,7 @@ class ScheduleFiller
         if schedules.empty? 
           #CREATE SCHEDULE
           zone_id = User.find(user_recurrence.user_id).addresses.first.postal_code.zones.first.id
-          schedule = Schedule.find_or_create_by(datetime: (today_in_the_future + user_recurrence.hour.hour), aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, status: 'available', zone_id: zone_id )
+          schedule = Schedule.create(datetime: (today_in_the_future + user_recurrence.hour.hour), aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, status: 'available', zone_id: zone_id )
           puts "CREATED SCHEDULE #{schedule.id}"
           schedules = [schedule]
         end
