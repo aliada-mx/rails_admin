@@ -14,20 +14,24 @@ class ScheduleFiller
     fill_aliadas_availability today_in_the_future
 
     insert_clients_schedule today_in_the_future
- 
   end
 
   # aliada's recurrences, to build the whole availability
   def self.fill_aliadas_availability today_in_the_future
-
     Recurrence.where("user_id is null").each do |aliada_recurrence|
       if today_in_the_future.weekday == aliada_recurrence.weekday 
+        beggining_of_recurrence = today_in_the_future + aliada_recurrence.hour.hour
+        ending_of_recurrence = today_in_the_future + aliada_recurrence.hour.hour + aliada_recurrence.total_hours.hour
 
-        schedule_intervals = ScheduleInterval.build_from_range (today_in_the_future + aliada_recurrence.hour.hour), (today_in_the_future + aliada_recurrence.hour.hour + aliada_recurrence.total_hours.hour), from_existing: false, conditions: {aliada_id: aliada_recurrence.aliada_id, zone_id: aliada_recurrence.zone_id, service_id: nil}
+        schedule_intervals = ScheduleInterval.build_from_range(beggining_of_recurrence, 
+                                                               ending_of_recurrence,
+                                                               from_existing: false,
+                                                               conditions: {aliada_id: aliada_recurrence.aliada_id, 
+                                                                            zone_id: aliada_recurrence.zone_id, 
+                                                                            service_id: nil})
         schedule_intervals.persist!
       end
     end
-
   end
 
   # creates service inside aliada's schedule, based on the client's recurrence

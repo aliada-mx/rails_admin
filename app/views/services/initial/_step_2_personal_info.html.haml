@@ -1,0 +1,23 @@
+%section.step_2_personal_info{data: {bind: 'visible: current_step() == 2'}}
+  = initial_service_form.hidden_field :zone_id
+
+  = initial_service_form.fields_for :user, @user do |user_form|
+    = user_form.text_field :email
+    = user_form.text_field :first_name
+    = user_form.text_field :last_name
+    = user_form.text_field :phone
+
+  = initial_service_form.fields_for :address, @address do |address_form|
+    = address_form.hidden_field :postal_code_id, as: :hidden
+    = address_form.text_area :street
+    = address_form.text_field :interior_number
+    = address_form.text_field :number
+    = address_form.text_area :colony
+    = address_form.text_area :between_streets
+    = address_form.text_field :postal_code, value: @postal_code.code
+    = address_form.text_area :state
+    = address_form.text_field :city
+    = address_form.text_area :references
+
+    = address_form.hidden_field :latitude, as: :hidden
+    = address_form.hidden_field :longitude, as: :hidden

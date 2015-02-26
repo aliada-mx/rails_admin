@@ -1,0 +1,12 @@
+= extends :application do
+  .container.one-column
+    .row
+      = render partial: 'common/header'
+
+    .row
+      %nav
+        = render partial: 'common/inner_navigation'
+
+    .row
+      %main
+        = yield

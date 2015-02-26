@@ -1,9 +1,7 @@
 class ServicesController < ApplicationController
-  include ServiceHelper
+  layout 'two_columns'
 
-  def show
-    @service = Service.find_by_id(params[:id])
-  end
+  include ServiceHelper
 
   def initial
     if user_signed_in?
@@ -21,10 +19,31 @@ class ServicesController < ApplicationController
                            zone: @zone,
                            service_type: @service_type,
                            address: @address)
+
+    #Example of to pass a date into the calendarario.html.erb partial
+    @dates =  {Date.new(2015,1,2) => ['8:00', '9:00', '10:00', '11:00', '12:00'] }
+
+    map = {}
+    @dates.each_pair do |k,v|
+      map[k.strftime('%m-%d-%Y')] = v
+    end
+    @dates = map
+    
+    @dates_parsed = ActiveSupport::JSON.encode(@dates).html_safe
+  end
+
+  def new
+  end
+
+  def update
+  end
+
+  def edit
+    @service = Service.find(params[:service_id])
   end
 
   def create
-    service = Service.create_initial(service_params)
+    service = Service.create_initial!(service_params)
 
     redirect_to show_service_users_path(service.user.id, service.id)
   end
@@ -35,13 +54,14 @@ class ServicesController < ApplicationController
                                       :bathrooms,
                                       :bedrooms,
                                       {extra_ids: []},
-                                      :billed_hours,
+                                      :estimated_hours,
                                       :special_instructions,
                                       :service_type_id,
                                       :date,
                                       :time,
                                       :payment_method_id,
                                       :conekta_temporary_token,
+                                      :aliada_id,
                                       user_attributes: [
                                         :first_name,
                                         :last_name,
@@ -61,6 +81,7 @@ class ServicesController < ApplicationController
                                         :state,
                                         :city,
                                         :references,
-                                      ])
+                                      ]).merge({conekta_temporary_token: params[:conekta_temporary_token] })
+                                      
   end
 end

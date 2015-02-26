@@ -18,7 +18,7 @@ feature 'Service' do
                          zone: zone,
                          service_type: one_time_service,
                          datetime: starting_datetime,
-                         billed_hours: 3) }
+                         estimated_hours: 3) }
   before do
     Timecop.freeze(starting_datetime)
   end

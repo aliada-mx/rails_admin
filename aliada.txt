@@ -216,7 +216,6 @@ _______
 
   old.agenda.recurrencias_id *-> new.services.recurrence_id
   old.agenda.elim -> ?
-
 _______
 
   recurrencias (sale de haber creado ya schedules para aliadas)

@@ -5,10 +5,10 @@
       = area :title, 'Aliada' 
     %meta{ name: 'description', content: '' }
     %meta{ name: 'keywords', content: '' }
-    = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true
     = csrf_meta_tags
     = area :extra_head
+    = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true
   %body
-    = area :content
     = yield
-    = area :javascript
+    = area :javascript do
+      = render partial: 'common/javascript_variables'

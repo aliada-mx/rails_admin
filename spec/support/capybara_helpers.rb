@@ -3,5 +3,11 @@ module TestingSupport
     def fill_hidden_input(element_id, with: '') 
       find(:xpath, "//input[@id='#{element_id}']").set with
     end
+
+    def select_by_value(value, from: id)
+      option_xpath = "//*[@id='#{from}']/option[@value='#{value}']"
+      option = find(:xpath, option_xpath).text
+      select(option, :from => from)
+    end
   end
 end

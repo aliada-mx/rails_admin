@@ -1,0 +1,16 @@
+.calendar-wrap
+  #inner.inner
+    .header
+      %nav
+        %span#prev.prev
+        %span#next.next
+      #month.month Enero
+    #calendar.fc-calendar-container
+#cal-hours
+
+= append :javascript do
+  :javascript
+    aliada.dates = JSON.parse('#{raw @dates_parsed}');
+
+  = javascript_include_tag 'jquery.calendario'
+  = javascript_include_tag 'modules/calendar'

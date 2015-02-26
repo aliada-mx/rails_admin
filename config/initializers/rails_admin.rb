@@ -11,6 +11,7 @@ RailsAdmin.config do |config|
   # config.audit_with :paper_trail, 'User', 'PaperTrail::Version' # PaperTrail >= 3.0.0
 
   config.actions do
+    dashboard                     # mandatory
     index                         # mandatory
     new
     export

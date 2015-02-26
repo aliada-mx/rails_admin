@@ -19,15 +19,15 @@ describe 'AliadaChooser' do
                              zone: zone_1,
                              service_type: one_time_service_type,
                              datetime: starting_datetime,
-                             billed_hours: 3,
+                             estimated_hours: 3,
                              address: address_1) }
 
     before :each do
-      Timecop.freeze(starting_datetime)
+      Timecop.freeze(starting_datetime-1.hour)
 
-      create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada_id: aliada_1.id, zone_id: zone_1.id})
-      create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada_id: aliada_2.id, zone_id: zone_1.id})
-      create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada_id: aliada_3.id, zone_id: zone_1.id})
+      create_recurrent!(starting_datetime-1.hour, hours: 5, periodicity: 7, conditions: {aliada_id: aliada_1.id, zone_id: zone_1.id})
+      create_recurrent!(starting_datetime-1.hour, hours: 5, periodicity: 7, conditions: {aliada_id: aliada_2.id, zone_id: zone_1.id})
+      create_recurrent!(starting_datetime-1.hour, hours: 5, periodicity: 7, conditions: {aliada_id: aliada_3.id, zone_id: zone_1.id})
 
       @aliadas_availability = ScheduleChecker.find_aliadas_availability(service_1)
     end

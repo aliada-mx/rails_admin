@@ -1,0 +1,14 @@
+.summary
+  %h1
+    Resúmen
+
+  .foot
+    %span.hours{data: {bind: 'text: hours()+" horas:"'}}
+    %span.cash{data: {bind: 'text: "$"+price()'}}
+  .promotional-code{data: {bind: 'visible: current_step() == 5'}}
+    %a
+      APLICAR
+    = text_field_tag 'promo-code', nil, placeholder: 'código promocional'
+
+= initial_service_form.submit 'atras', id: 'previous_button'
+= initial_service_form.submit 'Confirmar servicio', id: 'next_button'

@@ -1,0 +1,141 @@
+-# Home header
+%section.search-section-wrapper
+
+  %header.container
+    %div.row.header-container
+      %div.logo-container.col-lg-2
+        = link_to image_tag("logo.png", :class => 'logo'), '/';
+      %nav.nav-container.col-lg-10
+        %ul.nav
+          %li ¿Cómo funciona?
+          %li Precios
+          %li Preguntas Frencuentes
+          %li
+            =link_to("Log in", "/sign_in", { :class => 'action-button-gray'})
+
+
+  %div.container
+    %div.row.search-container
+      %div.search-slogan-container.text-color-white.col-lg-12
+        %h1.slogan
+          Simplifica tu vida
+          =image_tag("aliada-shine.png", :class => 'shine')
+        %p.motto
+          Limpiamos tu hogar
+
+      %div.search-form-container.col-lg-12
+        = form_tag initial_service_path do
+          %fieldset
+            %legend
+              Pide una profesional de la limpieza en menos de un minuto desde $65/hr.
+            %ol
+              %li
+                = text_field_tag('postal_code_id', '', {:placeholder => 'Calle, número, colonia'})
+                = submit_tag('Programa tu visita', { :class => 'action-button size-large' })
+
+
+%section.media-section-wrapper
+  %div.container
+    %div.row
+      %div.media-section-container.col-lg-12
+        %div.media-logo
+          =image_tag("media_logos/chilango-logo.png", :title => 'Chilango')
+        %div.media-logo
+          =image_tag("media_logos/reforma-logo.png", :title => 'Reforma')
+        %div.media-logo
+          =image_tag("media_logos/cnnexpansion-logo.png", :title => 'Cnn Expansión')
+        %div.media-logo
+          =image_tag("media_logos/ibero-logo.png", :title => 'Ibero 90.9')
+
+
+%section.why-section-wrapper
+  %div.container
+    %div.row
+      %div.why-section-container.col-lg-12
+        %h3.why-section-title ¿Por qué utilizar aliada?
+        %div.col-lg-4
+          =image_tag("why-1.png", :title => 'Recibe la misma aliada en las visitas recurrentes')
+          %p.why-description Recibe la misma aliada en las visitas recurrentes
+        %div.col-lg-4
+          =image_tag("why-2.png", :title => 'Sin contratos ni cuotas de administración')
+          %p.why-description Sin contratos ni cuotas de administración
+        %div.col-lg-4
+          =image_tag("why-3.png", :title => 'El pago en línea es muy fácil, con los estándares más altos de seguridad')
+          %p.why-description El pago en línea es muy fácil, con los estándares más altos de seguridad
+
+        %div.clearfix
+
+        %div.col-lg-4
+          =image_tag("why-4.png", :title => 'Recibe la misma aliada en las visitas recurrentes')
+          %p.why-description Solo paga las horas utilizadas
+        %div.col-lg-4
+          =image_tag("why-5.png", :title => 'Recibe la misma aliada en las visitas recurrentes')
+          %p.why-description Atención telefónica los 7 días de la semana
+        %div.col-lg-4
+          =image_tag("why-6.png", :title => 'Recibe la misma aliada en las visitas recurrentes')
+          %p.why-description Ayuda a que todas las aliadas mejore su calidad de vida
+
+
+%section.service-section-wrapper
+  %div.container
+    %div.row
+      %div.service-section-container.col-lg-12
+        %h2.service-section-title ¿Qué servicios ofrecen las aliadas?
+        %p.service-subtitle Las Aliadas son profesionales de la limpieza altamente capacitadas para solucionar todas las necesidades de tu hogar
+        %div.col-lg-3
+          =image_tag("service-1.png", :title => 'Sin contratos ni cuotas de administración')
+          %p.service-description Habitaciones y áreas comunes
+        %div.col-lg-3
+          =image_tag("service-2.png", :title => 'Sin contratos ni cuotas de administración')
+          %p.service-description Baños
+        %div.col-lg-3
+          =image_tag("service-3.png", :title => 'Sin contratos ni cuotas de administración')
+          %p.service-description Cocina
+        %div.col-lg-3
+          =image_tag("service-4.png", :title => 'Sin contratos ni cuotas de administración')
+          %p.service-description Lavado y planchado
+
+
+%section.warranty-section-wrapper
+  %div.container
+    %div.row
+      %div.warranty-section-container.col-lg-12
+        =image_tag("warranty-logo.png", {:title => 'Garantía Aliada', :class => 'warranty-logo'})
+        %p.warranty-description Tu hogar quedará impecable o te devolvemos tu dinero
+
+
+%section.video-section-wrapper
+  %div.container
+    %div.row
+      %div.video-section-container.col-lg-12
+
+
+%section.payment-section-wrapper
+  %div.container
+    %div.row
+      %div.payment-description.col-lg-6
+        %p Paga en línea de forma segura. <br> Sin dinero en efectivo, sin problemas.
+      %div.payment-logos.col-lg-6
+        =image_tag("payment-logos.png", {:title => 'Métodos de pago' })
+
+
+%footer
+  %div.container
+    %div.call-us.col-lg-6
+      =image_tag("phone-white.png", {:title => 'Teléfono'})
+      %p ¿Necesitas ayuda? Llámanos al (55) 4170 8032
+    %div.col-lg-3
+      %nav.bottom-nav
+        %ul
+          %li
+            =link_to("Acerca de nosotros", "/sign_in")
+          %li
+            =link_to("Preguntas frecuentes", "/sign_in")
+          %li
+            =link_to("Términos y condiciones", "/sign_in")
+          %li
+            =link_to("Política de privacidad", "/sign_in")
+          %li
+            =link_to("Contacto", "/sign_in")
+    %div.col-lg-3
+      %p 2014 Aliada. <br> Todos los derechos reservados.

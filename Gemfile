@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-
+source 'https://rails-assets.org'
 
 # BASE
 #
@@ -36,10 +36,18 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 # Easy file attachment management for ActiveRecord
 gem 'paperclip'
+# AWS storage adapter
+gem 'aws-sdk', '~> 1.5.7'
 # Bootstrap
 gem 'bootstrap-sass'
 # Sass framework
 gem 'compass-rails'
+ 
+# BOWER
+#
+gem 'rails-assets-underscore'
+gem 'rails-assets-knockout'
+
 
 # TEMPLATING
 #
@@ -67,8 +75,7 @@ end
 gem 'invert'
 
 # ADMIN
-gem 'rails_admin', github: 'sferik/rails_admin'
-# gem 'rails_admin'
+gem 'rails_admin', github: 'grillermo/rails_admin'
 # permissions
 gem 'cancancan'
 

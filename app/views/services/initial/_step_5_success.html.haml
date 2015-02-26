@@ -1,0 +1,18 @@
+%section.step_5_success{data: {bind: 'visible: current_step() == 5'}}
+  %h1
+    Visita Programada con éxito
+  %p
+    Dinos si tienes instrucciones especiales.
+    %br
+    Todos los campos son opcionales.
+  .special-instructions
+    %p.iconized.instructions
+      ¿Cómo entrará la aliada a tu casa?
+    %fieldset.radiobuttons.small
+      = label_tag :at_home do
+        %span Estaré en casa
+        = radio_button_tag :service_aliada_entry, 1, false, id: :at_home
+      = label_tag :with_guard do
+        %span Dejaré las llaves con el guardia/portero
+        = radio_button_tag :service_aliada_entry, 2, false, id: :with_guard
+    = initial_service_form.text_area :special_instructions 
