@@ -134,7 +134,12 @@ puts "MIGRANDO HORARIOS"
 connection.query("SELECT * FROM horarios").each do |row|
   
   if (aliadas[row["aliadas_id"]])
-    recurrence = Recurrence.find_or_initialize_by(aliada_id: aliadas[row["aliadas_id"]], weekday: row["dia"].downcase, hour: row["hora"].hour, periodicity: 7, owner: 'aliada', total_hours: 1, status: nil, user_id: nil, zone_id: nil)
+    aliada = Aliada.find(aliadas[row["aliadas_id"]])
+    zone_id = nil
+    if not aliada.zones.empty?
+      zone_id = aliada.zones.first.id
+    end
+    recurrence = Recurrence.find_or_initialize_by(aliada_id: aliada.id, weekday: row["dia"].downcase, hour: row["hora"].hour, periodicity: 7, owner: 'aliada', total_hours: 1, status: nil, user_id: nil, zone_id: zone_id)
 
     if recurrence.new_record?
       recurrence.save
