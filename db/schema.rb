@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150226141521) do
+ActiveRecord::Schema.define(version: 20150226224630) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -136,7 +136,7 @@ ActiveRecord::Schema.define(version: 20150226141521) do
     t.integer  "bedrooms"
     t.string   "date"
     t.string   "time"
-    t.decimal  "estimated_hours", precision: 10, scale: 3
+    t.decimal  "estimated_hours",       precision: 10, scale: 3
     t.text     "street"
     t.string   "number"
     t.string   "interior_number"
@@ -147,10 +147,11 @@ ActiveRecord::Schema.define(version: 20150226141521) do
     t.text     "extra_ids"
     t.integer  "map_zoom"
     t.string   "postal_code"
-    t.decimal  "latitude",        precision: 10, scale: 7
-    t.decimal  "longitude",       precision: 10, scale: 7
+    t.decimal  "latitude",              precision: 10, scale: 7
+    t.decimal  "longitude",             precision: 10, scale: 7
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "postal_code_not_found"
   end
 
   create_table "payment_methods", force: true do |t|

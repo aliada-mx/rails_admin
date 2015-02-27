@@ -3,7 +3,11 @@
     ¿Cuándo te visitamos?
   %p
     Elige la frecuencia de la visita
-  = initial_service_form.collection_radio_buttons :service_type_id, ServiceType.all, :id, :name
+  = initial_service_form.collection_radio_buttons :service_type_id, ServiceType.all, :id, :name do |radio_button_builder|
+    .radio-button-container
+      = radio_button_builder.radio_button
+      = radio_button_builder.label do
+        = radio_button_builder.object.name
 
   %p
     %icon.calendar

@@ -1,3 +1,3 @@
 JsRoutes.setup do |config|
-  config.include = [/inicial/, /incomplete/]
+  config.exclude = [/admin/, /resque/]
 end

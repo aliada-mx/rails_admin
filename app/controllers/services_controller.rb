@@ -44,9 +44,52 @@ class ServicesController < ApplicationController
     redirect_to show_service_users_path(service.user.id, service.id)
   end
 
+  # Provides feedback through ajax to the initial service creation form
+  def initial_feedback
+    save_incomplete_service
+
+    return if check_email_present
+
+    return if check_postal_code
+
+    return render json: { status: :success }
+  end
+
   private
+  def save_incomplete_service
+    @incomplete_service = IncompleteService.find(params[:incomplete_service][:id])
+    @incomplete_service.update_attributes!(incomplete_service_params)
+  end
+
+  def check_email_present
+    email = incomplete_service_params[:email]
+    return render json: { status: :error, code: :email_already_exists } if email.present? && User.email_exists?(email)
+  end
+
+  def check_postal_code
+    postal_code = incomplete_service_params[:postal_code]
+
+    if postal_code.present? && postal_code.size >= 4 
+      zone = Zone.find_by_code(postal_code)
+
+      unless zone.present?
+        @incomplete_service.update(postal_code_not_found: true)
+        return render json: { status: :error, code: :postal_code_missing }
+      end
+    end
+  end
+
   def incomplete_service_params
-    params.require(:incomplete_service).permit(:id)
+      params.require(:service).permit(:bathrooms,
+                                      :bedrooms,
+                                      :estimated_hours,
+                                      :service_type_id,
+                                      :date,
+                                      :time,
+                                      ).merge({extra_ids: params[:service][:extra_ids].to_s })
+                                       .merge(params[:service][:address_attributes])
+                                       .merge(params[:service][:user_attributes])
+                                       .except!(:postal_code_id)
   end
 
   def service_params

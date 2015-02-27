@@ -4,11 +4,12 @@
 //= require initial/_step_3_visit_info
 //= require initial/_step_4_payment
 //= require initial/_step_5_success
+//= require modules/dialogs
 
 $(document).ready(function() {
   // KNOCKOUT initialization
   aliada.ko = {
-    current_step: ko.observable(2),
+    current_step: ko.observable(3),
   }
 
   aliada.services.initial.step_1_duration(aliada, ko);
@@ -51,8 +52,28 @@ $(document).ready(function() {
   });
 
   // Update incomplete service
-  $form = $('#new_service');
-  $form.find('input, select').on('blur change',function(){
-    $form.ajaxSubmit({ url: Routes.incomplete_services_path() })
-  })
+  var $form = $('#new_service');
+
+  get_feedback = function(){
+    $form.ajaxSubmit({
+      url: Routes.initial_feedback_path(),
+      success: function(response){
+        if (response.status == 'error'){
+          switch(response.code){
+            case 'email_already_exists':
+              aliada.dialogs.email_already_exists(aliada.ko.email());
+              break;
+            case 'postal_code_missing':
+              aliada.dialogs.postal_code_missing(aliada.ko.postal_code());
+              break;
+          }
+        }
+      },
+      error: function(){
+        aliada.dialogs.platform_error();
+      }
+    })
+  }
+
+  $form.find('input, select').on('change', get_feedback)
 });
