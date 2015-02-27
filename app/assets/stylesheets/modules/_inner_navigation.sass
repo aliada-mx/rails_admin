@@ -1,0 +1,42 @@
+.inner-top-nav-wrapper
+  display: table
+
+  .balance-section
+    display: table-cell
+    font-size: 0
+    vertical-align: middle
+    width: 20%
+
+    .label
+      text-align: right
+      +rem(font-size, 1.6rem)
+
+      span
+        color: $green
+        display: inline-block
+        vertical-align: top
+        +rem(font-size, 1.3rem)
+
+    .balance
+      letter-spacing: -2px
+      text-align: right
+      +rem(font-size, 4rem)
+      +rem(margin-top, -0.5rem)
+
+  .inner-top-nav
+    display: table-cell
+    margin: 0
+    padding: 0
+    vertical-align: middle
+    width: 80%
+
+    li
+      display: inline-block
+      vertical-align: top
+      +rem(margin-right, 1rem)
+
+      &:last-child
+        margin-right: 0
+
+        a
+          +action-button($green)
