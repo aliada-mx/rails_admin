@@ -17,6 +17,8 @@
 @import 'modules/bathroom-bedrooms'
 @import 'modules/extras'
 @import 'modules/service-card'
+@import 'modules/service_type_buttons'
+@import 'modules/time_selector'
 
 // Modal
 @import 'vex'
@@ -51,10 +53,12 @@ b
 a.small-letters
   text-decoration: underline
   color: $green
+
+.small-letters
   +rem(font-size, $small-font)
 
-p.small-letters
-  +rem(font-size, $small-font)
+.smallish-letters
+  +rem(font-size, $smallish-font)
 
 h1
   color: $green
@@ -89,6 +93,12 @@ icon
     background-image: image-url('house.png')
   &.hash
     background-image: image-url('hash.png')
+  &.sparks
+    background-image: image-url('sparks.png')
+  &.check
+    background-image: image-url('check.png')
+  &.check-active
+    background-image: image-url('check-active.png')
 
 p.medium
   +rem(font-size, $medium-font)
@@ -128,6 +138,9 @@ footer
 
 .action-button-gray
   +action-button($dark_gray)
+
+.action-button-transparent
+  +action-button(transparent)
 
 .action-button-purple
   +action-button($purple)

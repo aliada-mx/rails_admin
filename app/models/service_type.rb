@@ -14,10 +14,18 @@ class ServiceType < ActiveRecord::Base
     name == 'one-time'
   end
 
+  def benefits_list
+    benefits.split(',')
+  end
+
   rails_admin do
     label_plural 'tipos de servicio'
     label_plural 'tipos de servicios'
     parent Service
     navigation_icon 'icon-barcode'
+
+    configure :benefits do
+      help 'Frases separadas por comas'
+    end
   end
 end
