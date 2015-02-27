@@ -90,7 +90,7 @@ feature 'AliadasController' do
                       references: 'Metro insurgentes',
                       references_latitude: 19.541,
                       references_longitude: -99.451,
-                      map_zoom: 16,
+                      map_zoom: 16, 
                       latitude: 19.54,
                       longitude: -99.45) 
     Servicio1 = create(:service, aliada_id: aliada.id, address_id: address1.id,
@@ -103,11 +103,11 @@ feature 'AliadasController' do
     
       Timecop.freeze(Date.today + 1) do
         visit  ('aliadas/servicios/'+ aliada.authentication_token)
-        #save_and_open_page
+         save_and_open_page
         expect(page).to   have_content 'Roma Norte'
       end
       
-      
+        
     end
     
     

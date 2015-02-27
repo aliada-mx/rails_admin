@@ -1,27 +1,30 @@
-%h1 Tus servicios
-=   @usuario
 - @upcoming_services.each do |i|
-  %b= i.datetime.strftime("Dia %d")
-  %p 
+  %h1=  I18n.l i.datetime, format: "%A %e a las %k %P"
+
+  %h4
+    #{i.estimated_hours.floor} horas
+    #{(60*(i.estimated_hours-i.estimated_hours.floor)).floor} minutos
+  %h3 
     #{i.address.street} 
-    #{i.address.number} 
+    #{i.address.number}
+    interior:
     #{i.address.interior_number}
-  %p 
+  %h4
     %b Colonia: 
     #{i.address.colony},
     #{i.address.city}
   %img{:src => "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{i.address.latitude},#{i.address.longitude}&zoom=#{i.address.map_zoom}&markers=#{i.address.latitude},#{i.address.longitude}&markers=color:blue%7Clabel:S%7C#{i.address.references_latitude},#{i.address.references_longitude}"}
-  %p= i.address.reference 
-  %p 
+  %h5= i.address.references 
+  %h3 
     %b Cliente:
     #{i.user.first_name}
     #{i.user.last_name}
-  %p
+  %h5 
     %b tel: 
     #{i.user.phone}
-  %p Entre calles: #{i.address.between_streets}
-  %p Baños:  #{i.bathrooms}
-  %p Cuartos:   #{i.bedrooms}
+  %h5 Entre calles: #{i.address.between_streets}
+  %h5 Baños:  #{i.bathrooms}
+  %h5 Cuartos:   #{i.bedrooms}
   %br
   %br
   
