@@ -10,7 +10,8 @@
     %b Colonia: 
     #{i.address.colony},
     #{i.address.city}
-  %img{:src => "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{i.address.latitude},#{i.address.longitude}&zoom=8&markers=#{i.address.latitude},#{i.address.longitude}"}
+  %img{:src => "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{i.address.latitude},#{i.address.longitude}&zoom=#{i.address.map_zoom}&markers=#{i.address.latitude},#{i.address.longitude}&markers=color:blue%7Clabel:S%7C#{i.address.references_latitude},#{i.address.references_longitude}"}
+  %p= i.address.reference 
   %p 
     %b Cliente:
     #{i.user.first_name}
