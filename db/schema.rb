@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150227033132) do
+ActiveRecord::Schema.define(version: 20150228200653) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -146,7 +146,7 @@ ActiveRecord::Schema.define(version: 20150227033132) do
     t.string   "city"
     t.text     "extra_ids"
     t.integer  "map_zoom"
-    t.string   "postal_code"
+    t.string   "postal_code_number"
     t.decimal  "latitude",              precision: 10, scale: 7
     t.decimal  "longitude",             precision: 10, scale: 7
     t.datetime "created_at"
@@ -183,21 +183,12 @@ ActiveRecord::Schema.define(version: 20150227033132) do
 
   add_index "payments", ["user_id"], name: "index_payments_on_user_id", using: :btree
 
-  create_table "postal_code_zones", force: true do |t|
-    t.integer  "postal_code_id"
-    t.integer  "zone_id"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-  end
-
-  add_index "postal_code_zones", ["postal_code_id"], name: "index_postal_code_zones_on_postal_code_id", using: :btree
-  add_index "postal_code_zones", ["zone_id"], name: "index_postal_code_zones_on_zone_id", using: :btree
-
   create_table "postal_codes", force: true do |t|
     t.string   "code",       limit: nil
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
     t.string   "name"
+    t.integer  "zone_id"
   end
 
   create_table "recurrences", force: true do |t|
@@ -254,7 +245,6 @@ ActiveRecord::Schema.define(version: 20150227033132) do
   end
 
   create_table "services", force: true do |t|
-    t.integer  "zone_id"
     t.integer  "address_id"
     t.integer  "user_id"
     t.integer  "service_type_id"
@@ -279,6 +269,7 @@ ActiveRecord::Schema.define(version: 20150227033132) do
     t.text     "attention_instructions"
     t.text     "equipment_instructions"
     t.text     "forbidden_instructions"
+    t.integer  "zone_id"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
@@ -343,9 +334,6 @@ ActiveRecord::Schema.define(version: 20150227033132) do
   add_foreign_key "codes", "users", name: "fk_rails_0cc1e79270"
 
   add_foreign_key "documents", "users", name: "fk_rails_8492e5f484"
-
-  add_foreign_key "postal_code_zones", "postal_codes", name: "fk_rails_42b87c0f50"
-  add_foreign_key "postal_code_zones", "zones", name: "fk_rails_0b1be18d68"
 
   add_foreign_key "recurrences", "users", name: "fk_rails_6e1c955ffb"
 

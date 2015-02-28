@@ -25,9 +25,6 @@ class Service < ActiveRecord::Base
   has_many :schedules
   has_many :tickets, as: :relevant_object
 
-  accepts_nested_attributes_for :user
-  accepts_nested_attributes_for :address
-
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
@@ -37,10 +34,11 @@ class Service < ActiveRecord::Base
   validate :datetime_is_hour_o_clock
   validate :datetime_within_working_hours
   validate :service_type_exists
-  validates_presence_of :address, :user, :zone, :estimated_hours, :datetime, :service_type
+  validates_presence_of :address, :user, :estimated_hours, :datetime, :service_type
 
   # Callbacks
   after_initialize :set_defaults
+  after_create :ensure_zone!
 
   # TODO: Fix validations, it is only working with :created
   # State machine
@@ -100,6 +98,14 @@ class Service < ActiveRecord::Base
                                            weekday: datetime.weekday)
       self.save!
     end
+  end
+
+  def ensure_zone!
+    return if zone_id.present?
+    return unless address_id.present? 
+
+    self.zone_id = address.postal_code.zone.id
+    self.save!
   end
 
   def self.create_aliada_missing_ticket
@@ -162,12 +168,17 @@ class Service < ActiveRecord::Base
   end
 
   def self.create_initial!(service_params)
-    service = Service.new(service_params)
+    address = Address.create!(service_params[:address])
+    user = User.create!(service_params[:user])
+    service = Service.new(service_params.except!(:user, :address))
+
+    service.address = address
+    service.user = user
     service.combine_date_time
-    service.save!
     service.ensure_recurrence!
 
-    user = service.user
+    service.save!
+
     user.create_first_payment_provider!(service_params[:payment_method_id])
     user.ensure_first_payment!(service_params)
 

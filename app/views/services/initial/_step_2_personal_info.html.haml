@@ -1,6 +1,4 @@
 %section.step_2_personal_info{data: {bind: 'visible: current_step() == 2'}}
-  = initial_service_form.hidden_field :zone_id
-
   %h1
     Tus datos y dirección
   %h4
@@ -11,7 +9,7 @@
       = initial_service_form.fields_for :user do |user_form|
         %label.field-row.email
           %icon.user
-          = user_form.text_field :email, placeholder: 'Correo electrónico', class: 'full-width', data: {bind: 'value: email'}
+          = user_form.text_field :email, placeholder: 'Correo electrónico', class: 'full-width', data: {bind: 'value: email, valueUpdate: "change"'}
         %label.field-row
           = user_form.text_field :first_name, placeholder: 'Nombres(s)', class: 'half-width', data: {bind: 'value: first_name'}
           = user_form.text_field :last_name, placeholder: 'Apellido(s)', class: 'half-width', data: {bind: 'value: last_name'}
@@ -20,8 +18,6 @@
 
     .address
       = initial_service_form.fields_for :address do |address_form|
-        %label.field-row
-          = address_form.hidden_field :postal_code_id, as: :hidden
         %label.field-row
           %icon.house
           = address_form.text_field :street, placeholder: 'Calle', class: 'full-width', data: {bind: 'value: street'}
@@ -37,7 +33,7 @@
           = address_form.text_field :city, placeholder: 'Ciudad/Delegación', class: 'half-width', data: {bind: 'value: city'}
           = address_form.text_field :state, placeholder: 'Estado/Distrito', class: 'half-width', data: {bind: 'value: state'}
         %label.field-row
-          = address_form.text_field :postal_code, placeholder: 'Código postal', data: {bind: 'value: postal_code'}, class: 'two-thirds-width'
+          = address_form.text_field :postal_code_number, placeholder: 'Código postal', data: {bind: 'value: postal_code'}, class: 'two-thirds-width'
 
         = address_form.hidden_field :latitude, as: :hidden, data: {bind: 'value: latitude'}
         = address_form.hidden_field :longitude, as: :hidden, data: {bind: 'value: longitude'}

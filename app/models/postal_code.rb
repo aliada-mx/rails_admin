@@ -1,6 +1,7 @@
 class PostalCode < ActiveRecord::Base
-  has_many :postal_code_zones
-  has_many :zones, through: :postal_code_zones
+  belongs_to :zone
+
+  validates_presence_of :zone_id
 
   rails_admin do
     label_plural 'códigos postales'

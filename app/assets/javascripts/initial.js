@@ -9,14 +9,18 @@
 //= require initial/_step_3_visit_info
 //= require initial/_step_4_payment
 //= require initial/_step_5_success
-//= require initial/validation
 //= require initial/live_feedback
 
 $(document).ready(function() {
   aliada.services.initial.form = $('#new_service');
 
   aliada.services.initial.is_valid_step = function(){
-    return aliada.services.initial.form.valid();
+    // Trigger update on to force validation feedback
+    _.each(aliada.step_2_required_fields, function(element){
+      aliada.ko[element].valueHasMutated();
+    });
+
+    return ko.validatedObservable(aliada.ko).isValid();
   };
 
   // Move to specific step
@@ -32,7 +36,7 @@ $(document).ready(function() {
 
   // KNOCKOUT initialization
   aliada.ko = {
-    current_step: ko.observable(3),
+    current_step: ko.observable(2),
   };
 
   aliada.services.initial.step_1_duration(aliada, ko);
@@ -48,6 +52,13 @@ $(document).ready(function() {
     }
     return current_step < 4 ? 'Siguiente' : 'Confirmar visita'
   });
+
+  ko.validation.init({
+    errorClass: 'error',
+    decorateInputElement: true,
+    insertMessages: false,
+    errorsAsTitle: true,
+  })
 
   // Activates knockout.js
   ko.applyBindings(aliada.ko);
@@ -90,6 +101,4 @@ $(document).ready(function() {
   }, aliada.ko, "beforeChange");
 
   aliada.services.initial.live_feedback(aliada.services.initial.form);
-
-  aliada.services.initial.validate_form(aliada.services.initial.form);
 });

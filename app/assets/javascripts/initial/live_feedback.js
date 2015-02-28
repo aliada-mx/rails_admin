@@ -7,16 +7,22 @@ aliada.services.initial.live_feedback = function($form){
         if (response.status == 'error'){
           switch(response.code){
             case 'email_already_exists':
-              var email = aliada.ko.email()
+              var email = aliada.ko.email();
 
               aliada.dialogs.email_already_exists(email);
+              aliada.ko.email(''); // Delete it to invalidate the form
+              $form.find('#service_user_email').select();
               break;
             case 'postal_code_missing':
-              var postal_code = aliada.ko.postal_code()
+              var postal_code = aliada.ko.postal_code();
 
               aliada.dialogs.postal_code_missing(postal_code);
+              aliada.ko.postal_code(''); // Delete it to invalidate the form
+              $form.find('#service_address_postal_code_number').select();
               break;
           }
+        }else if(response.status == 'success'){
+          $form.find('.invalid')
         }
       },
       error: function(){

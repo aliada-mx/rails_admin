@@ -5,26 +5,21 @@ aliada.services.initial.step_2_personal_info = function(aliada, ko){
   var name_email_phone_default = 'Nombre, correo, teléfono';
   var address_default = 'Dirección';
 
-  // Knockout model
-  _(aliada.ko).extend({
-    street: ko.observable(''),
-    number: ko.observable(''),
-    interior_number: ko.observable(''),
-    colony: ko.observable(''),
-    between_streets: ko.observable(''),
-    city: ko.observable(''),
-    state: ko.observable(''),
-    postal_code: ko.observable(''),
+  var on_step_2 = function(){ return aliada.ko.current_step() == 2 };
 
+  // Knockout model
+  aliada.step_2_required_fields = [ 'email','first_name','last_name','phone','street','number','interior_number', 'colony', 'between_streets', 'city', 'state', 'postal_code' ]
+
+  _.each(aliada.step_2_required_fields, function(element){
+    aliada.ko[element] = ko.observable('').extend({ required: { onlyIf: on_step_2 } })
+  });
+
+  _(aliada.ko).extend({
     latitude: ko.observable(''),
     longitude: ko.observable(''),
-
-    email: ko.observable(''),
-    first_name: ko.observable(''),
-    last_name: ko.observable(''),
-    phone: ko.observable(''),
     map_zoom: ko.observable(aliada.default_map_zoom),
   });
+
 
   // PERSONAL INFO
   aliada.ko.name_email_phone = ko.computed(function(){
@@ -150,7 +145,7 @@ aliada.services.initial.step_2_personal_info = function(aliada, ko){
   $(document).on('entered_step_2',function(){
     // Initialize map only once the container is visible otherwise the map renders incorrectly
     if(should_init_map_autocomplete){
-      initialize_map_and_autocomplete();
+      // initialize_map_and_autocomplete();
       should_init_map_autocomplete = false;
     }
   });

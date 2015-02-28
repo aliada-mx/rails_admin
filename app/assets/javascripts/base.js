@@ -1,12 +1,12 @@
 //= require jquery
 //= require jquery-ui.min.js
-//= require jquery.validate
 //
 //= require modernizr.custom.63321
 //= require underscore
 //= require bluebird.min
 //
 //= require knockout
+//= require knockout.validation
 //
 //= require vex
 //= require vex.dialog

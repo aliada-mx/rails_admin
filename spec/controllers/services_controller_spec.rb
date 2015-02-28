@@ -67,6 +67,8 @@ feature 'ServiceController' do
         expect(service).to be_present
         expect(incomplete_service.service).to eql service
 
+        expect(address.postal_code.code).to eql '11800'
+
         expect(service_aliada).to eql aliada
         expect(extras).to include extra_1
 

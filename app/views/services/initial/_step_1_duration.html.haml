@@ -1,6 +1,8 @@
 %section.step_1_duration{data: {bind: 'visible: current_step() == 1'}}
   = hidden_field :incomplete_service, :id
 
+  = initial_service_form.hidden_field 'estimated_hours', data: {bind: 'attr: {value: hours}'}
+
   %h1
     Cuéntanos más de tu casa
 
