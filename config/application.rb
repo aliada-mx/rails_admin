@@ -27,17 +27,5 @@ module AliadaWebApp
      
     Conekta.api_key = Rails.application.secrets.conekta_secret_key
 
-    config.paperclip_defaults = {
-      :storage => :s3,
-      :s3_headers => { 
-        'Cache-Control' => 'max-age=315576000',
-        'Expires' => 1.years.from_now.httpdate 
-      },
-      :s3_credentials => {
-        :bucket => ENV['S3_BUCKET_NAME'],
-        :access_key_id => ENV['AWS_ACCESS_KEY_ID'],
-        :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY']
-      }
-    }
   end
 end

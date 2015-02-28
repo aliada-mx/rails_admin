@@ -2,7 +2,8 @@
     aliada = {
         services: {
             initial: {}
-        }
+        },
+        dialogs: {}
     };
 
     aliada.conekta_public_key = '<%= @conekta_public_key %>';
@@ -10,4 +11,7 @@
     aliada.bathrooms_multiplier = <%= Setting.bathrooms_multiplier %>;
     aliada.minimum_hours_service = <%= Setting.minimum_hours_service %>;
     aliada.cost_per_hour = <%= Setting.cost_per_hour  %>;
+
+    aliada.map_marker_icon = '<%= image_url("map-marker-icon.png") %>';
+    aliada.default_map_zoom = 16;
 </script>

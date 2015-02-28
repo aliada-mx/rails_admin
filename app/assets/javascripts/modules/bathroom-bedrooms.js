@@ -1,12 +1,12 @@
 $(function(){
-  var $counter_container = $('.counter-container');
+  var $bathroom_bedrooms_container = $('.bathroom-bedrooms-container');
 
-  $('.counter-toggle-button').click(function(){
-    $counter_container.slideToggle();
+  $('.bathroom-bedrooms-toggle-button').click(function(){
+    $bathroom_bedrooms_container.slideToggle();
     aliada.ko.forced_hours(null);
   })
 
-  $counter_container.on('click',function(e){
+  $bathroom_bedrooms_container.on('click',function(e){
     var $button = $(e.target),
         button_action = $button.data('action');
 
@@ -15,7 +15,7 @@ $(function(){
 
     switch(button_action){
       case 'less-bathrooms':
-        var new_bathrooms = bathrooms === 1 ? 0 : bathrooms - 1;
+        var new_bathrooms = bathrooms >= 2 ? bathrooms - 1 : 1;
 
         aliada.ko.bathrooms(new_bathrooms)
         break;
@@ -25,7 +25,7 @@ $(function(){
         aliada.ko.bathrooms(new_bathrooms)
         break;
       case 'less-bedrooms':
-        var new_bedrooms = bedrooms === 1 ? 0 : bedrooms - 1;
+        var new_bedrooms = bedrooms >= 2 ? bedrooms - 1 : 1;
 
         aliada.ko.bedrooms(new_bedrooms)
         break;

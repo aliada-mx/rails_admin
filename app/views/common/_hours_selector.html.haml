@@ -1,15 +1,17 @@
-= form.select 'estimated_hours', options_from_collection_for_select(Setting.hours_space_room.to_a, :hours, :text), {}, class: 'selectpicker'
+= select_tag 'hours_space_room_selector', options_from_collection_for_select(Setting.hours_space_room.to_a, :hours, :text), class: 'selectpicker'
 
-.short-row
-  %a.small-letters.counter-toggle-button
-    ¿No sabes los metros cuadrados?
+= form.hidden_field 'estimated_hours', data: {bind: 'attr: {value: hours}'}
 
-= render partial: 'common/counter', locals: {form: form}
+%a.small-letters.bathroom-bedrooms-toggle-button
+  ¿No sabes los metros cuadrados?
+
+= render partial: 'common/bathroom_bedrooms', locals: {form: form}
 
 = append :javascript do
   = javascript_include_tag 'jquery.selectBoxIt'
   :javascript
-    $("selectpicker").selectBoxIt({
+    $(".selectpicker").selectBoxIt({
       // Trigger events on original dom element
       aggressiveChange: true,
+      autoWidth: false
     })

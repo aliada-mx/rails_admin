@@ -8,17 +8,11 @@ class ServicesController < ApplicationController
       redirect_to new_service_users_path(current_user)
     end
 
-    @postal_code = PostalCode.find(params[:postal_code_id])
-    @zone = Zone.find_by_postal_code(@postal_code)
+    @incomplete_service = IncompleteService.create!
+    @service = Service.new(user: User.new,
+                           service_type: ServiceType.first,
+                           address: Address.new)
 
-    @user = User.new
-    @address = Address.new(postal_code_id: @postal_code.id)
-
-    @service_type = ServiceType.first
-    @service = Service.new(user: @user,
-                           zone: @zone,
-                           service_type: @service_type,
-                           address: @address)
 
     #Example of to pass a date into the calendarario.html.erb partial
     @dates =  {Date.new(2015,1,2) => ['8:00', '9:00', '10:00', '11:00', '12:00'] }
@@ -45,10 +39,59 @@ class ServicesController < ApplicationController
   def create
     service = Service.create_initial!(service_params)
 
+    IncompleteService.mark_as_complete(incomplete_service_params,service)
+
     redirect_to show_service_users_path(service.user.id, service.id)
   end
 
+  # Provides feedback through ajax to the initial service creation form
+  def initial_feedback
+    save_incomplete_service
+
+    return if check_email_present
+
+    return if check_postal_code
+
+    return render json: { status: :success }
+  end
+
   private
+  def save_incomplete_service
+    @incomplete_service = IncompleteService.find(params[:incomplete_service][:id])
+    @incomplete_service.update_attributes!(incomplete_service_params)
+  end
+
+  def check_email_present
+    email = incomplete_service_params[:email]
+    return render json: { status: :error, code: :email_already_exists } if email.present? && User.email_exists?(email)
+  end
+
+  def check_postal_code
+    postal_code = incomplete_service_params[:postal_code]
+
+    if postal_code.present? && postal_code.size >= 4 
+      zone = Zone.find_by_code(postal_code)
+
+      unless zone.present?
+        @incomplete_service.update(postal_code_not_found: true)
+        return render json: { status: :error, code: :postal_code_missing }
+      end
+    end
+  end
+
+  def incomplete_service_params
+      params.require(:service).permit(:bathrooms,
+                                      :bedrooms,
+                                      :estimated_hours,
+                                      :service_type_id,
+                                      :date,
+                                      :time,
+                                      ).merge({extra_ids: params[:service][:extra_ids].to_s })
+                                       .merge(params[:service][:address_attributes])
+                                       .merge(params[:service][:user_attributes])
+                                       .except!(:postal_code_id)
+  end
+
   def service_params
       params.require(:service).permit(:zone_id,
                                       :bathrooms,
@@ -62,6 +105,7 @@ class ServicesController < ApplicationController
                                       :payment_method_id,
                                       :conekta_temporary_token,
                                       :aliada_id,
+                                      :incomplete_service_id,
                                       user_attributes: [
                                         :first_name,
                                         :last_name,
@@ -69,7 +113,6 @@ class ServicesController < ApplicationController
                                         :phone,
                                       ],
                                       address_attributes: [
-                                        :id,
                                         :street,
                                         :interior_number,
                                         :number,
@@ -81,6 +124,9 @@ class ServicesController < ApplicationController
                                         :state,
                                         :city,
                                         :references,
+                                        :latitude,
+                                        :longitude,
+                                        :map_zoom,
                                       ]).merge({conekta_temporary_token: params[:conekta_temporary_token] })
                                       
   end

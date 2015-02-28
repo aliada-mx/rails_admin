@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Service < ActiveRecord::Base
   include Presenters::ServicePresenter
   STATUSES = [
@@ -38,7 +39,6 @@ class Service < ActiveRecord::Base
   validate :datetime_within_working_hours
   validate :service_type_exists
   validates_presence_of :address, :user, :zone, :estimated_hours, :datetime, :service_type
-
 
   # Callbacks
   after_initialize :set_defaults

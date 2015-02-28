@@ -18,19 +18,20 @@ feature 'AliadasController' do
                          #billable_hours: 3
                          ) }
   before do
+   # Capybara.current_driver = :webkit  
     Timecop.freeze(starting_datetime)
   end
 
   after do
+    # Capybara.use_default_driver       
     Timecop.return
   end
-
    
   describe '#services' do
    
 
 
-
+ 
     it 'checks the aliada has a valid token' do
  aliada = create(:aliada)
     client = create(:user, phone: '54545454', first_name: 'Juan', last_name:'Perez Tellez')
@@ -115,8 +116,8 @@ feature 'AliadasController' do
       client = create(:user, phone: '54545454', first_name: 'Juan', last_name:'Perez Tellez')
     address1 = create(:address, city: 'Cuauhtemoc',
                       street: 'Tabasco', number: '232', 
-                      interior_number: 'torre A 802',
-                      between_streets: 'colima y tonala',
+                       interior_number: 'torre A 802',
+                        between_streets: 'colima y tonala',
                       colony: 'Roma Norte',
                       state: 'DF',
                       latitude: 19.98,
@@ -143,6 +144,7 @@ feature 'AliadasController' do
       Servicio2 = create(:service, aliada_id: aliada.id, address_id: address2.id,
                        user_id: client.id, status: 'aliada_assigned', datetime: DateTime.now-1)
       visit  ('aliadas/servicios/'+ aliada.authentication_token)
+#      save_and_open_page
       save_and_open_page
       page.has_content?('Tus servicios')
     end

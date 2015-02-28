@@ -3,15 +3,21 @@
     ¿Cuándo te visitamos?
   %p
     Elige la frecuencia de la visita
-  = initial_service_form.collection_radio_buttons :service_type_id, ServiceType.all, :id, :name
 
-  %p.iconized.calendar
+  = render partial: 'common/service_type_buttons', locals: {form: initial_service_form}
+
+  %p
+    %icon.calendar
     Elige el día de la visita
   = render partial: 'common/calendar'
-  %p.small-letters
+  %p.smallis-letters
     Si quieres reservar para más de un día al final podrás hacerlo.
 
-  %p.iconized.clock
+  %p
+    %icon.clock
     Selecciona la hora que más te convenga
-  = initial_service_form.date_field :date
-  = initial_service_form.time_field :time
+
+  = render partial: 'common/time_selector', locals: {form: initial_service_form}
+
+  = initial_service_form.hidden_field :date
+  = initial_service_form.hidden_field :time

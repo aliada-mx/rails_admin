@@ -1,10 +1,10 @@
 @import 'common/mixins'
 @import 'common/variables'
 
-.counter-container
+.bathroom-bedrooms-container
   width: 100%
   margin: 10px 0
-  .counter
+  .bathroom-bedrooms
     text-align: center
     display: inline-block
     +rem(font-size, $large-font)
@@ -15,6 +15,7 @@
       position: absolute
       cursor: pointer
       bottom: -4px
+      +soft-transition
       &:hover
         color: $faint_green
     .less-sign
@@ -27,5 +28,7 @@
         content: '+'
     input[type=text]
       text-align: center
+      color: transparent
+      cursor: default
       +input-placeholder
         color: $dark_gray

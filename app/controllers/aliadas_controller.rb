@@ -21,3 +21,4 @@ class AliadasController < ApplicationController
     end
   end
 end
+ 

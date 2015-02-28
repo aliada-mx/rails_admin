@@ -1,4 +1,6 @@
 %section.step_1_duration{data: {bind: 'visible: current_step() == 1'}}
+  = hidden_field :incomplete_service, :id
+
   %h1
     Cuéntanos más de tu casa
 
@@ -10,5 +12,4 @@
   %h4
     Agrega tareas extras (extiende el tiempo de la visita)
 
-  %fieldset.checkboxes.large
-    = initial_service_form.collection_check_boxes :extra_ids, Extra.all, :id, :name
+  = render partial: 'common/extras', locals: {form: initial_service_form}

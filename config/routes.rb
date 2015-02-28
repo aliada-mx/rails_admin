@@ -18,8 +18,7 @@ Rails.application.routes.draw do
   resources :aliadas
 
   scope :servicio do
-    post 'inicial', to: 'services#initial', as: :initial_service
-    get 'inicial', to: 'services#initial'
+    get 'inicial', to: 'services#initial', as: :initial_service
     post 'create', to: 'services#create', as: :create_service
   end
 
@@ -35,9 +34,13 @@ Rails.application.routes.draw do
     post 'conekta_card/create', to: 'conekta_cards#create', as: :create_conekta_card
   end
 
+
   devise_scope :aliadas do
     get 'aliadas/servicios/:token', to: 'aliadas#services', as: :servicios_aliadas
   end
+
+  post 'initial_feedback', to: 'services#initial_feedback', as: :initial_feedback
+
 
   resources :schedules
 

@@ -1,0 +1,42 @@
+.login-container
+  +rem(padding, 4rem)
+
+  .logo-container
+    img
+      display: block
+      max-width: 150px
+      width: 100%
+      +rem(margin, 4rem auto)
+
+  .login-form-wrapper
+    text-align: center
+
+    .login-form-container
+      background-color: white
+      display: inline-block
+      max-width: 550px
+      width: 100%
+      +rem(padding, 4rem)
+      +box-shadow($medium-gray 0px 0px 4px)
+
+      .login-form
+        +rem(padding, 0 8rem)
+
+        form
+          +rem(margin, 4rem 0 6rem)
+
+          input[type=text], input[type=email], input[type=password]
+            +rem(padding-left, 2.5rem)
+            +rem(margin, 1rem 0)
+
+        .recover-password
+          font-style: italic
+          text-align: right
+          +rem(font-size, 1.2rem)
+          +rem(margin, 0.5rem 0)
+
+      .actions
+        input
+          width: 100%
+          +rem(padding, 0.4rem)
+          +rem(font-size, 1.8rem)

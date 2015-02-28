@@ -1,0 +1,4 @@
+%fieldset.radio_buttons.medium{data: {bind: 'foreach: times'}}
+  = label_tag '', '', data: {bind: 'attr: {for: "service_time_"+value}'} do
+    = form.radio_button :time, {}, data: {bind: 'value: value, attr: {id: "service_time_"+value}'}
+    %span{data: {bind: 'text: text'}, class: "action-button-transparent size-medium"}

@@ -72,9 +72,10 @@ es:
       document:
         user: usuario
         file: archivo
-      extras:
+      extra:
         name: nombre
         hours: horas
+        icon: ícono
       payment:
         payment_provider: proveedor del cobro
         amount: monto
