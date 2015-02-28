@@ -103,13 +103,49 @@ feature 'AliadasController' do
     
       Timecop.freeze(Date.today + 1) do
         visit  ('aliadas/servicios/'+ aliada.authentication_token)
-         save_and_open_page
+        #  save_and_open_page
         expect(page).to   have_content 'Roma Norte'
       end
-      
+       
         
-    end
+    end 
     
+    it 'shows unfinished services' do
+      aliada = create(:aliada)
+      client = create(:user, phone: '54545454', first_name: 'Juan', last_name:'Perez Tellez')
+    address1 = create(:address, city: 'Cuauhtemoc',
+                      street: 'Tabasco', number: '232', 
+                      interior_number: 'torre A 802',
+                      between_streets: 'colima y tonala',
+                      colony: 'Roma Norte',
+                      state: 'DF',
+                      latitude: 19.98,
+                      longitude: 20.45)
+      address2 = create(:address, city: 'Coyoacan',
+                        street: 'Tamales', number: '32', 
+                        interior_number: '802',
+                        between_streets: 'Insurgentes',
+                        colony: 'Doctores',
+                        state: 'DF',
+                        latitude: 19.99,
+                        references: 'Metro insurgentes',
+                        references_latitude: 19.991,
+                        references_longitude: 20.451,
+                        map_zoom: 2,
+                        longitude: 20.45) 
+      Servicio1 = create(:service, aliada_id: aliada.id, address_id: address1.id,
+                         bathrooms: 2,
+                         bedrooms: 3,
+                         status: 'aliada_assigned',
+                         user_id: client.id, 
+                         datetime: (DateTime.now-1)
+                         )
+      Servicio2 = create(:service, aliada_id: aliada.id, address_id: address2.id,
+                       user_id: client.id, status: 'aliada_assigned', datetime: DateTime.now-1)
+      visit  ('aliadas/servicios/'+ aliada.authentication_token)
+      save_and_open_page
+      page.has_content?('Tus servicios')
+    end
     
     it 'Shows message if token invalid' do
       visit  ('aliadas/servicios/'+ user.authentication_token)

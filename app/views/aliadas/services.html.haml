@@ -1,3 +1,13 @@
+%h2 Servicios por terminar
+- @unfinished_services.each do |i|
+  %h5
+    En: 
+    #{i.address.street}
+  %h6= I18n.l i.datetime, format: "%A %e a las %k %P"
+  %form
+    
+%br
+%br
 - @upcoming_services.each do |i|
   %h1=  I18n.l i.datetime, format: "%A %e a las %k %P"
 
