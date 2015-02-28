@@ -4,12 +4,12 @@
       %a{href: '/', class: 'logo-container' }
         = image_tag 'logo-contrast.png', class: 'logo-contrast'
       .help-container
-        %a{href: '/', title: 'Mi cuenta' }
-          = image_tag 'user.png'
-          Mi cuenta
-        .actions
-          %a.action-button-pink.size-large
-            Programar nueva visita
+        = image_tag('user.png', { :class => 'account-icon'})
+        %a{href: '/', title: 'Mi cuenta', class: 'account-link' }
+          Mi Cuenta
+        %a{href: '/', title: 'Programar nueva visita', class:'action-button-pink size-large'}
+          Programar nueva visita
+
         -#%p.medium
           %icon.phone
           ¿Necesitas ayuda? Llámanos al (55)-6723-7041
