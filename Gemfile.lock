@@ -52,6 +52,11 @@ GEM
     autoprefixer-rails (5.1.5)
       execjs
       json
+    aws-sdk (1.5.8)
+      httparty (~> 0.7)
+      json (~> 1.4)
+      nokogiri (>= 1.4.4)
+      uuidtools (~> 2.1)
     bcrypt (3.1.10)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
@@ -174,6 +179,9 @@ GEM
       nokogiri (~> 1.6.0)
       ruby_parser (~> 3.5)
     http_parser.rb (0.6.0)
+    httparty (0.13.3)
+      json (~> 1.8)
+      multi_xml (>= 0.5.2)
     i18n (0.7.0)
     interception (0.5)
     invert (0.1.0)
@@ -209,7 +217,9 @@ GEM
     minitest (5.5.1)
     mono_logger (1.1.0)
     multi_json (1.10.1)
+    multi_xml (0.5.5)
     multipart-post (2.0.0)
+    mysql2 (0.3.18)
     nenv (0.2.0)
     nested_form (0.3.2)
     nestive (0.6.0)
@@ -370,6 +380,7 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    uuidtools (2.1.5)
     vcr (2.9.3)
     vegas (0.1.11)
       rack (>= 1.0.0)
@@ -390,6 +401,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  aws-sdk (~> 1.5.7)
   better_errors
   bootstrap-sass
   cancancan
@@ -411,6 +423,7 @@ DEPENDENCIES
   jquery-rails
   launchy
   lograge
+  mysql2
   nestive
   paperclip
   pg

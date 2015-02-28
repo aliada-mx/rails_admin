@@ -1,13 +1,12 @@
 = extends :application do
+  .container.two-columns
+    .row
+      = render partial: 'common/header'
 
-  %header
-    = render partial: 'common/inner_header'
+    .row
+      %nav
+        = area :navigation
 
-  %nav
-    = area :navigation
+    .row
+      = yield
 
-  %main
-    = yield
-
-  %aside
-    = area :sidebar

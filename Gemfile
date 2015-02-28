@@ -7,6 +7,7 @@ source 'https://rails-assets.org'
 gem 'rails', '4.1.9'
 # Use sqlite3 as the database for Active Record
 gem 'pg'
+gem 'mysql2'
 # Use SCSS for stylesheets
 gem 'state_machine'
 # Settings management
@@ -35,6 +36,8 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 # Easy file attachment management for ActiveRecord
 gem 'paperclip'
+# AWS storage adapter
+gem 'aws-sdk', '~> 1.5.7'
 # Bootstrap
 gem 'bootstrap-sass'
 # Sass framework

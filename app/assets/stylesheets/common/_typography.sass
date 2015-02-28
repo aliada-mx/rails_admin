@@ -1,3 +1,5 @@
+@import 'common/variables'
+
 @mixin font-smoothing($value: antialiased) 
   @if $value == antialiased 
     -webkit-font-smoothing: antialiased
@@ -41,10 +43,18 @@
   font-style: italic
 
 
+.text-color-white
+  color: white
+
 body 
   +font-smoothing
-  font-family: "CircularStd", "Helvetica Neue", Helvetica, Arial, sans-serif
+  font-family: "CircularStd", "Helvetica Neue", Helvetica, Arial, sans-serif !important
   font-weight: 400
-  font-size: 16px
   line-height: 24px
   font-style: normal
+  color: $dark_gray !important
+
+$small-font: 1rem
+$medium-font: 1.6rem
+$large-font: 2rem
+$extra-large-font: 3rem

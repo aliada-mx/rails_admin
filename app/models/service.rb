@@ -9,6 +9,7 @@ class Service < ActiveRecord::Base
     ['Pagado', 'paid'],
     ['Cancelado', 'canceled'],
   ]
+  validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
   # accessors for forms
   attr_accessor :postal_code, :time, :date, :payment_method_id, :conekta_temporary_token
 
@@ -36,17 +37,20 @@ class Service < ActiveRecord::Base
   validate :datetime_is_hour_o_clock
   validate :datetime_within_working_hours
   validate :service_type_exists
-  validates_presence_of :address, :user, :zone, :billable_hours, :datetime, :service_type
-  validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
+  validates_presence_of :address, :user, :zone, :estimated_hours, :datetime, :service_type
 
 
   # Callbacks
   after_initialize :set_defaults
 
+  # TODO: Fix validations, it is only working with :created
   # State machine
   state_machine :status, :initial => 'created' do
     transition 'created' => 'aliada_assigned', :on => :assign
     transition 'created' => 'aliada_missing', :on => :mark_as_missing
+    transition 'created' => 'paid', :on => :pay
+    transition ['created', 'aliada_assigned', 'in-progress'] => 'finished', :on => :finish
+    transition ['created', 'aliada_assigned' ] => 'cancelled', :on => :cancel
 
     after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
 
@@ -63,7 +67,6 @@ class Service < ActiveRecord::Base
       end
     end
   end
-
 
   # Ask service_type to answer recurrent? method for us
   delegate :recurrent?, to: :service_type
@@ -110,7 +113,7 @@ class Service < ActiveRecord::Base
   end
 
   def total_hours
-    hours_before_service + billable_hours + hours_after_service
+    hours_before_service + estimated_hours + hours_after_service
   end
 
   # Starting now how many days we'll provide service to the end of
@@ -161,7 +164,7 @@ class Service < ActiveRecord::Base
     ScheduleInterval.build_from_range(beginning_datetime, ending_datetime)
   end
 
-  def self.create_initial(service_params)
+  def self.create_initial!(service_params)
     service = Service.new(service_params)
     service.combine_date_time
     service.save!

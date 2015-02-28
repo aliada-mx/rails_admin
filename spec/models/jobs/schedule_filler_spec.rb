@@ -9,10 +9,10 @@ describe 'Schedule Filler' do
   let(:zone){ create(:zone) }
   let(:aliada){ create(:aliada) }
   let(:user){ create(:user) }
-  let!(:aliada_recurrence) { create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, zone: zone, aliada: aliada, total_hours: total_available_hours) }
+  let!(:aliada_recurrence) { create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, zone: zone, aliada: aliada, total_hours: total_available_hours, owner: 'aliada') }
   
   # client's recurrence, built with aliada's recurrence
-  let!(:client_recurrence) { create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, zone: zone, aliada: aliada, user: user, total_hours: total_service_hours) }
+  let!(:client_recurrence) { create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, zone: zone, aliada: aliada, user: user, total_hours: total_service_hours, owner: 'user') }
 
   # services scheduled for client's schedule
   let!(:first_service){ create(:service, aliada: aliada, user: user, recurrence: client_recurrence, datetime: recurrence_service_datetime, special_instructions: "first service") }

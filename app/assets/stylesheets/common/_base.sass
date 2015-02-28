@@ -1,4 +1,147 @@
 @import 'reset'
 @import 'typography'
+@import 'variables'
+@import "mixins"
+
+// Boostrap
+@import 'bootstrap-sprockets'
+@import 'bootstrap'
+
+@import 'common/two_columns'
+@import 'common/one_column'
 
 @import 'modules/calendar'
+@import 'modules/header'
+@import 'modules/summary'
+@import 'modules/hours_selector'
+@import 'modules/counter'
+
+// Modal
+@import 'vex'
+@import 'vex-theme-plain'
+@import 'modules/service-card'
+
+html
+  overflow-y: scroll
+
+body
+  background-color: $lightest_gray
+
+a, input
+  outline: 0 !important
+
+a
+  cursor: pointer
+  &.hover
+    text-decoration: underline
+
+a.small-letters
+  text-decoration: underline
+  color: $green
+  +rem(font-size, $small-font)
+
+p.small-letters
+  +rem(font-size, $small-font)
+
+h1
+  color: $green
+  font-weight: 600
+
+p.iconized
+  background-position: 0
+  background-repeat: no-repeat
+  background-size: 20px
+  padding-left: 40px
+  &.instructions
+    background-image: image-url('instructions.png')
+  &.calendar
+    background-image: image-url('calendar.png')
+  &.clock
+    background-image: image-url('clock.png')
+  &.phone
+    background-image: image-url('phone.png')
+    padding-left: 0px
+
+p.medium
+  +rem(font-size, $medium-font)
+
+footer
+  background-color: $darkest-gray
+  color: white
+  +rem(padding, 4rem 0)
+  +rem(font-size, 1.4rem)
+
+  .bottom-nav
+    ul
+      margin: 0
+      padding: 0
+
+      li
+        a
+          color: white
+
+  .call-us
+
+    img
+      display: inline-block
+      +rem(margin-right, 1rem)
+
+    p
+      display: inline-block
+
+input
+  +input-placeholder
+    color: $light_gray
+  &[type=text]
+    border: none
+    border-bottom: 1px solid $dark_gray
+
+.concealed
+  display: none
+
+.action-button
+  border-radius: 3px
+  box-sizing: border-box
+  display: inline-block
+  vertical-align: top
+  &.size-large
+    +rem(font-size, 1.2rem)
+    padding: 10px 16px
+    width: 219px
+
+  &.size-medium
+    +rem(font-size, 1rem)
+    padding: 6px 12px
+    width: 180px
+
+  &.size-small
+    +rem(font-size, 0.8rem)
+    padding: 5px 10px
+    width: 90px
+
+.action-button-pink
+  @extend .action-button
+  +action-button-color($pink)
+
+.action-button-green
+  @extend .action-button
+  +action-button-color($light_green)
+
+.action-button-gray
+  @extend .action-button
+  +action-button-color($medium_gray)
+
+.wrapper
+  max-width: 960px
+
+.description
+  font-weight: 600
+  +rem(font-size, 1.8rem)
+
+.logo
+  max-width: 130px
+  width: 100%
+
+.size-fill-up
+  +rem(font-size, 1.5rem)
+  width: 100%

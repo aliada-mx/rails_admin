@@ -1,4 +1,247 @@
-@import "compass/css3/box-shadow"
+body
+  display: table
+  height: 100%
+  width: 100%
 
-form
-  +box-shadow(red 2px 2px 10px)
+.search-section-wrapper
+  background: url("temp-background.jpg") no-repeat center center
+  background-size: cover
+  background-color: black
+  box-sizing: border-box
+  position: relative
+  height: 750px
+
+
+  .header-container
+    +rem(margin, 1.5rem 0)
+    +rem(padding, 1.5rem 0)
+    vertical-align: middle
+    width: 100%
+
+    .nav-container
+      text-align: right
+      vertical-align: middle
+
+      ul.nav
+        color: white
+        display: inline-block
+        font-weight: 600
+        list-style: none
+        +rem(margin, 0.5rem 0 0)
+        padding: 0
+        vertical-align: middle
+        +rem(font-size, 1.5rem)
+
+        li
+          display: inline-block
+          +rem(margin-right, 1.5rem)
+          vertical-align: inherit
+
+        li:last-child
+          margin-right: 0
+
+          a
+            padding: 5px 20px
+            text-decoration: none
+
+
+  .search-container
+    +rem(margin, 10rem 0)
+    +rem(padding, 1.5rem 0)
+    vertical-align: middle
+    width: 100%
+
+    .search-slogan-container
+      +rem(margin, 0 0 10rem)
+      text-align: center
+
+      .slogan
+        display: inline-block
+        +rem(margin, 0 auto 1rem)
+        padding: 0
+        position: relative
+        +rem(font-size, 7rem)
+        font-weight: 600
+        letter-spacing: -3px
+        color: white
+
+        .shine
+          max-width: 15px
+          position: absolute
+          right: -15px
+          top: 10px
+          width: 100%
+
+      .motto
+        font-style: italic
+        +rem(font-size, 2.5rem)
+
+    .search-form-container
+      +rem(margin, 0 0 4rem)
+      text-align: center
+
+      form
+        padding: 0
+
+        fieldset
+          padding: 0
+          +rem(font-size, 0)
+
+          legend
+            border: none
+            color: white
+            +rem(margin, 0 0 1rem)
+            text-align: left
+            +rem(font-size, 1.8rem)
+
+          ol
+            margin: 0
+            padding: 0
+
+            li
+              margin: 0
+              padding: 0
+              position: relative
+
+              input[type=text]
+                border: 1px solid $light_gray
+                border-radius: 3px
+                color: $dark_gray
+                display: inline-block
+                height: 60px
+                margin: 0
+                +rem(padding, 2rem)
+                vertical-align: top
+                width: 100%
+                +rem(font-size, 1.8rem)
+
+              .action-button
+                height: 60px
+                position: absolute
+                right: 0
+                top: 0
+                +rem(font-size, 2rem)
+                +action-button-color($pink)
+
+
+.media-section-wrapper
+  background-color: $lightest-gray
+
+  .media-section-container
+    +rem(margin, 3rem 0)
+    text-align: center
+
+    .media-logo
+      display: inline-block
+      margin: 0
+      width: 18%
+
+      img
+        display: inline-block
+        max-height: 40px
+
+
+.payment-section-wrapper
+  background-color: white
+  +rem(padding, 5rem 0)
+
+  .payment-description
+    text-align: right
+    +rem(font-size, 1.5rem)
+    @extend .description
+
+    p
+      margin: 0
+
+  .payment-logos
+    img
+      display: inline-block
+      max-width: 320px
+      vertical-align: middle
+      width: 100%
+
+
+.why-section-wrapper
+  background-color: white
+  +rem(padding-bottom, 6rem)
+
+  .why-section-container
+    text-align: center
+
+    h3.why-section-title
+      color: $medium_gray
+      font-weight: 600
+      letter-spacing: -2px
+      +rem(margin, 4.5rem 0)
+      +rem(font-size, 2.8rem)
+
+    .why-description
+      color: $medium_gray
+      +rem(margin, 2rem auto 4rem)
+      max-width: 250px
+      @extend .description
+
+    img
+      display: block
+      +rem(margin, 2rem auto)
+      max-width: 90px
+      width: 100%
+
+
+.service-section-wrapper
+  background-color: white
+  +rem(padding-bottom, 6rem)
+
+  .service-section-container
+    text-align: center
+
+    h2.service-section-title
+      color: $medium_gray
+      font-weight: 600
+      letter-spacing: -2px
+      +rem(margin, 4.5rem 0 1rem)
+      +rem(font-size, 3.5rem)
+
+    .service-subtitle
+      color: $medium_gray
+      margin: 0 auto 4rem
+      +rem(font-size, 1.5rem)
+      @extend .description
+
+    .service-description
+      color: $green
+      +rem(margin, 2rem auto 4rem)
+      max-width: 150px
+      @extend .description
+
+    img
+      display: block
+      +rem(margin, 2rem auto)
+      max-width: 60px
+      width: 100%
+
+.warranty-section-wrapper
+  background-color: $lightest-gray
+  text-align: center
+  +rem(padding, 5rem 0)
+
+  .warranty-section-container
+
+    .warranty-logo
+      display: inline-block
+      max-width: 140px
+      vertical-align: middle
+      width: 100%
+      +rem(margin-right, 4rem)
+
+    .warranty-description
+      color: $green
+      display: inline-block
+      font-weight: 400
+      letter-spacing: -2px
+      max-width: 420px
+      text-align: left
+      vertical-align: middle
+      width: 100%
+      +rem(font-size, 3.5rem)
+

@@ -29,9 +29,7 @@ watch ("Guardfile") do
   exit 0
 end
 
-guard 'sass'
-
-guard 'livereload' do
+guard 'livereload', apply_css_live: true do
   watch(%r{app/views/.+\.(erb|haml|slim)})
   watch(%r{app/helpers/.+\.rb})
   watch(%r{public/.+\.(css|js|html)})

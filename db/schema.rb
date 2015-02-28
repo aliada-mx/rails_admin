@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150219000317) do
+ActiveRecord::Schema.define(version: 20150224214406) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,19 +19,22 @@ ActiveRecord::Schema.define(version: 20150219000317) do
   create_table "addresses", force: true do |t|
     t.integer  "user_id"
     t.integer  "postal_code_id"
-    t.datetime "created_at",                                           null: false
-    t.datetime "updated_at",                                           null: false
+    t.datetime "created_at",                                                null: false
+    t.datetime "updated_at",                                                null: false
     t.text     "street"
-    t.integer  "number"
-    t.integer  "interior_number"
+    t.string   "number"
+    t.string   "interior_number"
     t.text     "between_streets"
     t.text     "colony"
-    t.string   "state",           limit: nil
-    t.string   "city",            limit: nil
+    t.string   "state",                limit: nil
+    t.string   "city",                 limit: nil
     t.text     "references"
-    t.decimal  "latitude",                    precision: 10, scale: 7
-    t.decimal  "longitude",                   precision: 10, scale: 7
+    t.decimal  "latitude",                         precision: 10, scale: 7
+    t.decimal  "longitude",                        precision: 10, scale: 7
     t.integer  "aliada_id"
+    t.integer  "map_zoom"
+    t.decimal  "references_latitude",              precision: 10, scale: 7
+    t.decimal  "references_longitude",             precision: 10, scale: 7
   end
 
   add_index "addresses", ["postal_code_id"], name: "index_addresses_on_postal_code_id", using: :btree
@@ -112,10 +115,18 @@ ActiveRecord::Schema.define(version: 20150219000317) do
   end
 
   create_table "extras", force: true do |t|
-    t.string   "name",       limit: nil
-    t.decimal  "hours",                  precision: 10, scale: 3
-    t.datetime "created_at",                                      null: false
-    t.datetime "updated_at",                                      null: false
+    t.string   "name",                    limit: nil
+    t.decimal  "hours",                               precision: 10, scale: 3
+    t.datetime "created_at",                                                   null: false
+    t.datetime "updated_at",                                                   null: false
+    t.string   "icon_file_name"
+    t.string   "icon_content_type"
+    t.integer  "icon_file_size"
+    t.datetime "icon_updated_at"
+    t.string   "attachment_file_name"
+    t.string   "attachment_content_type"
+    t.integer  "attachment_file_size"
+    t.datetime "attachment_updated_at"
   end
 
   create_table "payment_methods", force: true do |t|
@@ -132,7 +143,7 @@ ActiveRecord::Schema.define(version: 20150219000317) do
     t.string  "payment_provider_type"
   end
 
-  add_index "payment_provider_choices", ["user_id", "default"], name: "index_payment_provider_choices_on_user_id_and_default", unique: true, using: :btree
+  add_index "payment_provider_choices", ["user_id", "default"], name: "index_payment_provider_choices_on_user_id_and_default", unique: true, where: "(\"default\" = true)", using: :btree
 
   create_table "payments", force: true do |t|
     t.datetime "created_at",                                    null: false
@@ -161,6 +172,7 @@ ActiveRecord::Schema.define(version: 20150219000317) do
     t.string   "code",       limit: nil
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
+    t.string   "name"
   end
 
   create_table "recurrences", force: true do |t|
@@ -199,8 +211,11 @@ ActiveRecord::Schema.define(version: 20150219000317) do
     t.datetime "updated_at",                         null: false
     t.decimal  "value",      precision: 5, scale: 2
     t.integer  "aliada_id"
+    t.text     "comment"
+    t.integer  "service_id"
   end
 
+  add_index "scores", ["service_id"], name: "index_scores_on_service_id", using: :btree
   add_index "scores", ["user_id"], name: "index_scores_on_user_id", using: :btree
 
   create_table "service_types", force: true do |t|
@@ -219,17 +234,25 @@ ActiveRecord::Schema.define(version: 20150219000317) do
     t.integer  "service_type_id"
     t.integer  "price"
     t.integer  "recurrence_id"
-    t.datetime "created_at",                                                null: false
-    t.datetime "updated_at",                                                null: false
-    t.decimal  "billable_hours",                   precision: 10, scale: 3
-    t.decimal  "hours_before_service",             precision: 10, scale: 3
-    t.decimal  "hours_after_service",              precision: 10, scale: 3
+    t.datetime "created_at",                                                          null: false
+    t.datetime "updated_at",                                                          null: false
+    t.decimal  "billed_hours",                               precision: 10, scale: 3
+    t.decimal  "hours_before_service",                       precision: 10, scale: 3
+    t.decimal  "hours_after_service",                        precision: 10, scale: 3
     t.integer  "bathrooms"
     t.integer  "bedrooms"
     t.text     "special_instructions"
-    t.string   "status",               limit: nil
+    t.string   "status",                         limit: nil
     t.integer  "aliada_id"
     t.datetime "datetime"
+    t.decimal  "estimated_hours",                            precision: 10, scale: 3
+    t.boolean  "bring_cleaning_products"
+    t.text     "entrance_instructions"
+    t.text     "cleaning_supplies_instructions"
+    t.text     "garbage_instructions"
+    t.text     "attention_instructions"
+    t.text     "equipment_instructions"
+    t.text     "forbidden_instructions"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
@@ -256,14 +279,14 @@ ActiveRecord::Schema.define(version: 20150219000317) do
   create_table "users", force: true do |t|
     t.string   "role",                   limit: nil
     t.string   "email",                  limit: nil
-    t.datetime "created_at",                                      null: false
-    t.datetime "updated_at",                                      null: false
+    t.datetime "created_at",                                                              null: false
+    t.datetime "updated_at",                                                              null: false
     t.string   "phone",                  limit: nil
-    t.string   "encrypted_password",     limit: nil, default: "", null: false
+    t.string   "encrypted_password",     limit: nil,                         default: "", null: false
     t.string   "reset_password_token",   limit: nil
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                      default: 0,  null: false
+    t.integer  "sign_in_count",                                              default: 0,  null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.inet     "current_sign_in_ip"
@@ -271,6 +294,7 @@ ActiveRecord::Schema.define(version: 20150219000317) do
     t.string   "first_name",             limit: nil
     t.string   "last_name",              limit: nil
     t.string   "conekta_customer_id"
+    t.decimal  "credits",                            precision: 7, scale: 2
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
@@ -302,6 +326,7 @@ ActiveRecord::Schema.define(version: 20150219000317) do
   add_foreign_key "schedules", "services", name: "fk_rails_c759b2308c"
   add_foreign_key "schedules", "users", name: "fk_rails_46c762044c"
 
+  add_foreign_key "scores", "services", name: "scores_service_id_fk"
   add_foreign_key "scores", "users", name: "fk_rails_a7985791f0"
 
   add_foreign_key "services", "addresses", name: "fk_rails_da43fb23af"

@@ -39,10 +39,11 @@ class ServicesController < ApplicationController
   end
 
   def edit
+    @service = Service.find(params[:service_id])
   end
 
   def create
-    service = Service.create_initial(service_params)
+    service = Service.create_initial!(service_params)
 
     redirect_to show_service_users_path(service.user.id, service.id)
   end
@@ -53,7 +54,7 @@ class ServicesController < ApplicationController
                                       :bathrooms,
                                       :bedrooms,
                                       {extra_ids: []},
-                                      :billable_hours,
+                                      :estimated_hours,
                                       :special_instructions,
                                       :service_type_id,
                                       :date,

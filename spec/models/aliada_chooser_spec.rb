@@ -19,7 +19,7 @@ describe 'AliadaChooser' do
                              zone: zone_1,
                              service_type: one_time_service_type,
                              datetime: starting_datetime,
-                             billable_hours: 3,
+                             estimated_hours: 3,
                              address: address_1) }
 
     before :each do

@@ -38,10 +38,11 @@ $font_0: fontawesome-selected
   padding-bottom: 10px
 
 .calendar-wrap 
-  margin: 10px auto
   position: relative
   overflow: hidden
-  width: 450px
+  max-width: 450px
+  width: 100%
+  min-width: 280px
   border: 1px solid $dark_gray
 
 .fc-calendar 
@@ -163,84 +164,25 @@ $font_0: fontawesome-selected
 
 
 
-.inner 
-  background: $white
-  &:before 
-    content: ""
-    width: 99%
-    height: 50%
-    position: absolute
-    bottom: -4px
-    left: 0.5%
-    z-index: -1
-
-  &:after 
-    height: 50%
-    position: absolute
-    content: ""
-    width: 98%
-    bottom: -7px
-    left: 1%
-    z-index: -2
-
-
-.header 
-  background: $white
-  padding: 5px 10px 15px 20px
-  position: relative
-  .month
-    text-align: center
-    color: $color_fiord_approx
-    font-weight: 300
-    font-size: 18px
-    margin-top: 10px
-
-  nav 
-    span 
+  .inner 
+    &:before 
+      content: ""
+      width: 99%
+      height: 50%
       position: absolute
-      top: 17px
-      width: 30px
-      height: 30px
-      color: transparent
-      cursor: pointer
-      margin: 0 1px
-      font-size: 20px
-      line-height: 30px
-      -webkit-touch-callout: none
-      -webkit-user-select: none
-      -khtml-user-select: none
-      -moz-user-select: none
-      -ms-user-select: none
-      &:first-child 
-        left: 5px
+      bottom: -4px
+      left: 0.5%
+      z-index: -1
 
-      &:last-child 
-        right: 5px
+    &:after 
+      height: 50%
+      position: absolute
+      content: ""
+      width: 98%
+      bottom: -7px
+      left: 1%
+      z-index: -2
 
-      &:before 
-        font-family: $font_0
-        color: $green
-        position: absolute
-        text-align: center
-        width: 100%
-
-      &.prev:before 
-        content: "\276E"
-
-      &.next:before 
-        content: "\276F"
-
-
-    span:hover:before 
-      color: $color_fiord_approx
-
-
-@media screen and(max-width: 400px) 
-  .fc-calendar-container 
-    height: 295px
-
-  .fc-calendar .fc-row > div > span.fc-date 
-    font-size: 15px
 
 .fc-four-rows .fc-row 
   height: 25%
@@ -257,3 +199,10 @@ $font_0: fontawesome-selected
 
   .fc-head > div 
     width: 14.2%
+
+@media screen and(max-width: 400px) 
+  .fc-calendar-container 
+    height: 295px
+
+  .fc-calendar .fc-row > div > span.fc-date 
+    font-size: 15px
