@@ -50,7 +50,6 @@ gem 'rails-assets-knockout'
 # Named railes routes for js
 gem "js-routes"
 
-
 # TEMPLATING
 #
 gem "haml-rails"
