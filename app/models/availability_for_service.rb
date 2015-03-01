@@ -1,15 +1,23 @@
-class ScheduleChecker
+class AvailabilityForService
 
   def initialize(service, aliada_id: nil)
     @service = service
-    @chosen_aliada_id = aliada_id
 
     @requested_schedule_interval = service.to_schedule_interval
     # Pull the schedules from db
     @available_schedules = Schedule.available_for_booking(service.zone)
+    if aliada_id.present?
+      @available_schedules = @available_schedules.where(aliada_id: aliada_id)
+    end
 
     # An object to track our availability
-    @aliadas_availability = AliadaAvailability.new(service)
+    if @service.recurrent?
+      @aliadas_availability = AliadaAvailability.new(recurrent: true, periodicity: @service.periodicity.days)
+      @minimum_availaibilites = @service.days_count_to_end_of_recurrency
+    else
+      @aliadas_availability = AliadaAvailability.new
+    end
+
 
     # Limiting variables
     @requested_starting_hour = @requested_schedule_interval.beginning_of_interval.hour
@@ -32,18 +40,14 @@ class ScheduleChecker
   end
 
   def self.find_aliadas_availability(service, aliada_id: nil)
-    ScheduleChecker.new(service, aliada_id: aliada_id).match_schedules
+    AvailabilityForService.new(service, aliada_id: aliada_id).find
   end
      
-  # It will try to build as many aliada_availabilities that matches the requested hours
+  # It will try to bind as many aliada_availabilities that matches the requested hours
   # on the same week day per aliada
   #
-  # Receives
-  # available_schedules: persisted available schedules ordered by aliada_id, datetime
-  # schedule_interval: a proposed interval that should fit 
-  #
   # returns {'aliada_id' => [available_schedule_interval, available_schedule_interval]}
-  def match_schedules
+  def find
     return false if invalid?
 
     @previous_aliada_id = @available_schedules.first.aliada_id
@@ -51,10 +55,6 @@ class ScheduleChecker
     @available_schedules.each do |schedule|
       @current_schedule = schedule
       @current_aliada_id = @current_schedule.aliada_id
-
-      if @chosen_aliada_id.present?
-        skip_aliada! unless @current_aliada_id == @chosen_aliada_id
-      end
 
       if skip_aliada?
         track_aliadas_changing
@@ -84,7 +84,6 @@ class ScheduleChecker
           next
         end
 
-        store_availability
         add_availabilities
 
         restart_continues_schedules
@@ -93,6 +92,7 @@ class ScheduleChecker
       track_aliadas_changing
     end
     
+    clear_not_enough_small_availabilities
     @aliadas_availability
   end
 
@@ -122,6 +122,8 @@ class ScheduleChecker
     end
 
     def add_availabilities
+      @availabilities.push(@continuous_schedules)
+
       @aliadas_availability.add(@current_aliada_id, @availabilities)
 
       clear_availabilities
@@ -153,10 +155,6 @@ class ScheduleChecker
 
     def remove_aliada_availability!
       @aliadas_availability.delete(@current_aliada_id)
-    end
-
-    def store_availability
-      @availabilities.push(@continuous_schedules)
     end
 
     def clear_availabilities
@@ -191,5 +189,11 @@ class ScheduleChecker
 
     def banned_aliada?
       @banned_aliadas_ids.include? @current_aliada_id
+    end
+
+    def clear_not_enough_small_availabilities
+      if @aliadas_availability.present? && @minimum_availaibilites.present?
+        @aliadas_availability.delete_if { |aliada_id, aliada_availability| aliada_availability.size < @minimum_availaibilites}
+      end
     end
 end

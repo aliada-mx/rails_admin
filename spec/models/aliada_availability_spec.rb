@@ -30,7 +30,7 @@ describe 'AliadaAvailability' do
       @first_five_schedules = Schedule.all.limit(5)
       @last_five_schedules = Schedule.all.where('id not in (?)', @first_five_schedules.map(&:id))
 
-      @aliadas_availability = AliadaAvailability.new(one_time_service)
+      @aliadas_availability = AliadaAvailability.new()
     end
 
     describe '#add' do
@@ -57,7 +57,7 @@ describe 'AliadaAvailability' do
       @third_intervals = @recurrent_intervals.third
       @fourth_intervals = @recurrent_intervals.fourth
 
-      @aliadas_availability = AliadaAvailability.new(recurrent_service)
+      @aliadas_availability = AliadaAvailability.new(recurrent: true, periodicity: 7.days)
     end
 
     describe '#add' do
@@ -67,7 +67,7 @@ describe 'AliadaAvailability' do
         expect(@aliadas_availability.schedules).to eql @first_intervals.schedules
       end
 
-      it 'doesnt add intervals they are no continuous' do
+      it 'doesnt add intervals if they are no continuous' do
         @aliadas_availability.add(aliada.id, [@first_intervals])
         expect(@aliadas_availability.schedules).to eql @first_intervals.schedules
 

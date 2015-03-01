@@ -1,4 +1,4 @@
-describe 'ScheduleChecker' do
+describe 'AvailabilityForService' do
   include TestingSupport::SchedulesHelper
 
   describe '#dates_available' do
@@ -11,7 +11,7 @@ describe 'ScheduleChecker' do
 
     before do
       @user = double(banned_aliadas: [])
-      @recurrence = double(periodicity: double(days: 7.days))
+      @recurrence = double(periodicity: double(days: 7))
     end
 
     context 'for a one time service' do
@@ -24,14 +24,14 @@ describe 'ScheduleChecker' do
 
         @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours)
 
-        @service = double(to_schedule_intervals: [@schedule_interval], 
-                          to_schedule_interval: @schedule_interval,
+        @service = double(to_schedule_interval: @schedule_interval,
                           user: @user,
                           recurrence: @recurrence,
                           zone: zone,
                           one_timer?: true,
+                          periodicity: nil,
                           recurrent?: false)
-        @checker = ScheduleChecker.new(@service)
+        @finder = AvailabilityForService.new(@service)
       end
 
       after do
@@ -39,13 +39,13 @@ describe 'ScheduleChecker' do
       end
 
       it 'finds an available datetime' do
-        aliadas_availability = @checker.match_schedules
+        aliadas_availability = @finder.find
 
         expect(aliadas_availability).to be_present
       end
 
       it 'returns a list of schedule intervals with aliadas ids' do
-        aliadas_availability = @checker.match_schedules
+        aliadas_availability = @finder.find
 
         expect(aliadas_availability.size).to be 3
         expect(aliadas_availability[aliada.id].first.beginning_of_interval).to eql starting_datetime
@@ -60,37 +60,35 @@ describe 'ScheduleChecker' do
 
       it 'doesnt find an available datetime when the available schedules have holes in the continuity' do
         Schedule.where(datetime: starting_datetime + 1.hour).destroy_all
-        aliadas_availability = @checker.match_schedules
+        aliadas_availability = @finder.find
         
         expect(aliadas_availability).to be_empty
       end
 
       it 'doesnt find an available datetime when the requested hour happens before the available schedules' do
         before_availability_schedule_interval = ScheduleInterval.build_from_range(starting_datetime - 1.hour, ending_datetime)
-        service = double(to_schedule_intervals: [before_availability_schedule_interval],
-                         to_schedule_interval: before_availability_schedule_interval,
+        service = double(to_schedule_interval: before_availability_schedule_interval,
                          recurrence: @recurrence,
-                         days_count_to_end_of_recurrency: 4,
                          user: @user,
                          zone: zone,
                          one_timer?: true,
+                          periodicity: nil,
                          recurrent?: false)
-        aliadas_availability = ScheduleChecker.new(service).match_schedules
+        aliadas_availability = AvailabilityForService.new(service).find
         
         expect(aliadas_availability).to be_empty
       end
       
       it 'doesnt find an available datetime when the requested hour happens after the available schedules' do
         after_availability_schedule_interval = ScheduleInterval.build_from_range(starting_datetime + 7.hour, ending_datetime + 7.hour)
-        service = double(to_schedule_intervals: [after_availability_schedule_interval],
-                         to_schedule_interval: after_availability_schedule_interval,
+        service = double(to_schedule_interval: after_availability_schedule_interval,
                          recurrence: @recurrence,
-                         days_count_to_end_of_recurrency: 4,
                          user: @user,
                          zone: zone,
                          one_timer?: true,
+                          periodicity: nil,
                          recurrent?: false)
-        aliadas_availability = ScheduleChecker.find_aliadas_availability(service)
+        aliadas_availability = AvailabilityForService.find_aliadas_availability(service)
         
         expect(aliadas_availability).to be_empty
       end
@@ -98,15 +96,15 @@ describe 'ScheduleChecker' do
       it 'doesnt find a availability for banned aliadas' do
         user = double(banned_aliadas: [aliada_2])
 
-        service = double(to_schedule_intervals: [@schedule_interval], 
-                         to_schedule_interval: @schedule_interval,
+        service = double(to_schedule_interval: @schedule_interval,
                          user: user,
                          recurrence: @recurrence,
                          zone: zone,
                          one_timer?: true,
+                          periodicity: nil,
                          recurrent?: false)
         
-        aliadas_availability = ScheduleChecker.find_aliadas_availability(service)
+        aliadas_availability = AvailabilityForService.find_aliadas_availability(service)
 
         expect(aliadas_availability.size).to be 2
 
@@ -131,15 +129,15 @@ describe 'ScheduleChecker' do
 
         schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours, conditions: {aliada_id: aliada.id})
 
-        service = double(to_schedule_intervals: [schedule_interval], 
-                         to_schedule_interval: schedule_interval,
+        service = double(to_schedule_interval: schedule_interval,
                          user: @user,
                          recurrence: @recurrence,
-                         days_count_to_end_of_recurrency: 4,
                          zone: zone,
                          one_timer?: false,
+                         periodicity: 7,
+                         days_count_to_end_of_recurrency: 5,
                          recurrent?: true)
-        @checker = ScheduleChecker.new(service)
+        @finder = AvailabilityForService.new(service)
       end
 
       after do
@@ -147,13 +145,13 @@ describe 'ScheduleChecker' do
       end
 
       it 'finds an aliada availability' do
-        aliadas_availability = @checker.match_schedules
+        aliadas_availability = @finder.find
 
         expect(aliadas_availability.size).not_to eql 0
       end
 
       it 'returns a list of schedule intervals with aliadas ids' do
-        aliadas_availability = @checker.match_schedules
+        aliadas_availability = @finder.find
 
         expect(aliadas_availability.size).to be 3
         expect(aliadas_availability[aliada.id].first.beginning_of_interval).to eql starting_datetime
@@ -168,7 +166,7 @@ describe 'ScheduleChecker' do
 
       it 'doesnt find availability when the available schedules have holes in the continuity' do
         Schedule.where(datetime: starting_datetime + 7.days, aliada_id: aliada_2).destroy_all
-        aliadas_availability = @checker.match_schedules
+        aliadas_availability = @finder.find
         
         expect(aliadas_availability.size).to be 2
         expect(aliadas_availability[aliada.id].first.beginning_of_interval).to eql starting_datetime
@@ -183,32 +181,53 @@ describe 'ScheduleChecker' do
       it 'doesnt find an available datetime when the requested hour happens before the available schedules' do
         before_availability_schedule_interval = ScheduleInterval.build_from_range(starting_datetime - 1.hour, ending_datetime)
 
-        service = double(to_schedule_intervals: [before_availability_schedule_interval],
-                         to_schedule_interval: before_availability_schedule_interval,
+        service = double(to_schedule_interval: before_availability_schedule_interval,
                          user: @user,
                          recurrence: @recurrence,
-                         days_count_to_end_of_recurrency: 5,
                          one_timer?: true,
                          zone: zone,
+                         periodicity: 7,
                          recurrent?: false)
-        aliadas_availability = ScheduleChecker.new(service).match_schedules
+        aliadas_availability = AvailabilityForService.new(service).find
         
         expect(aliadas_availability).to be_empty
       end
       
       it 'doesnt find an available datetime when the requested hour happens after the available schedules' do
         after_availability_schedule_interval = ScheduleInterval.build_from_range(starting_datetime + 7.hour, ending_datetime + 7.hour)
-        service = double(to_schedule_intervals: [after_availability_schedule_interval],
-                         to_schedule_interval: after_availability_schedule_interval,
+        service = double(to_schedule_interval: after_availability_schedule_interval,
                          user: @user,
                          recurrence: @recurrence,
-                         days_count_to_end_of_recurrency: 5,
                          zone: zone,
                          one_timer?: true,
+                         periodicity: 7,
                          recurrent?: false)
-        aliadas_availability = ScheduleChecker.new(service).match_schedules
+        aliadas_availability = AvailabilityForService.new(service).find
         
         expect(aliadas_availability).to be_empty
+      end
+
+      it 'doesnt find availability when the recurrence is too small(not enough schedules intervals)' do
+        availability_schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours)
+
+        Schedule.where(datetime: starting_datetime + 4.weeks, aliada_id: aliada_3.id).update_all(status: 'booked')
+
+        service = double(to_schedule_interval: availability_schedule_interval,
+                         user: @user,
+                         recurrence: @recurrence,
+                         zone: zone,
+                         one_timer?: false,
+                         periodicity: 7,
+                         days_count_to_end_of_recurrency: 5,
+                         recurrent?: true)
+        aliadas_availability = AvailabilityForService.new(service).find
+        
+        expect(aliadas_availability.size).to be 2
+        expect(aliadas_availability[aliada.id].first.beginning_of_interval).to eql starting_datetime
+        expect(aliadas_availability[aliada.id].size).to be 5
+
+        expect(aliadas_availability[aliada_2.id].first.beginning_of_interval).to eql starting_datetime
+        expect(aliadas_availability[aliada_2.id].size).to be 5
       end
     end
 
@@ -221,20 +240,20 @@ describe 'ScheduleChecker' do
 
         @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours)
 
-        @service = double(to_schedule_intervals: [@schedule_interval], 
-                          to_schedule_interval: @schedule_interval,
+        @service = double(to_schedule_interval: @schedule_interval,
                           user: @user,
                           zone: zone,
                           one_timer?: true,
+                          periodicity: nil,
                           recurrent?: false)
-        @checker = ScheduleChecker.new(@service, aliada_id: aliada.id)
+        @finder = AvailabilityForService.new(@service, aliada_id: aliada.id)
       end
 
       after do
         Timecop.return
       end
       it 'returns only the aliada´s availability' do
-        aliadas_availability = @checker.match_schedules
+        aliadas_availability = @finder.find
 
         expect(aliadas_availability.size).to be 1
         expect(aliadas_availability[aliada.id].first.beginning_of_interval).to eql starting_datetime

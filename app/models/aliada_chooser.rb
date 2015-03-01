@@ -2,7 +2,7 @@ class AliadaChooser
   attr_reader :aliadas_availability, :aliadas
   # Encasulates the aliada choosing algorithm
    
-  # Receives the result of ScheduleChecker.match_schedules
+  # Receives the result of AvailabilityForService.find
   # returns an aliada availability
   def initialize(aliadas_availability, service)
     @aliadas_availability = aliadas_availability  
