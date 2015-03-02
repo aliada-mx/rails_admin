@@ -1,0 +1,33 @@
+<script type="text/html" id="email_already_exists">
+    <p>
+        Tú o alguien más con el email <b><%%= email %></b> ya ha hecho un servicio antes.
+    </p>
+
+    <fieldset>
+        <button class='action-button-gray size-large left' id='try-another-email-button'>
+            Probar con otro email
+        </button>
+    
+        <a class='action-button-gray size-large right' href='<%= new_user_session_path %>'>Haz login</a>
+    </fieldset>
+</script>
+
+<script type="text/html" id="postal_code_missing">
+    <h1>
+        Me gustaría que aliada estuviera aqui
+    </h1>
+    <p class='left'>
+        Desafortunadamente aliada no está disponible en tu zona por el momento.
+        <br>
+        Por favor ten paciencia mientras hacemos el máximo esfuerzo para crecer y ayudar a más personas.
+        <br>
+        te avisaremos cuando estemos en tu zona.
+    </p>
+    <p>
+        Muchas gracias :)
+    </p>
+
+    <button class='action-button-gray size-large' id='try-another-postal-code-button'>
+        Probar otro código postal
+    </button>
+</script>

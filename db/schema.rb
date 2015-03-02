@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150224214406) do
+ActiveRecord::Schema.define(version: 20150228200653) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -115,18 +115,43 @@ ActiveRecord::Schema.define(version: 20150224214406) do
   end
 
   create_table "extras", force: true do |t|
-    t.string   "name",                    limit: nil
-    t.decimal  "hours",                               precision: 10, scale: 3
-    t.datetime "created_at",                                                   null: false
-    t.datetime "updated_at",                                                   null: false
+    t.string   "name",              limit: nil
+    t.decimal  "hours",                         precision: 10, scale: 3
+    t.datetime "created_at",                                             null: false
+    t.datetime "updated_at",                                             null: false
     t.string   "icon_file_name"
     t.string   "icon_content_type"
     t.integer  "icon_file_size"
     t.datetime "icon_updated_at"
-    t.string   "attachment_file_name"
-    t.string   "attachment_content_type"
-    t.integer  "attachment_file_size"
-    t.datetime "attachment_updated_at"
+  end
+
+  create_table "incomplete_services", force: true do |t|
+    t.integer  "service_id"
+    t.string   "email"
+    t.string   "phone"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.integer  "service_type_id"
+    t.integer  "bathrooms"
+    t.integer  "bedrooms"
+    t.string   "date"
+    t.string   "time"
+    t.decimal  "estimated_hours",       precision: 10, scale: 3
+    t.text     "street"
+    t.string   "number"
+    t.string   "interior_number"
+    t.text     "between_streets"
+    t.text     "colony"
+    t.string   "state"
+    t.string   "city"
+    t.text     "extra_ids"
+    t.integer  "map_zoom"
+    t.string   "postal_code_number"
+    t.decimal  "latitude",              precision: 10, scale: 7
+    t.decimal  "longitude",             precision: 10, scale: 7
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "postal_code_not_found"
   end
 
   create_table "payment_methods", force: true do |t|
@@ -158,21 +183,12 @@ ActiveRecord::Schema.define(version: 20150224214406) do
 
   add_index "payments", ["user_id"], name: "index_payments_on_user_id", using: :btree
 
-  create_table "postal_code_zones", force: true do |t|
-    t.integer  "postal_code_id"
-    t.integer  "zone_id"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-  end
-
-  add_index "postal_code_zones", ["postal_code_id"], name: "index_postal_code_zones_on_postal_code_id", using: :btree
-  add_index "postal_code_zones", ["zone_id"], name: "index_postal_code_zones_on_zone_id", using: :btree
-
   create_table "postal_codes", force: true do |t|
     t.string   "code",       limit: nil
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
     t.string   "name"
+    t.integer  "zone_id"
   end
 
   create_table "recurrences", force: true do |t|
@@ -225,10 +241,10 @@ ActiveRecord::Schema.define(version: 20150224214406) do
     t.datetime "updated_at",                 null: false
     t.integer  "price_per_hour"
     t.string   "display_name",   limit: nil
+    t.text     "benefits"
   end
 
   create_table "services", force: true do |t|
-    t.integer  "zone_id"
     t.integer  "address_id"
     t.integer  "user_id"
     t.integer  "service_type_id"
@@ -253,6 +269,7 @@ ActiveRecord::Schema.define(version: 20150224214406) do
     t.text     "attention_instructions"
     t.text     "equipment_instructions"
     t.text     "forbidden_instructions"
+    t.integer  "zone_id"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
@@ -317,9 +334,6 @@ ActiveRecord::Schema.define(version: 20150224214406) do
   add_foreign_key "codes", "users", name: "fk_rails_0cc1e79270"
 
   add_foreign_key "documents", "users", name: "fk_rails_8492e5f484"
-
-  add_foreign_key "postal_code_zones", "postal_codes", name: "fk_rails_42b87c0f50"
-  add_foreign_key "postal_code_zones", "zones", name: "fk_rails_0b1be18d68"
 
   add_foreign_key "recurrences", "users", name: "fk_rails_6e1c955ffb"
 

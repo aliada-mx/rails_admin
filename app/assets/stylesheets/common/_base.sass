@@ -1,25 +1,32 @@
 @import 'reset'
 @import 'typography'
 @import 'variables'
-@import "mixins"
+@import 'mixins'
+@import 'forms'
 
-// Boostrap
-@import 'bootstrap-sprockets'
-@import 'bootstrap'
-
+// Layouts
 @import 'common/two_columns'
 @import 'common/one_column'
 
+// Modules
+@import 'modules/login'
 @import 'modules/calendar'
 @import 'modules/header'
+@import 'modules/inner_navigation'
 @import 'modules/summary'
 @import 'modules/hours_selector'
-@import 'modules/counter'
+@import 'modules/bathroom-bedrooms'
+@import 'modules/extras'
+@import 'modules/service-card'
+@import 'modules/service_type_buttons'
+@import 'modules/time_selector'
 
 // Modal
 @import 'vex'
-@import 'vex-theme-plain'
+@import 'vex-theme-aliada'
+
 @import 'modules/service-card'
+
 
 html
   overflow-y: scroll
@@ -35,23 +42,42 @@ a
   &.hover
     text-decoration: underline
 
+.left
+  float: left
+
+.right
+  float: right
+
+b
+  font-weight: 800
+
 a.small-letters
   text-decoration: underline
   color: $green
+
+.small-letters
   +rem(font-size, $small-font)
 
-p.small-letters
-  +rem(font-size, $small-font)
+.smallish-letters
+  +rem(font-size, $smallish-font)
 
 h1
   color: $green
+  font-weight: 800
+  +rem(font-size, $extra-large-font)
+
+h4
   font-weight: 600
 
-p.iconized
-  background-position: 0
-  background-repeat: no-repeat
-  background-size: 20px
-  padding-left: 40px
+icon
+  width: 20px
+  height: 20px
+  display: inline-block
+  background-size: cover
+  vertical-align: middle
+  &.small
+    width: 10px
+    height: 10px
   &.instructions
     background-image: image-url('instructions.png')
   &.calendar
@@ -60,7 +86,20 @@ p.iconized
     background-image: image-url('clock.png')
   &.phone
     background-image: image-url('phone.png')
-    padding-left: 0px
+  &.pencil
+    background-image: image-url('pencil.png')
+  &.user
+    background-image: image-url('user.png')
+  &.house
+    background-image: image-url('house.png')
+  &.hash
+    background-image: image-url('hash.png')
+  &.sparks
+    background-image: image-url('sparks.png')
+  &.check
+    background-image: image-url('check.png')
+  &.check-active
+    background-image: image-url('check-active.png')
 
 p.medium
   +rem(font-size, $medium-font)
@@ -89,47 +128,42 @@ footer
     p
       display: inline-block
 
-input
-  +input-placeholder
-    color: $light_gray
-  &[type=text]
-    border: none
-    border-bottom: 1px solid $dark_gray
-
 .concealed
   display: none
 
-.action-button
-  border-radius: 3px
-  box-sizing: border-box
-  display: inline-block
-  vertical-align: top
-  &.size-large
-    +rem(font-size, 1.2rem)
-    padding: 10px 16px
-    width: 219px
-
-  &.size-medium
-    +rem(font-size, 1rem)
-    padding: 6px 12px
-    width: 180px
-
-  &.size-small
-    +rem(font-size, 0.8rem)
-    padding: 5px 10px
-    width: 90px
-
 .action-button-pink
-  @extend .action-button
-  +action-button-color($pink)
+  +action-button($dark_pink)
 
 .action-button-green
-  @extend .action-button
-  +action-button-color($light_green)
+  +action-button($green)
 
 .action-button-gray
-  @extend .action-button
-  +action-button-color($medium_gray)
+  +action-button($dark_gray)
+
+.action-button-transparent
+  +action-button(transparent)
+
+.action-button-purple
+  +action-button($purple)
+
+.form-control
+  .field
+    padding: 0
+    position: relative
+    margin: 0
+
+  input[type=text], input[type=email], input[type=password]
+    border: none
+    border-bottom: 1px solid $darkest_gray
+    background-color: white
+    width: 100%
+
+  .icon
+    color: $light_gray
+    left: 0
+    position: absolute
+    top: 15px
+
 
 .wrapper
   max-width: 960px

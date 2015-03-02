@@ -8,7 +8,6 @@ class Extra < ActiveRecord::Base
                                                           'image/png',
                                                           'image/gif',
                                                           'image/svg+xml']
-  
 
   rails_admin do
     label_plural 'extras'
@@ -18,5 +17,7 @@ class Extra < ActiveRecord::Base
     configure :hours do
       help 'Horas que toma realizar el servicio, decimales aceptados'
     end
+
+    exclude_fields :extra_services, :services
   end
 end

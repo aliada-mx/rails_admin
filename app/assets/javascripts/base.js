@@ -1,10 +1,18 @@
 //= require jquery
 //= require jquery-ui.min.js
+//
 //= require modernizr.custom.63321
 //= require underscore
+//= require bluebird.min
+//
 //= require knockout
+//= require knockout.validation
+//
 //= require vex
 //= require vex.dialog
+//
+//= require js-routes
+//= require jquery.form.min
 //= require_self
 
 vex.defaultOptions.className = 'vex-theme-plain';

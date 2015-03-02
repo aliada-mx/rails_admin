@@ -40,7 +40,6 @@ $font_0: fontawesome-selected
 .calendar-wrap 
   position: relative
   overflow: hidden
-  max-width: 450px
   width: 100%
   min-width: 280px
   border: 1px solid $dark_gray
@@ -100,13 +99,13 @@ $font_0: fontawesome-selected
         > 
           span 
             &.fc-date 
-              width: 30px
-              height: 30px
+              width: 35px
+              height: 35px
               font-size: 20px
               display: inline-block
               font-weight: 400
               pointer-events: none
-              line-height: 28px
+              line-height: 30px
               top: 7px
               position: relative
             &.fc-weekday 
@@ -183,6 +182,51 @@ $font_0: fontawesome-selected
       left: 1%
       z-index: -2
 
+.header 
+  background: $white
+  padding: 5px 10px 15px 20px
+  position: relative
+  .month
+    text-align: center
+    color: $color_fiord_approx
+    font-weight: 300
+    font-size: 18px
+    margin-top: 10px
+
+  nav 
+    span 
+      position: absolute
+      top: 17px
+      width: 30px
+      height: 30px
+      color: transparent
+      cursor: pointer
+      margin: 0 1px
+      font-size: 20px
+      line-height: 30px
+      +no-selection
+      &:first-child 
+        left: 5px
+
+      &:last-child 
+        right: 5px
+
+      &:before 
+        font-family: $font_0
+        color: $green
+        position: absolute
+        text-align: center
+        width: 100%
+
+      &.prev:before 
+        content: "\276E"
+
+      &.next:before 
+        content: "\276F"
+
+
+    span:hover:before 
+      color: $color_fiord_approx
 
 .fc-four-rows .fc-row 
   height: 25%

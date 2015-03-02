@@ -23,10 +23,10 @@ feature 'ServiceController' do
     # The - 1 hour is needed because this hour is the one the aliada needs to get there from a previous service
     create_recurrent!(starting_datetime - 1.hour, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada})
 
-    expect(Address.all.count).to be 0
-    expect(Service.all.count).to be 0
-    expect(Aliada.all.count).to be 1
-
+    expect(Address.count).to be 0
+    expect(Service.count).to be 0
+    expect(IncompleteService.count).to be 0
+    expect(Aliada.count).to be 1
   end
 
   after do
@@ -38,9 +38,7 @@ feature 'ServiceController' do
       user = create(:user)
 
       login_as(user)
-      with_rack_test_driver do
-        page.driver.submit :post, initial_service_path, {postal_code_id: postal_code.id}
-      end
+      visit initial_service_path
 
       expect(current_path).to eql new_service_users_path(user)
     end
@@ -53,19 +51,23 @@ feature 'ServiceController' do
         User.any_instance.stub(:create_payment_provider!).and_return(nil)
         User.any_instance.stub(:ensure_first_payment!).and_return(nil)
 
-        with_rack_test_driver do
-          page.driver.submit :post, initial_service_path, {postal_code_id: postal_code.id}
-        end
+        visit initial_service_path
 
         expect(current_path).to eq initial_service_path
       end
 
       after do
         service = Service.first
+        incomplete_service = IncompleteService.first
         address = service.address
         user = service.user
         extras = service.extras
         service_aliada = service.aliada
+
+        expect(service).to be_present
+        expect(incomplete_service.service).to eql service
+
+        expect(address.postal_code.code).to eql '11800'
 
         expect(service_aliada).to eql aliada
         expect(extras).to include extra_1
@@ -92,9 +94,9 @@ feature 'ServiceController' do
       end
 
       it 'creates a new one time service' do
-        fill_service_form(conekta_card, one_time_service, starting_datetime, extra_1)
+        fill_service_form(conekta_card, one_time_service, starting_datetime, extra_1, zone)
 
-        click_button 'Confirmar servicio'
+        click_button 'Confirmar visita'
 
         service = Service.first
         expect(service).to be_present
@@ -105,9 +107,9 @@ feature 'ServiceController' do
       end
 
       it 'creates a new recurrent service' do
-        fill_service_form(conekta_card, recurrent_service, starting_datetime, extra_1)
+        fill_service_form(conekta_card, recurrent_service, starting_datetime, extra_1, zone)
 
-        click_button 'Confirmar servicio'
+        click_button 'Confirmar visita'
 
         service = Service.first
         expect(service).to be_present
@@ -135,18 +137,16 @@ feature 'ServiceController' do
         expect(ConektaCard.count).to be 0
         expect(PaymentProviderChoice.count).to be 0
 
-        with_rack_test_driver do
-          page.driver.submit :post, initial_service_path, {postal_code_id: postal_code.id}
-        end
+        visit initial_service_path
       end
 
       it 'creates a pre-authorization payment when choosing conekta' do
-        fill_service_form(conekta_card, one_time_service, starting_datetime, extra_1)
+        fill_service_form(conekta_card, one_time_service, starting_datetime, extra_1, zone)
 
         fill_hidden_input 'conekta_temporary_token', with: 'tok_test_visa_4242'
 
         VCR.use_cassette('initial_service_conekta_card', match_requests_on: [:method, :conekta_preauthorization]) do
-          click_button 'Confirmar servicio'
+          click_button 'Confirmar visita'
         end
 
         payment = Payment.first

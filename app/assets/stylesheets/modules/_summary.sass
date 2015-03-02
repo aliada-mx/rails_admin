@@ -1,37 +1,58 @@
-.summary
-  padding: 42px 20px 20px
+.summary-container
   width: 100%
-  +box-shadow($medium-gray 0px 0px 4px)
   background-color: white
+  +rem(font-size, $medium-font)
+  +rem(padding, 0)
+  &.initial
+    +box-shadow($medium-gray 0px 0px 4px)
+    padding: 22px 20px 20px
+
+  h1
+    margin-bottom: 15px
+
   .foot
     text-align: right
     .hours
       +rem(font-size, $medium-font)
-      +rem(vertical-align, 5px)
+      vertical-align: middle
     .cash
       +rem(font-size, $extra-large-font)
+      vertical-align: middle
 
+    .promotional-code
+      position: relative
+      float: right
+      width: 215px
+
+      a
+        position: absolute
+        right: 0
+        top: 1px
+        color: $green
+
+      input[type=text]
+        width: 100%
+
+
+
+ul.summary
+  margin-bottom: 15px
   li
     +rem(margin-bottom, 0.2rem)
     +rem(padding-left, 2.2rem)
-
-  .checked
-    background: url('check-active-recurrent.png') no-repeat left 4px
+    +rem(font-size, $medium-font)
+    background-repeat: no-repeat
+    background-position: left 4px
     background-size: 15px 15px
 
-  .unchecked
-    background: none
+    &.unchecked
+      color: $light_gray
+      background-image: image-url('check.png')
 
-  .promotional-code
-    position: relative
-    float: right
-    width: 215px
+.recurrent
+  li.checked
+    background-image: image-url('check-active-recurrent.png')
 
-    a
-      position: absolute
-      right: 0
-      top: 1px
-      color: $green
-
-    input[type=text]
-      width: 100%
+.one-time
+  li.checked
+    background-image: image-url('check-active.png')

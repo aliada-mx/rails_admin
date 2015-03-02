@@ -1,9 +1,9 @@
 class AddIconToExtras < ActiveRecord::Migration
-  def up
-    add_attachment :extras, :icon, :attachment
+  def self.up
+    add_attachment :extras, :icon
   end
 
-  def down
-    remove_attachment :extras, :icon, :attachment
+  def self.down
+    remove_attachment :extras, :icon
   end
 end

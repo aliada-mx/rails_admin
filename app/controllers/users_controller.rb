@@ -13,6 +13,7 @@ class UsersController < ApplicationController
   end
 
   def previous_services
+    current_user
   end
 
   private

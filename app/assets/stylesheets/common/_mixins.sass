@@ -1,20 +1,102 @@
+@import "compass/css3/border-radius"
 
-@mixin action-button-color($color)
+@mixin centered()
+  margin: 0 auto
+  display: block
 
-  @if $color == $pink
-    background-color: $pink
-    border: 2px solid $dark_pink
+@mixin soft-transition($time: 300ms)
+  -webkit-transition: all $time cubic-bezier(0,.5,.5,1)
+  -moz-transition: all $time cubic-bezier(0,.5,.5,1)
+  -ms-transition: all $time cubic-bezier(0,.5,.5,1)
+  -o-transition: all $time cubic-bezier(0,.5,.5,1)
+  transition: all $time cubic-bezier(0,.5,.5,1)
+
+@mixin round-corners
+  +border-radius(3px)
+
+@function action-button-background-color($color)
+  @if $color == $dark_pink
+    @return $pink
+
+  @if $color == $dark_gray
+    @return $medium_gray
+
+  @if $color == $green or $color == $purple
+    @return transparent
+
+  @return $color
+
+@function action-button-text-color($color)
+  @if $color == $dark_pink or $color == $dark_gray
+    @return white
+  @if $color == transparent
+    @return $dark_gray
+
+  @return $color
+
+@function action-button-hover-background-color($color)
+  @if $color == $dark_pink
+    @return lighten($pink, 4%)
+
+  @if $color == transparent
+    @return $dark_gray
+
+  @return $color
+
+@function action-button-border-color($color)
+  @if $color == transparent
+    @return $dark_gray
+
+  @return $color
+
+
+@mixin action-button($color)
+  +round-corners
+  box-sizing: border-box
+  display: inline-block
+  text-align: center
+  background-color: action-button-background-color($color)
+  border: 1px solid action-button-border-color($color)
+  color: action-button-text-color($color)
+  cursor: pointer
+  +soft-transition
+  &:hover
+    background-color: action-button-hover-background-color($color)
     color: white
+    text-decoration: none
+  .icon-button
+    +rem(margin-right, 0.5rem)
+  &.size-extra-large
+    +rem(font-size, $large-font)
+    font-weight: 800
+    padding: 25px
+    width: 100%
 
-  @if $color == $light_green
-    background-color: $light_green
-    border: 2px solid $green
-    color: white
+    .icon-button
+      +rem(font-size, 1.4rem)
 
-  @if $color == $medium_gray
-    background-color: $medium_gray
-    border: 2px solid $dark_gray
-    color: white
+  &.size-large
+    +rem(font-size, 1.7rem)
+    padding: 10px 16px
+
+    .icon-button
+      +rem(font-size, 1.2rem)
+
+  &.size-medium
+    +rem(font-size, 1.5rem)
+    padding: 6px 12px
+
+    .icon-button
+      +rem(font-size, 0.8rem)
+
+  &.size-small
+    +rem(font-size, 0.8rem)
+    padding: 5px 10px
+
+    .icon-button
+      +rem(font-size, 1rem)
+
+
 
 
 @function parseInt($n)
@@ -52,3 +134,13 @@
   &:-ms-input-placeholder
     @content
 
+@mixin prevent-collapse()
+  overflow: hidden
+
+@mixin no-selection
+  -webkit-touch-callout: none
+  -webkit-user-select: none
+  -khtml-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none

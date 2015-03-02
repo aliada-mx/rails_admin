@@ -30,6 +30,10 @@ class User < ActiveRecord::Base
 
   validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
 
+  def self.email_exists?(email)
+    User.find_by_email(email).present?
+  end
+
   def create_first_payment_provider!(payment_method_id)
     payment_method = PaymentMethod.find(payment_method_id)
     payment_provider = payment_method.provider_class.create!

@@ -9,6 +9,12 @@
     -webkit-font-smoothing: subpixel-antialiased
     -moz-osx-font-smoothing: auto
 
+@font-face
+  font-family: 'Glyphicons Halflings'
+  src: url('/assets/glyphicons-halflings-regular.eot')
+  src: url('/assets/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('/assets/glyphicons-halflings-regular.woff') format('woff'), url('/assets/glyphicons-halflings-regular.ttf') format('truetype'), url('/assets/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg')
+
+
 @font-face 
   font-family: 'CircularStd'
   src: asset-url('fonts/CircularStd-Black.eot?#iefix') format('embedded-opentype'), asset-url('fonts/CircularStd-Black.otf')  format('opentype'), asset-url('fonts/CircularStd-Black.woff') format('woff'), asset-url('fonts/CircularStd-Black.ttf')  format('truetype'), asset-url('fonts/CircularStd-Black.svg#CircularStd-Black') format('svg')
@@ -18,6 +24,17 @@
   font-family: 'CircularStd'
   src: asset-url('fonts/CircularStd-BlackItalic.eot?#iefix') format('embedded-opentype'), asset-url('fonts/CircularStd-BlackItalic.otf')  format('opentype'), asset-url('fonts/CircularStd-BlackItalic.woff') format('woff'), asset-url('fonts/CircularStd-BlackItalic.ttf')  format('truetype'), asset-url('fonts/CircularStd-BlackItalic.svg#CircularStd-BlackItalic') format('svg')
   font-weight: 800
+  font-style: italic
+
+@font-face 
+  font-family: 'CircularStd'
+  src: asset-url('fonts/CircularStd-Bold.eot?#iefix') format('embedded-opentype'), asset-url('fonts/CircularStd-Bold.otf')  format('opentype'), asset-url('fonts/CircularStd-Bold.woff') format('woff'), asset-url('fonts/CircularStd-Bold.ttf')  format('truetype'), asset-url('fonts/CircularStd-Bold.svg#CircularStd-Bold') format('svg')
+  font-weight: 700
+
+@font-face 
+  font-family: 'CircularStd'
+  src: asset-url('fonts/CircularStd-BoldItalic.eot?#iefix') format('embedded-opentype'), asset-url('fonts/CircularStd-BoldItalic.otf')  format('opentype'), asset-url('fonts/CircularStd-BoldItalic.woff') format('woff'), asset-url('fonts/CircularStd-BoldItalic.ttf')  format('truetype'), asset-url('fonts/CircularStd-BoldItalic.svg#CircularStd-BoldItalic') format('svg')
+  font-weight: 700
   font-style: italic
 
 @font-face 
@@ -48,13 +65,16 @@
 
 body 
   +font-smoothing
-  font-family: "CircularStd", "Helvetica Neue", Helvetica, Arial, sans-serif !important
-  font-weight: 400
+  font-weight: 600
   line-height: 24px
   font-style: normal
-  color: $dark_gray !important
 
 $small-font: 1rem
+$smallish-font: 1.1rem
 $medium-font: 1.6rem
 $large-font: 2rem
 $extra-large-font: 3rem
+
+$font-family-base: "CircularStd", "Helvetica Neue", Helvetica, Arial, sans-serif
+$text-color: $dark_gray
+

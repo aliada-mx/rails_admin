@@ -1,23 +1,44 @@
 %section.step_2_personal_info{data: {bind: 'visible: current_step() == 2'}}
-  = initial_service_form.hidden_field :zone_id
+  %h1
+    Tus datos y dirección
+  %h4
+    ¿A dónde enviaremos tu Aliada?
 
-  = initial_service_form.fields_for :user, @user do |user_form|
-    = user_form.text_field :email
-    = user_form.text_field :first_name
-    = user_form.text_field :last_name
-    = user_form.text_field :phone
+  .fields
+    .personal-info
+      = initial_service_form.fields_for :user do |user_form|
+        %label.field-row.email
+          %icon.user
+          = user_form.text_field :email, placeholder: 'Correo electrónico', class: 'full-width', data: {bind: 'value: email, valueUpdate: "change"'}
+        %label.field-row
+          = user_form.text_field :first_name, placeholder: 'Nombres(s)', class: 'half-width', data: {bind: 'value: first_name'}
+          = user_form.text_field :last_name, placeholder: 'Apellido(s)', class: 'half-width', data: {bind: 'value: last_name'}
+        %label.field-row
+          = user_form.text_field :phone, placeholder: 'Teléfono (10 digitos)', data: {bind: 'value: phone'}
 
-  = initial_service_form.fields_for :address, @address do |address_form|
-    = address_form.hidden_field :postal_code_id, as: :hidden
-    = address_form.text_area :street
-    = address_form.text_field :interior_number
-    = address_form.text_field :number
-    = address_form.text_area :colony
-    = address_form.text_area :between_streets
-    = address_form.text_field :postal_code, value: @postal_code.code
-    = address_form.text_area :state
-    = address_form.text_field :city
-    = address_form.text_area :references
+    .address
+      = initial_service_form.fields_for :address do |address_form|
+        %label.field-row
+          %icon.house
+          = address_form.text_field :street, placeholder: 'Calle', class: 'full-width', data: {bind: 'value: street'}
+        %label.field-row
+          %icon.hash
+          = address_form.text_field :number, placeholder: 'Número Exterior', class: 'two-thirds-width', data: {bind: 'value: number'}
+          = address_form.text_field :interior_number, placeholder: 'Interior', class: 'third-width important-placeholder', data: {bind: 'value: interior_number'}
+        %label.field-row
+          = address_form.text_field :colony, placeholder: 'Colonia', class: 'full-width', data: {bind: 'value: colony'}
+        %label.field-row
+          = address_form.text_field :between_streets, placeholder: 'Entre calles', class: 'full-width', data: {bind: 'value: between_streets'}
+        %label.field-row
+          = address_form.text_field :city, placeholder: 'Ciudad/Delegación', class: 'half-width', data: {bind: 'value: city'}
+          = address_form.text_field :state, placeholder: 'Estado/Distrito', class: 'half-width', data: {bind: 'value: state'}
+        %label.field-row
+          = address_form.text_field :postal_code_number, placeholder: 'Código postal', data: {bind: 'value: postal_code'}, class: 'two-thirds-width'
 
-    = address_form.hidden_field :latitude, as: :hidden
-    = address_form.hidden_field :longitude, as: :hidden
+        = address_form.hidden_field :latitude, as: :hidden, data: {bind: 'value: latitude'}
+        = address_form.hidden_field :longitude, as: :hidden, data: {bind: 'value: longitude'}
+        = address_form.hidden_field :map_zoom, as: :hidden, data: {bind: 'value: map_zoom'}
+
+  %h4
+    Si el PIN verde no indica la dirección, por favor arrástralo hasta la dirección correcta
+  = render 'common/map'

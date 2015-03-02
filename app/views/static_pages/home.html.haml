@@ -11,7 +11,7 @@
           %li Precios
           %li Preguntas Frencuentes
           %li
-            =link_to("Log in", "/sign_in", { :class => 'action-button-gray'})
+            =link_to("Log in", new_user_session_path, { :class => 'action-button-gray'})
 
 
   %div.container
@@ -24,14 +24,10 @@
           Limpiamos tu hogar
 
       %div.search-form-container.col-lg-12
-        = form_tag initial_service_path do
-          %fieldset
-            %legend
-              Pide una profesional de la limpieza en menos de un minuto desde $65/hr.
-            %ol
-              %li
-                = text_field_tag('postal_code_id', '', {:placeholder => 'Calle, número, colonia'})
-                = submit_tag('Programa tu visita', { :class => 'action-button size-large' })
+        %legend
+          Pide una profesional de la limpieza en menos de un minuto desde $65/hr.
+        .action-button-container
+          %a.action-button.size-extra-large{href: initial_service_path} Pide tu primer visita
 
 
 %section.media-section-wrapper
@@ -139,3 +135,7 @@
             =link_to("Contacto", "/sign_in")
     %div.col-lg-3
       %p 2014 Aliada. <br> Todos los derechos reservados.
+
+= append :javascript do
+  = javascript_include_tag 'https://maps.googleapis.com/maps/api/js?libraries=places'
+  = javascript_include_tag 'home'

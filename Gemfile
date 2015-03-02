@@ -43,11 +43,12 @@ gem 'bootstrap-sass'
 # Sass framework
 gem 'compass-rails'
  
-# BOWER
+# JAVASCRIPT 
 #
 gem 'rails-assets-underscore'
 gem 'rails-assets-knockout'
-
+# Named railes routes for js
+gem "js-routes"
 
 # TEMPLATING
 #
@@ -64,13 +65,7 @@ gem 'chronic'
 # PAYMENT SYSTEMS
 gem 'conekta'
 
-
-group :production do
-  # Logging
-  gem "lograge"
-end
-
-# Inverte <=> operator for sortings
+# Invert <=> operator for sortings
 gem 'invert'
 
 # ADMIN
@@ -137,4 +132,9 @@ group :test do
 
   # Record requests to be replayed on tests
   gem 'vcr'
+end
+
+group :production do
+  # Logging
+  gem "lograge"
 end
