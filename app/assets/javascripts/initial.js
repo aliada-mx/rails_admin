@@ -14,29 +14,36 @@
 $(document).ready(function() {
   aliada.services.initial.form = $('#new_service');
 
-  aliada.services.initial.is_valid_step = function(){
-    // Trigger update on to force validation feedback
-    _.each(aliada.step_2_required_fields, function(element){
-      aliada.ko[element].valueHasMutated();
-    });
+  aliada.services.initial.is_valid_step = function(step){
+    // provide feedback
+    switch(step){
+        case 2:
+            // Trigger update on fields to force validation feedback
+            _.each(aliada.step_2_required_fields, function(element){
+              aliada.ko[element].valueHasMutated();
+            });
+            break;
+        default:
+            return true;
+    }
+
 
     return ko.validatedObservable(aliada.ko).isValid();
   };
 
   // Move to specific step
   aliada.move_to_step = function(){
+    var step_number = this;
 
-    if(aliada.services.initial.is_valid_step()){
-      var step_number = this;
+    if(aliada.services.initial.is_valid_step(step_number)){
 
       aliada.ko.current_step(step_number);
     }
   }
 
-
   // KNOCKOUT initialization
   aliada.ko = {
-    current_step: ko.observable(2),
+    current_step: ko.observable(1),
   };
 
   aliada.services.initial.step_1_duration(aliada, ko);
@@ -66,13 +73,13 @@ $(document).ready(function() {
   // Handle previous step
   $('#next_button').on('click',function(e){
       e.preventDefault();
+      var current_step = aliada.ko.current_step();
 
-      if(!aliada.services.initial.is_valid_step()){
+      if(!aliada.services.initial.is_valid_step(current_step)){
         return;
       };
 
       // Next if we are not on the last step
-      var current_step = aliada.ko.current_step();
       var next_step = current_step === 5 ? current_step : current_step+1;
 
       aliada.ko.current_step(next_step);
