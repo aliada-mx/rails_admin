@@ -1,5 +1,7 @@
 class Service < ActiveRecord::Base
   include Presenters::ServicePresenter
+  include AliadaSupport::DatetimeSupport
+
   STATUSES = [
     ['Creado','created'],
     ['Aliada asignada', 'aliada_assigned'],
@@ -71,6 +73,7 @@ class Service < ActiveRecord::Base
   # Ask service_type to answer recurrent? method for us
   delegate :recurrent?, to: :service_type
   delegate :one_timer?, to: :service_type
+  delegate :periodicity, to: :service_type
 
   # Callbacks
   def set_defaults
@@ -105,10 +108,10 @@ class Service < ActiveRecord::Base
     end
   end
 
-  def self.create_aliada_missing_ticket
+  def create_aliada_missing_ticket
     Ticket.create_warning message: "No se encontró una aliada para el servicio", 
                           action_needed: "Asigna una aliada al servicio",
-                          relevant_object: @service
+                          relevant_object: self
 
   end
 
@@ -119,17 +122,7 @@ class Service < ActiveRecord::Base
   # Starting now how many days we'll provide service to the end of
   # the recurrence
   def days_count_to_end_of_recurrency
-    current_datetime = Time.zone.now
-    ending_datetime = current_datetime + Setting.time_horizon_days.days
-    
-    periodicity = recurrence.periodicity.days
-    count = 0
-
-    while current_datetime < ending_datetime
-      current_datetime += periodicity
-      count +=1
-    end
-    count
+    recurrences_until_horizon(recurrence.periodicity)
   end
 
   def ending_datetime
@@ -141,13 +134,13 @@ class Service < ActiveRecord::Base
     datetime - hours_before_service.hours
   end
 
-  def book_aliada! 
-    aliadas_availability = ScheduleChecker.find_aliadas_availability(self)
+  def book_aliada!(aliada_id: nil)
+    aliadas_availability = AvailabilityForService.find_aliadas_availability(self, aliada_id: aliada_id)
 
     aliada_availability = AliadaChooser.find_aliada_availability(aliadas_availability, self)
 
-    aliada = aliada_availability[:aliada]
-    schedules_intervals = aliada_availability[:availability]
+    aliada = aliada_availability.aliada
+    schedules_intervals = aliada_availability.schedules_intervals
 
     if schedules_intervals.present? && aliada.present?
       schedules_intervals.each do |schedule_interval|

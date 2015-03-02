@@ -36,7 +36,7 @@ feature 'Service' do
     create_recurrent!(starting_datetime, hours: 4, periodicity: 7, conditions: {aliada: aliada, zone: zone})
   end
 
-  describe '#book_with!' do
+  describe '#book_aliada!' do
     it 'allows it to mark one time service schedules´ as booked', recurrent:false do
       available_schedules = Schedule.available_for_booking(zone)
       expect(available_schedules.count).to be 4
