@@ -29,34 +29,11 @@ describe 'AliadaChooser' do
       create_recurrent!(starting_datetime-1.hour, hours: 5, periodicity: 7, conditions: {aliada_id: aliada_2.id, zone_id: zone_1.id})
       create_recurrent!(starting_datetime-1.hour, hours: 5, periodicity: 7, conditions: {aliada_id: aliada_3.id, zone_id: zone_1.id})
 
-      @aliadas_availability = ScheduleChecker.find_aliadas_availability(service_1)
+      @aliadas_availability = AvailabilityForService.find_aliadas_availability(service_1)
     end
 
     after :each do
       Timecop.return
-    end
-
-    it 'doesnt filter valid aliadas availability' do
-      chooser = AliadaChooser.new(@aliadas_availability, service_1)
-
-      chooser.choose!
-
-      expect(chooser.aliadas_availability.has_aliada? aliada_1).to be true
-      expect(chooser.aliadas_availability.has_aliada? aliada_2).to be true
-      expect(chooser.aliadas_availability.has_aliada? aliada_3).to be true
-    end
-
-    it 'filters out aliadas with discontinues intervals for a recurrent services' do
-      Schedule.where(aliada: aliada_2, datetime: starting_datetime + 7.day).destroy_all
-      service_1.service_type = recurrent_service_type
-
-      aliadas_availability = ScheduleChecker.find_aliadas_availability(service_1)
-      chooser = AliadaChooser.new(aliadas_availability, service_1)
-      chooser.choose!
-
-      expect(chooser.aliadas_availability.has_aliada? aliada_1).to be true
-      expect(chooser.aliadas_availability.has_aliada? aliada_2).to be false
-      expect(chooser.aliadas_availability.has_aliada? aliada_3).to be true
     end
 
     context '#sort_candidates' do

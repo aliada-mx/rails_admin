@@ -116,9 +116,9 @@ feature 'ServiceController' do
 
         user = service.user
         recurrence = service.recurrence
-        recurrence_aliada = recurrence.aliada
+        recurrence.aliada = recurrence.aliada
 
-        expect(recurrence_aliada).to eql aliada
+        expect(recurrence.aliada).to eql aliada
         expect(recurrence.user).to eql user
         expect(recurrence.owner).to eql 'user'
         expect(recurrence.hour).to eql service.beginning_datetime.hour
