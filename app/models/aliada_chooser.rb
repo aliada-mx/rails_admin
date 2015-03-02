@@ -13,7 +13,7 @@ class AliadaChooser
 
   def choose!
     load_aliadas
-    sort_candidates
+    sort_aliadas
     first
   end
 
@@ -32,7 +32,7 @@ class AliadaChooser
       @aliadas = Aliada.for_booking(aliadas_ids).to_a
     end
 
-    def sort_candidates
+    def sort_aliadas
       @aliadas.sort_by! { |aliada| [Invert(aliada.busy_services_hours), 
                                     aliada.closeness_to_service(@service),
                                     aliada.average_score,

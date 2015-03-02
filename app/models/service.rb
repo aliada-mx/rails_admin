@@ -1,5 +1,7 @@
 class Service < ActiveRecord::Base
   include Presenters::ServicePresenter
+  include AliadaSupport::DatetimeSupport
+
   STATUSES = [
     ['Creado','created'],
     ['Aliada asignada', 'aliada_assigned'],
@@ -120,17 +122,7 @@ class Service < ActiveRecord::Base
   # Starting now how many days we'll provide service to the end of
   # the recurrence
   def days_count_to_end_of_recurrency
-    current_datetime = Time.zone.now
-    ending_datetime = current_datetime + Setting.time_horizon_days.days
-    
-    periodicity = recurrence.periodicity.days
-    count = 0
-
-    while current_datetime < ending_datetime
-      current_datetime += periodicity
-      count +=1
-    end
-    count
+    recurrences_until_horizon(recurrence.periodicity)
   end
 
   def ending_datetime
@@ -147,8 +139,8 @@ class Service < ActiveRecord::Base
 
     aliada_availability = AliadaChooser.find_aliada_availability(aliadas_availability, self)
 
-    aliada = aliada_availability[:aliada]
-    schedules_intervals = aliada_availability[:availability]
+    aliada = aliada_availability.aliada
+    schedules_intervals = aliada_availability.schedules_intervals
 
     if schedules_intervals.present? && aliada.present?
       schedules_intervals.each do |schedule_interval|
