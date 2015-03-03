@@ -54,6 +54,10 @@ RSpec.configure do |config|
 
     # Use faster transaction strategy
     DatabaseCleaner.strategy = :transaction
+
+    # Ensure clean db because in aborted specs there might be left over objects
+    DatabaseCleaner.start
+    DatabaseCleaner.clean
   end
 
   config.before(:each) do

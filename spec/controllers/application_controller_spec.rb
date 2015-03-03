@@ -11,6 +11,16 @@ feature 'ApplicationController' do
                               code: '11800') }
 
   context 'when creating a service without a conekta token' do
+
+    before do
+      @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
+      Capybara.ignore_hidden_elements = false
+    end
+
+    after do
+      Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
+    end
+
     it 'catches the exception and renders a json error' do
       visit initial_service_path
 

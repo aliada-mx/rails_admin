@@ -19,6 +19,11 @@ Rails.application.routes.draw do
 
   scope :servicio do
     get 'inicial', to: 'services#initial', as: :initial_service
+
+    post 'initial_feedback', to: 'services#initial_feedback', as: :initial_feedback
+    post 'check_email', to: 'services#check_email', as: :check_email
+    post 'check_postal_code', to: 'services#check_postal_code', as: :check_postal_code
+
     post 'create', to: 'services#create', as: :create_service
   end
 
@@ -35,11 +40,14 @@ Rails.application.routes.draw do
   end
 
 
+
   devise_scope :aliadas do
     get 'aliadas/servicios/:token', to: 'aliadas#services', as: :servicios_aliadas
   end
 
-  post 'initial_feedback', to: 'services#initial_feedback', as: :initial_feedback
+
+
+
 
 
   resources :schedules

@@ -6,13 +6,14 @@ class ScheduleInterval
   validate :schedules_presence
   validate :schedules_continuity
 
-  attr_accessor :schedules, :aliada, :skip_validations
+  attr_accessor :schedules, :aliada_id, :skip_validations
 
-  def initialize(schedules, skip_validations: false)
+  def initialize(schedules, skip_validations: false, aliada_id: nil)
     # Because the users of this class might reuse the passed array we must ensure
     # we get our own duplicate
     @schedules = schedules.dup
     @skip_validations = skip_validations
+    @aliada_id = aliada_id
   end
 
   def beginning_of_interval

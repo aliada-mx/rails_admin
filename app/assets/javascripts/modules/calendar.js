@@ -1,15 +1,4 @@
-$(function(){
-
-  function is_recurrent(){
-    return true;
-  }
-
-  function lockCalendar(){
-
-  }
-
-  function updateCalendar (hours){
-  }
+aliada.initialize_calendar = function(dates, is_recurrent){
 
   function onDayClick($el, $content, dateProperties){
     //Erase the hours from the previously selected day
@@ -24,9 +13,9 @@ $(function(){
         twoDigit(dateProperties.day) + "-" +
         dateProperties.year;
 
-    if (aliada.dates[dateClicked]) {
+    if (dates[dateClicked]) {
         //Render each hour of the selected date
-        aliada.dates[dateClicked].forEach(function(h) {
+        dates[dateClicked].forEach(function(h) {
             $('#cal-hours').append('<button>' + h + '</button>')
         });
     }
@@ -63,8 +52,8 @@ $(function(){
       }
       //Variable con las fechas y la disponibilidad de cada uno
 
-  cal = $('#calendar').calendario({
-      caldata: aliada.dates,
+  calendario = $('#calendar').calendario({
+      caldata: dates,
       weekabbrs: ['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'],
       months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
       displayMonthAbbr: false,
@@ -73,21 +62,25 @@ $(function(){
   });
 
   //update Month and year
-  $month = $('#month').html(cal.getMonthName()),
-  $year = $('#year').html(cal.getYear());
+  var $month = $('#month').html(calendario.getMonthName()),
+      $year = $('#year').html(calendario.getYear());
 
   function updateMonthYear() {
-    $month.html(cal.getMonthName());
-    $year.html(cal.getYear());
+    $month.html(calendario.getMonthName());
+    $year.html(calendario.getYear());
   };
   
-  //Event handlers
+  //Next month
   $('#next').on('click', function(e) {
       e.stopImmediatePropagation();
-      cal.gotoNextMonth(updateMonthYear);
+      calendario.gotoNextMonth(updateMonthYear);
   });
+    
+  //Previous month
   $('#prev').on('click', function(e) {
       e.stopImmediatePropagation();
-      cal.gotoPreviousMonth(updateMonthYear);
+      calendario.gotoPreviousMonth(updateMonthYear);
   });
-})
+
+  return calendario;
+}

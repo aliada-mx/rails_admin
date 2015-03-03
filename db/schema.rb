@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150227033132) do
+ActiveRecord::Schema.define(version: 20150303013440) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -146,7 +146,7 @@ ActiveRecord::Schema.define(version: 20150227033132) do
     t.string   "city"
     t.text     "extra_ids"
     t.integer  "map_zoom"
-    t.string   "postal_code"
+    t.string   "postal_code_number"
     t.decimal  "latitude",              precision: 10, scale: 7
     t.decimal  "longitude",             precision: 10, scale: 7
     t.datetime "created_at"
@@ -183,21 +183,12 @@ ActiveRecord::Schema.define(version: 20150227033132) do
 
   add_index "payments", ["user_id"], name: "index_payments_on_user_id", using: :btree
 
-  create_table "postal_code_zones", force: true do |t|
-    t.integer  "postal_code_id"
-    t.integer  "zone_id"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-  end
-
-  add_index "postal_code_zones", ["postal_code_id"], name: "index_postal_code_zones_on_postal_code_id", using: :btree
-  add_index "postal_code_zones", ["zone_id"], name: "index_postal_code_zones_on_zone_id", using: :btree
-
   create_table "postal_codes", force: true do |t|
     t.string   "code",       limit: nil
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
     t.string   "name"
+    t.integer  "zone_id"
   end
 
   create_table "recurrences", force: true do |t|
@@ -279,6 +270,8 @@ ActiveRecord::Schema.define(version: 20150227033132) do
     t.text     "attention_instructions"
     t.text     "equipment_instructions"
     t.text     "forbidden_instructions"
+    t.time     "begin_time"
+    t.time     "end_time"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
@@ -345,9 +338,6 @@ ActiveRecord::Schema.define(version: 20150227033132) do
   add_foreign_key "codes", "users", name: "fk_rails_8bca1f8d02"
 
   add_foreign_key "documents", "users", name: "fk_rails_57bac53f26"
-
-  add_foreign_key "postal_code_zones", "postal_codes", name: "fk_rails_38e8d8e1de"
-  add_foreign_key "postal_code_zones", "zones", name: "fk_rails_24ef461b2d"
 
   add_foreign_key "recurrences", "users", name: "fk_rails_bceec69f09"
 
