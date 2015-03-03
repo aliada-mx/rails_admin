@@ -72,6 +72,7 @@
 				var $cell = $( this ),
 					idx = $cell.index(),
 					$content = $cell.children( 'div' ),
+          data = JSON.parse($cell.find('.dayData').html()),
 					dateProp = {
 						day : $cell.children( 'span.fc-date' ).text(),
 						month : self.month + 1,
@@ -82,7 +83,7 @@
 					};
 
 				if( dateProp.day ) {
-					self.options.onDayClick( $cell, $content, dateProp );
+					self.options.onDayClick( $cell, $content, data, dateProp );
 				}
 
 			} );
@@ -160,14 +161,14 @@
 
 						// this day is:
 						var strdate = ( this.month + 1 < 10 ? '0' + ( this.month + 1 ) : this.month + 1 ) + '-' + ( day < 10 ? '0' + day : day ) + '-' + this.year,
-							dayData = this.caldata[ strdate ];
+                dayData = this.caldata[ strdate ];
 
 						if( dayData ) {
-							content = dayData;
+							content = JSON.stringify(dayData);
 						}
 
 						if( content !== '' ) {
-							inner += '<div>' + content + '</div>';
+							inner += '<div class="dayData">' + content + '</div>';
 						}
 
 						++day;
@@ -284,10 +285,16 @@
 			return this.$cal.find( 'div.fc-body' ).children( 'div.fc-row' ).eq( row ).children( 'div' ).eq( pos ).children( 'div' );
 
 		},
-		setData : function( caldata ) {
+		addData : function( caldata ) {
 
 			caldata = caldata || {};
 			$.extend( this.caldata, caldata );
+
+		},
+		setData : function( caldata ) {
+
+			caldata = caldata || {};
+      this.caldata = caldata;
 			this._generateTemplate();
 
 		},

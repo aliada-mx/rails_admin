@@ -12,18 +12,6 @@ class ServicesController < ApplicationController
     @service = Service.new(user: User.new,
                            service_type: ServiceType.first,
                            address: Address.new)
-    # binding.pry
-
-    #Example of to pass a date into the calendarario.html.erb partial
-    @dates =  {Date.new(2015,1,2) => ['8:00', '9:00', '10:00', '11:00', '12:00'] }
-
-    map = {}
-    @dates.each_pair do |k,v|
-      map[k.strftime('%m-%d-%Y')] = v
-    end
-    @dates = map
-    
-    @dates_parsed = ActiveSupport::JSON.encode(@dates).html_safe
   end
 
   def new

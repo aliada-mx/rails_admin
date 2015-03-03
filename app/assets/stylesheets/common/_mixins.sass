@@ -144,3 +144,10 @@
   -moz-user-select: none
   -ms-user-select: none
   user-select: none
+
+
+@mixin transparent-background($opacity:0.6)
+  background: rgb(255, 255, 255) transparent
+  background: rgba(255, 255, 255, $opacity)
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#99ffffff, endColorstr=#99ffffff )
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99ffffff, endColorstr=#99ffffff)"

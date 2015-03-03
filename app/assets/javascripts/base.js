@@ -7,6 +7,7 @@
 //
 //= require knockout
 //= require knockout.validation
+//= require knockout_custom_bindings
 //
 //= require vex
 //= require vex.dialog
@@ -31,3 +32,7 @@ log = function(message,object){
         }
     }
 };
+
+add_csrf_token = function(xhr) {
+  xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+}

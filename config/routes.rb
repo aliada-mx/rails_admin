@@ -39,6 +39,7 @@ Rails.application.routes.draw do
     post 'conekta_card/create', to: 'conekta_cards#create', as: :create_conekta_card
   end
 
+  post 'aliadas-availability', to: 'aliadas_availability#for_duration', as: :aliadas_availability
 
   resources :schedules
 

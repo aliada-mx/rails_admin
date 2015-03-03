@@ -26,6 +26,5 @@ module AliadaWebApp
     end
      
     Conekta.api_key = Rails.application.secrets.conekta_secret_key
-
   end
 end
