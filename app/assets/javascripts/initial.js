@@ -53,11 +53,18 @@ $(document).ready(function() {
   aliada.services.initial.step_5_success(aliada, ko);
 
   aliada.ko.next_button_text = ko.computed(function(){
-    var current_step = aliada.ko.current_step();
-    if (current_step == 5){
-      return 'Terminar'
+    switch(aliada.ko.current_step()){
+      case 1:
+        return 'Siguiente'
+      case 2:
+        return 'Confirmar dirección'
+      case 3:
+        return 'Siguiente'
+      case 4:
+        return 'Confirmar visita'
+      case 5:
+        return 'Siguiente'
     }
-    return current_step < 4 ? 'Siguiente' : 'Confirmar visita'
   });
 
   ko.validation.init({

@@ -27,10 +27,19 @@ feature 'ServiceController' do
     expect(Service.count).to be 0
     expect(IncompleteService.count).to be 0
     expect(Aliada.count).to be 1
+
+
+    # We have hidden elements in our initial service creation assitant 
+    # because we don't show all the steps at once
+    @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
+    Capybara.ignore_hidden_elements = false
+
+    visit initial_service_path
   end
 
   after do
     Timecop.return
+    Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
   end
 
   describe '#initial' do
@@ -44,21 +53,21 @@ feature 'ServiceController' do
     end
 
     context 'Skipping the payment logic' do
-      before do
+      before :each do
         expect(User.where('role != ?', 'aliada').count).to be 0
         expect(Schedule.available.count).to be 25
 
         User.any_instance.stub(:create_payment_provider!).and_return(nil)
         User.any_instance.stub(:ensure_first_payment!).and_return(nil)
 
-        visit initial_service_path
-
         expect(current_path).to eq initial_service_path
       end
 
-      after do
-        service = Service.first
+      after :each do
+        expect(IncompleteService.count).to be 1
         incomplete_service = IncompleteService.first
+
+        service = Service.first
         address = service.address
         user = service.user
         extras = service.extras
@@ -136,8 +145,6 @@ feature 'ServiceController' do
         expect(Payment.count).to be 0
         expect(ConektaCard.count).to be 0
         expect(PaymentProviderChoice.count).to be 0
-
-        visit initial_service_path
       end
 
       it 'creates a pre-authorization payment when choosing conekta' do
