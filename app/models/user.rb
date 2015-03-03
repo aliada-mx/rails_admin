@@ -45,7 +45,24 @@ class User < ActiveRecord::Base
 
     create_payment_provider_choice(payment_provider)
   end
-
+  
+  # Given a service id, check whether status is finished,
+  # charge the default service provider and change status to finished
+  # 
+  def charge_service!(id_s)
+    service_to_charge = Service.find_by(id: id_s, user_id: self.id, status: 'finished')
+   
+    if service_to_charge
+      amount = service_to_charge.amount_to_bill
+      product = OpenStruct.new({price_for_conekta: amount,
+                                description: 'Servicio aliada',
+                                 reference_id: id_s})
+      default_payment_provider.charge!(product)
+    else
+      #servicio no finalizado
+    end  
+  end
+  
   def create_payment_provider_choice(payment_provider)
     # Switch the default
     PaymentProviderChoice.where(user: self).update_all default: false
