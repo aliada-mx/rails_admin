@@ -161,6 +161,17 @@ class Service < ActiveRecord::Base
   def to_schedule_interval
     ScheduleInterval.build_from_range(beginning_datetime, ending_datetime)
   end
+  
+  #calculates the price to be charged for a service
+  def amount_to_bill
+    hours = self.end_time.hour - self.begin_time.hour
+    minutes = self.end_time.min - self.begin_time.min 
+    if hours >= 0 && minutes >= 0
+      return (hours*self.price)+(minutes*self.price/60.0)
+    else
+      return 0
+    end
+  end
 
   def self.create_initial!(service_params)
     service = Service.new(service_params)
