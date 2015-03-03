@@ -86,7 +86,7 @@ aliada.services.initial.step_2_personal_info = function(aliada, ko){
 
   var initialize_map_and_autocomplete = function(){
     // Our autocomplete input
-    var $street_input = $('#service_address_attributes_street');
+    var $street_input = $('#service_address_street');
 
     // Set variables from the autocomplete
     aliada.geo_autocomplete($street_input[0], function(address){
@@ -145,7 +145,7 @@ aliada.services.initial.step_2_personal_info = function(aliada, ko){
   $(document).on('entered_step_2',function(){
     // Initialize map only once the container is visible otherwise the map renders incorrectly
     if(should_init_map_autocomplete){
-      // initialize_map_and_autocomplete();
+      initialize_map_and_autocomplete();
       should_init_map_autocomplete = false;
     }
   });
