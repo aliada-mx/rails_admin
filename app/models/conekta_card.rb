@@ -40,8 +40,9 @@ class ConektaCard < ActiveRecord::Base
   end
 
   def charge!(product)
+   # binding.pry
     Conekta::Charge.create({
-      amount: product.price_for_conekta,
+      amount: (product.price * 100).floor,
       currency: 'MXN',
       description: product.description,
       reference_id: product.id,
@@ -60,9 +61,9 @@ class ConektaCard < ActiveRecord::Base
   end
 
   def preauthorize!(user)
-    preauthorization = OpenStruct.new({price_for_conekta: 300,
+    preauthorization = OpenStruct.new({price: 300,
                                        description: "Pre-autorización de tarjeta #{id}",
-                                       reference_id: self.id})
+                                       id: self.id})
     conekta_charge = charge!(preauthorization)
 
     payment = Payment.create_from_conekta_charge(conekta_charge,user,self)

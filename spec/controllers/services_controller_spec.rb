@@ -168,7 +168,7 @@ feature 'ServiceController' do
 
         expect(payment.provider).to eql conekta_card
         expect(payment.user).to eql user
-        expect(payment.amount).to eql 3
+        expect(payment.amount).to eql 300
         expect(payment).to be_paid
 
         expects_it_to_be_complete_and_valid(conekta_card)
