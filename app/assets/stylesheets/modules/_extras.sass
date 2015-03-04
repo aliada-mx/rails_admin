@@ -2,11 +2,11 @@
 @import 'common/variables'
 @import "compass/css3/opacity"
 
-fieldset.checkboxes.large
+
+fieldset.checkboxes
   .check-box-container
     display: inline-block
     width: 140px
-    height: 125px
     float: left
     margin-right: 15px
     margin-bottom: 15px
@@ -31,11 +31,13 @@ fieldset.checkboxes.large
       .foot
         position: absolute
         bottom: 0
+        min-height: 34px
         width: 100%
         h4
           font-weight: 600
         .small-letters
           +rem(font-size, $small-font)
+
     input[type=checkbox]
       +opacity(0)
       position: absolute
@@ -47,6 +49,24 @@ fieldset.checkboxes.large
         display: block
       .unchecked
         display: none
+
+    &.disabled
+      label
+        border: 2px solid $lightest_gray
+        color: $lightest_gray
+        cursor: default
+        pointer-events: none
+
+    &:last-child
+      margin-right: 0
+
+  &.large
+    .check-box-container
+      height: 125px
+
+  &.small
+    .check-box-container
+      height: 95px
 
 @media screen and(max-width: 400px) 
   fieldset.checkboxes.large
