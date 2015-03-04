@@ -12,10 +12,10 @@
       %form{ :controller => 'aliadas', :action => 'end_service', :method => 'post' }
         %div
           Llegue?
-          %input{ :type => "text", :name => "arrival" }
+          %input{ :type => "text", :name => "arrival_hour" }
           Acabe?
-          %input{ :text => "text", :name => "ended"}
-        %input{ :type => "submit", :name => "submit", :value => "login" }
+          %input{ :text => "text", :name => "end_hour"}
+        %input{ :type => "submit", :name => "submit", :value => "hours" }
       %br
       %br
   - @upcoming_services.each do |i|
