@@ -41,9 +41,10 @@ describe 'User' do
     it 'Charges the user using the default payment provider' do
       user.create_payment_provider_choice(conekta_card)
       s = Service.create(price: 65,
-                         service_type_id: 5,
-                         address_id: 5,
-                         zone_id: service.zone_id,
+                         id: 11,
+                         service_type_id: 95,
+                         address_id: 71,
+                         zone_id: 195,
                          status: 'finished',
                          user_id: user.id,
                          begin_time: Time.now,
@@ -51,9 +52,11 @@ describe 'User' do
                          end_time: Time.now + 3.hour,
                          datetime: starting_datetime,
                          estimated_hours: 3)
-      
+      #binding.pry
+
+      VCR.use_cassette('conekta_charge', match_requests_on: [:conekta_preauthorization]) do
       user.charge_service!(s.id)
-      
+      end
     end
   end
 end
