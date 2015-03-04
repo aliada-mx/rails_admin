@@ -8,6 +8,7 @@ aliada.services.initial.step_3_visit_info = function(aliada, ko){
     dates: ko.observableArray([]),
     times: ko.observableArray([]),
     service_type: ko.observable(default_service_type),
+    time: ko.observable([]),
   });
 
   aliada.ko.is_recurrent_service = ko.computed(function(){
@@ -17,11 +18,14 @@ aliada.services.initial.step_3_visit_info = function(aliada, ko){
   //
   // CALENDAR
   //
-  function on_calendar_day_click($el, $content, data, dateProperties){
-    aliada.ko.times(data.times);
+  function on_calendar_day_click($el, $content, times, dateProperties){
+    aliada.ko.times(times);
+
+    aliada.ko.time(_.first(times));
+
      // Only interact with available dates
      if( !$el.hasClass('fc-content') ){
-      return;
+       return;
      }
 
     //Remove previous selected
@@ -55,14 +59,16 @@ aliada.services.initial.step_3_visit_info = function(aliada, ko){
   function update_calendar(){
     var hours = aliada.ko.hours();
     var service_type_id = aliada.ko.service_type().id;
+    var postal_code = aliada.ko.postal_code();
 
     // Prevent further user interaction to avoid double requests
     aliada.calendar.lock(calendar);
 
     // Get data from server
-    aliada.calendar.get_dates_times(hours, service_type_id).then(function(dates_times){
+    aliada.calendar.get_dates_times(hours, service_type_id, postal_code).then(function(dates_times){
       // Update the calendar
       aliada.calendar.set_dates(calendar, dates_times);
+        
       // Select first date of the calendar as a default
       $calendar_container.find('.fc-content').click();
 

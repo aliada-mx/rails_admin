@@ -36,7 +36,7 @@ aliada.calendar.initialize = function(options){
   return calendario;
 }
 
-aliada.calendar.get_dates_times = function(hours, service_type_id){
+aliada.calendar.get_dates_times = function(hours, service_type_id, postal_code){
   return new Promise(function(resolve,reject){
     $.ajax(Routes.aliadas_availability_path(), {
       method: 'POST',
@@ -44,7 +44,8 @@ aliada.calendar.get_dates_times = function(hours, service_type_id){
       beforeSend: add_csrf_token,
       data:{
         hours: hours,
-        service_type_id: service_type_id
+        service_type_id: service_type_id,
+        postal_code: postal_code,
       }
     }).done(function(response){
       if(response.status == 'success'){

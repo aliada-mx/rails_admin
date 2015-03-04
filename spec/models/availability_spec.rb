@@ -32,6 +32,21 @@ describe 'Availability' do
     @aliadas_availability = Availability.new
   end
 
+  describe '#for_calendar' do
+    it 'should return the availability in the right format' do
+      @aliadas_availability.add('key', @first_five_schedules, aliada.id)
+
+      dates_times = @aliadas_availability.for_calendario
+
+      expect(dates_times).to eql ({"01-01-2015"=>
+                                    [{:time=>"16:00", :friendly_time=>" 4:00 pm"},
+                                     {:time=>"17:00", :friendly_time=>" 5:00 pm"},
+                                     {:time=>"18:00", :friendly_time=>" 6:00 pm"},
+                                     {:time=>"19:00", :friendly_time=>" 7:00 pm"},
+                                     {:time=>"20:00", :friendly_time=>" 8:00 pm"}]})
+    end
+  end
+
   describe '#for_aliada' do
     it 'returns an aliada availability with a key' do
       @aliadas_availability.add('key', @first_five_schedules, aliada.id)

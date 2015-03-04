@@ -1,15 +1,18 @@
 class AliadasAvailabilityController < ApplicationController
-  def for_duration
-    hours = params[:hours]
+  def for_calendar
+    hours = params[:hours].to_i
+    hours += Setting.hours_before_service
+    hours += Setting.hours_after_service
+    service_type = ServiceType.find(params[:service_type_id])
+    zone = Zone.find_by!(params[:postal_code])
 
+    availability = AvailabilityForCalendar.find_availability(hours, 
+                                                             recurrent: service_type.recurrent?,
+                                                             zone: zone,
+                                                             periodicity: service_type.periodicity)
 
-    requested_service = Service.new()
-    
-    #Example of to pass a date into the calendarario.html.erb partial
-    @dates =  {Date.new(2015,1,3) => ['8:00', '9:00', '10:00', '11:00', '12:00'] }
+    dates_times = availability.for_calendario
 
-    @dates =  {"03-#{rand(30).to_s % '%0D'}-2015" => {times: [{value: '8:00', text: '8:00 am'}, {value: '9:00', text: '9:00 am' }] } }
-    
-    return render json: { status: :success, dates_times: @dates }
+    return render json: { status: :success, dates_times: dates_times }
   end
 end
