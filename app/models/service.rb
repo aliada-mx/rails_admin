@@ -26,6 +26,7 @@ class Service < ActiveRecord::Base
   has_many :extras, through: :extra_services
   has_many :schedules
   has_many :tickets, as: :relevant_object
+  has_one :score
 
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
@@ -178,6 +179,11 @@ class Service < ActiveRecord::Base
 
     service.book_aliada!
     service
+  end
+
+  #TODO: rename price column to cost and caluculate this value
+  def cost
+    100
   end
 
   # Validations

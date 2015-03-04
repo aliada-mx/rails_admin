@@ -1,3 +1,6 @@
+= append :javascript do
+  = javascript_include_tag 'previous_services'
+
 .service_history.col-lg-12
   .service_history_header HISTORIAL DE VISITAS
   %div.table-responsive.service_history_table
@@ -7,43 +10,44 @@
           %th Fecha
           %th Duración 
           %th Aliada Asignada
-          %th Pago
-          %th Estimado
+          %th Status 
+          %th Costo 
           %th Calificación
       %tbody
+      - @services.each do |service|
         %tr
-          %td Jueves 4 de agosto
-          %td 4 horas
-          %td Aidé López
-          %td -
-          %td $200
-          %td.rating
-            %form
-              %input{:type=>'radio', :name=>'rating', :value=>'1'}
-              %span
-              %input{:type=>'radio', :name=>'rating', :value=>'2'}
-              %span
-              %input{:type=>'radio', :name=>'rating', :value=>'3'}
-              %span
-              %input{:type=>'radio', :name=>'rating', :value=>'4'}
-              %span
-              %input{:type=>'radio', :name=>'rating', :value=>'5'}
-              %span
-        %tr
-          %td Jueves 4 de agosto
-          %td 4 horas
-          %td Aidé López
-          %td -
-          %td $200
-          %td.rating
-            %form
-              %input{:type=>'radio', :name=>'rating', :value=>'1'}
-              %span
-              %input{:type=>'radio', :name=>'rating', :value=>'2'}
-              %span
-              %input{:type=>'radio', :name=>'rating', :value=>'3'}
-              %span
-              %input{:type=>'radio', :name=>'rating', :value=>'4'}
-              %span
-              %input{:type=>'radio', :name=>'rating', :value=>'5'}
-              %span
+          %td
+            = l service.datetime, format: :short
+          %td
+            - if service.billed_hours
+              = service.billed_hours
+            - else
+              = service.estimated_hours
+          %td
+            = "#{service.aliada.first_name} #{service.aliada.last_name}"
+          %td
+            = service.status
+          %td
+            = service.cost
+          - if service.score
+            %td.rating
+              - ((5..1).first).downto((5..1).last).each do |i|
+                - if i == service.score.value.to_i
+                  = radio_button_tag :value, i, false, class: "checked"
+                - else
+                  = radio_button_tag :value, i, false, class: "disabled" 
+                %span
+          - else
+            %td.rating
+              = form_tag :create_by_service_id, :id => "service_#{service.id}" do
+                = radio_button_tag :value, 5, false, onclick: "submitRating(#{service.id}, 5)", class: "unchecked", id: "#{service.id}_5" 
+                %span
+                = radio_button_tag :value, 4, false, onclick: "submitRating(#{service.id}, 4)", class: "unchecked", id: "#{service.id}_4"
+                %span
+                = radio_button_tag :value, 3, false, onclick: "submitRating(#{service.id}, 3)", class: "unchecked", id: "#{service.id}_3"
+                %span
+                = radio_button_tag :value, 2, false, onclick: "submitRating(#{service.id}, 2)", class: "unchecked", id: "#{service.id}_2"
+                %span
+                = radio_button_tag :value, 1, false, onclick: "submitRating(#{service.id}, 1)", class: "unchecked", id: "#{service.id}_1"
+                %span
+                = hidden_field_tag :service_id, service.id

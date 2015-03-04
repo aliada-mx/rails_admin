@@ -36,5 +36,14 @@
     padding: .5rem 1.1rem 0
     background: url(stars.png) 
 
-  input:hover ~ span
+  input.unchecked:hover ~ span
     background: url(star-full.png)
+
+  input.checked
+    cursor: default !important
+  input.checked ~ span
+    background: url(star-full.png)
+
+.disabled
+  cursor: default !important
+    
