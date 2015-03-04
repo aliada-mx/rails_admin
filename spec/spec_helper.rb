@@ -21,7 +21,9 @@ VCR.configure do |config|
   config.hook_into :webmock # or :fakeweb
 
   config.register_request_matcher :conekta_preauthorization do |real_request, recorded_request|
-    preauth_regex = /^https:\/\/.*:@api.conekta.io\/charges\?amount=300&card=card_.*&currency=MXN&description=Pre-autorizaci%C3%B3n%20de%20tarjeta%20\d+&reference_id=/
+    preauth_regex = /^https:\/\/.*:@api.conekta.io\/charges\?amount=\d+&card=.*&currency=MXN&description=.*&reference_id=\d+/
+
+    
 
     real_request.uri == recorded_request.uri || (preauth_regex.match(real_request.uri) && preauth_regex.match(recorded_request.uri))
   end
