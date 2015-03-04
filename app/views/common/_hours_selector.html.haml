@@ -1,7 +1,5 @@
 = select_tag 'hours_space_room_selector', options_from_collection_for_select(Setting.hours_space_room.to_a, :hours, :text), class: 'selectpicker'
 
-= form.hidden_field 'estimated_hours', data: {bind: 'attr: {value: hours}'}
-
 %a.small-letters.bathroom-bedrooms-toggle-button
   ¿No sabes los metros cuadrados?
 

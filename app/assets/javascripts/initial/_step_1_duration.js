@@ -6,10 +6,11 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
     additional: ko.observable(1),
     forced_hours: ko.observable(null),
     extras_hours: ko.observable(0),
+    cost_per_hour: ko.observable(aliada.cost_per_hour),
   });
 
   aliada.ko.bathrooms_text = ko.computed(function(){
-      var sufix = aliada.ko.bathrooms() > 1 ? ' baños' : ' baño'
+    var sufix = aliada.ko.bathrooms() > 1 ? ' baños' : ' baño'
     return aliada.ko.bathrooms()+sufix
   });
 
@@ -34,7 +35,7 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
   });
 
   aliada.ko.price = ko.computed(function(){
-      return Math.ceil(aliada.ko.hours() * aliada.cost_per_hour);
+      return Math.ceil(aliada.ko.hours() * aliada.ko.cost_per_hour());
   });
     
   // Hours selector
@@ -47,6 +48,7 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
     $('.bathroom-bedrooms-container').slideUp();
   });
 
+  // Set hours depending on selected extras
   $('#extras').on('change',function(){
       var extras_hours = _.reduce($(this).find(':checked'), function(total, checkbox){
         return total + parseFloat($(checkbox).data('hours'));

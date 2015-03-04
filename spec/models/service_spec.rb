@@ -36,7 +36,7 @@ feature 'Service' do
     create_recurrent!(starting_datetime, hours: 4, periodicity: 7, conditions: {aliada: aliada, zone: zone})
   end
 
-  describe '#book_with!' do
+  describe '#book_aliada!' do
     it 'allows it to mark one time service schedules´ as booked', recurrent:false do
       available_schedules = Schedule.available_for_booking(zone)
       expect(available_schedules.count).to be 4
@@ -70,14 +70,34 @@ feature 'Service' do
       service.datetime = too_early
 
       expect(service).to be_invalid
+      expect(service.errors.messages).to have_key :datetime
+      expect(service.errors.messages[:datetime].first).to include 'No podemos registrar un servicio que empieza o termina fuera del horario de trabajo'
     end
 
     it 'validates the service doesnt end too late' do
-      too_late = Time.zone.now.change(hour: Setting.end_of_aliadas_day + 1)
+      too_late = '2014-10-31 18:00:00 -0600'.in_time_zone
 
       service.datetime = too_late
 
       expect(service).to be_invalid
+      expect(service.errors.messages).to have_key :datetime
+      expect(service.errors.messages[:datetime].first).to include 'No podemos registrar un servicio que empieza o termina fuera del horario de trabajo'
+    end
+
+    it 'validates a service ending at the end of aliadas day' do
+      service.datetime = '2015-01-27 17:00:00 -0600'.in_time_zone
+
+      expect(service).to be_valid
+    end
+  end
+
+  describe '#datetime_is_hour_o_clock' do
+    it 'validates the service ends in an hour o clock' do
+      service.datetime = '2015-02-19 17:30:00'.in_time_zone
+
+      expect(service).to be_invalid
+      expect(service.errors.messages).to have_key :datetime
+      expect(service.errors.messages[:datetime].first).to include 'Los servicios solo pueden crearse en horas en punto'
     end
   end
 

@@ -1,5 +1,7 @@
 class Service < ActiveRecord::Base
   include Presenters::ServicePresenter
+  include AliadaSupport::DatetimeSupport
+
   STATUSES = [
     ['Creado','created'],
     ['Aliada asignada', 'aliada_assigned'],
@@ -25,9 +27,6 @@ class Service < ActiveRecord::Base
   has_many :schedules
   has_many :tickets, as: :relevant_object
 
-  accepts_nested_attributes_for :user
-  accepts_nested_attributes_for :address
-
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
@@ -37,16 +36,20 @@ class Service < ActiveRecord::Base
   validate :datetime_is_hour_o_clock
   validate :datetime_within_working_hours
   validate :service_type_exists
-  validates_presence_of :address, :user, :zone, :estimated_hours, :datetime, :service_type
+  validates_presence_of :address, :user, :estimated_hours, :datetime, :service_type
 
   # Callbacks
   after_initialize :set_defaults
+  after_create :ensure_zone!
 
   # TODO: Fix validations, it is only working with :created
   # State machine
   state_machine :status, :initial => 'created' do
     transition 'created' => 'aliada_assigned', :on => :assign
     transition 'created' => 'aliada_missing', :on => :mark_as_missing
+    transition 'created' => 'paid', :on => :pay
+    transition ['created', 'aliada_assigned', 'in-progress'] => 'finished', :on => :finish
+    transition ['created', 'aliada_assigned' ] => 'cancelled', :on => :cancel
 
     after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
 
@@ -64,10 +67,10 @@ class Service < ActiveRecord::Base
     end
   end
 
-
   # Ask service_type to answer recurrent? method for us
   delegate :recurrent?, to: :service_type
   delegate :one_timer?, to: :service_type
+  delegate :periodicity, to: :service_type
 
   # Callbacks
   def set_defaults
@@ -102,11 +105,18 @@ class Service < ActiveRecord::Base
     end
   end
 
-  def self.create_aliada_missing_ticket
+  def ensure_zone!
+    return if zone_id.present?
+    return unless address_id.present? 
+
+    self.zone_id = address.postal_code.zone.id
+    self.save!
+  end
+
+  def create_aliada_missing_ticket
     Ticket.create_warning message: "No se encontró una aliada para el servicio", 
                           action_needed: "Asigna una aliada al servicio",
-                          relevant_object: @service
-
+                          relevant_object: self
   end
 
   def total_hours
@@ -116,17 +126,7 @@ class Service < ActiveRecord::Base
   # Starting now how many days we'll provide service to the end of
   # the recurrence
   def days_count_to_end_of_recurrency
-    current_datetime = Time.zone.now
-    ending_datetime = current_datetime + Setting.time_horizon_days.days
-    
-    periodicity = recurrence.periodicity.days
-    count = 0
-
-    while current_datetime < ending_datetime
-      current_datetime += periodicity
-      count +=1
-    end
-    count
+    recurrences_until_horizon(recurrence.periodicity)
   end
 
   def ending_datetime
@@ -138,13 +138,13 @@ class Service < ActiveRecord::Base
     datetime - hours_before_service.hours
   end
 
-  def book_aliada! 
-    aliadas_availability = ScheduleChecker.find_aliadas_availability(self)
+  def book_aliada!(aliada_id: nil)
+    aliadas_availability = AvailabilityForService.find_aliadas_availability(self, aliada_id: aliada_id)
 
     aliada_availability = AliadaChooser.find_aliada_availability(aliadas_availability, self)
 
-    aliada = aliada_availability[:aliada]
-    schedules_intervals = aliada_availability[:availability]
+    aliada = aliada_availability.aliada
+    schedules_intervals = aliada_availability.schedules_intervals
 
     if schedules_intervals.present? && aliada.present?
       schedules_intervals.each do |schedule_interval|
@@ -162,12 +162,17 @@ class Service < ActiveRecord::Base
   end
 
   def self.create_initial!(service_params)
-    service = Service.new(service_params)
+    address = Address.create!(service_params[:address])
+    user = User.create!(service_params[:user])
+    service = Service.new(service_params.except!(:user, :address))
+
+    service.address = address
+    service.user = user
     service.combine_date_time
-    service.save!
     service.ensure_recurrence!
 
-    user = service.user
+    service.save!
+
     user.create_first_payment_provider!(service_params[:payment_method_id])
     user.ensure_first_payment!(service_params)
 

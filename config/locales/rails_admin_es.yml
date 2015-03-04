@@ -20,8 +20,9 @@ es:
       ticket: 'ticket'
       zone: 'zona'
       extra: 'extra'
+      incomplete_service: 'registro inconcluso'
     attributes:
-      address:
+      address: &address_attributes
         user: usuario
         postal_code: código postal
         street: calle
@@ -34,7 +35,7 @@ es:
         references: referencias
         latitude: latitud
         longitude: longitud
-      user: &user
+      user: &user_attributes
         next_service: siguiente servicio
         address: dirección
         addresses: direcciones
@@ -54,7 +55,7 @@ es:
         remember_created_at: cuando pidió contraseña nueva
         reset_password_sent_at: cuando enviamos contraseña nueva
       aliada:
-        <<: *user
+        <<: *user_attributes
         banned_users: usuarios que la banearon
         zones: zonas de trabajo
         scores: calificaciones
@@ -100,7 +101,7 @@ es:
         type: tipo
       schedule:
       score:
-      service:
+      service: &service_attributes
         datetime: fecha y hora del servicio
         zone: zona
         address: dirección
@@ -113,12 +114,22 @@ es:
         hours_after_service: horas después del servicio
         bathrooms: baños
         bedrooms: recámaras
+        estimated_hours: Horas estimadas 
       service_type:
       ticket:
         relevant_object: Servicio
         message: error
         action_needed: acción sugerida
         classification: tipo de ticket
+      incomplete_service:
+        <<: *user_attributes
+        <<: *service_attributes
+        <<: *address_attributes
+        date: Fecha pedida
+        time: Hora pedida
+        service: Servicio 
+        postal_code_number: Código postal
+        postal_code_not_found: No existía el código postal
       zones:
   admin:
     home:

@@ -1,3 +1,7 @@
+@import 'common/variables'
+@import 'compass/css3/box-shadow'
+@import 'common/mixins'
+
 .fields
   padding: 20px 0 20px 40px
   label
@@ -18,14 +22,25 @@
 
     &.half-width
       width: 49.5%
+
+    &.two-thirds-width
+      width: 67%
+
+    &.third-width
+      width: 32%
     
 input
   +input-placeholder
+    +soft-transition
     color: $light_gray
     font-weight: 600
   &.important-placeholder
     +input-placeholder
       font-weight: 800
+  &.error
+    color: $error
+    +input-placeholder
+      color: $error
   &[type=text]
     border: none
     border-bottom: 1px solid $dark_gray

@@ -9,6 +9,7 @@
 @import 'common/one_column'
 
 // Modules
+@import 'modules/login'
 @import 'modules/calendar'
 @import 'modules/header'
 @import 'modules/inner_navigation'
@@ -63,7 +64,7 @@ a.small-letters
 
 h1
   color: $green
-  font-weight: 600
+  font-weight: 800
   +rem(font-size, $extra-large-font)
 
 h4
@@ -145,6 +146,25 @@ footer
 
 .action-button-purple
   +action-button($purple)
+
+.form-control
+  .field
+    padding: 0
+    position: relative
+    margin: 0
+
+  input[type=text], input[type=email], input[type=password]
+    border: none
+    border-bottom: 1px solid $darkest_gray
+    background-color: white
+    width: 100%
+
+  .icon
+    color: $light_gray
+    left: 0
+    position: absolute
+    top: 15px
+
 
 .wrapper
   max-width: 960px

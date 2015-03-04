@@ -15,11 +15,10 @@ class ServiceType < ActiveRecord::Base
   end
 
   def benefits_list
-    benefits.split(',')
+    benefits.present? ? benefits.split(',') : []
   end
 
   rails_admin do
-    label_plural 'tipos de servicio'
     label_plural 'tipos de servicios'
     parent Service
     navigation_icon 'icon-barcode'

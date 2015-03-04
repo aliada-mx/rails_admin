@@ -12,7 +12,7 @@ class ServicesController < ApplicationController
     @service = Service.new(user: User.new,
                            service_type: ServiceType.first,
                            address: Address.new)
-
+    # binding.pry
 
     #Example of to pass a date into the calendarario.html.erb partial
     @dates =  {Date.new(2015,1,2) => ['8:00', '9:00', '10:00', '11:00', '12:00'] }
@@ -72,8 +72,7 @@ class ServicesController < ApplicationController
     if postal_code.present? && postal_code.size >= 4 
       zone = Zone.find_by_code(postal_code)
 
-      unless zone.present?
-        @incomplete_service.update(postal_code_not_found: true)
+      if zone.blank?
         return render json: { status: :error, code: :postal_code_missing }
       end
     end
@@ -87,9 +86,9 @@ class ServicesController < ApplicationController
                                       :date,
                                       :time,
                                       ).merge({extra_ids: params[:service][:extra_ids].to_s })
-                                       .merge(params[:service][:address_attributes])
-                                       .merge(params[:service][:user_attributes])
-                                       .except!(:postal_code_id)
+                                       .merge(params[:service][:address])
+                                       .merge(params[:service][:user])
+                                       .merge(params[:incomplete_service])
   end
 
   def service_params
@@ -106,19 +105,18 @@ class ServicesController < ApplicationController
                                       :conekta_temporary_token,
                                       :aliada_id,
                                       :incomplete_service_id,
-                                      user_attributes: [
+                                      user: [
                                         :first_name,
                                         :last_name,
                                         :email,
                                         :phone,
                                       ],
-                                      address_attributes: [
+                                      address: [
                                         :street,
                                         :interior_number,
                                         :number,
                                         :colony,
                                         :between_streets,
-                                        :postal_code_id,
                                         :latitude,
                                         :longitude,
                                         :state,
@@ -127,6 +125,7 @@ class ServicesController < ApplicationController
                                         :latitude,
                                         :longitude,
                                         :map_zoom,
+                                        :postal_code_number,
                                       ]).merge({conekta_temporary_token: params[:conekta_temporary_token] })
                                       
   end

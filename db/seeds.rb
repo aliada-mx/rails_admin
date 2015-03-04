@@ -10,10 +10,10 @@
 puts 'creating extras'
 
 Extra.destroy_all
-Extra.create!(name: 'Planchar (12pz)', hours: 1)
-Extra.create!(name: 'Limpiar ventanas', hours: 1)
-Extra.create!(name: 'Lavar ropa', hours: 1)
-Extra.create!(name: 'Limpiar el refri', hours: 1.5)
+Extra.create!(name: 'Planchar (6pz)', hours: 0.5)
+Extra.create!(name: 'Limpiar ventanas', hours: 0.5)
+Extra.create!(name: 'Lavar a mano', hours: 1)
+Extra.create!(name: 'Limpiar el refri', hours: 0.5)
 Extra.create!(name: 'Limpiar el horno', hours: 0.5)
 Extra.create!(name: 'Limpieza profunda', hours: 2)
 
@@ -28,7 +28,7 @@ ServiceType.create(name: 'recurrent',
                    display_name: 'Cada Semana',
                    periodicity: 7,
                    price_per_hour: 79,
-                   benefits: 'La misma Aliada en cada visita, Una casa limpia cada siempre, El precio :)')
+                   benefits: 'La misma Aliada en cada visita, Tu casa siempre limpia, El precio :)')
 
 puts 'Creating users'
 User.destroy_all
