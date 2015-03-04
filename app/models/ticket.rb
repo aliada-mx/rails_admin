@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Ticket < ActiveRecord::Base
   CLASSIFICATIONS = {
     'alert-info' => 'Atención',
@@ -21,7 +22,12 @@ class Ticket < ActiveRecord::Base
   def classification_partial
 
   end
-
+  
+  def self.create_error(options)
+    options.merge!({classification: 'alert-danger'})
+    Ticket.create(options)
+  end
+  
   def self.create_warning(options)
     options.merge!({classification: 'alert-warning'})
     Ticket.create(options)
