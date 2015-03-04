@@ -8,7 +8,7 @@ aliada.services.initial.step_2_personal_info = function(aliada, ko){
   var on_step_2 = function(){ return aliada.ko.current_step() == 2 };
 
   // Knockout model
-  aliada.step_2_required_fields = [ 'email','first_name','last_name','phone','street','number','interior_number', 'colony', 'between_streets', 'city', 'state', 'postal_code' ]
+  aliada.step_2_required_fields = [ 'email','first_name','last_name','phone','street','number','interior_number', 'colony', 'between_streets', 'city', 'state', 'postal_code_number' ]
 
   _.each(aliada.step_2_required_fields, function(element){
     aliada.ko[element] = ko.observable('').extend({ required: { onlyIf: on_step_2 } })
@@ -93,7 +93,7 @@ aliada.services.initial.step_2_personal_info = function(aliada, ko){
         aliada.ko.street(address.street || '');
         aliada.ko.number(address.number || '');
         aliada.ko.colony(address.colony || '');
-        aliada.ko.postal_code(address.postal_code || '');
+        aliada.ko.postal_code_number(address.postal_code || '');
 
         var latitude = address.place.geometry.location.lat();
         var longitude = address.place.geometry.location.lng();

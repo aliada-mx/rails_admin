@@ -61,8 +61,9 @@ describe 'AvailabilityForCalendar' do
 
       it 'it doesnt find availability if there is a missing hour' do
         Schedule.where(datetime: starting_datetime).destroy_all
+        finder = AvailabilityForCalendar.new(5, zone)
+        aliadas_availability = finder.find
 
-        aliadas_availability = @finder.find
         expect(aliadas_availability.size).to be 2
 
         aliada_2_availability = aliadas_availability.for_aliada(aliada_2)
@@ -79,8 +80,9 @@ describe 'AvailabilityForCalendar' do
 
       it 'it finds availability when at least one aliada has it for a specific hour' do
         Schedule.where('aliada_id in (?)', [aliada_2, aliada_3]).destroy_all
+        finder = AvailabilityForCalendar.new(5, zone)
 
-        aliadas_availability = @finder.find
+        aliadas_availability = finder.find
 
         expect(aliadas_availability.size).to be 1
         expect(aliadas_availability.schedules_intervals[0].beginning_of_interval).to eql starting_datetime
@@ -134,7 +136,8 @@ describe 'AvailabilityForCalendar' do
 
       it 'doesnt find availability when the available schedules have holes in the continuity' do
         Schedule.where(datetime: starting_datetime + 4.hours + 7.days, aliada_id: aliada_2).destroy_all
-        aliadas_availability = @finder.find
+        finder = AvailabilityForCalendar.new(3, zone, recurrent: true, periodicity: 7)
+        aliadas_availability = finder.find
         
         expect(aliadas_availability.size).to be 2
 

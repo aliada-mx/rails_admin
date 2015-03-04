@@ -19,5 +19,5 @@
 
   = render partial: 'common/time_selector', locals: {form: initial_service_form}
 
-  = initial_service_form.hidden_field :date
-  = initial_service_form.hidden_field :time
+  = initial_service_form.hidden_field :date, data: {bind: 'value: date'}
+  = initial_service_form.hidden_field :time, data: {bind: 'value: time'}

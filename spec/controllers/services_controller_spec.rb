@@ -11,7 +11,7 @@ feature 'ServiceController' do
   let!(:postal_code) { create(:postal_code, 
                               :zoned, 
                               zone: zone,
-                              code: '11800') }
+                              number: '11800') }
   let!(:extra_1){ create(:extra, name: 'Lavanderia')}
   let!(:extra_2){ create(:extra, name: 'Limpieza de refri')}
   let!(:conekta_card){ create(:payment_method)}
@@ -76,7 +76,7 @@ feature 'ServiceController' do
         expect(service).to be_present
         expect(incomplete_service.service).to eql service
 
-        expect(address.postal_code.code).to eql '11800'
+        expect(address.postal_code.number).to eql '11800'
 
         expect(service_aliada).to eql aliada
         expect(extras).to include extra_1

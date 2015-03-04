@@ -1,6 +1,6 @@
-<script type="text/html" id="email_already_exists">
+<script type="text/html" id="email_already_exists_template">
     <p>
-        Tú o alguien más con el email <b><%%= email %></b> ya ha hecho un servicio antes.
+        Tú o alguien más con el email <b><%%= email %></b> ya ha usado aliada antes.
     </p>
 
     <fieldset>
@@ -12,7 +12,7 @@
     </fieldset>
 </script>
 
-<script type="text/html" id="postal_code_missing">
+<script type="text/html" id="postal_code_number_missing_template">
     <h1>
         Me gustaría que aliada estuviera aqui
     </h1>
@@ -23,11 +23,24 @@
         <br>
         te avisaremos cuando estemos en tu zona.
     </p>
-    <p>
+
+    <div>
         Muchas gracias :)
-    </p>
+    </div>
 
     <button class='action-button-gray size-large' id='try-another-postal-code-button'>
         Probar otro código postal
     </button>
+</script>
+
+<script type="text/html" id="platform_error_template">
+    <h1>
+        Error con aliada :()
+    </h1>
+    <p>
+        Lo sentimos, algo salió mal con aliada.mx ya estamos enterados y estamos trabajando para arreglarlo lo más rápido posible.
+    </p>
+    <p>
+        <%%= error %>
+    </p>
 </script>
