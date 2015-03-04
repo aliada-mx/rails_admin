@@ -33,7 +33,7 @@
           = address_form.text_field :city, placeholder: 'Ciudad/Delegación', class: 'half-width', data: {bind: 'value: city'}
           = address_form.text_field :state, placeholder: 'Estado/Distrito', class: 'half-width', data: {bind: 'value: state'}
         %label.field-row
-          = address_form.text_field :postal_code_number, placeholder: 'Código postal', data: {bind: 'value: postal_code'}, class: 'two-thirds-width'
+          = address_form.text_field :postal_code_number, placeholder: 'Código postal', data: {bind: 'value: postal_code_number'}, class: 'two-thirds-width'
 
         = address_form.hidden_field :latitude, as: :hidden, data: {bind: 'value: latitude'}
         = address_form.hidden_field :longitude, as: :hidden, data: {bind: 'value: longitude'}

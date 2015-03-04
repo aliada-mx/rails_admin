@@ -7,11 +7,11 @@ class AvailabilityForCalendar
     @zone = zone
 
     # Pull the schedules from db
-    @available_schedules = Schedule.available_for_booking(zone)
+    @available_schedules = Schedule.available_for_booking(@zone)
     if aliada_id.present?
       @available_schedules = @available_schedules.where(aliada_id: aliada_id)
     end
-    # Eval the query to avoid multiple queries later on
+    # Eval the query to avoid multiple queries later on thanks to lazy evaluation
     @available_schedules.to_a
 
     # An object to track our availability

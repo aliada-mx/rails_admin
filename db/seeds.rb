@@ -50,7 +50,10 @@ zone = FactoryGirl.create(:zone)
 
 PostalCode.destroy_all
 puts 'creating postal_code'
-postal_code = FactoryGirl.create(:postal_code, :zoned, zone: zone, code: '11800')
+postal_code = FactoryGirl.create(:postal_code, :zoned, zone: zone, number: '11800')
 
 Schedule.destroy_all
 create_recurrent!(Time.zone.now.change({hour: 7}), hours: 12, periodicity: 7, conditions: {aliada: aliada, zone: zone})
+
+Service.destroy_all
+IncompleteService.destroy_all

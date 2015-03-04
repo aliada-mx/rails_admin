@@ -8,7 +8,7 @@ feature 'ApplicationController' do
   let!(:postal_code) { create(:postal_code, 
                               :zoned, 
                               zone: zone,
-                              code: '11800') }
+                              number: '11800') }
 
   context 'when creating a service without a conekta token' do
 

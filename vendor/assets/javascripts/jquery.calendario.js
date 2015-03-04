@@ -72,7 +72,6 @@
 				var $cell = $( this ),
 					idx = $cell.index(),
 					$content = $cell.children( 'div' ),
-          data = JSON.parse($cell.find('.dayData').html()),
 					dateProp = {
 						day : $cell.children( 'span.fc-date' ).text(),
 						month : self.month + 1,
@@ -81,6 +80,10 @@
 						weekday : idx + self.options.startIn,
 						weekdayname : self.options.weeks[ idx + self.options.startIn ]
 					};
+          dateProp['strdate'] = (dateProp.year + '-' + (dateProp.month + 1 < 10 ? '0' + ( dateProp.month + 1 ) : dateProp.month + 1 )) + '-' + ( dateProp.day < 10 ? '0' + dateProp.day : dateProp.day );
+
+        var deserialized_data = $cell.find('.dayData').html()
+        var data = JSON.parse(deserialized_data || '{}');
 
 				if( dateProp.day ) {
 					self.options.onDayClick( $cell, $content, data, dateProp );
@@ -160,7 +163,7 @@
 						inner += '<span class="fc-date">' + day + '</span><span class="fc-weekday">' + this.options.weekabbrs[ j + this.options.startIn > 6 ? j + this.options.startIn - 6 - 1 : j + this.options.startIn ] + '</span>';
 
 						// this day is:
-						var strdate = ( this.month + 1 < 10 ? '0' + ( this.month + 1 ) : this.month + 1 ) + '-' + ( day < 10 ? '0' + day : day ) + '-' + this.year,
+						var strdate = (this.year + '-' + (this.month + 1 < 10 ? '0' + ( this.month + 1 ) : this.month + 1 )) + '-' + ( day < 10 ? '0' + day : day ),
                 dayData = this.caldata[ strdate ];
 
 						if( dayData ) {

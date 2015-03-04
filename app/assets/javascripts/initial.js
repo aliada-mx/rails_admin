@@ -74,6 +74,8 @@ $(document).ready(function() {
     errorsAsTitle: true,
   })
 
+  // Activates knockout punches
+  ko.punches.enableAll();
   // Activates knockout.js
   ko.applyBindings(aliada.ko);
   

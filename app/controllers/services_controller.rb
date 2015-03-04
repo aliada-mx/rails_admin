@@ -55,13 +55,13 @@ class ServicesController < ApplicationController
   end
 
   def check_postal_code
-    postal_code = incomplete_service_params[:postal_code]
+    postal_code_number = incomplete_service_params[:postal_code_number]
 
-    if postal_code.present? && postal_code.size >= 4 
-      zone = Zone.find_by_code(postal_code)
+    if postal_code_number.present? && postal_code_number.size >= 4 
+      zone = Zone.find_by_postal_code_number(postal_code_number)
 
       if zone.blank?
-        return render json: { status: :error, code: :postal_code_missing }
+        return render json: { status: :error, code: :postal_code_number_missing }
       end
     end
   end

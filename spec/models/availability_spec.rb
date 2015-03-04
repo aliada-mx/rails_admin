@@ -30,6 +30,12 @@ describe 'Availability' do
     @last_five_schedules = Schedule.all.where('id not in (?)', @first_five_schedules.map(&:id))
 
     @aliadas_availability = Availability.new
+
+    Timecop.freeze(starting_datetime)
+  end
+
+  after do
+    Timecop.return
   end
 
   describe '#for_calendar' do
@@ -38,12 +44,7 @@ describe 'Availability' do
 
       dates_times = @aliadas_availability.for_calendario
 
-      expect(dates_times).to eql ({"01-01-2015"=>
-                                    [{:time=>"16:00", :friendly_time=>" 4:00 pm"},
-                                     {:time=>"17:00", :friendly_time=>" 5:00 pm"},
-                                     {:time=>"18:00", :friendly_time=>" 6:00 pm"},
-                                     {:time=>"19:00", :friendly_time=>" 7:00 pm"},
-                                     {:time=>"20:00", :friendly_time=>" 8:00 pm"}]})
+      expect(dates_times).to eql ({"2015-01-01"=>[{:value=>"16:00", :friendly_time=>" 4:00 pm"}]})
     end
   end
 

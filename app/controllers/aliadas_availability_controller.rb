@@ -1,10 +1,13 @@
 class AliadasAvailabilityController < ApplicationController
   def for_calendar
-    hours = params[:hours].to_i
+    # We round up because our whole system depends on round hours
+    # and its safer to asume more time than less
+    hours = params[:hours].to_f.ceil
     hours += Setting.hours_before_service
     hours += Setting.hours_after_service
+    
     service_type = ServiceType.find(params[:service_type_id])
-    zone = Zone.find_by!(params[:postal_code])
+    zone = Zone.find_by_postal_code_number(params[:postal_code_number])
 
     availability = AvailabilityForCalendar.find_availability(hours, 
                                                              recurrent: service_type.recurrent?,

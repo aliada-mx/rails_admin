@@ -4,32 +4,32 @@
 
   %ul.summary
     %li{data: {bind: 'css: {checked: current_step() >= 1}'}}
-      %span{data: {bind: 'text: "Duración del servicio: "+hours()+" horas"'}}
+      %span Duración del servicio: {{ hours }} horas 
       %a.small-letters{data: {bind: 'visible: current_step() > 1, click: aliada.move_to_step.bind(1) '}} 
         %icon.pencil.small
         editar
 
     %li{data: {bind: 'css: {checked: is_address_done, unchecked: !is_address_done()}'}}
-      %span{data: {bind: 'text: address'}}
+      %span {{ address }}
       %a.small-letters{data: {bind: 'visible: is_address_done, click: aliada.move_to_step.bind(2) '}} 
         %icon.pencil.small
         editar
 
     %li{data: {bind: 'css: {checked: is_name_email_phone_done, unchecked: !is_name_email_phone_done()}'}}
-      %span{data: {bind: 'text: name_email_phone'}}
+      %span {{ name_email_phone }}
       %a.small-letters{data: {bind: 'visible: is_name_email_phone_done, click: aliada.move_to_step.bind(3) '}} 
         %icon.pencil.small
         editar
 
     %li{data: {bind: 'css: {checked: current_step() >= 4, unchecked: current_step() < 4}'}}
-      %span{data: {bind: 'text: date_hour'}}
+      %span {{ date_hour }}
       %a.small-letters{data: {bind: 'visible: current_step() > 4, click: aliada.move_to_step.bind(4) '}} 
         %icon.pencil.small
         editar
 
   .foot
-    %span.hours{data: {bind: 'text: hours()+" horas:"'}}
-    %span.cash{data: {bind: 'text: "$"+price()'}}
+    %span.hours {{ hours }} horas:
+    %span.cash ${{ price }} 
   .promotional-code{data: {bind: 'visible: current_step() == 5'}}
     %a
       APLICAR

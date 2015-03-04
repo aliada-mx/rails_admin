@@ -7,6 +7,7 @@
 //
 //= require knockout
 //= require knockout.validation
+//= require knockout.punches.min
 //= require knockout_custom_bindings
 //
 //= require vex

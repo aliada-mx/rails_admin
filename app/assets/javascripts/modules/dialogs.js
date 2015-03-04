@@ -20,12 +20,12 @@ aliada.dialogs.email_already_exists = function(email){
     });  
 };
 
-aliada.dialogs.postal_code_missing = function(postal_code){
+aliada.dialogs.postal_code_number_missing = function(postal_code_number){
     // Preload template
-    var postal_code_missing_template = _.template($('#postal_code_missing_template').html());
+    var postal_code_number_missing_template = _.template($('#postal_code_number_missing_template').html());
 
     vex.open({
-        content: postal_code_missing_template({postal_code: postal_code}),
+        content: postal_code_number_missing_template({postal_code_number: postal_code_number}),
         showCloseButton: false,
         escapeButtonCloses: false,
         overlayClosesOnClick: false,

@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :postal_code, class: PostalCode do
-    sequence(:code){ |n| "#{n}#{n}#{n}#{n}#{n}" }
+    sequence(:number){ |n| "#{n}#{n}#{n}#{n}#{n}" }
     association :zone, factory: :zone
   end
 

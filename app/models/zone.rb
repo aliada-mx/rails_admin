@@ -8,8 +8,8 @@ class Zone < ActiveRecord::Base
     Zone.joins(:postal_codes).where('postal_codes.id = ?', postal_code.id).try(:first)
   end
 
-  def self.find_by_code(code)
-    Zone.joins(:postal_codes).where('postal_codes.code = ?', code).try(:first)
+  def self.find_by_postal_code_number(number)
+    Zone.joins(:postal_codes).where('postal_codes.number = ?', number).try(:first)
   end
 
   rails_admin do

@@ -14,4 +14,3 @@ ko.bindingHandlers.from_data = {
         });
     }
 };
-

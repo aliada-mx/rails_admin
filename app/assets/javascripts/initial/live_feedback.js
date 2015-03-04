@@ -1,5 +1,5 @@
-// Contacts the server to verify email, postal code and save an incomplete service
 aliada.services.initial.live_feedback = function($form){
+// Contacts the server to verify email, postal code and save an incomplete service
   get_feedback = function(){
     $form.ajaxSubmit({
       url: Routes.initial_feedback_path(),
@@ -31,5 +31,5 @@ aliada.services.initial.live_feedback = function($form){
     })
   }
 
-  $form.find('input, select').on('change', get_feedback)
+  $form.on('change', get_feedback)
 }

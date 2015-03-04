@@ -51,13 +51,14 @@ class Availability
     # A hash with an array as default value for new keys
     dates_times = Hash.new{ |h,k| h[k] = [] }
 
-    schedules.map do |schedule|
-      date = schedule.datetime.strftime('%m-%d-%Y')
-      time = schedule.datetime.strftime('%H:%M')
-      friendly_time = schedule.datetime.strftime('%l:%S %P')
+    schedules_intervals.map do |schedule_interval|
+      datetime = schedule_interval.beginning_of_interval
 
-      dates_times[date].push({time: time, friendly_time: friendly_time}) 
-      dates_times[date].uniq!
+      date = datetime.strftime('%Y-%m-%d')
+      time = datetime.strftime('%H:%M')
+      friendly_time = datetime.strftime('%l:%S %P')
+
+      dates_times[date].push({value: time, friendly_time: friendly_time}) 
     end
 
     dates_times

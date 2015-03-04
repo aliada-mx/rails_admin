@@ -15,7 +15,7 @@ class Address < ActiveRecord::Base
     return if postal_code_id.present?
 
     if postal_code_number.present?
-      self.postal_code = PostalCode.find_by!(code: postal_code_number)
+      self.postal_code = PostalCode.find_by!(number: postal_code_number)
       self.save!
     end
   end
