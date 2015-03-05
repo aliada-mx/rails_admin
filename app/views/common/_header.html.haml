@@ -4,7 +4,8 @@
       %a{href: '/', class: 'logo-container' }
         = image_tag 'logo-contrast.png', class: 'logo-contrast'
       .help-container
-        = image_tag('user.png', { :class => 'account-icon'})
+        %span.icon.icon-user
+        -# = image_tag('user.png', { :class => 'account-icon'})
         %a{href: '/', title: 'Mi cuenta', class: 'account-link' }
           Mi Cuenta
         %a{href: '/', title: 'Programar nueva visita', class:'action-button-pink size-large'}
