@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class ConektaCard < ActiveRecord::Base
   def self.create_for_user!(user, temporary_token)
     conekta_customer = Conekta::Customer.find(user.conekta_customer_id)
@@ -39,15 +40,21 @@ class ConektaCard < ActiveRecord::Base
     update_from_api_card(card_attributes)
   end
 
-  def charge!(product)
+  def charge!(product, user)
    # binding.pry
-    Conekta::Charge.create({
+    
+   conekta_charge = Conekta::Charge.create({
       amount: (product.price * 100).floor,
       currency: 'MXN',
       description: product.description,
       reference_id: product.id,
       card: self.token
     })
+ 
+    payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
+    payment.pay!
+    
+    return conekta_charge
   end
 
   def payment_possible?(service)
@@ -64,10 +71,9 @@ class ConektaCard < ActiveRecord::Base
     preauthorization = OpenStruct.new({price: 300,
                                        description: "Pre-autorización de tarjeta #{id}",
                                        id: self.id})
-    conekta_charge = charge!(preauthorization)
+    charge!(preauthorization, user)
 
-    payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
-    payment.pay!
+    
 
     self.preauthorized = true
     self.save!

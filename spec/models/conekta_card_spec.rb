@@ -27,7 +27,7 @@ describe 'ConektaCard' do
       VCR.use_cassette('conekta_charge') do
         card.token = token
 
-        conekta_charge = card.charge!(fake_product)
+        conekta_charge = card.charge!(fake_product,user)
         charge = eval(conekta_charge.inspect)
 
         expect(charge['amount']).to eql 30000
