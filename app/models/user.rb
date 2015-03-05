@@ -56,14 +56,14 @@ class User < ActiveRecord::Base
     service_to_charge = Service.find_by(id: id_s, user_id: self.id, status: 'finished')
     
     
-    
+   # binding.pry
     if service_to_charge
       begin
         amount = service_to_charge.amount_to_bill
         product = OpenStruct.new({price: amount,
                                    description: 'Servicio aliada',
                                    id: id_s})
-        #binding.pry
+    #    binding.pry
         default_payment_provider.charge!(product, self)
         
         

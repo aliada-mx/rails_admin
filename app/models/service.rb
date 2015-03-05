@@ -164,10 +164,11 @@ class Service < ActiveRecord::Base
   
   #calculates the price to be charged for a service
   def amount_to_bill
+    
     hours = self.end_time.hour - self.begin_time.hour
     minutes = self.end_time.min - self.begin_time.min 
     if hours >= 0 && minutes >= 0
-      return (hours*self.price)+(minutes*self.price/60.0)
+      return (hours*self.service_type.price_per_hour)+(minutes*self.price/60.0)
     else
       return 0
     end

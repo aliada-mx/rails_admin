@@ -41,19 +41,17 @@ class ConektaCard < ActiveRecord::Base
   end
 
   def charge!(product, user)
-   # binding.pry
-    
-   conekta_charge = Conekta::Charge.create({
+    conekta_charge = Conekta::Charge.create({
       amount: (product.price * 100).floor,
       currency: 'MXN',
       description: product.description,
       reference_id: product.id,
       card: self.token
     })
- 
+   # binding.pry
     payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
     payment.pay!
-    
+    #binding.pry
     return conekta_charge
   end
 
