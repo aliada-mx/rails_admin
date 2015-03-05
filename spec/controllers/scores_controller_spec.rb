@@ -23,7 +23,7 @@ feature 'ScoresController' do
       login_as(user)
 
       with_rack_test_driver do
-        page.driver.submit :post, create_by_service_id_path, {service_id: service.id, value: 3.0}
+        page.driver.submit :post, score_service_path(service.id), {value: 3.0}
       end
       
       response = JSON.parse(page.body)["score"]
@@ -39,8 +39,8 @@ feature 'ScoresController' do
       login_as(user)
 
       with_rack_test_driver do
-        page.driver.submit :post, create_by_service_id_path, {service_id: service.id, value: 3.0}
-        page.driver.submit :post, create_by_service_id_path, {service_id: service.id, value: 3.0}
+        page.driver.submit :post, score_service_path(service.id), {value: 3.0}
+        page.driver.submit :post, score_service_path(service.id), {value: 3.0}
       end
 
       expect(page.status_code).to be 500
@@ -52,7 +52,7 @@ feature 'ScoresController' do
       login_as(admin)
 
       with_rack_test_driver do
-        page.driver.submit :post, create_by_service_id_path, {service_id: service.id, value: 3.0}
+        page.driver.submit :post, score_service_path(service.id), {value: 3.0}
       end
       
       response = JSON.parse(page.body)["score"]
@@ -69,7 +69,7 @@ feature 'ScoresController' do
       login_as(other_user)
 
       with_rack_test_driver do
-        page.driver.submit :post, create_by_service_id_path, {service_id: service.id, value: 3.0}
+        page.driver.submit :post, score_service_path(service.id), {value: 3.0}
       end
 
       expect(Score.count).to be 0

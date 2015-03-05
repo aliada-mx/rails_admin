@@ -39,7 +39,7 @@
                 %span
           - else
             %td.rating
-              = form_tag :create_by_service_id, :id => "service_#{service.id}" do
+              = form_tag score_service_path(service.id), :id => "service_#{service.id}" do
                 = radio_button_tag :value, 5, false, onclick: "submitRating(#{service.id}, 5)", class: "unchecked", id: "#{service.id}_5" 
                 %span
                 = radio_button_tag :value, 4, false, onclick: "submitRating(#{service.id}, 4)", class: "unchecked", id: "#{service.id}_4"
