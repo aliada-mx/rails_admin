@@ -6,6 +6,10 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 #
+require 'factory_girl_rails'
+require_relative '../spec/support/schedules_helper'
+include TestingSupport::SchedulesHelper
+
 
 puts 'creating extras'
 
@@ -33,3 +37,23 @@ ServiceType.create(name: 'recurrent',
 puts 'Creating users'
 User.destroy_all
 User.create!(first_name: 'Guillermo', last_name: 'Silice', email: 'guillermo.siliceo@gmail.com', role: 'admin', password: '12345678')
+
+puts 'creating data for testing the frontend testing'
+
+Aliada.destroy_all
+puts 'creating aliada'
+aliada = FactoryGirl.create(:aliada)
+
+Zone.destroy_all
+puts 'creating zone'
+zone = FactoryGirl.create(:zone)
+
+PostalCode.destroy_all
+puts 'creating postal_code'
+postal_code = FactoryGirl.create(:postal_code, :zoned, zone: zone, number: '11800')
+
+Schedule.destroy_all
+create_recurrent!(Time.zone.now.change({hour: 7}), hours: 12, periodicity: 7, conditions: {aliada: aliada, zone: zone})
+
+Service.destroy_all
+IncompleteService.destroy_all

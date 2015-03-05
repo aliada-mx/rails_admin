@@ -1,6 +1,6 @@
 aliada.dialogs.email_already_exists = function(email){
     // Preload template
-    var email_exists_template = _.template($('#email_already_exists').html());
+    var email_exists_template = _.template($('#email_already_exists_template').html());
 
     vex.open({
         content: email_exists_template({email: email}),
@@ -20,12 +20,12 @@ aliada.dialogs.email_already_exists = function(email){
     });  
 };
 
-aliada.dialogs.postal_code_missing = function(postal_code){
+aliada.dialogs.postal_code_number_missing = function(postal_code_number){
     // Preload template
-    var postal_code_missing_template = _.template($('#postal_code_missing').html());
+    var postal_code_number_missing_template = _.template($('#postal_code_number_missing_template').html());
 
     vex.open({
-        content: postal_code_missing_template({postal_code: postal_code}),
+        content: postal_code_number_missing_template({postal_code_number: postal_code_number}),
         showCloseButton: false,
         escapeButtonCloses: false,
         overlayClosesOnClick: false,
@@ -42,5 +42,14 @@ aliada.dialogs.postal_code_missing = function(postal_code){
     });  
 };
 
-aliada.dialogs.platform_error = function(){
+aliada.dialogs.platform_error = function(error){
+    var platform_error_template = _.template($('#platform_error_template').html());
+
+    vex.open({
+        content: platform_error_template({error: error || 'Algo salió mal :( con aliada)'}),
+        showCloseButton: false,
+        escapeButtonCloses: false,
+        overlayClosesOnClick: false,
+        contentClassName: 'error',
+    });  
 };

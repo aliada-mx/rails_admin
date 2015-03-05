@@ -1,4 +1,4 @@
-%fieldset.radio_buttons.large
+%fieldset.service_types.radio_buttons.large
   = form.collection_radio_buttons :service_type_id, ServiceType.all, :id, :name do |radio_button_builder|
 
     - service_type = radio_button_builder.object
@@ -12,7 +12,7 @@
             %icon.sparks
             MEJOR VALOR
             %icon.sparks
-      = radio_button_builder.label do
+      = label_tag "service_service_type_id_#{service_type.id}", {data: {bind: "from_data: 'service_type'", service_type: service_type.to_json }} do
         = radio_button_builder.radio_button
 
         %span{class: "action-button-#{class_name} size-large"}

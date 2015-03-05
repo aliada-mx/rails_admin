@@ -12,18 +12,6 @@ class ServicesController < ApplicationController
     @service = Service.new(user: User.new,
                            service_type: ServiceType.first,
                            address: Address.new)
-    # binding.pry
-
-    #Example of to pass a date into the calendarario.html.erb partial
-    @dates =  {Date.new(2015,1,2) => ['8:00', '9:00', '10:00', '11:00', '12:00'] }
-
-    map = {}
-    @dates.each_pair do |k,v|
-      map[k.strftime('%m-%d-%Y')] = v
-    end
-    @dates = map
-    
-    @dates_parsed = ActiveSupport::JSON.encode(@dates).html_safe
   end
 
   def new
@@ -67,13 +55,13 @@ class ServicesController < ApplicationController
   end
 
   def check_postal_code
-    postal_code = incomplete_service_params[:postal_code]
+    postal_code_number = incomplete_service_params[:postal_code_number]
 
-    if postal_code.present? && postal_code.size >= 4 
-      zone = Zone.find_by_code(postal_code)
+    if postal_code_number.present? && postal_code_number.size >= 4 
+      zone = Zone.find_by_postal_code_number(postal_code_number)
 
       if zone.blank?
-        return render json: { status: :error, code: :postal_code_missing }
+        return render json: { status: :error, code: :postal_code_number_missing }
       end
     end
   end

@@ -29,7 +29,7 @@ end
 
 puts "MIGRANDO CP"
 connection.query("SELECT * FROM cp WHERE elim = 0").each do |row|
-  cp = PostalCode.find_or_initialize_by(code: row["cp"].to_s.rjust(5, '0'), name: row["nombre"], zone_id: zones[row["zonas_id"]])
+  cp = PostalCode.find_or_initialize_by(number: row["cp"].to_s.rjust(5, '0'), name: row["nombre"], zone_id: zones[row["zonas_id"]])
   if cp.new_record?
     cp.save
     puts "POSTALCODE #{row["id"]} #{cp.errors.messages.to_yaml}" if not cp.errors.messages.empty?
@@ -81,7 +81,7 @@ end
 puts "MIGRANDO CLIENTES HAS DIRECCIONES"
 connection.query("SELECT * FROM (SELECT * FROM clientes_has_direcciones WHERE elim = 0 ORDER BY modified DESC) t GROUP BY t.clientes_id").each do |row|
   
-  cp = PostalCode.find_or_create_by(code: row["cp"].to_s.rjust(5, '0'))
+  cp = PostalCode.find_or_create_by(number: row["cp"].to_s.rjust(5, '0'))
 
   address = Address.find_or_initialize_by(user_id: clientes[row["clientes_id"]], street: row["direccion"], number: row["numero"], interior_number: row["numero_int"], between_streets: row["entre_calles"], colony: row["colonia"], state: row["estado"], city: row["delegacion"], postal_code_id: cp.id,  references: row["referencia"], map_zoom: row["mapa_zoom"]) do |add|
     #treated separately, because decimal objects are different for find_or_create and were duplicating objects
@@ -210,7 +210,7 @@ connection.query("SELECT * FROM recurrencias").each do |row|
 
   zone = nil
   if row["cp"] != ""
-    cp = PostalCode.find_or_create_by(code: row["cp"].to_s.rjust(5, '0')) # only migrating the first zone associated to the postal_code
+    cp = PostalCode.find_or_create_by(number: row["cp"].to_s.rjust(5, '0')) # only migrating the first zone associated to the postal_code
     zone = cp.zone.id
   end
  

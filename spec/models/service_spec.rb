@@ -1,6 +1,5 @@
 feature 'Service' do
   include TestingSupport::SchedulesHelper
-
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 07:00:00') }
   let!(:user) { create(:user) }
   let!(:aliada) { create(:aliada) }

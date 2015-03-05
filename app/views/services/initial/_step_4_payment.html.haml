@@ -3,5 +3,12 @@
     Agrega un método de pago
   %p
     El cargo a tu tarjeta se hace un día siguiente a la visita
-  = initial_service_form.collection_radio_buttons :payment_method_id, PaymentMethod.all, :id, :name
-  = render partial: 'common/conekta_form'
+
+  .payment-options-container
+    = render partial: 'common/payment_options'
+
+  .payment-form-container
+    %h5 Tarjeta de débito o crédito
+    .payment-form
+      = initial_service_form.collection_radio_buttons :payment_method_id, PaymentMethod.all, :id, :name
+      = render partial: 'common/conekta_form'

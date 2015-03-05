@@ -60,7 +60,8 @@ describe 'AvailabilityForService' do
 
       it 'doesnt find an available datetime when the available schedules have holes in the continuity' do
         Schedule.where(datetime: starting_datetime + 1.hour).destroy_all
-        aliadas_availability = @finder.find
+        finder = AvailabilityForService.new(@service)
+        aliadas_availability = finder.find
         
         expect(aliadas_availability).to be_empty
       end
@@ -129,7 +130,7 @@ describe 'AvailabilityForService' do
 
         schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours, conditions: {aliada_id: aliada.id})
 
-        service = double(to_schedule_interval: schedule_interval,
+        @service = double(to_schedule_interval: schedule_interval,
                          user: @user,
                          recurrence: @recurrence,
                          zone: zone,
@@ -137,7 +138,7 @@ describe 'AvailabilityForService' do
                          periodicity: 7,
                          days_count_to_end_of_recurrency: 5,
                          recurrent?: true)
-        @finder = AvailabilityForService.new(service)
+        @finder = AvailabilityForService.new(@service)
       end
 
       after do
@@ -166,7 +167,8 @@ describe 'AvailabilityForService' do
 
       it 'doesnt find availability when the available schedules have holes in the continuity' do
         Schedule.where(datetime: starting_datetime + 7.days, aliada_id: aliada_2).destroy_all
-        aliadas_availability = @finder.find
+        finder = AvailabilityForService.new(@service)
+        aliadas_availability = finder.find
         
         expect(aliadas_availability.size).to be 2
         expect(aliadas_availability[aliada.id].first.beginning_of_interval).to eql starting_datetime

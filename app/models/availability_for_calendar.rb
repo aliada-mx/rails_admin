@@ -2,13 +2,17 @@ class AvailabilityForCalendar
   include Mixins::AvailabilityFindersMixin
   include AliadaSupport::DatetimeSupport
 
-  def initialize(hours, zone ,  recurrent: false, periodicity: nil, aliada_id: nil)
+  def initialize(hours, zone, recurrent: false, periodicity: nil, aliada_id: nil)
     @hours = hours
+    @zone = zone
+
     # Pull the schedules from db
-    @available_schedules = Schedule.available_for_booking(zone)
+    @available_schedules = Schedule.available_for_booking(@zone)
     if aliada_id.present?
       @available_schedules = @available_schedules.where(aliada_id: aliada_id)
     end
+    # Eval the query to avoid multiple queries later on thanks to lazy evaluation
+    @available_schedules.to_a
 
     # An object to track our availability
     @aliadas_availability = Availability.new
@@ -19,14 +23,13 @@ class AvailabilityForCalendar
       @minimum_availaibilites = recurrences_until_horizon(periodicity)
     end
 
-
     # save time consecutive schedules 
     # until the desired size is reached
     @continuous_schedules = []
   end
 
-  def self.find_availability(hours, recurrent: false)
-    AvailabilityForCalendar.new(hours, recurrent).find
+  def self.find_availability(hours, recurrent: false, zone: zone, periodicity: 7)
+    AvailabilityForCalendar.new(hours, zone, recurrent: recurrent, periodicity: periodicity).find
   end
      
   # It will try to build as many aliada_availabilities that matches the requested number of hours
@@ -87,7 +90,7 @@ class AvailabilityForCalendar
     end
 
     def invalid?
-      @available_schedules.empty? || @hours.zero? || @available_schedules.size < @hours
+       @available_schedules.empty? || @hours.zero? || @available_schedules.size < @hours || @zone.nil?
     end
 
     def enough_continuous_schedules?

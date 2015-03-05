@@ -6,9 +6,5 @@
         %span#next.next
       #month.month Enero
     #calendar.fc-calendar-container
-#cal-hours
-
-= append :javascript do
-  :javascript
-    aliada.dates = JSON.parse('#{raw @dates_parsed}');
-
+    .lock-overlay
+      .loader

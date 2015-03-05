@@ -80,9 +80,13 @@
 						weekday : idx + self.options.startIn,
 						weekdayname : self.options.weeks[ idx + self.options.startIn ]
 					};
+          dateProp['strdate'] = (dateProp.year + '-' + (dateProp.month + 1 < 10 ? '0' + ( dateProp.month + 1 ) : dateProp.month + 1 )) + '-' + ( dateProp.day < 10 ? '0' + dateProp.day : dateProp.day );
+
+        var deserialized_data = $cell.find('.dayData').html()
+        var data = JSON.parse(deserialized_data || '{}');
 
 				if( dateProp.day ) {
-					self.options.onDayClick( $cell, $content, dateProp );
+					self.options.onDayClick( $cell, $content, data, dateProp );
 				}
 
 			} );
@@ -159,15 +163,15 @@
 						inner += '<span class="fc-date">' + day + '</span><span class="fc-weekday">' + this.options.weekabbrs[ j + this.options.startIn > 6 ? j + this.options.startIn - 6 - 1 : j + this.options.startIn ] + '</span>';
 
 						// this day is:
-						var strdate = ( this.month + 1 < 10 ? '0' + ( this.month + 1 ) : this.month + 1 ) + '-' + ( day < 10 ? '0' + day : day ) + '-' + this.year,
-							dayData = this.caldata[ strdate ];
+						var strdate = (this.year + '-' + (this.month + 1 < 10 ? '0' + ( this.month + 1 ) : this.month + 1 )) + '-' + ( day < 10 ? '0' + day : day ),
+                dayData = this.caldata[ strdate ];
 
 						if( dayData ) {
-							content = dayData;
+							content = JSON.stringify(dayData);
 						}
 
 						if( content !== '' ) {
-							inner += '<div>' + content + '</div>';
+							inner += '<div class="dayData">' + content + '</div>';
 						}
 
 						++day;
@@ -284,10 +288,16 @@
 			return this.$cal.find( 'div.fc-body' ).children( 'div.fc-row' ).eq( row ).children( 'div' ).eq( pos ).children( 'div' );
 
 		},
-		setData : function( caldata ) {
+		addData : function( caldata ) {
 
 			caldata = caldata || {};
 			$.extend( this.caldata, caldata );
+
+		},
+		setData : function( caldata ) {
+
+			caldata = caldata || {};
+      this.caldata = caldata;
 			this._generateTemplate();
 
 		},
