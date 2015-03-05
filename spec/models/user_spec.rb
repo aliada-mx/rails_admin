@@ -38,6 +38,28 @@ describe 'User' do
   end
   
   describe '#charge_service!' do
+
+    it 'Creates a ticket on Conekta::Error' do
+      user.create_payment_provider_choice(conekta_card)
+      service.price= 65
+      service.status = 'finished'
+      service.user_id = user.id
+      service.begin_time = Time.now
+     
+      service.end_time = Time.now + 3.hours
+      service.datetime = starting_datetime
+      service.estimated_hours = 3
+      
+      service.save
+      conekta_card.token = nil
+      conekta_card.save
+      #raise Conekta::Error
+      user.charge_service!(service.id)
+      binding.pry
+      expect(Ticket.all.count).to eql 1
+     
+    end
+
     it 'Charges the user using the default payment provider' do
       user.create_payment_provider_choice(conekta_card)
       s = Service.create(price: 65,
@@ -52,7 +74,7 @@ describe 'User' do
                          end_time: Time.now + 3.hour,
                          datetime: starting_datetime,
                          estimated_hours: 3)
-      #binding.pry
+      #Binding.pry
 
       VCR.use_cassette('conekta_charge', match_requests_on: [:conekta_preauthorization]) do
       user.charge_service!(s.id)
