@@ -30,7 +30,7 @@ feature 'ApplicationController' do
         click_button 'Confirmar visita'
       end
 
-      expect(page).to have_content '{"status":"error","sender":"conekta","messages":["El recurso no ha sido encontrado."]}'
+      expect(page).to have_content '{"status":"warning","sender":"conekta","messages":["El recurso no ha sido encontrado."]}'
     end
   end
 end
