@@ -19,22 +19,22 @@ ActiveRecord::Schema.define(version: 20150304150555) do
   create_table "addresses", force: true do |t|
     t.integer  "user_id"
     t.integer  "postal_code_id"
-    t.datetime "created_at",                                                null: false
-    t.datetime "updated_at",                                                null: false
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
     t.text     "street"
     t.string   "number"
     t.string   "interior_number"
     t.text     "between_streets"
     t.text     "colony"
-    t.string   "state",                limit: nil
-    t.string   "city",                 limit: nil
+    t.string   "state"
+    t.string   "city"
     t.text     "references"
-    t.decimal  "latitude",                         precision: 10, scale: 7
-    t.decimal  "longitude",                        precision: 10, scale: 7
+    t.decimal  "latitude",             precision: 10, scale: 7
+    t.decimal  "longitude",            precision: 10, scale: 7
     t.integer  "aliada_id"
     t.integer  "map_zoom"
-    t.decimal  "references_latitude",              precision: 10, scale: 7
-    t.decimal  "references_longitude",             precision: 10, scale: 7
+    t.decimal  "references_latitude",  precision: 10, scale: 7
+    t.decimal  "references_longitude", precision: 10, scale: 7
   end
 
   add_index "addresses", ["postal_code_id"], name: "index_addresses_on_postal_code_id", using: :btree
@@ -56,9 +56,9 @@ ActiveRecord::Schema.define(version: 20150304150555) do
 
   create_table "code_types", force: true do |t|
     t.integer  "value"
-    t.string   "name",       limit: nil
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "code_users", force: true do |t|
@@ -97,12 +97,12 @@ ActiveRecord::Schema.define(version: 20150304150555) do
 
   create_table "documents", force: true do |t|
     t.integer  "user_id"
-    t.string   "file_file_name",    limit: nil
-    t.string   "file_content_type", limit: nil
+    t.string   "file_file_name"
+    t.string   "file_content_type"
     t.integer  "file_file_size"
     t.datetime "file_updated_at"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
   end
 
   add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
@@ -115,10 +115,10 @@ ActiveRecord::Schema.define(version: 20150304150555) do
   end
 
   create_table "extras", force: true do |t|
-    t.string   "name",              limit: nil
-    t.decimal  "hours",                         precision: 10, scale: 3
-    t.datetime "created_at",                                             null: false
-    t.datetime "updated_at",                                             null: false
+    t.string   "name"
+    t.decimal  "hours",             precision: 10, scale: 3
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
     t.string   "icon_file_name"
     t.string   "icon_content_type"
     t.integer  "icon_file_size"
@@ -155,9 +155,9 @@ ActiveRecord::Schema.define(version: 20150304150555) do
   end
 
   create_table "payment_methods", force: true do |t|
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
-    t.string   "name",                  limit: nil
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+    t.string   "name"
     t.string   "payment_provider_type"
   end
 
@@ -193,12 +193,12 @@ ActiveRecord::Schema.define(version: 20150304150555) do
 
   create_table "recurrences", force: true do |t|
     t.integer  "user_id"
-    t.string   "status",      limit: nil
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.string   "status"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
     t.integer  "periodicity"
     t.integer  "aliada_id"
-    t.string   "weekday",     limit: nil
+    t.string   "weekday"
     t.integer  "hour"
     t.integer  "total_hours"
     t.integer  "zone_id"
@@ -209,11 +209,11 @@ ActiveRecord::Schema.define(version: 20150304150555) do
 
   create_table "schedules", force: true do |t|
     t.integer  "user_id"
-    t.string   "status",     limit: nil
+    t.string   "status"
     t.datetime "datetime"
     t.integer  "service_id"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer  "aliada_id"
     t.integer  "zone_id"
   end
@@ -231,37 +231,38 @@ ActiveRecord::Schema.define(version: 20150304150555) do
     t.integer  "service_id"
   end
 
-  add_index "scores", ["service_id"], name: "index_scores_on_service_id", using: :btree
+  add_index "scores", ["service_id"], name: "index_scores_on_service_id", unique: true, using: :btree
   add_index "scores", ["user_id"], name: "index_scores_on_user_id", using: :btree
 
   create_table "service_types", force: true do |t|
-    t.string   "name",           limit: nil
+    t.string   "name"
     t.integer  "periodicity"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
     t.integer  "price_per_hour"
-    t.string   "display_name",   limit: nil
+    t.string   "display_name"
     t.text     "benefits"
   end
 
   create_table "services", force: true do |t|
+    t.integer  "zone_id"
     t.integer  "address_id"
     t.integer  "user_id"
     t.integer  "service_type_id"
     t.integer  "price"
     t.integer  "recurrence_id"
-    t.datetime "created_at",                                                          null: false
-    t.datetime "updated_at",                                                          null: false
-    t.decimal  "billed_hours",                               precision: 10, scale: 3
-    t.decimal  "hours_before_service",                       precision: 10, scale: 3
-    t.decimal  "hours_after_service",                        precision: 10, scale: 3
+    t.datetime "created_at",                                              null: false
+    t.datetime "updated_at",                                              null: false
+    t.decimal  "billed_hours",                   precision: 10, scale: 3
+    t.decimal  "hours_before_service",           precision: 10, scale: 3
+    t.decimal  "hours_after_service",            precision: 10, scale: 3
     t.integer  "bathrooms"
     t.integer  "bedrooms"
     t.text     "special_instructions"
-    t.string   "status",                         limit: nil
+    t.string   "status"
     t.integer  "aliada_id"
     t.datetime "datetime"
-    t.decimal  "estimated_hours",                            precision: 10, scale: 3
+    t.decimal  "estimated_hours",                precision: 10, scale: 3
     t.boolean  "bring_cleaning_products"
     t.text     "entrance_instructions"
     t.text     "cleaning_supplies_instructions"
@@ -269,7 +270,6 @@ ActiveRecord::Schema.define(version: 20150304150555) do
     t.text     "attention_instructions"
     t.text     "equipment_instructions"
     t.text     "forbidden_instructions"
-    t.integer  "zone_id"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
@@ -284,43 +284,43 @@ ActiveRecord::Schema.define(version: 20150304150555) do
   end
 
   create_table "tickets", force: true do |t|
-    t.string   "classification",       limit: nil
+    t.string   "classification"
     t.integer  "relevant_object_id"
-    t.string   "relevant_object_type", limit: nil
+    t.string   "relevant_object_type"
     t.text     "message"
-    t.string   "action_needed",        limit: nil
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.string   "action_needed"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
   create_table "users", force: true do |t|
-    t.string   "role",                   limit: nil
-    t.string   "email",                  limit: nil
-    t.datetime "created_at",                                                              null: false
-    t.datetime "updated_at",                                                              null: false
-    t.string   "phone",                  limit: nil
-    t.string   "encrypted_password",     limit: nil,                         default: "", null: false
-    t.string   "reset_password_token",   limit: nil
+    t.string   "role"
+    t.string   "email"
+    t.datetime "created_at",                                                  null: false
+    t.datetime "updated_at",                                                  null: false
+    t.string   "phone"
+    t.string   "encrypted_password",                             default: "", null: false
+    t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                                              default: 0,  null: false
+    t.integer  "sign_in_count",                                  default: 0,  null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.inet     "current_sign_in_ip"
     t.inet     "last_sign_in_ip"
-    t.string   "first_name",             limit: nil
-    t.string   "last_name",              limit: nil
+    t.string   "first_name"
+    t.string   "last_name"
     t.string   "conekta_customer_id"
-    t.decimal  "credits",                            precision: 7, scale: 2
+    t.decimal  "credits",                precision: 7, scale: 2
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
   create_table "zones", force: true do |t|
-    t.string   "name",       limit: nil
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   Foreigner.load

@@ -29,17 +29,12 @@ end
 
 puts "MIGRANDO CP"
 connection.query("SELECT * FROM cp WHERE elim = 0").each do |row|
-  cp = PostalCode.find_or_initialize_by(number: row["cp"].to_s.rjust(5, '0'), name: row["nombre"])
+  cp = PostalCode.find_or_initialize_by(number: row["cp"].to_s.rjust(5, '0'), name: row["nombre"], zone_id: zones[row["zonas_id"]])
   if cp.new_record?
     cp.save
     puts "POSTALCODE #{row["id"]} #{cp.errors.messages.to_yaml}" if not cp.errors.messages.empty?
   end
 
-  pcz = PostalCodeZone.find_or_initialize_by(postal_code_id: cp.id, zone_id: zones[row["zonas_id"]])
-  if pcz.new_record?
-    pcz.save
-    puts "POSTALCODE ZONE #{row["id"]} #{pcz.errors.messages.to_yaml}" if not pcz.errors.messages.empty?
-  end
 end
 
 puts "MIGRANDO ALIADAS"
@@ -177,7 +172,7 @@ connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
 
     address = User.find(clientes[row["clientes_id"]]).addresses.first
 
-    service = Service.find_or_initialize_by(status: status_service, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], bedrooms: row["recamaras"], bathrooms: row["banos"], service_type_id: type_service.id, datetime: datetime, special_instructions: row["indicacion_instrucciones_esp"], bring_cleaning_products: (row["incluir_productos_limpieza"] == 1), entrance_instructions: row["indicacion_entrada_aliada"], cleaning_supplies_instructions: row["indicacion_donde_utensilios_limpieza"], garbage_instructions: row["indicacion_donde_basura"], attention_instructions: row["indicacion_especial_atencion"], equipment_instructions: row["indicacion_equipo_especial"], forbidden_instructions: row["indicacion_no_tocar"], hours_before_service: 1, hours_after_service: 1, address_id: address.id, zone_id: address.postal_code.zones.first.id) do |add|
+    service = Service.find_or_initialize_by(status: status_service, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], bedrooms: row["recamaras"], bathrooms: row["banos"], service_type_id: type_service.id, datetime: datetime, special_instructions: row["indicacion_instrucciones_esp"], bring_cleaning_products: (row["incluir_productos_limpieza"] == 1), entrance_instructions: row["indicacion_entrada_aliada"], cleaning_supplies_instructions: row["indicacion_donde_utensilios_limpieza"], garbage_instructions: row["indicacion_donde_basura"], attention_instructions: row["indicacion_especial_atencion"], equipment_instructions: row["indicacion_equipo_especial"], forbidden_instructions: row["indicacion_no_tocar"], hours_before_service: 1, hours_after_service: 1, address_id: address.id, zone_id: address.postal_code.zone.id) do |add|
       add.billed_hours = row["duracion"] ? row["duracion"] : 0
       add.estimated_hours = row["duracion_aprox"]
     end
@@ -190,7 +185,7 @@ connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
     if service.id
       servicios[row["id"]] = service.id
 
-      schedule = Schedule.find_or_initialize_by(datetime: datetime, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], status: 'booked', service_id: service.id, zone_id: address.postal_code.zones.first.id)
+      schedule = Schedule.find_or_initialize_by(datetime: datetime, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], status: 'booked', service_id: service.id, zone_id: address.postal_code.zone.id)
 
       if schedule.new_record?
         schedule.save
@@ -216,7 +211,7 @@ connection.query("SELECT * FROM recurrencias").each do |row|
   zone = nil
   if row["cp"] != ""
     cp = PostalCode.find_or_create_by(number: row["cp"].to_s.rjust(5, '0')) # only migrating the first zone associated to the postal_code
-    zone = cp.zones.first.id
+    zone = cp.zone.id
   end
  
   if row["monday"] == 1
