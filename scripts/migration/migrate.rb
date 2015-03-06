@@ -67,7 +67,7 @@ connection.query("SELECT * FROM clientes WHERE estatus = 'normal'").each do |row
     first_name = splitted_name[0] 
     last_name = splitted_name[1..splitted_name.length].join(" ") if splitted_name.length > 0
   end
-  cliente = User.find_or_initialize_by(first_name: first_name, last_name: last_name, email: row["email"].downcase, role: "client", phone: row["telefono"], created_at: row["created"], credits: row["saldo"] )
+  cliente = User.find_or_initialize_by(first_name: first_name, last_name: last_name, email: row["email"].downcase, role: "client", phone: row["telefono"], created_at: row["created"], balance: row["saldo"] )
 
   if cliente.new_record?
     cliente.save

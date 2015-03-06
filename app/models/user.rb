@@ -8,6 +8,8 @@ class User < ActiveRecord::Base
     ['admin', 'Admin'],
   ]
 
+  has_many :credits
+  has_many :redeemed_credits, :foreign_key => "redeemer_id", :class_name => "Credit"
   has_many :services, inverse_of: :user, foreign_key: :user_id
   has_many :addresses
   has_and_belongs_to_many :banned_aliadas,
