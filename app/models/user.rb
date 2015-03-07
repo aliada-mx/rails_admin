@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
 
   has_many :credits
   has_many :redeemed_credits, :foreign_key => "redeemer_id", :class_name => "Credit"
+  has_one :code
   has_many :services, inverse_of: :user, foreign_key: :user_id
   has_many :addresses
   has_and_belongs_to_many :banned_aliadas,
@@ -28,9 +29,17 @@ class User < ActiveRecord::Base
   before_validation :ensure_password
   before_validation :set_default_role
 
+  after_create :create_promotional_code
+
   default_scope { where('users.role in (?)', ['client', 'admin']) }
 
   validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
+
+  def create_promotional_code
+    if self.role == "client"
+      Code.generate_unique_code self
+    end
+  end
 
   def self.email_exists?(email)
     User.find_by_email(email).present?
@@ -69,6 +78,13 @@ class User < ActiveRecord::Base
 
   def ensure_first_payment!(payment_method_options)
     default_payment_provider.ensure_first_payment!(self, payment_method_options)
+  end
+
+  def redeem_code code_name
+    code = Code.find_by(name: code_name)
+    if code
+      Credit.create(user_id: code.user_id, code_id: code.id, redeemer_id: self.id)
+    end
   end
 
   def admin?

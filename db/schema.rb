@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150306000408) do
+ActiveRecord::Schema.define(version: 20150307004719) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(version: 20150306000408) do
   end
 
   add_index "codes", ["code_type_id"], name: "index_codes_on_code_type_id", using: :btree
+  add_index "codes", ["name"], name: "index_codes_on_name", unique: true, using: :btree
   add_index "codes", ["user_id"], name: "index_codes_on_user_id", using: :btree
 
   create_table "conekta_cards", force: true do |t|
@@ -299,14 +300,14 @@ ActiveRecord::Schema.define(version: 20150306000408) do
   create_table "users", force: true do |t|
     t.string   "role"
     t.string   "email"
-    t.datetime "created_at",                                                  null: false
-    t.datetime "updated_at",                                                  null: false
+    t.datetime "created_at",                                                   null: false
+    t.datetime "updated_at",                                                   null: false
     t.string   "phone"
-    t.string   "encrypted_password",                             default: "", null: false
+    t.string   "encrypted_password",                             default: "",  null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                                  default: 0,  null: false
+    t.integer  "sign_in_count",                                  default: 0,   null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.inet     "current_sign_in_ip"
@@ -314,7 +315,7 @@ ActiveRecord::Schema.define(version: 20150306000408) do
     t.string   "first_name"
     t.string   "last_name"
     t.string   "conekta_customer_id"
-    t.decimal  "balance",                precision: 7, scale: 2
+    t.decimal  "balance",                precision: 7, scale: 2, default: 0.0
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

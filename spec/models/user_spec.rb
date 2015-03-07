@@ -34,6 +34,6 @@ describe 'User' do
       user.create_payment_provider_choice(other_conekta_card)
 
       expect(user.default_payment_provider).to eql other_conekta_card
-    end
+    end 
   end
 end

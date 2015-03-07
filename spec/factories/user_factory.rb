@@ -6,6 +6,10 @@ FactoryGirl.define do
     first_name 'Test'
     last_name 'User'
     password '12345678'
+
+    before(:create){
+      CodeType.find_or_create_by(name: 'personal', value: 100) 
+    }
   end
 
   factory :admin, parent: :user do

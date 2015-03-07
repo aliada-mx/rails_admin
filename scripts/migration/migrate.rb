@@ -58,6 +58,7 @@ connection.query("SELECT * FROM aliadas_has_zonas").each do |row|
 end
 
 puts "MIGRANDO CLIENTES"
+code_type = CodeType.find_or_create_by(name: 'personal', value: 100)
 connection.query("SELECT * FROM clientes WHERE estatus = 'normal'").each do |row|
   
   first_name = ""
