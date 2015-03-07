@@ -43,6 +43,8 @@ Rails.application.routes.draw do
 
   resources :schedules
 
+  match 'calificar-servicio/:service_id', to: 'scores#create_by_service_id', as: :score_service, via: [:get, :post]
+
   # Resque-web
   # TODO: protect with devise authentication
   #authenticate :admin do...

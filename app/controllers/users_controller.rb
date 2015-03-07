@@ -13,7 +13,7 @@ class UsersController < ApplicationController
   end
 
   def previous_services
-    current_user
+    @services = User.find(params[:user_id]).services.in_the_past
   end
 
   private
