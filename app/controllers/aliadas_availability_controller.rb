@@ -14,7 +14,6 @@ class AliadasAvailabilityController < ApplicationController
     service_type = ServiceType.find(params[:service_type_id])
     zone = Zone.find_by_postal_code_number(params[:postal_code_number])
 
-    puts "puts available_after #{available_after}"
     availability = AvailabilityForCalendar.find_availability(hours, 
                                                              zone,
                                                              available_after,
@@ -22,7 +21,6 @@ class AliadasAvailabilityController < ApplicationController
                                                              periodicity: service_type.periodicity)
 
     dates_times = availability.for_calendario
-    # binding.pry
 
     return render json: { status: :success, dates_times: dates_times }
   end
