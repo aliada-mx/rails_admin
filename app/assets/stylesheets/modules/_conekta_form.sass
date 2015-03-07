@@ -1,3 +1,6 @@
+@import 'common/variables'
+@import 'common/mixins'
+
 .conekta-form-container
   background: $lightest_gray
   border: 1px solid $dark_gray
@@ -60,6 +63,10 @@
         position: absolute
         top: 6px
         right: 8px
+        +rem(font-size, 2rem)
+        &.image-icon
+          top: 2px
+          right: 1px
 
         img
           max-width: 40px

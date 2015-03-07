@@ -22,9 +22,9 @@
           %td
             = text_field_tag nil, nil, data: {'conekta' => 'card[cvc]'}, placeholder: '123', class: 'iconized', id: 'card_cvc'
             %p CVC
-            %span.icon
-            %span.image-icon
+            %span.icon.image-icon
               =image_tag('cvc.png', {:title => 'Número de tarjeta'})
+              
 
     = append :javascript do
       %script{type: "text/javascript", src: "https://conektaapi.s3.amazonaws.com/v0.3.2/js/conekta.js"}
