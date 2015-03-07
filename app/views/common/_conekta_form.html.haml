@@ -8,8 +8,7 @@
     .field
       = text_field_tag nil, nil, data: {'conekta' => 'card[number]'}, placeholder: '1234 5678 1234 5678', class: 'iconized'
       %p NÚMERO DE LA TARJETA
-      %span.icon
-        =image_tag('lock.png', {:title => 'Número de tarjeta'})
+      %span.icon.icon-lock
     .field
       %table
         %tr
@@ -24,6 +23,7 @@
             = text_field_tag nil, nil, data: {'conekta' => 'card[cvc]'}, placeholder: '123', class: 'iconized', id: 'card_cvc'
             %p CVC
             %span.icon
+            %span.image-icon
               =image_tag('cvc.png', {:title => 'Número de tarjeta'})
 
     = append :javascript do

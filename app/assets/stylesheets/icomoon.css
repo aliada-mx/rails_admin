@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'icomoon';
-    src:url('fonts/icomoon.eot?w726af');
-    src:url('fonts/icomoon.eot?#iefixw726af') format('embedded-opentype'),
-    url('fonts/icomoon.woff?w726af') format('woff'),
-    url('fonts/icomoon.ttf?w726af') format('truetype'),
-    url('fonts/icomoon.svg?w726af#icomoon') format('svg');
+    src:url('fonts/icomoon.eot?j6cz24');
+    src:url('fonts/icomoon.eot?#iefixj6cz24') format('embedded-opentype'),
+    url('fonts/icomoon.woff?j6cz24') format('woff'),
+    url('fonts/icomoon.ttf?j6cz24') format('truetype'),
+    url('fonts/icomoon.svg?j6cz24#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -23,6 +23,60 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-notice:before {
+    content: "\e613";
+}
+
+.icon-bill:before {
+    content: "\e603";
+}
+
+.icon-telephone:before {
+    content: "\e605";
+}
+
+.icon-cvc .path1:before {
+    content: "\e606";
+    color: rgb(127, 127, 127);
+}
+.icon-cvc .path2:before {
+    content: "\e607";
+    margin-left: -0.94140625em;
+    color: rgb(255, 99, 125);
+}
+.icon-cvc .path3:before {
+    content: "\e608";
+    margin-left: -0.94140625em;
+    color: rgb(255, 99, 125);
+}
+.icon-cvc .path4:before {
+    content: "\e609";
+    margin-left: -0.94140625em;
+    color: rgb(255, 99, 125);
+}
+.icon-cvc .path5:before {
+    content: "\e60a";
+    margin-left: -0.94140625em;
+    color: rgb(127, 127, 127);
+}
+.icon-cvc .path6:before {
+    content: "\e60b";
+    margin-left: -0.94140625em;
+    color: rgb(127, 127, 127);
+}
+
+.icon-lock:before {
+    content: "\e60c";
+}
+
+.icon-home:before {
+    content: "\e60d";
+}
+
+.icon-user:before {
+    content: "\e60e";
+}
+
 .icon-asterisk7:before {
     content: "\e601";
 }
@@ -35,7 +89,31 @@
     content: "\e600";
 }
 
+.icon-clock:before {
+    content: "\e60f";
+}
+
+.icon-document-text:before {
+    content: "\e610";
+}
+
 .icon-pencil:before {
     content: "\e905";
+}
+
+.icon-hash:before {
+    content: "\e611";
+}
+
+.icon-calendar:before {
+    content: "\e612";
+}
+
+.icon-pencil:before {
+    content: "\e905";
+}
+
+.icon-help-with-circle:before {
+    content: "\e604";
 }
 
