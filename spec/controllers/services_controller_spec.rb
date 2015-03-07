@@ -3,7 +3,7 @@ feature 'ServiceController' do
   include TestingSupport::SchedulesHelper
   include TestingSupport::SharedExpectations::ConektaCardExpectations
 
-  starting_datetime = Time.zone.now.change({hour: 13})
+  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 07:00:00') }
   let!(:aliada) { create(:aliada) }
   let!(:zone) { create(:zone) }
   let!(:recurrent_service) { create(:service_type) }
@@ -18,10 +18,10 @@ feature 'ServiceController' do
     
 
   before do
-    Timecop.freeze(starting_datetime - 1.hour)
+    Timecop.freeze(starting_datetime)
 
     # The - 1 hour is needed because this hour is the one the aliada needs to get there from a previous service
-    create_recurrent!(starting_datetime - 1.hour, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada})
+    create_recurrent!(starting_datetime + 1.day, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada})
 
     expect(Address.count).to be 0
     expect(Service.count).to be 0
@@ -103,7 +103,7 @@ feature 'ServiceController' do
       end
 
       it 'creates a new one time service' do
-        fill_service_form(conekta_card, one_time_service, starting_datetime, extra_1, zone)
+        fill_service_form(conekta_card, one_time_service, starting_datetime + 1.day, extra_1, zone)
 
         click_button 'Confirmar visita'
 
@@ -111,12 +111,12 @@ feature 'ServiceController' do
         expect(service).to be_present
 
         expect(service.service_type_id).to eql one_time_service.id
-        expect(Schedule.available.count).to be 20
-        expect(Schedule.booked.count).to be 5
+        expect(Schedule.available.count).to be 21
+        expect(Schedule.booked.count).to be 4
       end
 
       it 'creates a new recurrent service' do
-        fill_service_form(conekta_card, recurrent_service, starting_datetime, extra_1, zone)
+        fill_service_form(conekta_card, recurrent_service, starting_datetime + 1.day, extra_1, zone)
 
         click_button 'Confirmar visita'
 
@@ -134,8 +134,8 @@ feature 'ServiceController' do
         expect(recurrence.weekday).to eql service.beginning_datetime.weekday
 
         expect(service.service_type_id).to eql recurrent_service.id
-        expect(Schedule.available.count).to be 0
-        expect(Schedule.booked.count).to be 25
+        expect(Schedule.available.count).to be 5
+        expect(Schedule.booked.count).to be 20
       end
     end
 

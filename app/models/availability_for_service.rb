@@ -1,24 +1,24 @@
 class AvailabilityForService
   include Mixins::AvailabilityFindersMixin
+  include AliadaSupport::DatetimeSupport
 
-  def initialize(service, aliada_id: nil)
+  def initialize(service, available_after, aliada_id: nil)
     @service = service
 
     @requested_schedule_interval = service.to_schedule_interval
     # Pull the schedules from db
-    @available_schedules = Schedule.available_for_booking(service.zone)
+    @available_schedules = Schedule.available_for_booking(service.zone, available_after)
     if aliada_id.present?
       @available_schedules = @available_schedules.where(aliada_id: aliada_id)
     end
     # Eval the query to avoid multiple queries later on thanks to lazy evaluation
     @available_schedules.to_a
 
-    @recurrent = @service.recurrent?
-
     # An object to track our availability
-    if @recurrent
-      @recurrency_seconds = @service.periodicity.days
-      @minimum_availaibilites = @service.days_count_to_end_of_recurrency
+    if @recurrent = @service.recurrent?
+      @recurrency_days = @service.periodicity
+      @recurrency_seconds = @recurrency_days.days
+      @minimum_availaibilites = wdays_until_horizon(@requested_schedule_interval.wday, starting_from: available_after)
     end
 
     @aliadas_availability = Availability.new
@@ -37,8 +37,8 @@ class AvailabilityForService
     @aliadas_to_skip =  @service.user.banned_aliadas.map(&:id)
   end
 
-  def self.find_aliadas_availability(service, aliada_id: nil)
-    AvailabilityForService.new(service, aliada_id: aliada_id).find
+  def self.find_aliadas_availability(service, available_after, aliada_id: nil)
+    AvailabilityForService.new(service, available_after, aliada_id: aliada_id).find
   end
      
   # It will try to bind as many aliada_availabilities that matches the requested hours
@@ -142,5 +142,23 @@ class AvailabilityForService
 
     def remove_aliada_availability!
       @aliadas_availability.delete(@current_aliada_id)
+    end
+     
+    # 1 hour away from each other
+    def continuous_schedules?
+      last_continuous = @continuous_schedules.last
+
+      # If we are starting a continuity
+      return true if last_continuous.blank?
+
+      last_continuous.datetime + 1.hour == @current_schedule.datetime
+    end
+
+    def clear_not_enough_availabilities
+      if @aliadas_availability.present? && @minimum_availaibilites.present? 
+        @aliadas_availability.delete_if do |aliada_id, aliada_availability| 
+          aliada_availability.size < @minimum_availaibilites
+        end
+      end
     end
 end

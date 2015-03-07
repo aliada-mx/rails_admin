@@ -9,42 +9,34 @@
 //= require initial/_step_3_visit_info
 //= require initial/_step_4_payment
 //= require initial/_step_5_success
-//= require initial/live_feedback
+//= require initial/_live_feedback
 
 $(document).ready(function() {
   aliada.services.initial.form = $('#new_service');
-
-  aliada.services.initial.is_valid_step = function(step){
-    // provide feedback
-    switch(step){
-        case 2:
-            // Trigger update on fields to force validation feedback
-            _.each(aliada.step_2_required_fields, function(element){
-              aliada.ko[element].valueHasMutated();
-            });
-            break;
-        default:
-            return true;
-    }
+  var $form = aliada.services.initial.form
 
 
-    return ko.validatedObservable(aliada.ko).isValid();
-  };
-
-  // Move to specific step
-  aliada.move_to_step = function(){
-    var step_number = this;
-
-    if(aliada.services.initial.is_valid_step(step_number)){
-
-      aliada.ko.current_step(step_number);
-    }
-  }
 
   // KNOCKOUT initialization
   aliada.ko = {
     current_step: ko.observable(1),
+
+    // Move to specific step
+    go_to_step: function(step_number){
+      if(aliada.ko.is_valid_step()){
+        aliada.ko.current_step(step_number);
+      }
+    }
   };
+
+  aliada.ko.is_valid_step = ko.computed(function(){
+    // Register as a dependency
+    // so it runs everytime a step changes
+    aliada.ko.current_step();
+
+    // Validate the whole viewmodel
+    return ko.validatedObservable(aliada.ko).isValid();
+  });
 
   aliada.services.initial.step_1_duration(aliada, ko);
   aliada.services.initial.step_2_personal_info(aliada, ko);
@@ -57,13 +49,13 @@ $(document).ready(function() {
       case 1:
         return 'Siguiente'
       case 2:
-        return 'Confirmar dirección'
+        return aliada.ko.is_valid_step() ? 'Siguiente' : 'Confirma tu dirección'
       case 3:
-        return 'Siguiente'
+        return aliada.ko.is_valid_step() ? 'Siguiente' : 'Escoge día y hora'
       case 4:
         return 'Confirmar visita'
       case 5:
-        return 'Siguiente'
+        return 'Ver servicio'
     }
   });
 
@@ -79,46 +71,51 @@ $(document).ready(function() {
   // Activates knockout.js
   ko.applyBindings(aliada.ko);
   
-  // Handle previous step
+  // Handle next step
   $('#next_button').on('click',function(e){
       e.preventDefault();
       var current_step = aliada.ko.current_step();
 
-      if(!aliada.services.initial.is_valid_step(current_step)){
+      if(!aliada.ko.is_valid_step()){
+
+        // Trigger validation to provide feedback
+        switch(current_step ){
+            case 2:
+              _.each(aliada.step_2_required_fields, function(element){
+                aliada.ko[element].valueHasMutated();
+              });
+              break;
+            default:
+              break;
+        }
         return;
       };
 
+      // On payment step
+      if (current_step === 4){
+        $(aliada.services.initial.form).submit();
+        return;
+      }
+
       // Next if we are not on the last step
-      var next_step = current_step === 5 ? current_step : current_step+1;
+      var next_step = current_step === 5 ? current_step : current_step + 1;
 
       aliada.ko.current_step(next_step);
   });
-  
-  // Handle next step
-  $('#previous_button').on('click',function(e){
-      e.preventDefault();
 
-      // Next if we are not on the last step
-      var current_step = aliada.ko.current_step();
-      var previous_step = current_step === 1 ? current_step : current_step-1;
-
-      aliada.ko.current_step(previous_step);
-  });
-
-
-  // Entered a step event
+  // Broadcast the entered a step event
   aliada.ko.current_step.subscribe(function(new_step){
     $.event.trigger({type: 'entered_step_'+new_step});
   });
 
-  // Leaving a step event
+  // Broadcast the leaving a step event
   aliada.ko.current_step.subscribe(function(current_step){
     $.event.trigger({type: 'leaving_step_'+current_step});
   }, aliada.ko, "beforeChange");
 
-  aliada.services.initial.live_feedback(aliada.services.initial.form);
+  aliada.services.initial.live_feedback(aliada.services.initial.form)
 
-  // When a user begins to type the error is gone
+  // When a user begins to type the validation error is gone
   aliada.services.initial.form.find('input').on('click', function(){
     $(this).removeClass('error');
   })

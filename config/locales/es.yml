@@ -215,3 +215,6 @@ es:
     card_created_successfully: 'Guardamos exitosamente tu tarjeta'
     customer_not_found: "No se encontró el cliente conekta del usuario %{user_id}" 
     card_creation_failed: "No se pudo agregar nueva tarjeta de conekta para el usuario %{user-id} " 
+  address:
+    validations:
+      postal_code_failed: 'No se puede crear una dirección sin código postal o una fuera de la zona de cobertura de aliada'

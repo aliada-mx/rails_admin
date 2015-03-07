@@ -1,5 +1,5 @@
 class Aliada < User
-  include AliadaSupport::AliadasHelpers
+include AliadaSupport::DatetimeSupport
 
   has_many :aliada_zones
   has_many :zones, through: :aliada_zones

@@ -61,10 +61,6 @@ aliada.calendar.get_dates_times = function(hours, service_type_id, postal_code_n
   })
 }
 
-aliada.calendar.set_dates = function(calendar, dates){
-  calendar.setData(dates);
-}
-
 aliada.calendar.lock = function(calendar){
   $lock_overlay = calendar.$el.parents('.calendar-wrap').addClass('locked');
 }

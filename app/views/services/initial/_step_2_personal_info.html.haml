@@ -8,7 +8,7 @@
     .personal-info
       = initial_service_form.fields_for :user do |user_form|
         %label.field-row.email
-          %icon.user
+          %icon.icon-user
           = user_form.text_field :email, placeholder: 'Correo electrónico', class: 'full-width', data: {bind: 'value: email, valueUpdate: "change"'}
         %label.field-row
           = user_form.text_field :first_name, placeholder: 'Nombres(s)', class: 'half-width', data: {bind: 'value: first_name'}
@@ -19,10 +19,10 @@
     .address
       = initial_service_form.fields_for :address do |address_form|
         %label.field-row
-          %icon.house
+          %icon.icon-home
           = address_form.text_field :street, placeholder: 'Calle', class: 'full-width', data: {bind: 'value: street'}
         %label.field-row
-          %icon.hash
+          %icon.icon-hash
           = address_form.text_field :number, placeholder: 'Número Exterior', class: 'two-thirds-width', data: {bind: 'value: number'}
           = address_form.text_field :interior_number, placeholder: 'Interior', class: 'third-width important-placeholder', data: {bind: 'value: interior_number'}
         %label.field-row

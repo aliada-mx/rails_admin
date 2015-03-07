@@ -1,6 +1,7 @@
 feature 'ApplicationController' do
   include TestingSupport::ServiceControllerHelper
   starting_datetime = Time.zone.now.change({hour: 13})
+  let!(:recurrent_service) { create(:service_type) }
   let!(:conekta_card){ create(:payment_method)}
   let!(:extra_1){ create(:extra, name: 'Lavanderia')}
   let!(:one_time_service) { create(:service_type, name: 'one-time') }

@@ -63,4 +63,12 @@ class Availability
 
     dates_times
   end
+
+  def to_s
+    "<#{self.class.name}:#{self.object_id}:#{self.size} schedules>"
+  end
+
+  def wday
+    schedules_intervals.first.datetime.wday
+  end
 end

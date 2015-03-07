@@ -2,7 +2,7 @@
   .actions
     = f.submit 'Save'
 
-= form_tag create_conekta_card_users_path(@user), method: :post do
+= form_tag create_conekta_card_users_path(@user) do
   = render partial: 'common/conekta_form', locals: {}
   .actions
     = submit_tag 'Guardar Tarjeta'

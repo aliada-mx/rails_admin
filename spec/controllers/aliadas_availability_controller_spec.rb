@@ -17,7 +17,7 @@ feature 'AliadasAvailabilityController' do
   describe 'for_calendar' do
     context 'user selected one time service' do
       before do
-        create_one_timer!(starting_datetime, hours: 5, conditions: {aliada: aliada, zone: zone} )
+        create_one_timer!(starting_datetime + 1.day, hours: 5, conditions: {aliada: aliada, zone: zone} )
         Timecop.freeze(starting_datetime)
       end
 
@@ -30,8 +30,11 @@ feature 'AliadasAvailabilityController' do
           page.driver.submit :post, aliadas_availability_path, {hours: 3, service_type_id: one_time.id, postal_code_number: postal_code.number}
         end
         
-        success = '{"status":"success","dates_times":{"2015-01-01":[{"value":"07:00","friendly_time":" 7:00 am"}]}}'
-        expect(page).to have_content(success)
+        
+        response = JSON.parse(page.body)
+        available_date = (starting_datetime + 1.day).strftime('%Y-%m-%d')
+        expect(response['dates_times'].has_key?(available_date)).to eql true
+        expect(response['dates_times'][available_date]).to eql [{"value" => "07:00","friendly_time" => " 7:00 am"}]
       end
     end
   end

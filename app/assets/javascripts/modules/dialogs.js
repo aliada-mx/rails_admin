@@ -46,10 +46,25 @@ aliada.dialogs.platform_error = function(error){
     var platform_error_template = _.template($('#platform_error_template').html());
 
     vex.open({
-        content: platform_error_template({error: error || 'Algo salió mal :( con aliada)'}),
-        showCloseButton: false,
-        escapeButtonCloses: false,
-        overlayClosesOnClick: false,
+        content: platform_error_template({error: error}),
+        contentClassName: 'error',
+    });  
+};
+
+aliada.dialogs.conekta_error = function(error){
+    var conekta_error_template = _.template($('#conekta_error_template').html());
+
+    vex.open({
+        content: conekta_error_template({error: error}),
+        contentClassName: 'error',
+    });  
+};
+
+aliada.dialogs.invalid_service = function(error){
+    var invalida_service_template = _.template($('#invalid_service_template').html());
+
+    vex.open({
+        content: invalida_service_template({error: error}),
         contentClassName: 'error',
     });  
 };

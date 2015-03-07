@@ -1,14 +1,15 @@
-= form_for @service, url: create_service_path do |initial_service_form|
-  %main
-    - ['duration', 'personal_info', 'visit_info', 'payment', 'success'].each_with_index do |step_name, step|
+.initial_service
+  = form_for @service, url: create_service_path do |initial_service_form|
+    %main
+      - ['duration', 'personal_info', 'visit_info', 'payment', 'success'].each_with_index do |step_name, step|
 
-      = render partial: "services/initial/step_#{step+1}_#{step_name}", locals: {:initial_service_form => initial_service_form,
-                                                                                 :@user => @user,
-                                                                                 :@address => @address,
-                                                                                 :@postal_code => @postal_code}
+        = render partial: "services/initial/step_#{step+1}_#{step_name}", locals: {:initial_service_form => initial_service_form,
+                                                                                   :@user => @user,
+                                                                                   :@address => @address,
+                                                                                   :@postal_code => @postal_code}
 
-  %aside
-    = render partial: 'services/initial/summary', locals: {initial_service_form: initial_service_form}
+    %aside
+      = render partial: 'services/initial/summary', locals: {initial_service_form: initial_service_form}
 
-= append :javascript do
-  = javascript_include_tag 'initial'
+  = append :javascript do
+    = javascript_include_tag 'initial'
