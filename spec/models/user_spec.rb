@@ -11,7 +11,7 @@ describe 'User' do
                                aliada: other_aliada,
                                user: user,
                                datetime: starting_datetime) }
- xf let!(:conekta_card){ create(:conekta_card) }
+  let!(:conekta_card){ create(:conekta_card) }
   let!(:other_conekta_card){ create(:conekta_card) }
 
   describe '#past_aliadas' do

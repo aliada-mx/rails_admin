@@ -149,7 +149,7 @@ feature 'AliadasController' do
 
         #   save_and_open_page
         page.has_content?('Tus servicios')
-        # save_and_open_page
+         save_and_open_page
         
         click_on('Pagar')
         save_and_open_page

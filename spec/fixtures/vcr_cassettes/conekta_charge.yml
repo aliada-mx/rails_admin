@@ -2,16 +2,16 @@
 http_interactions:
 - request:
     method: post
-    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=3000&card=tok_test_visa_4242&currency=MXN&description=fake%20test%20product&reference_id=1
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=30000&card=tok_test_visa_4242&currency=MXN&description=fake%20test%20product&reference_id=1
     body:
       encoding: UTF-8
       string: ''
     headers:
       User-Agent:
-      - Conekta/v1 RubyBindings/0.5.1
+      - Conekta/v1 RubyBindings/0.5.2
       X-Conekta-Client-User-Agent:
-      - '{"bindings_version":"0.5.1","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
-        Kernel Version 13.4.0: Sun Aug 17 19:50:11 PDT 2014; root:xnu-2422.115.4~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.2.0","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"Alejandros-MacBook-Pro-2.local","release":"14.0.0","version":"Darwin
+        Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro5,5"}}'
       Accept:
       - application/vnd.conekta-v1.0.0+json
       Accept-Language:
@@ -32,9 +32,9 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Fri, 13 Feb 2015 01:03:07 GMT
+      - Sat, 07 Mar 2015 03:02:28 GMT
       Etag:
-      - '"45f0f73e28ad86fc54577ee5a12364c2"'
+      - '"1dd523e93b02af24635d3e658f33865c"'
       Server:
       - nginx/1.1.19
       Status:
@@ -42,18 +42,18 @@ http_interactions:
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - 085bff99222db6f2566d3c1bd421c499
+      - 0fb139227ec7c8f0de39e6347cbae351
       X-Runtime:
-      - '4.572293'
+      - '3.811275'
       Content-Length:
-      - '640'
+      - '642'
       Connection:
       - keep-alive
     body:
       encoding: UTF-8
-      string: '{"id":"54dd4d4624122936be0010fb","livemode":false,"created_at":1423789382,"status":"paid","currency":"MXN","description":"fake
-        test product","reference_id":"1","failure_code":null,"failure_message":null,"monthly_installments":null,"object":"charge","amount":3000,"paid_at":1423789387,"fee":391,"customer_id":"","refunds":[],"payment_method":{"name":"Jorge
-        Lopez","exp_month":"12","exp_year":"19","auth_code":"271607","object":"card_payment","type":"credit","last4":"4242","brand":"visa","issuer":"","account_type":"","country":"US","fraud_score":null,"fraud_indicators":[]},"details":{"name":null,"phone":null,"email":null,"line_items":[]}}'
+      string: '{"id":"54fa6a4119ce885a57000521","livemode":false,"created_at":1425697345,"status":"paid","currency":"MXN","description":"fake
+        test product","reference_id":"1","failure_code":null,"failure_message":null,"monthly_installments":null,"object":"charge","amount":30000,"paid_at":1425697348,"fee":1299,"customer_id":"","refunds":[],"payment_method":{"name":"Jorge
+        Lopez","exp_month":"12","exp_year":"19","auth_code":"176804","object":"card_payment","type":"credit","last4":"4242","brand":"visa","issuer":"","account_type":"","country":"US","fraud_score":null,"fraud_indicators":[]},"details":{"name":null,"phone":null,"email":null,"line_items":[]}}'
     http_version: 
-  recorded_at: Fri, 13 Feb 2015 01:02:51 GMT
+  recorded_at: Sat, 07 Mar 2015 03:01:19 GMT
 recorded_with: VCR 2.9.3

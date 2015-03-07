@@ -123,6 +123,7 @@ feature 'Service' do
     end
     it 'returns 0 with invalid begin and end' do
       s = Service.create(price: 65,
+                         service_type: one_time_service,
                          begin_time: Time.now, 
                          end_time: Time.now - 3.hour,
                          datetime: starting_datetime,
