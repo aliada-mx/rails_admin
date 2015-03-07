@@ -116,7 +116,8 @@ feature 'Service' do
                          begin_time: Time.now, 
                          end_time: Time.now + 3.hour,
                          datetime: starting_datetime,
-                         estimated_hours: 3
+                         estimated_hours: 3,
+                         service_type: one_time_service
                          )
       expect(s.amount_to_bill).to be 195.0
     end

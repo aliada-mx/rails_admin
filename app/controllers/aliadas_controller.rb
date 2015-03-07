@@ -1,12 +1,18 @@
 class AliadasController < ApplicationController
   
   def finish
+    
      @aliada = Aliada.find_by(authentication_token: params[:token])
-    @service_to_finish = Service.where(aliada_id: @aliada.id, status: 'aliada_assigned').where("datetime <= ?", DateTime.now).take
+    @service_to_finish = Service.where(id: params[:service],  aliada_id: @aliada.id, status: 'aliada_assigned').where("datetime <= ?", DateTime.now).take
     if @service_to_finish
-      
+      binding.pry
+      @service_to_finish.begin_time = params[:begin_time]
+      @service_to_finish.end_time = params[:end_time]
+      @service_to_finish.finish!
+      @service_to_finish.user.charge_service!(@service_to_finish.id)
+      redirect_to :back
     else
-      render text: 'Ruta invalida, ponte  en contacto con aliada' + params[:token]
+      render text: 'Ruta invalida, ponte  en contacto con aliada' 
     end
   end
 

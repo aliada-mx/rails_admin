@@ -4,18 +4,23 @@
     = render partial: 'common/javascript_templates'
     = render partial: 'common/javascript_variables'
   %h2 Servicios por terminar
-  - @unfinished_services.each do |i|
+  - @unfinished_services.each do |service|
     %h5
       En: 
-      #{i.address.street}
-      %h6= I18n.l i.datetime, format: "%A %e a las %k %P"
-      %form{ :controller => 'aliadas', :action => 'end_service', :method => 'post' }
+      #{service.address.street}
+      %h6= I18n.l service.datetime, format: "%A %e a las %k %P"
+      = form_tag((finish_service_path)) do
+        %input{:type=>"hidden", :value=>service.id, :name => :service}
         %div
           Llegue?
-          %input{ :type => "text", :name => "arrival_hour" }
+          %select{:name => :begin_time}
+            - begin_hours_range(service).each do |h|
+              %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%k:%M %P"
           Acabe?
-          %input{ :text => "text", :name => "end_hour"}
-        %input{ :type => "submit", :name => "submit", :value => "hours" }
+          %select{:name => :end_time}
+            - end_hours_range(service).each do |h|
+              %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%k:%M %P"
+          %input{  :type => "submit", :name => "Pay", :value => "Pagar" }
       %br
       %br
   - @upcoming_services.each do |i|

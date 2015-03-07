@@ -42,7 +42,8 @@ Rails.application.routes.draw do
 
 
   devise_scope :aliadas do
-    get 'aliadas/servicios/:token', to: 'aliadas#services', as: :servicios_aliadas
+    get 'aliadas/servicios/:token', to: 'aliadas#services', as: :aliadas_services
+    post 'aliadas/servicios/finish/:token', to: 'aliadas#finish', as: :finish_service
   end
 
 
