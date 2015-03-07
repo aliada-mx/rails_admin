@@ -64,6 +64,10 @@ class ScheduleInterval
     end
   end
 
+  def wday
+    @schedules.first.datetime.wday
+  end
+
   def self.build_from_range(starting_datetime, ending_datetime, from_existing: false, conditions: {})
     schedules = []
     (starting_datetime.to_i .. ending_datetime.to_i).step(1.hour) do |date|

@@ -9,13 +9,10 @@ describe 'AliadaChooser' do
     let!(:aliada_1) { create(:aliada, created_at: starting_datetime - 3.hours) }
     let!(:aliada_2) { create(:aliada, created_at: starting_datetime - 2.hours) }
     let!(:aliada_3) { create(:aliada, created_at: starting_datetime - 1.hour) }
-    let!(:recurrence){ create(:recurrence, weekday: starting_datetime.weekday, hour: starting_datetime.hour ) }
     let!(:one_time_service_type) { create(:service_type, name: 'one-time') }
-    let!(:recurrent_service_type) { create(:service_type, name: 'recurrent') }
     let!(:address_1){ create(:address)}
     let!(:service_1){ create(:service,
                              user: user,
-                             recurrence: recurrence,
                              zone: zone_1,
                              service_type: one_time_service_type,
                              datetime: starting_datetime,
@@ -23,13 +20,13 @@ describe 'AliadaChooser' do
                              address: address_1) }
 
     before :each do
-      Timecop.freeze(starting_datetime-1.hour)
+      Timecop.freeze(starting_datetime)
 
-      create_recurrent!(starting_datetime-1.hour, hours: 5, periodicity: 7, conditions: {aliada_id: aliada_1.id, zone_id: zone_1.id})
-      create_recurrent!(starting_datetime-1.hour, hours: 5, periodicity: 7, conditions: {aliada_id: aliada_2.id, zone_id: zone_1.id})
-      create_recurrent!(starting_datetime-1.hour, hours: 5, periodicity: 7, conditions: {aliada_id: aliada_3.id, zone_id: zone_1.id})
+      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_1.id, zone_id: zone_1.id})
+      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_2.id, zone_id: zone_1.id})
+      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_3.id, zone_id: zone_1.id})
 
-      @aliadas_availability = AvailabilityForService.find_aliadas_availability(service_1)
+      @aliadas_availability = AvailabilityForService.find_aliadas_availability(service_1, starting_datetime - 1.hour)
     end
 
     after :each do

@@ -5,23 +5,20 @@
 +keyframes-vex-pulse
 
 .vex.vex-theme-plain
-  padding-top: 160px
-  padding-bottom: 160px
-
   .vex-content
-    font-family: "Helvetica Neue", sans-serif
     background: #fff
-    padding: 1em
-    position: relative
-    margin: 0 auto
-    max-width: 100%
-    width: 50%
-    min-width: 300px
+    font-family: "Helvetica Neue", sans-serif
     font-size: 1.1em
     line-height: 1.5em
-    text-align: center
-    overflow: hidden
+    left: 35%
+    margin: 0 auto
+    max-width: 800px
     min-width: 300px
+    padding: 2em
+    position: fixed
+    text-align: center
+    width: 30%
+    top: 40%
 
     &.email_already_exists
       width: 30%
@@ -30,12 +27,15 @@
       margin-bottom: 20px
 
     p
-      text-align: left
+      text-align: center
       margin: 10px 0
+      word-wrap: break-word
 
     [class^="action-button"]
       margin: 10px
-
+    &.error
+      h1
+        color: #FF3D3D
 
   .vex-close
     position: absolute
@@ -123,3 +123,6 @@
   height: 2.5em
   width: 2.5em
 
+@media only screen and (min-device-width : 320px) and (max-device-width : 568px)
+  .vex-content
+    left: 0% !important

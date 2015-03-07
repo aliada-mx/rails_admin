@@ -25,21 +25,49 @@ class ServicesController < ApplicationController
   end
 
   def create
-    service = Service.create_initial!(service_params)
+    begin
+      service = Service.create_initial!(service_params)
+    rescue ActiveRecord::RecordInvalid => invalid
+      return render json: { status: :error, code: :invalid, message: invalid.message }
+    end
 
     IncompleteService.mark_as_complete(incomplete_service_params,service)
 
-    redirect_to show_service_users_path(service.user.id, service.id)
+    return render json: { status: :success, message: 'Hemos guardado creado tu servicio correctamente' }
   end
 
-  # Provides feedback through ajax to the initial service creation form
-  def initial_feedback
+  def incomplete_service
     save_incomplete_service
 
-    return if check_email_present
+    render nothing: true
+  end
 
-    return if check_postal_code
+  def check_email
+    save_incomplete_service
 
+    email = incomplete_service_params[:email]
+
+    if email.present? && User.email_exists?(email)
+      return render json: { status: :error, code: :email_already_exists } 
+    end
+    return render json: { status: :success }
+  end
+
+  def check_postal_code
+    save_incomplete_service
+
+    postal_code_number = incomplete_service_params[:postal_code_number]
+
+    if postal_code_number.present? && postal_code_number.size >= 4 
+      zone = Zone.find_by_postal_code_number(postal_code_number)
+
+      if zone.blank?
+        @incomplete_service.update_attributes!(postal_code_not_found: true)
+        return render json: { status: :error, code: :postal_code_missing }
+      end
+    end
+
+    @incomplete_service.update_attributes!(postal_code_not_found: false)
     return render json: { status: :success }
   end
 
@@ -47,23 +75,6 @@ class ServicesController < ApplicationController
   def save_incomplete_service
     @incomplete_service = IncompleteService.find(params[:incomplete_service][:id])
     @incomplete_service.update_attributes!(incomplete_service_params)
-  end
-
-  def check_email_present
-    email = incomplete_service_params[:email]
-    return render json: { status: :error, code: :email_already_exists } if email.present? && User.email_exists?(email)
-  end
-
-  def check_postal_code
-    postal_code_number = incomplete_service_params[:postal_code_number]
-
-    if postal_code_number.present? && postal_code_number.size >= 4 
-      zone = Zone.find_by_postal_code_number(postal_code_number)
-
-      if zone.blank?
-        return render json: { status: :error, code: :postal_code_number_missing }
-      end
-    end
   end
 
   def incomplete_service_params

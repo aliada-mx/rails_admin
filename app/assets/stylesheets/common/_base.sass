@@ -20,6 +20,7 @@
 @import 'modules/service-card'
 @import 'modules/service_type_buttons'
 @import 'modules/time_selector'
+@import 'modules/conekta_form'
 
 // Modal
 @import 'vex'
@@ -32,7 +33,7 @@ html
   overflow-y: scroll
 
 body
-  background-color: $lightest_gray
+  background-color: $lightest_gray !important
 
 a, input
   outline: 0 !important
@@ -179,3 +180,17 @@ footer
 .size-fill-up
   +rem(font-size, 1.5rem)
   width: 100%
+
+.blocked_ui_dialog
+  min-width: 300px
+  .loader_container
+    padding: 20px
+
+.disabled
+  +opacity(0.3)
+  cursor: default
+  pointer-events: none
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 568px)
+  .blocked_ui_dialog
+    left: 0% !important

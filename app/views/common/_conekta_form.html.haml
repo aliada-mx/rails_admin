@@ -1,29 +1,32 @@
+.conekta-form-container
+  %h5 Tarjeta de débito o crédito
+  .conekta-form
+    = hidden_field_tag :conekta_temporary_token
+    .field
+      = text_field_tag nil, nil, data: {'conekta' => 'card[name]'}, placeholder: 'Rodolfo Corcuera Meier'
+      %p NOMBRE COMO APARECE EN TU TARJETA
+    .field
+      = text_field_tag nil, nil, data: {'conekta' => 'card[number]'}, placeholder: '1234 5678 1234 5678', class: 'iconized'
+      %p NÚMERO DE LA TARJETA
+      %span.icon
+        =image_tag('lock.png', {:title => 'Número de tarjeta'})
+    .field
+      %table
+        %tr
+          %td
+            %span.expiration-date-field
+              = select_tag nil, options_for_select([*1..12], 1), data: {'conekta' => 'card[exp_month]'}
+              %span /
+              = select_tag nil, options_for_select([*2015..2030], 1), data: {'conekta' => 'card[exp_year]'}
+            %p VENCIMIENTO (MM/AA)
+          %td
+          %td
+            = text_field_tag nil, nil, data: {'conekta' => 'card[cvc]'}, placeholder: '123', class: 'iconized', id: 'card_cvc'
+            %p CVC
+            %span.icon
+              =image_tag('cvc.png', {:title => 'Número de tarjeta'})
 
-= hidden_field_tag :conekta_temporary_token
-.field
-  = text_field_tag nil, nil, data: {'conekta' => 'card[name]'}, placeholder: 'Rodolfo Corcuera Meier'
-  %p NOMBRE COMO APARECE EN TU TARJETA
-.field
-  = text_field_tag nil, nil, data: {'conekta' => 'card[number]'}, placeholder: '1234 5678 1234 5678', class: 'iconized'
-  %p NÚMERO DE LA TARJETA
-  %span.icon
-    =image_tag('lock.png', {:title => 'Número de tarjeta'})
-.field
-  %table
-    %tr
-      %td
-        %span.expiration-date-field
-          = select_tag nil, options_for_select([*1..12], 1), data: {'conekta' => 'card[exp_month]'}
-          %span /
-          = select_tag nil, options_for_select([*2015..2030], 1), data: {'conekta' => 'card[exp_year]'}
-        %p VENCIMIENTO (MM/AA)
-      %td
-      %td
-        = text_field_tag nil, nil, data: {'conekta' => 'card[cvc]'}, placeholder: '123', class: 'iconized'
-        %p CVC
-        %span.icon
-          =image_tag('cvc.png', {:title => 'Número de tarjeta'})
-
-= append :javascript do
-  %script{type: "text/javascript", src: "https://conektaapi.s3.amazonaws.com/v0.3.2/js/conekta.js"}
-  = javascript_include_tag 'modules/conekta'
+    = append :javascript do
+      %script{type: "text/javascript", src: "https://conektaapi.s3.amazonaws.com/v0.3.2/js/conekta.js"}
+      :javascript
+        Conekta.setPublishableKey(aliada.conekta_public_key);

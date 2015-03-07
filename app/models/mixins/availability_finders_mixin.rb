@@ -8,16 +8,6 @@ module Mixins
       add_continuous_schedules
     end
 
-    # 1 hour away from each other
-    def continuous_schedules?
-      last_continuous = @continuous_schedules.last
-
-      # If we are starting a continuity
-      return true if last_continuous.blank?
-
-      last_continuous.datetime + 1.hour == @current_schedule.datetime
-    end
-
     def same_aliada?
       last_continuous = @continuous_schedules.last
 
@@ -49,12 +39,6 @@ module Mixins
 
     def continuous_schedule_intervals?(previous_interval, current_interval)
       (current_interval - previous_interval) == @recurrency_seconds
-    end
-
-    def clear_not_enough_availabilities
-      if @aliadas_availability.present? && @minimum_availaibilites.present? 
-        @aliadas_availability.delete_if { |aliada_id, aliada_availability| aliada_availability.size < @minimum_availaibilites}
-      end
     end
   end
 end

@@ -2,12 +2,14 @@ class AvailabilityForCalendar
   include Mixins::AvailabilityFindersMixin
   include AliadaSupport::DatetimeSupport
 
-  def initialize(hours, zone, recurrent: false, periodicity: nil, aliada_id: nil)
+  def initialize(hours, zone, available_after, recurrent: false, periodicity: nil, aliada_id: nil)
     @hours = hours
     @zone = zone
+    @available_after = available_after
+    @recurrent = recurrent
 
     # Pull the schedules from db
-    @available_schedules = Schedule.available_for_booking(@zone)
+    @available_schedules = Schedule.available_for_booking(@zone, available_after)
     if aliada_id.present?
       @available_schedules = @available_schedules.where(aliada_id: aliada_id)
     end
@@ -17,19 +19,15 @@ class AvailabilityForCalendar
     # An object to track our availability
     @aliadas_availability = Availability.new
 
-    @recurrent = recurrent
-    if @recurrent
-      @recurrency_seconds = periodicity.days
-      @minimum_availaibilites = recurrences_until_horizon(periodicity)
-    end
+    @recurrency_seconds = periodicity.days if @recurrent
 
     # save time consecutive schedules 
     # until the desired size is reached
     @continuous_schedules = []
   end
 
-  def self.find_availability(hours, recurrent: false, zone: zone, periodicity: 7)
-    AvailabilityForCalendar.new(hours, zone, recurrent: recurrent, periodicity: periodicity).find
+  def self.find_availability(hours, zone, available_after, recurrent: false, periodicity: nil, aliada_id: nil)
+    AvailabilityForCalendar.new(hours, zone, available_after, recurrent: recurrent, periodicity: periodicity).find
   end
      
   # It will try to build as many aliada_availabilities that matches the requested number of hours
@@ -38,14 +36,13 @@ class AvailabilityForCalendar
   def find
     return @aliadas_availability if invalid?
 
-    @previous_aliada_id = @available_schedules.first.aliada_id
-
     @available_schedules.each do |schedule|
       @current_schedule = schedule
       @current_aliada_id = @current_schedule.aliada_id
       @wday_hour = availability_group_key
 
       if should_add_current_schedule? 
+        # puts "adding continuous schedule #{@current_schedule.datetime}"
         add_continuous_schedules
 
         store! if enough_continuous_schedules?
@@ -53,7 +50,6 @@ class AvailabilityForCalendar
         restart_continues_schedules
       end
 
-      track_aliadas_changing
     end
     
     clear_not_enough_availabilities
@@ -76,12 +72,13 @@ class AvailabilityForCalendar
 
     def store!
       trim_to_size
+      # puts "storeing with key #{@wday_hour} the #{@continuous_schedules.first.datetime}"
 
       if @recurrent 
         if broken_continous_intervals?
+          # puts "broken continuity #{@wday_hour} the #{@continuous_schedules.first.datetime}"
           # If we dont have a perfect recurrence we have nothing
-          remove_aliada_availability!
-          track_aliadas_changing
+          remove_wday_availability!
           return
         end
       end
@@ -117,10 +114,41 @@ class AvailabilityForCalendar
       # The first time there is no previous
       return false if previous_interval.blank?
 
-      !continuous_schedule_intervals?(previous_interval, current_interval)
+      value = !continuous_schedule_intervals?(previous_interval, current_interval)
+      if value
+        # # binding.pry
+        # puts "found broken continuous intervals"
+        # puts "previous #{previous_interval.schedules.map { |s| s.datetime }}"
+        # puts "current_interval #{current_interval.schedules.map { |s| s.datetime }}"
+        # puts " "
+      end
+      value
     end
 
-    def remove_aliada_availability!
+    def remove_wday_availability!
       @aliadas_availability.delete(@wday_hour)
+    end
+
+    def clear_not_enough_availabilities
+      if @aliadas_availability.present? && @recurrent
+        wdays_until_horizon = all_wdays_until_horizon(@available_after)
+
+        @aliadas_availability.delete_if do |aliada_id, aliada_availability| 
+          minimum_availabilities = wdays_until_horizon[aliada_availability.first.wday]
+          # puts "minimum_availabilities #{minimum_availabilities} vs aliada_availability #{aliada_availability.size}"
+
+          aliada_availability.size < minimum_availabilities
+        end
+      end
+    end
+    
+    # 1 hour away from each other
+    def continuous_schedules?
+      last_continuous = @continuous_schedules.last
+
+      # If we are starting a continuity
+      return true if last_continuous.blank?
+
+      last_continuous.datetime + 1.hour == @current_schedule.datetime
     end
 end

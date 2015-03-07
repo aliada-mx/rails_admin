@@ -1,118 +1,42 @@
+//= require initial/_calendar
+
 aliada.services.initial.step_3_visit_info = function(aliada, ko){
-  var $service_type_selector = $('.service_types.radio_buttons');
-  // Select default service type from the form
-  var default_service_type = $service_type_selector.find(':checked').parent('label').data('service-type');
+    // Select default service type from the form
+    var $selected_service_type = $('.service_types.radio_buttons').find(':checked');
+    var default_service_type = $selected_service_type.parent('label').data('service-type');
 
-  _(aliada.ko).extend({
-    dates: ko.observableArray([]),
-    date_hour: ko.observable('Fecha y hora de la visita'),
-    date: ko.observableArray(''),
+    var on_step_3 = function(){ return aliada.ko.current_step() == 3 };
 
-    times: ko.observableArray([]),
-    time: ko.observable(''),
+    _(aliada.ko).extend({
+        date_hour: ko.observable('Fecha y hora de la visita'),
+        dates: ko.observableArray([]),
+        date: ko.observable('').extend({
+          required: { onlyIf: on_step_3 }
+        }),
 
-    service_type: ko.observable(default_service_type),
-  });
+        times: ko.observableArray([]),
+        time: ko.observable('').extend({
+          required: { onlyIf: on_step_3 }
+        }),
 
-  aliada.ko.select_time = function(time){
-    aliada.ko.time(time.time);
-    return true;
-  }
+        service_type: ko.observable(default_service_type),
+    });
 
-  aliada.ko.is_recurrent_service = ko.computed(function(){
-    return aliada.ko.service_type().name == 'recurrent';
-  });
+    aliada.ko.date_hour = ko.computed(function(){
+      var date_hour = '';
 
+      if(aliada.ko.date()){
+        date_hour += aliada.ko.date();
+      }
+      if(aliada.ko.time()){
+        date_hour += ' '
+        date_hour += aliada.ko.time();
+      }
+    })
 
-  //
-  // CALENDAR
-  //
-  function on_calendar_day_click($el, $content, times, dateProperties){
-    aliada.ko.times(times || []);
+    aliada.ko.is_recurrent_service = ko.computed(function(){
+        return aliada.ko.service_type().name == 'recurrent';
+    });
 
-    aliada.ko.date(dateProperties.strdate);
-
-    // Broadcast the change so live_feedback can report it
-    aliada.services.initial.form.trigger('change');
-
-    // Only interact with available dates
-    if( !$el.hasClass('fc-content') ){
-      return;
-    }
-
-    //Remove previous selected
-    $('.fc-selected-day').removeClass("fc-selected-day");
-    $('.fc-selected-recurrences').removeClass('fc-selected-recurrences');
-    $('.fc-selected-recurrences-below').removeClass('fc-selected-recurrences-below');
-
-    //Mark the current selected 
-    $el.addClass("fc-selected-day");
-
-    //Render recurrences
-    if (aliada.ko.is_recurrent_service()) {
-
-      //Get the day and day-of-the-week from the selected element
-      dia = parseInt($el.children('span.fc-date').text());
-      diaSemana = $el.children('span.fc-weekday').text();
-
-      //Select days below the selected date and add class fc-selected-recurrencias
-      $('div.fc-row div').filter(function(index, elemen) {
-          diaEl = parseInt($(elemen).children('span.fc-date').text());
-          diaSemanaEl = $(elemen).children('span.fc-weekday').text();
-
-          return ((diaEl >= dia) && (diaSemanaEl === diaSemana));
-        }).addClass('fc-selected-recurrences-below');
-    }
-
-
-    return false;
-  };
-
-  function update_calendar(){
-    var hours = aliada.ko.hours();
-    var service_type_id = aliada.ko.service_type().id;
-    var postal_code_number = aliada.ko.postal_code_number();
-
-    // Prevent further user interaction to avoid double requests
-    aliada.calendar.lock(calendar);
-
-    // Get data from server
-    aliada.calendar.get_dates_times(hours, service_type_id, postal_code_number).then(function(dates_times){
-        // Update the calendar
-        aliada.calendar.set_dates(calendar, dates_times);
-
-        // Select first date of the calendar as a default
-        var date = $calendar_container.find('.fc-content');
-        // If no date is found empty
-        if(date.length > 0){
-          date.first().click();
-        }else{
-          aliada.ko.times([]);
-          aliada.ko.time([]);
-        }
-
-        aliada.calendar.un_lock(calendar);
-      }).caught(function(error){
-          aliada.dialogs.platform_error(error);
-        })
-    }
-
-    var $calendar_container = $('#calendar');
-    var calendar = aliada.calendar.initialize({container: $calendar_container,
-        dates: aliada.ko.dates(), 
-        on_day_click: on_calendar_day_click });
-
-    // Update calendar when leaving first step so it has enough time to be ready 
-    // when the user reaches the third step
-    $(document).on('leaving_step_1',function(){
-        update_calendar();
-      });
-
-    // When the service type changes the dates available change so update the calendar
-    $service_type_selector.on('change', function(e){
-        e.preventDefault();
-        update_calendar();
-      });
-
-
-  }
+    aliada.services.initial.initialize_calendar_times();
+}
