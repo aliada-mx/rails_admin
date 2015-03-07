@@ -246,7 +246,6 @@ ActiveRecord::Schema.define(version: 20150305181502) do
   end
 
   create_table "services", force: true do |t|
-    t.integer  "zone_id"
     t.integer  "address_id"
     t.integer  "user_id"
     t.integer  "service_type_id"
@@ -271,6 +270,7 @@ ActiveRecord::Schema.define(version: 20150305181502) do
     t.text     "attention_instructions"
     t.text     "equipment_instructions"
     t.text     "forbidden_instructions"
+    t.integer  "zone_id"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
