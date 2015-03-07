@@ -141,4 +141,8 @@ end
 group :production do
   # Logging
   gem "lograge"
+  # Heroku support
+  gem 'rails_12factor'
 end
+
+
