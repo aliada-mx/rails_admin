@@ -35,6 +35,16 @@
         +rem(margin-right, 1.5rem)
         vertical-align: inherit
 
+        .icon-user
+          font-weight: bolder
+          &:before
+            +rem(font-size, 2rem)
+            vertical-align: top
+
+        a:hover
+          +soft-transition
+          color: $light_gray
+
       li:last-child
         margin-right: 0
 

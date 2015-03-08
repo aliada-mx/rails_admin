@@ -1,5 +1,5 @@
 .initial_service
-  = form_for @service, url: create_service_path do |initial_service_form|
+  = form_for @service, url: create_initial_service_path do |initial_service_form|
     %main
       - ['duration', 'personal_info', 'visit_info', 'payment', 'success'].each_with_index do |step_name, step|
 

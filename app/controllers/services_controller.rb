@@ -1,5 +1,9 @@
 class ServicesController < ApplicationController
   layout 'two_columns'
+  load_and_authorize_resource
+  skip_authorize_resource only: [:initial, :create_initial, :check_email, :check_postal_code, :incomplete_service]
+
+  before_filter :set_user
 
   include ServiceHelper
 
@@ -24,7 +28,7 @@ class ServicesController < ApplicationController
     @service = Service.find(params[:service_id])
   end
 
-  def create
+  def create_initial
     begin
       service = Service.create_initial!(service_params, @current_timezone)
     rescue ActiveRecord::RecordInvalid => invalid
@@ -134,5 +138,9 @@ class ServicesController < ApplicationController
                                         :postal_code_number,
                                       ]).merge({conekta_temporary_token: params[:conekta_temporary_token] })
                                       
+  end
+
+  def set_user
+    @user = User.find(params[:user_id]) if params.include? :user_id
   end
 end
