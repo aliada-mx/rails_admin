@@ -16,33 +16,32 @@ feature 'ServiceController' do
   let!(:extra_2){ create(:extra, name: 'Limpieza de refri')}
   let!(:conekta_card){ create(:payment_method)}
     
-
-  before do
-    Timecop.freeze(starting_datetime)
-
-    # The - 1 hour is needed because this hour is the one the aliada needs to get there from a previous service
-    create_recurrent!(starting_datetime + 1.day, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada})
-
-    expect(Address.count).to be 0
-    expect(Service.count).to be 0
-    expect(IncompleteService.count).to be 0
-    expect(Aliada.count).to be 1
-
-
-    # We have hidden elements in our initial service creation assitant 
-    # because we don't show all the steps at once
-    @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
-    Capybara.ignore_hidden_elements = false
-
-    visit initial_service_path
-  end
-
-  after do
-    Timecop.return
-    Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
-  end
-
   describe '#initial' do
+    before do
+      Timecop.freeze(starting_datetime)
+
+      # The - 1 hour is needed because this hour is the one the aliada needs to get there from a previous service
+      create_recurrent!(starting_datetime + 1.day, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada})
+
+      expect(Address.count).to be 0
+      expect(Service.count).to be 0
+      expect(IncompleteService.count).to be 0
+      expect(Aliada.count).to be 1
+
+
+      # We have hidden elements in our initial service creation assitant 
+      # because we don't show all the steps at once
+      @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
+      Capybara.ignore_hidden_elements = false
+
+      visit initial_service_path
+    end
+
+    after do
+      Timecop.return
+      Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
+    end
+
     it 'redirects the logged in user to new service' do
       user = create(:user)
 
@@ -180,4 +179,63 @@ feature 'ServiceController' do
       end
     end
   end
+
+  context 'created users' do
+    let(:admin){ create(:admin) }
+    let(:user){ create(:user) }
+    let(:address){ create(:address, postal_code: postal_code) }
+    let(:service){ create(:service, 
+                          aliada: aliada,
+                          user: user,
+                          service_type: one_time_service) }
+    let(:admin_service){ create(:service, 
+                                aliada: aliada,
+                                user: admin,
+                                service_type: one_time_service) }
+
+    describe '#edit' do
+      it 'lets the admin edit any user services' do
+        login_as(admin)
+
+        edit_service_path = edit_service_users_path(user_id: user.id, service_id: service.id)
+
+        visit edit_service_path
+        
+        expect(page.current_path).to eql edit_service_path
+      end
+
+      it 'it doesnt let the user edit other users services' do
+        login_as(user)
+
+        edit_service_path = edit_service_users_path(user_id: admin.id, service_id: admin_service.id)
+
+        visit edit_service_path
+        
+        expect(page.current_path).not_to eql edit_service_path
+      end
+
+      it 'it let the user edit its own services' do
+        login_as(user)
+
+        edit_service_path = edit_service_users_path(user_id: user.id, service_id: user.id)
+
+        visit edit_service_path
+        
+        expect(page.current_path).to eql edit_service_path
+      end
+    end
+
+    describe '#new' do
+      it 'it let the user view the new service page' do
+        login_as(user)
+
+        new_service_path = new_service_users_path(user)
+
+        visit new_service_path
+        
+        expect(page.current_path).to eql new_service_path
+      end
+    end
+  end
 end
+
