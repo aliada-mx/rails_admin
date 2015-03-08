@@ -104,7 +104,7 @@ feature 'AliadasController' do
       
       Timecop.freeze(Date.today + 2) do
         visit  ('aliadas/servicios/'+ aliada.authentication_token)
-          save_and_open_page
+        #  save_and_open_page
         expect(page).to   have_content 'Roma Norte'
       end
       
@@ -152,7 +152,7 @@ feature 'AliadasController' do
        #  save_and_open_page
         
         click_on('Pagar')
-        save_and_open_page
+       # save_and_open_page
         expect(Payment.all.count).to be 1
       end
     end
