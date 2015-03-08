@@ -73,6 +73,10 @@ class User < ActiveRecord::Base
     role == 'admin'
   end
 
+  def timezone
+    'Mexico City'
+  end
+
   rails_admin do
     navigation_label 'Personas'
     navigation_icon 'icon-user'

@@ -16,10 +16,13 @@ feature 'ApplicationController' do
     before do
       @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
       Capybara.ignore_hidden_elements = false
+      @original_tz = ENV['TZ']
+      ENV['TZ'] = 'UTC'
     end
 
     after do
       Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
+      ENV['TZ'] = @original_tz
     end
 
     it 'catches the exception and renders a json error' do

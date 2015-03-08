@@ -3,6 +3,7 @@
 //= require jquery.calendario
 //= require modules/calendar
 //= require modules/dialogs
+//= require jquery.autogrow-textarea
 //
 //= require initial/_step_1_duration
 //= require initial/_step_2_personal_info
@@ -105,7 +106,7 @@ $(document).ready(function() {
 
   // Broadcast the entered a step event
   aliada.ko.current_step.subscribe(function(new_step){
-    $.event.trigger({type: 'entered_step_'+new_step});
+    $.event.trigger({type: 'entering_step_'+new_step});
   });
 
   // Broadcast the leaving a step event

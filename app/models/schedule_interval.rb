@@ -68,13 +68,13 @@ class ScheduleInterval
     @schedules.first.datetime.wday
   end
 
-  def self.build_from_range(starting_datetime, ending_datetime, from_existing: false, conditions: {})
+  def self.build_from_range(starting_datetime, ending_datetime, from_existing: false, conditions: {}, timezone: 'Mexico City')
     schedules = []
     (starting_datetime.to_i .. ending_datetime.to_i).step(1.hour) do |date|
       # If we reached the end...
       break if ending_datetime.to_i == date
 
-      datetime = Time.zone.at(date)
+      datetime = Time.at(date).in_time_zone(timezone)
 
       conditions.merge!({datetime: datetime})
 

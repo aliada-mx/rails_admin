@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   include AliadaSupport::RedirectAfterLogin
 
   before_filter :initialize_js_variables
+  before_filter :set_current_timezone
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -18,6 +19,12 @@ class ApplicationController < ActionController::Base
     store_destination
 
     !user_signed_in? && redirect_to_login || default_redirect_root_path
+  end
+  
+  # We don't want to set Time.zone = 'Mexico City' because internally we 
+  # depend on keeping the default UTC
+  def set_current_timezone
+    @current_timezone ||= ENV['TZ'] || 'Mexico City'
   end
 
   def initialize_js_variables

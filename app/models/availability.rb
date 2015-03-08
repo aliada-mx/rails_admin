@@ -47,16 +47,16 @@ class Availability
   end
 
   # format expected by jquery.calendario
-  def for_calendario
+  def for_calendario(timezone)
     # A hash with an array as default value for new keys
     dates_times = Hash.new{ |h,k| h[k] = [] }
 
     schedules_intervals.map do |schedule_interval|
       datetime = schedule_interval.beginning_of_interval
 
-      date = datetime.strftime('%Y-%m-%d')
-      time = datetime.strftime('%H:%M')
-      friendly_time = datetime.strftime('%l:%S %P')
+      date = datetime.in_time_zone(timezone).strftime('%Y-%m-%d')
+      time = datetime.in_time_zone(timezone).strftime('%H:%M')
+      friendly_time = datetime.in_time_zone(timezone).strftime('%l:%S %P')
 
       dates_times[date].push({value: time, friendly_time: friendly_time}) 
     end
