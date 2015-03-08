@@ -26,8 +26,9 @@ class AliadasController < ApplicationController
       date_to_show = if DateTime.now.hour < 19
                        Date.today
                      else
-                       Date.tomorrow
+                       Date.today + 1.day
                      end
+     
       @unfinished_services = Service.joins(:user).where(aliada_id: @aliada.id, status: 'aliada_assigned').where("datetime <= ?", DateTime.now)
       @upcoming_services = Service.joins(:address).where(aliada_id: @aliada.id, :datetime => date_to_show.beginning_of_day..date_to_show.end_of_day).joins(:user)      
       @message = 'Token correct'

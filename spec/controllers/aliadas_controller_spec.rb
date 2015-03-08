@@ -97,14 +97,14 @@ feature 'AliadasController' do
       Servicio1 = create(:service, aliada_id: aliada.id, address_id: address1.id,
                          bathrooms: 2,
                          bedrooms: 3,
-                         user_id: client.id, datetime: (DateTime.now+1)
+                         user_id: client.id, datetime: (DateTime.now+1.day)
                          )
       Servicio2 = create(:service, aliada_id: aliada.id, address_id: address2.id,
                          user_id: client.id, datetime: DateTime.now)
       
-      Timecop.freeze(Date.today + 1) do
+      Timecop.freeze(Date.today + 2) do
         visit  ('aliadas/servicios/'+ aliada.authentication_token)
-        #  save_and_open_page
+          save_and_open_page
         expect(page).to   have_content 'Roma Norte'
       end
       
@@ -149,7 +149,7 @@ feature 'AliadasController' do
 
         #   save_and_open_page
         page.has_content?('Tus servicios')
-         save_and_open_page
+       #  save_and_open_page
         
         click_on('Pagar')
         save_and_open_page
