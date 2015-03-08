@@ -84,9 +84,8 @@ class Service < ActiveRecord::Base
     self.hours_after_service = Setting.end_of_aliadas_day == datetime.try(:hour) ? 0 : Setting.hours_after_service
   end
 
-  def combine_date_time
-    Chronic.time_class = Time.zone
-    self.datetime = Chronic.parse "#{self.date} #{self.time}"
+  def combine_date_time(timezone)
+    self.datetime = Time.parse("#{self.date} #{self.time}").in_time_zone(timezone)
   end
 
   def ensure_recurrence!
@@ -160,7 +159,7 @@ class Service < ActiveRecord::Base
     ScheduleInterval.build_from_range(beginning_datetime, ending_datetime)
   end
 
-  def self.create_initial!(service_params)
+  def self.create_initial!(service_params, timezone)
     ActiveRecord::Base.transaction do
       address = Address.create!(service_params[:address])
       user = User.create!(service_params[:user])
@@ -168,7 +167,7 @@ class Service < ActiveRecord::Base
 
       service.address = address
       service.user = user
-      service.combine_date_time
+      service.combine_date_time(timezone)
       service.set_hours_before_after_service
       service.ensure_recurrence!
 

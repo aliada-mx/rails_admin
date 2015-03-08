@@ -20,7 +20,7 @@ class AliadasAvailabilityController < ApplicationController
                                                              recurrent: service_type.recurrent?,
                                                              periodicity: service_type.periodicity)
 
-    dates_times = availability.for_calendario
+    dates_times = availability.for_calendario(@current_timezone)
 
     return render json: { status: :success, dates_times: dates_times }
   end

@@ -7,7 +7,13 @@ module TestingSupport
 
       check "service_extra_ids_#{extra.id}"
 
-      fill_in 'service_special_instructions', with: 'nada'
+      choose 'at_home'
+      fill_in 'service_special_instructions', with: 'Algo especial'
+      fill_in 'service_garbage_instructions', with: 'Algo de basura'
+      fill_in 'service_attention_instructions', with: 'al perrito'
+      fill_in 'service_equipment_instructions', with: 'con pinol mis platos'
+      fill_in 'service_forbidden_instructions', with: 'no tocar mi colección de amiibos'
+
       fill_in 'service_address_street', with: 'Calle de las aliadas'
       fill_in 'service_address_number', with: '1' 
       fill_in 'service_address_interior_number', with: '2' 

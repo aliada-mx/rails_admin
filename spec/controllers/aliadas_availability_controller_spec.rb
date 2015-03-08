@@ -19,17 +19,20 @@ feature 'AliadasAvailabilityController' do
       before do
         create_one_timer!(starting_datetime + 1.day, hours: 5, conditions: {aliada: aliada, zone: zone} )
         Timecop.freeze(starting_datetime)
+        @original_tz = ENV['TZ']
+        ENV['TZ'] = 'UTC'
       end
 
       after do
         Timecop.return
+        ENV['TZ'] = @original_tz
       end
 
       it 'returns a json with dates times included' do
+
         with_rack_test_driver do
           page.driver.submit :post, aliadas_availability_path, {hours: 3, service_type_id: one_time.id, postal_code_number: postal_code.number}
         end
-        
         
         response = JSON.parse(page.body)
         available_date = (starting_datetime + 1.day).strftime('%Y-%m-%d')

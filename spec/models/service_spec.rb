@@ -88,7 +88,7 @@ feature 'Service' do
     end
 
     it 'validates a service ending at the end of aliadas day' do
-      service.datetime = '2015-01-27 17:00:00 -0600'.in_time_zone
+      service.datetime = '2015-01-27 17:00:00'.in_time_zone
 
       expect(service).to be_valid
     end
