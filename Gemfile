@@ -20,6 +20,8 @@ gem 'resque-scheduler'
 gem 'resque-web', require: 'resque_web'
 # Support for add_foreing_key (we downgraded from 4.2 to 4.1)
 gem 'foreigner'
+# Localization
+gem 'rails-i18n', github: 'svenfuchs/rails-i18n', branch: 'master' # For 4.x
 
 # ASSETS
 #
@@ -107,6 +109,8 @@ group :development, :test do
 end
 
 group :test do
+  gem "nyan-cat-formatter"
+
   # Testing framework
   gem 'rspec-rails', '~> 3.0.1'
 
@@ -141,4 +145,8 @@ end
 group :production do
   # Logging
   gem "lograge"
+  # Heroku support
+  gem 'rails_12factor'
 end
+
+

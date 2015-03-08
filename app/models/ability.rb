@@ -21,6 +21,32 @@ class Ability
               false
             end
           end
+        elsif subject_class == Score
+          if action == :create_by_service_id
+            if current_user.admin?
+              true
+            elsif params.include? :service_id
+              Service.find(params[:service_id]).user_id == current_user.id
+            else
+              false
+            end
+          end
+        elsif subject_class == Service
+          if [:new_service, :edit_service, :new, :read, :update, :edit].include? action
+            if current_user.admin?
+              true
+            elsif !params.include? :user_id
+              false
+            elsif params.include?(:user_id) && action == :new
+              current_user.id == params[:user_id].to_i
+            elsif params.include? :service_id
+              Service.find(params[:service_id]).user_id == current_user.id
+            elsif subject.present? # subject is the user being edited, read, updated...
+              subject.user.id == current_user.id
+            else
+              false
+            end
+          end
         end
       end
     end

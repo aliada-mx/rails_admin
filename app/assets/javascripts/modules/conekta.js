@@ -1,15 +1,17 @@
-aliada.add_conekta_token_to_form = function(form, after_error, after_success){
-    function conektaErrorResponseHandler(response) {
-        after_error(response);
-    };
+aliada.add_conekta_token_to_form = function(form, token_input){
+    return new Promise(function(resolve, reject){
+      function conektaErrorResponseHandler(response) {
+          reject(new ConektaFailed(response.message_to_purchaser));
+      }
 
-    function conektaSuccessResponseHandler(token) {
-        $form.val(token.id);
-        after_success($form);
-    };
+      function conektaSuccessResponseHandler(token) {
+          token_input.val(token.id);
+          resolve($form);
+      }
 
-    var $form = $(form);
+      var $form = $(form);
 
-    Conekta.token.create($form, leco.conektaSuccessResponseHandler, leco.conektaErrorResponseHandler);
+      Conekta.token.create($form, conektaSuccessResponseHandler, conektaErrorResponseHandler);
+    });
 }
 

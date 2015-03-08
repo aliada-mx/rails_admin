@@ -7,7 +7,7 @@ describe 'AvailabilityForCalendar' do
     let!(:aliada){ create(:aliada) }
     let!(:aliada_2){ create(:aliada) }
     let!(:aliada_3){ create(:aliada) }
-    starting_datetime = Time.zone.now.change({hour: 7})
+    starting_datetime = Time.zone.parse('01 Jan 2015 07:00:00')
     ending_datetime = starting_datetime + 6.hour
 
     before do
@@ -25,7 +25,7 @@ describe 'AvailabilityForCalendar' do
 
         @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours)
 
-        @finder = AvailabilityForCalendar.new(5, zone)
+        @finder = AvailabilityForCalendar.new(5, zone, starting_datetime)
       end
 
       after do
@@ -61,8 +61,9 @@ describe 'AvailabilityForCalendar' do
 
       it 'it doesnt find availability if there is a missing hour' do
         Schedule.where(datetime: starting_datetime).destroy_all
+        finder = AvailabilityForCalendar.new(5, zone, starting_datetime)
+        aliadas_availability = finder.find
 
-        aliadas_availability = @finder.find
         expect(aliadas_availability.size).to be 2
 
         aliada_2_availability = aliadas_availability.for_aliada(aliada_2)
@@ -79,8 +80,9 @@ describe 'AvailabilityForCalendar' do
 
       it 'it finds availability when at least one aliada has it for a specific hour' do
         Schedule.where('aliada_id in (?)', [aliada_2, aliada_3]).destroy_all
+        finder = AvailabilityForCalendar.new(5, zone, starting_datetime)
 
-        aliadas_availability = @finder.find
+        aliadas_availability = finder.find
 
         expect(aliadas_availability.size).to be 1
         expect(aliadas_availability.schedules_intervals[0].beginning_of_interval).to eql starting_datetime
@@ -89,7 +91,7 @@ describe 'AvailabilityForCalendar' do
       end
 
       it 'doesnt find an available datetime when are requested more hours than the available schedules' do
-        aliadas_availability = AvailabilityForCalendar.new(8, zone).find
+        aliadas_availability = AvailabilityForCalendar.new(8, zone, starting_datetime).find
         
         expect(aliadas_availability).to be_empty
       end
@@ -103,7 +105,7 @@ describe 'AvailabilityForCalendar' do
         create_recurrent!(starting_datetime,           hours: 4, periodicity: 7, conditions: {aliada: aliada, zone: zone} )
         create_recurrent!(starting_datetime + 4.hours, hours: 3, periodicity: 7, conditions: {aliada: aliada_2, zone: zone} )
 
-        @finder = AvailabilityForCalendar.new(3, zone, recurrent: true, periodicity: 7)
+        @finder = AvailabilityForCalendar.new(3, zone, starting_datetime, recurrent: true, periodicity: 7)
       end
 
       after do
@@ -134,7 +136,8 @@ describe 'AvailabilityForCalendar' do
 
       it 'doesnt find availability when the available schedules have holes in the continuity' do
         Schedule.where(datetime: starting_datetime + 4.hours + 7.days, aliada_id: aliada_2).destroy_all
-        aliadas_availability = @finder.find
+        finder = AvailabilityForCalendar.new(3, zone, starting_datetime, recurrent: true, periodicity: 7)
+        aliadas_availability = finder.find
         
         expect(aliadas_availability.size).to be 2
 
@@ -143,7 +146,7 @@ describe 'AvailabilityForCalendar' do
       end
 
       it 'doesnt find an available datetime when we more than there are available' do
-        aliadas_availability = AvailabilityForCalendar.new(5, zone, recurrent: true, periodicity: 7).find
+        aliadas_availability = AvailabilityForCalendar.new(5, zone, starting_datetime, recurrent: true, periodicity: 7).find
         
         expect(aliadas_availability).to be_empty
       end
@@ -152,7 +155,7 @@ describe 'AvailabilityForCalendar' do
         last_aliada_2_schedule = Schedule.where(aliada: aliada_2).order(:datetime).last
         last_aliada_2_schedule.book!
 
-        aliadas_availability = AvailabilityForCalendar.new(3, zone, recurrent: true, periodicity: 7).find
+        aliadas_availability = AvailabilityForCalendar.new(3, zone, starting_datetime, recurrent: true, periodicity: 7).find
         
         expect(aliadas_availability.size).to be 2
 
@@ -168,7 +171,7 @@ describe 'AvailabilityForCalendar' do
         create_one_timer!(starting_datetime, hours: 3, conditions: {aliada: aliada, zone: zone} )
         create_one_timer!(starting_datetime, hours: 3, conditions: {aliada: aliada_2, zone: zone} )
 
-        @finder = AvailabilityForCalendar.new(3, zone, aliada_id: aliada)
+        @finder = AvailabilityForCalendar.new(3, zone, starting_datetime, aliada_id: aliada)
       end
 
       after do

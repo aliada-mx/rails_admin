@@ -26,7 +26,7 @@ aliada.geo_autocomplete = function(input, success){
             address.colony = value;
             break;
           case 'postal_code':
-            address.postal_code = value;
+            address.postal_code_number = value;
             break;
           }
         });

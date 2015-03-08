@@ -6,10 +6,22 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 #
+require 'factory_girl_rails'
+require_relative '../spec/support/schedules_helper'
+include TestingSupport::SchedulesHelper
 
-puts 'creating extras'
+if ENV['clean']
+  puts 'Truncating all the tables'
+  require 'database_cleaner'
 
-Extra.destroy_all
+  DatabaseCleaner.clean_with(:truncation)
+end
+
+
+puts 'Creating:'
+
+puts 'extras'
+
 Extra.create!(name: 'Planchar (6pz)', hours: 0.5)
 Extra.create!(name: 'Limpiar ventanas', hours: 0.5)
 Extra.create!(name: 'Lavar a mano', hours: 1)
@@ -17,8 +29,7 @@ Extra.create!(name: 'Limpiar el refri', hours: 0.5)
 Extra.create!(name: 'Limpiar el horno', hours: 0.5)
 Extra.create!(name: 'Limpieza profunda', hours: 2)
 
-puts 'creating service types'
-ServiceType.destroy_all
+puts 'one-time and recurrent service types'
 ServiceType.create(name: 'one-time',
                    display_name: 'Sólo una vez',
                    price_per_hour: 105,
@@ -30,6 +41,24 @@ ServiceType.create(name: 'recurrent',
                    price_per_hour: 79,
                    benefits: 'La misma Aliada en cada visita, Tu casa siempre limpia, El precio :)')
 
-puts 'Creating users'
-User.destroy_all
-User.create!(first_name: 'Guillermo', last_name: 'Silice', email: 'guillermo.siliceo@gmail.com', role: 'admin', password: '12345678')
+
+puts 'Admin user'
+User.create!(first_name: 'Guillermo', last_name: 'Siliceo', email: 'guillermo.siliceo@gmail.com', role: 'admin', password: '12345678')
+
+puts 'Aliada'
+aliada = FactoryGirl.create(:aliada)
+
+puts 'Zone'
+zone = FactoryGirl.create(:zone)
+
+puts '11800 postal code'
+FactoryGirl.create(:postal_code, :zoned, zone: zone, number: '11800')
+
+puts 'schedules for the month'
+Time.zone = 'Mexico City'
+starting_datetime = Time.zone 
+create_recurrent!(Time.zone.now.change({hour: 7}), hours: 6, periodicity: 7, timezone: 'Mexico City', conditions: {aliada: aliada, zone: zone})
+create_recurrent!(Time.zone.now.change({hour: 7})+1.day, hours: 6, periodicity: 7, timezone: 'Mexico City',  conditions: {aliada: aliada, zone: zone})
+
+puts 'Conekta payment method'
+PaymentMethod.create!(name: 'Pago con tarjeta', payment_provider_type: 'ConektaCard')

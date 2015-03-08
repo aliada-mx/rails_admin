@@ -45,4 +45,30 @@ class Availability
   def beginning
     schedules_intervals.first.beginning_of_interval
   end
+
+  # format expected by jquery.calendario
+  def for_calendario(timezone)
+    # A hash with an array as default value for new keys
+    dates_times = Hash.new{ |h,k| h[k] = [] }
+
+    schedules_intervals.map do |schedule_interval|
+      datetime = schedule_interval.beginning_of_interval
+
+      date = datetime.in_time_zone(timezone).strftime('%Y-%m-%d')
+      time = datetime.in_time_zone(timezone).strftime('%H:%M')
+      friendly_time = datetime.in_time_zone(timezone).strftime('%l:%S %P')
+
+      dates_times[date].push({value: time, friendly_time: friendly_time}) 
+    end
+
+    dates_times
+  end
+
+  def to_s
+    "<#{self.class.name}:#{self.object_id}:#{self.size} schedules>"
+  end
+
+  def wday
+    schedules_intervals.first.datetime.wday
+  end
 end

@@ -30,6 +30,22 @@ describe 'Availability' do
     @last_five_schedules = Schedule.all.where('id not in (?)', @first_five_schedules.map(&:id))
 
     @aliadas_availability = Availability.new
+
+    Timecop.freeze(starting_datetime)
+  end
+
+  after do
+    Timecop.return
+  end
+
+  describe '#for_calendar' do
+    it 'should return the availability in the right format' do
+      @aliadas_availability.add('key', @first_five_schedules, aliada.id)
+
+      dates_times = @aliadas_availability.for_calendario('UTC')
+
+      expect(dates_times).to eql ({"2015-01-01"=>[{:value=>"16:00", :friendly_time=>" 4:00 pm"}]})
+    end
   end
 
   describe '#for_aliada' do

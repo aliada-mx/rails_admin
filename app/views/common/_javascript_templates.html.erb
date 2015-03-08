@@ -1,6 +1,6 @@
-<script type="text/html" id="email_already_exists">
+<script type="text/html" id="email_already_exists_template">
     <p>
-        Tú o alguien más con el email <b><%%= email %></b> ya ha hecho un servicio antes.
+        Tú o alguien más con el email <b><%%= email %></b> ya ha usado aliada antes.
     </p>
 
     <fieldset>
@@ -12,7 +12,7 @@
     </fieldset>
 </script>
 
-<script type="text/html" id="postal_code_missing">
+<script type="text/html" id="postal_code_number_missing_template">
     <h1>
         Me gustaría que aliada estuviera aqui
     </h1>
@@ -21,13 +21,62 @@
         <br>
         Por favor ten paciencia mientras hacemos el máximo esfuerzo para crecer y ayudar a más personas.
         <br>
-        te avisaremos cuando estemos en tu zona.
+        Te avisaremos cuando estemos en tu zona.
     </p>
-    <p>
+
+    <div>
         Muchas gracias :)
-    </p>
+    </div>
 
     <button class='action-button-gray size-large' id='try-another-postal-code-button'>
         Probar otro código postal
     </button>
+</script>
+
+<script type="text/html" id="platform_error_template">
+    <h1>
+        Error con aliada :(
+    </h1>
+    <p>
+        Lo sentimos, algo salió mal con aliada.mx ya estamos enterados y estamos trabajando para arreglarlo lo más rápido posible.
+    </p>
+    <p>
+        <%%= error %>
+    </p>
+</script>
+
+<script type="text/html" id="conekta_error_template">
+    <h1>
+        Problema con tu tarjeta
+    </h1>
+    <p>
+        Lo sentimos, algo salió mal al guardar tu tarjeta de crédito.
+    </p>
+    <p>
+        <%%= error %>
+    </p>
+    <p>
+        Prueba con otra tarjeta por favor.
+    </p>
+</script>
+
+<script type="text/html" id="invalid_service_template">
+    <h1>
+        Hay un problema con los datos del servicio
+    </h1>
+    <p>
+        Lo sentimos, algo salió mal al guardar tu servicio, por favor revisa.
+    </p>
+    <p>
+        <%%= error %>
+    </p>
+</script>
+
+<script type="text/html" id="aliada_busy_message_template">
+    <h1>
+        Espera un momento por favor...
+    </h1>
+    <p class='loader_container'>
+        <%= image_tag("loader-medium.gif") %>
+    </p>
 </script>

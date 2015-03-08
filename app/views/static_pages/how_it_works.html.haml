@@ -1,0 +1,63 @@
+%section.header-section-wrapper
+  .gray-navigation
+    = render partial: "common/public_navigation"
+
+#old_static_container
+
+  #como-funciona.contenedor960
+    #funcionamiento
+      %h3 ¿Cómo funciona aliada?
+      .paso
+        .icono
+          = image_tag("old_version/ubica-domicilio.png", { :title => "Ubica tu aliada más cercana" })
+        .explica
+          Ingresa tu código postal. <br>
+          Así ubicaremos a tu aliada más cercana.
+      .paso
+        .icono
+          = image_tag("old_version/agenda-visita.png", { :title => "Agenda y reserva tu servicio" })
+        .explica
+          Agenda y reserva tu servicio. <br>
+          Selecciona el día y hora que necesitas a tu aliada
+      .paso
+        .icono
+          = image_tag("old_version/pago-seguro-verde.png", { :title => "Paga de manera segura" })
+        .explica
+          Paga de manera segura con tu tarjeta de débito o crédito desde
+          nuestra plataforma. No más pagos en efectivo.
+
+      .paso
+        .icono
+          = image_tag("old_version/relajate.png", { :title => "Relájate" })
+        .explica
+          Relájate. La aliada llegará puntal en el día y hora que la <br>
+          necesites para que tu puedas dedicarte a las cosas que <br>
+          realmente te apasionan.
+
+    #preguntas
+      %h4 Preguntas frecuentes
+      %p.pregunta ¿Qué está incluido en el servicio?
+      %p Nuestros servicios principales son limpieza general (barrer, trapear, sacudir, etc.), lavado y planchado de ropa. El detalle de los servicios incluidos se puede consultar en nuestro checklist de limpieza.
+      %p.pregunta ¿Qué tarjetas acepta Aliada?
+      %p De crédito y débito, Visa, Master Card y American Express.
+      %p.pregunta ¿Puedo cancelar/reagendar una visita?
+      %p Si necesitas cancelar o reagendar una cita, puedes hacerlo por medio de la página web.
+      %p
+        =link_to("Ir a preguntas frecuentes", "/faq")
+
+  #pide-aliada
+    .contenedor960
+      #listo-programar.izq
+        ¿Listo para programar tu visita?
+      #programa-visita.der
+        .boton-blanco
+          = link_to "/", {:class => "subirbbt", :style => "left: 13px; width: 240px; padding-top: 7px;"}  do
+            Programa tu visita <span>Desde $65 por hora</span>
+
+      #pago-seguro.izq
+        Paga en línea de forma segura. <br>
+        Sin dinero en efectivo, sin problemas.
+      #forma-de-pago.der
+        =image_tag("old_version/tarjetas-blanco.png", {:title => "Pago en línea"})
+
+= render partial: "common/footer"

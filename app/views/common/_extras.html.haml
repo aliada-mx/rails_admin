@@ -1,4 +1,4 @@
-%fieldset.checkboxes.large#extras
+%fieldset.checkboxes.extra_large#extras
   = form.collection_check_boxes(:extra_ids, Extra.all, :id, :name) do |builder|
     .check-box-container
       = builder.check_box data: { hours: builder.object.hours }
@@ -7,6 +7,6 @@
         = image_tag 'check-large.png', class: :checked
         .foot
           %h4
-            = "#{builder.text}"
+            = builder.text
           .small-letters
             = "+#{builder.object.hours} hora/s extra"

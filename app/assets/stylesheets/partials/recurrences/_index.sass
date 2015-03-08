@@ -1,0 +1,49 @@
+@import 'common/variables'
+@import 'common/mixins'
+
+.recurrence-header
+  +rem(margin-bottom, 4rem)
+  +rem(padding, 1rem)
+
+  .head
+    background-color: $purple
+    position: relative
+    +rem(padding, 3rem 2rem)
+
+    .action-link
+      display: inline-block
+      position: absolute
+      +rem(bottom, 1.5rem)
+      +rem(right, 1.5rem)
+
+      a
+        color: white
+        text-decoration: underline
+        +rem(font-size, 1.2rem)
+
+
+    .badge
+      background: transparent
+      color: white
+      position: absolute
+      +rem(right, 1.5rem)
+      +rem(top, 1.5rem)
+
+      img
+        display: inline-block
+        max-width: 25px
+        width: 100%
+
+    .title
+      color: white
+      font-weight: 600
+      letter-spacing: -2px
+      margin: 0
+      text-align: center
+      +rem(font-size, $extra-large-font)
+
+    .small-letters
+      color: white
+      font-style: italic
+      text-align: center
+      +rem(font-size,  $medium-font)

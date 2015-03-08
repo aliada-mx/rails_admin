@@ -3,7 +3,8 @@
         services: {
             initial: {}
         },
-        dialogs: {}
+        dialogs: {},
+        calendar: {}
     };
 
     aliada.conekta_public_key = '<%= @conekta_public_key %>';
@@ -14,4 +15,6 @@
 
     aliada.map_marker_icon = '<%= image_url("map-marker-icon.png") %>';
     aliada.default_map_zoom = 16;
+
+    aliada.rails_environment = '<%= Rails.env %>';
 </script>

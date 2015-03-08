@@ -8,22 +8,26 @@ aliada.services.initial.step_2_personal_info = function(aliada, ko){
   var on_step_2 = function(){ return aliada.ko.current_step() == 2 };
 
   // Knockout model
-  aliada.step_2_required_fields = [ 'email','first_name','last_name','phone','street','number','interior_number', 'colony', 'between_streets', 'city', 'state', 'postal_code' ]
 
+  // Batch extend and validate
+  aliada.step_2_required_fields = [ 'first_name', 'email', 'last_name','phone','street','number', 'colony', 'between_streets', 'city', 'state', 'postal_code_number' ]
   _.each(aliada.step_2_required_fields, function(element){
     aliada.ko[element] = ko.observable('').extend({ required: { onlyIf: on_step_2 } })
   });
 
   _(aliada.ko).extend({
+    email: ko.observable('').extend({
+      email: true
+    }),
     latitude: ko.observable(''),
     longitude: ko.observable(''),
+    interior_number: ko.observable(''),
     map_zoom: ko.observable(aliada.default_map_zoom),
   });
 
-
   // PERSONAL INFO
   aliada.ko.name_email_phone = ko.computed(function(){
-      name_email_phone = '';
+      var name_email_phone = '';
 
       if(aliada.ko.email()){
         name_email_phone += aliada.ko.email();
@@ -93,7 +97,7 @@ aliada.services.initial.step_2_personal_info = function(aliada, ko){
         aliada.ko.street(address.street || '');
         aliada.ko.number(address.number || '');
         aliada.ko.colony(address.colony || '');
-        aliada.ko.postal_code(address.postal_code || '');
+        aliada.ko.postal_code_number(address.postal_code || '');
 
         var latitude = address.place.geometry.location.lat();
         var longitude = address.place.geometry.location.lng();

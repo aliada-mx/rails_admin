@@ -115,6 +115,13 @@ es:
         bathrooms: baños
         bedrooms: recámaras
         estimated_hours: Horas estimadas 
+        entrance_instructions: ¿Estará en casa?
+        garbage_instructions: ¿Dónde depositará la basura?
+        cleaning_supplies_instructions: ¿Dónde están los utensilios de limpieza?
+        attention_instructions: Poner especial atención a 
+        equipment_instructions: Usar un producto o equipo específico para limpiar
+        forbidden_instructions: No limpiar /No tocar
+        special_instructions: Otras instrucciones especiales
       service_type:
       ticket:
         relevant_object: Servicio

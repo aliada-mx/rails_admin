@@ -27,6 +27,7 @@ class Service < ActiveRecord::Base
   has_many :extras, through: :extra_services
   has_many :schedules
   has_many :tickets, as: :relevant_object
+  has_one :score
 
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
@@ -76,21 +77,16 @@ class Service < ActiveRecord::Base
   # Callbacks
   def set_defaults
     self.status ||= 'created' if self.respond_to? :status
-    self.hours_before_service ||= get_hours_before_service if self.respond_to? :hours_before_service
-    self.hours_after_service ||= get_hours_after_service if self.respond_to? :hours_after_service
+    set_hours_before_after_service
   end
 
-  def get_hours_before_service
-    Setting.beginning_of_aliadas_day == datetime.try(:hour) ? 0 : Setting.hours_before_service
+  def set_hours_before_after_service
+    self.hours_before_service = Setting.beginning_of_aliadas_day == datetime.try(:hour) ? 0 : Setting.hours_before_service
+    self.hours_after_service = Setting.end_of_aliadas_day == datetime.try(:hour) ? 0 : Setting.hours_after_service
   end
 
-  def get_hours_after_service
-    Setting.end_of_aliadas_day == datetime.try(:hour) ? 0 : Setting.hours_after_service
-  end
-
-  def combine_date_time
-    Chronic.time_class = Time.zone
-    self.datetime = Chronic.parse "#{self.date} #{self.time}"
+  def combine_date_time(timezone)
+    self.datetime = Time.parse("#{self.date} #{self.time}").in_time_zone(timezone)
   end
 
   def ensure_recurrence!
@@ -127,7 +123,7 @@ class Service < ActiveRecord::Base
   # Starting now how many days we'll provide service to the end of
   # the recurrence
   def days_count_to_end_of_recurrency
-    recurrences_until_horizon(recurrence.periodicity)
+    wdays_until_horizon(Time.zone.now.wday, starting_from: starting_datetime_to_book_services)
   end
 
   def ending_datetime
@@ -140,7 +136,9 @@ class Service < ActiveRecord::Base
   end
 
   def book_aliada!(aliada_id: nil)
-    aliadas_availability = AvailabilityForService.find_aliadas_availability(self, aliada_id: aliada_id)
+    available_after = starting_datetime_to_book_services
+
+    aliadas_availability = AvailabilityForService.find_aliadas_availability(self, available_after, aliada_id: aliada_id)
 
     aliada_availability = AliadaChooser.find_aliada_availability(aliadas_availability, self)
 
@@ -177,23 +175,31 @@ class Service < ActiveRecord::Base
     end
   end
 
-  def self.create_initial!(service_params)
-    address = Address.create!(service_params[:address])
-    user = User.create!(service_params[:user])
-    service = Service.new(service_params.except!(:user, :address))
+  def self.create_initial!(service_params, timezone)
+    ActiveRecord::Base.transaction do
+      address = Address.create!(service_params[:address])
+      user = User.create!(service_params[:user])
+      service = Service.new(service_params.except!(:user, :address))
 
-    service.address = address
-    service.user = user
-    service.combine_date_time
-    service.ensure_recurrence!
+      service.address = address
+      service.user = user
+      service.combine_date_time(timezone)
+      service.set_hours_before_after_service
+      service.ensure_recurrence!
 
-    service.save!
+      service.save!
 
-    user.create_first_payment_provider!(service_params[:payment_method_id])
-    user.ensure_first_payment!(service_params)
+      user.create_first_payment_provider!(service_params[:payment_method_id])
+      user.ensure_first_payment!(service_params)
 
-    service.book_aliada!
-    service
+      service.book_aliada!
+      return service
+    end
+  end
+
+  #TODO: rename price column to cost and caluculate this value
+  def cost
+    100
   end
 
   # Validations

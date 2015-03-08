@@ -1,0 +1,79 @@
+@import 'common/variables'
+@import 'common/mixins'
+
+.white-navigation
+  ul.nav
+    a
+      color: white
+
+.gray-navigation
+  ul.nav
+    a
+      color: $medium_gray
+
+.header-container
+  +rem(margin, 1.5rem 0)
+  +rem(padding, 1.5rem 0)
+  vertical-align: middle
+  width: 100%
+
+  .nav-container
+    text-align: right
+    vertical-align: middle
+
+    ul.nav
+      display: inline-block
+      font-weight: 600
+      list-style: none
+      +rem(margin, 0.5rem 0 0)
+      padding: 0
+      vertical-align: middle
+      +rem(font-size, 1.5rem)
+
+      li
+        display: inline-block
+        +rem(margin-right, 1.5rem)
+        vertical-align: inherit
+
+        .icon-user
+          font-weight: bolder
+          &:before
+            +rem(font-size, 2rem)
+            vertical-align: top
+
+        a:hover
+          +soft-transition
+          color: $light_gray
+
+      li:last-child
+        margin-right: 0
+
+        a
+          padding: 5px 20px
+          text-decoration: none
+
+        .action-button-gray
+          color: white !important
+
+.btnns
+  .bt11
+    background-color: white
+    color: #aa80fe
+    border: solid 2px #aa80fe
+    width: 40%
+    display: inline-block
+    -webkit-border-radius: 10px
+    -moz-border-radius: 10px
+    -ms-border-radius: 10px
+    -o-border-radius: 10px
+    border-radius: 10px
+  .bt12
+    color: white
+    background-color: #aa80fe
+    width: 20%
+    display: inline-block
+    -webkit-border-radius: 10px
+    -moz-border-radius: 10px
+    -ms-border-radius: 10px
+    -o-border-radius: 10px
+    border-radius: 10px

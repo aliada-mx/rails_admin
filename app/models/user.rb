@@ -25,8 +25,7 @@ class User < ActiveRecord::Base
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+  devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable
 
   before_validation :ensure_password
   before_validation :set_default_role
@@ -39,7 +38,8 @@ class User < ActiveRecord::Base
 
 
   def self.email_exists?(email)
-    User.find_by_email(email).present?
+    ## Devise is configured to save emails in lower case
+    User.find_by_email(email.strip.downcase).present?
   end
 
   def create_first_payment_provider!(payment_method_id)
@@ -110,6 +110,10 @@ class User < ActiveRecord::Base
 
   def admin?
     role == 'admin'
+  end
+
+  def timezone
+    'Mexico City'
   end
 
   rails_admin do

@@ -1,0 +1,40 @@
+%section.header-section-wrapper
+  .gray-navigation
+    = render partial: "common/public_navigation"
+
+
+#old_static_container
+  #lista-precios.contenedor960
+    %h3 Precios
+
+    .tabulador-precios
+      .tipo-visita
+        .tipo-titulo
+          Limpieza única
+        .precio
+          $105
+          %span por hora
+      %ul.incluye
+        %li Aliada profesional y capacitada
+        %li Con referencias validadas
+        %li Atención telefónica
+        %li Sólo pagas las horas utilizadas
+      =link_to("Programa tu visita", "/", {:class => 'boton-morado'})
+
+    .tabulador-precios
+      .tipo-visita
+        .tipo-titulo
+          Limpieza semanal
+        .precio
+          $65
+          %span por hora
+      %ul.incluye
+        %li Aliada profesional y capacitada
+        %li Con referencias validadas
+        %li Atención telefónica
+        %li Sólo pagas las horas utilizadas
+        %li La misma aliada cada visita
+        %li Precio especial
+      =link_to("Programa tu visita", "/", {:class => 'boton-morado'})
+
+= render partial: "common/footer"

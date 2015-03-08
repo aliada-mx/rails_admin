@@ -6,16 +6,28 @@ class Address < ActiveRecord::Base
   belongs_to :postal_code
   has_many :services
 
-  validates_presence_of :postal_code
+  validate :postal_code_or_number
 
   before_validation :ensure_postal_code!
+
+  def postal_code_or_number
+    message = I18n.t('address.validations.postal_code_failed')
+
+    valid = self.postal_code_id.present?
+
+    unless valid
+      valid = self.postal_code_number.present? ? PostalCode.find_by_number(self.postal_code_number).present? : false
+    end
+
+    errors.add(:postal_code, message) if !valid
+  end
 
   # An address might be instantiated with a postal code code and not a PostalCode object
   def ensure_postal_code!
     return if postal_code_id.present?
 
     if postal_code_number.present?
-      self.postal_code = PostalCode.find_by!(code: postal_code_number)
+      self.postal_code = PostalCode.find_by!(number: postal_code_number)
       self.save!
     end
   end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150303013440) do
+ActiveRecord::Schema.define(version: 20150308025352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -159,6 +159,7 @@ ActiveRecord::Schema.define(version: 20150303013440) do
     t.datetime "updated_at",                        null: false
     t.string   "name",                  limit: nil
     t.string   "payment_provider_type"
+    t.boolean  "disabled"
   end
 
   create_table "payment_provider_choices", id: false, force: true do |t|
@@ -184,7 +185,7 @@ ActiveRecord::Schema.define(version: 20150303013440) do
   add_index "payments", ["user_id"], name: "index_payments_on_user_id", using: :btree
 
   create_table "postal_codes", force: true do |t|
-    t.string   "code",       limit: nil
+    t.string   "number",     limit: nil
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
     t.string   "name"
@@ -231,7 +232,7 @@ ActiveRecord::Schema.define(version: 20150303013440) do
     t.integer  "service_id"
   end
 
-  add_index "scores", ["service_id"], name: "index_scores_on_service_id", using: :btree
+  add_index "scores", ["service_id"], name: "index_scores_on_service_id", unique: true, using: :btree
   add_index "scores", ["user_id"], name: "index_scores_on_user_id", using: :btree
 
   create_table "service_types", force: true do |t|
@@ -263,8 +264,6 @@ ActiveRecord::Schema.define(version: 20150303013440) do
     t.integer  "aliada_id"
     t.datetime "datetime"
     t.decimal  "estimated_hours",                            precision: 10, scale: 3
-    t.boolean  "bring_cleaning_products"
-    t.text     "entrance_instructions"
     t.text     "cleaning_supplies_instructions"
     t.text     "garbage_instructions"
     t.text     "attention_instructions"
@@ -272,6 +271,7 @@ ActiveRecord::Schema.define(version: 20150303013440) do
     t.text     "forbidden_instructions"
     t.time     "begin_time"
     t.time     "end_time"
+    t.boolean  "entrance_instructions"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree

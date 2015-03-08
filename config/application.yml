@@ -26,6 +26,7 @@ defaults: &defaults
   bathrooms_multiplier: 0.5 # to get hours
   minimum_hours_service: 3
   cost_per_hour: 65
+  booking_for_tomorrow_limit: 17 # After this hour you cant book a service for tomorrow
 
 development:
   <<: *defaults

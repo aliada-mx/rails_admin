@@ -6,6 +6,10 @@ class ServiceType < ActiveRecord::Base
 
   validates :name, inclusion: {in: NAMES.map{ |pairs| pairs[0] } }
 
+  def self.recurrent
+    ServiceType.where(name: 'recurrent').first 
+  end
+
   def recurrent?
     name == 'recurrent'
   end
