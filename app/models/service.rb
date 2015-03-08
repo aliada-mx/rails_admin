@@ -167,7 +167,7 @@ class Service < ActiveRecord::Base
     minutes = self.end_time.min - self.begin_time.min 
     amount = (hours*(self.service_type.price_per_hour))+(minutes * ((self.service_type.price_per_hour)/60.0))
     
-   binding.pry
+   #binding.pry
     if amount > 0 && (self.end_time.to_date === self.begin_time.to_date)
       return amount
     else
