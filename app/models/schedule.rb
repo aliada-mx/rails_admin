@@ -34,6 +34,12 @@ class Schedule < ActiveRecord::Base
     label_plural 'horas de servicio'
     navigation_label 'Operación'
     navigation_icon 'icon-calendar'
+
+    configure :datetime do
+      pretty_value do
+        value.in_time_zone('Mexico City')
+      end
+    end
   end
 
   private

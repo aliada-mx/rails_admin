@@ -55,8 +55,10 @@ puts '11800 postal code'
 FactoryGirl.create(:postal_code, :zoned, zone: zone, number: '11800')
 
 puts 'schedules for the month'
-create_recurrent!(Time.zone.now.change({hour: 7}), hours: 6, periodicity: 7, conditions: {aliada: aliada, zone: zone})
-create_recurrent!(Time.zone.now.change({hour: 7})+1.day, hours: 6, periodicity: 7, conditions: {aliada: aliada, zone: zone})
+Time.zone = 'Mexico City'
+starting_datetime = Time.zone 
+create_recurrent!(Time.zone.now.change({hour: 7}), hours: 6, periodicity: 7, timezone: 'Mexico City', conditions: {aliada: aliada, zone: zone})
+create_recurrent!(Time.zone.now.change({hour: 7})+1.day, hours: 6, periodicity: 7, timezone: 'Mexico City',  conditions: {aliada: aliada, zone: zone})
 
 puts 'Conekta payment method'
 PaymentMethod.create!(name: 'Pago con tarjeta', payment_provider_type: 'ConektaCard')

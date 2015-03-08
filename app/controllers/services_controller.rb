@@ -30,7 +30,7 @@ class ServicesController < ApplicationController
 
   def create_initial
     begin
-      service = Service.create_initial!(service_params)
+      service = Service.create_initial!(service_params, @current_timezone)
     rescue ActiveRecord::RecordInvalid => invalid
       return render json: { status: :error, code: :invalid, message: invalid.message }
     end
@@ -108,6 +108,13 @@ class ServicesController < ApplicationController
                                       :conekta_temporary_token,
                                       :aliada_id,
                                       :incomplete_service_id,
+                                      :entrance_instructions,
+                                      :garbage_instructions,
+                                      :cleaning_supplies_instructions,
+                                      :attention_instructions,
+                                      :equipment_instructions,
+                                      :forbidden_instructions,
+                                      :special_instructions,
                                       user: [
                                         :first_name,
                                         :last_name,

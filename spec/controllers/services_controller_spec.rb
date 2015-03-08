@@ -34,12 +34,16 @@ feature 'ServiceController' do
       @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
       Capybara.ignore_hidden_elements = false
 
+      @original_tz = ENV['TZ']
+      ENV['TZ'] = 'UTC'
+
       visit initial_service_path
     end
 
     after do
       Timecop.return
       Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
+      ENV['TZ'] = @original_tz
     end
 
     it 'redirects the logged in user to new service' do
@@ -92,7 +96,13 @@ feature 'ServiceController' do
         expect(service.estimated_hours).to eql 3
         expect(service.bathrooms).to eql 1
         expect(service.bedrooms).to eql 1
-        expect(service.special_instructions).to eql 'nada'
+
+        expect(service.special_instructions).to eql 'Algo especial'
+        expect(service.garbage_instructions).to eql 'Algo de basura'
+        expect(service.attention_instructions).to eql 'al perrito'
+        expect(service.equipment_instructions).to eql 'con pinol mis platos'
+        expect(service.forbidden_instructions).to eql 'no tocar mi colección de amiibos'
+        expect(service.entrance_instructions).to eql true
 
         expect(user.first_name).to eql 'Guillermo'
         expect(user.last_name).to eql 'Siliceo'

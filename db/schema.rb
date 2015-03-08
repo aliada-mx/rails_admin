@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150305181502) do
+ActiveRecord::Schema.define(version: 20150308025352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -263,14 +263,13 @@ ActiveRecord::Schema.define(version: 20150305181502) do
     t.integer  "aliada_id"
     t.datetime "datetime"
     t.decimal  "estimated_hours",                precision: 10, scale: 3
-    t.boolean  "bring_cleaning_products"
-    t.text     "entrance_instructions"
     t.text     "cleaning_supplies_instructions"
     t.text     "garbage_instructions"
     t.text     "attention_instructions"
     t.text     "equipment_instructions"
     t.text     "forbidden_instructions"
     t.integer  "zone_id"
+    t.boolean  "entrance_instructions"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
