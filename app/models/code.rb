@@ -6,10 +6,9 @@ class Code < ActiveRecord::Base
     visible false
   end
 
-  def self.generate_unique_code user
+  def self.generate_unique_code user, code_type
     c = Code.new
     c.user = user
-    code_type = CodeType.find_by(name: 'personal')
     c.code_type = code_type
     c.amount =  code_type.value 
     name = self.generate_unique_name user.first_name

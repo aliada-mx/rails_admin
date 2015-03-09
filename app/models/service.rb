@@ -183,6 +183,7 @@ class Service < ActiveRecord::Base
       address = Address.create!(service_params[:address])
       user = User.create!(service_params[:user])
       service = Service.new(service_params.except!(:user, :address))
+      code_type = CodeType.find_by(name: "personal")
 
       service.address = address
       service.user = user
@@ -196,6 +197,7 @@ class Service < ActiveRecord::Base
       user.create_first_payment_provider!(service_params[:payment_method_id])
       user.ensure_first_payment!(service_params)
       user.send_welcome_email
+      user.create_promotional_code code_type
 
       service.book_aliada!
       return service

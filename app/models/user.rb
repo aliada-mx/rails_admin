@@ -28,8 +28,6 @@ class User < ActiveRecord::Base
   before_validation :ensure_password
   before_validation :set_default_role
 
-  after_create :create_promotional_code
-
   default_scope { where('users.role in (?)', ['client', 'admin']) }
 
   validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
@@ -37,9 +35,9 @@ class User < ActiveRecord::Base
   validates_confirmation_of :password, if: :password_required?
   validates_length_of :password, within: Devise.password_length, allow_blank: true
   
-  def create_promotional_code
+  def create_promotional_code code_type
     if self.role == "client"
-      Code.generate_unique_code self
+      Code.generate_unique_code self, code_type
     end
   end
 
