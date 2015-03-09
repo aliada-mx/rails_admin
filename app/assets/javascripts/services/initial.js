@@ -109,7 +109,7 @@ $(document).ready(function() {
           aliada.services.initial.$form.submit();
           return;
         case 5:
-          aliada.services.edit.$form.submit();
+          aliada.services.initial.$form.submit();
           return;
         default:
           break;

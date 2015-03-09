@@ -108,6 +108,7 @@ feature 'ServiceController' do
         expect(user.last_name).to eql 'Siliceo'
         expect(user.email).to eql 'guillermo.siliceo@gmail.com'
         expect(user.phone).to eql '5585519954'
+        expect(user.default_address).to eql address
 
       end
 

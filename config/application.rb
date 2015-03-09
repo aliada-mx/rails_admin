@@ -25,7 +25,20 @@ module AliadaWebApp
     config.generators do |g|
       g.test_framework :rspec
     end
-     
+
+
     Conekta.api_key = Rails.application.secrets.conekta_secret_key
+
+    ActionMailer::Base.delivery_method = :smtp
+
+    ActionMailer::Base.smtp_settings = {
+      :address        => 'smtp.sendgrid.net',
+      :port           => '587',
+      :authentication => :plain,
+      :user_name      => ENV['SENDGRID_USERNAME'],
+      :password       => ENV['SENDGRID_PASSWORD'],
+      :domain         => 'heroku.com',
+      :enable_starttls_auto => true
+    }
   end
 end

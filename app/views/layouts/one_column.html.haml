@@ -4,9 +4,10 @@
       = render partial: 'common/header'
 
     .row
-      %nav
-        = render partial: 'common/inner_navigation'
+      = render partial: 'common/inner_navigation'
 
     .row
       %main
         = yield
+
+= render partial: "common/footer"

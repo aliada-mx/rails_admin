@@ -1,4 +1,3 @@
-
 aliada.services.initial.step_5_success = function(aliada, ko){
 
   _(aliada.ko).extend({

@@ -1,19 +1,20 @@
-.inner-top-nav-wrapper.col-lg-12
-  %ul.inner-top-nav
-    %li.actions
-      %a.action-button-green.size-large{href: previous_services_users_path(@user)}
-        Próximas visitas
-    %li.actions
-      %a.action-button-green.size-large{href: next_services_users_path(@user)}
-        Próximas visitas
-    %li.actions
-      %a.action-button-purple.size-large
-        %span.icon-small-wand
-        Limpieza gratis
+%nav.inner
+  .inner-top-nav-wrapper.col-lg-12
+    %ul.inner-top-nav
+      %li.actions
+        %a.action-button-green.size-large{href: next_services_users_path(@user)}
+          Próximas visitas
+      %li.actions
+        %a.action-button-green.size-large{href: previous_services_users_path(@user)}
+          Historial de visitas
+      %li.actions
+        %a.action-button-purple.size-large
+          %span.icon-small-wand
+          Limpieza gratis
 
-  .balance-section
-    .label
-      Crédito
-      %span.icon-help-with-circle
-    .balance
-      $100
+    .balance-section
+      .label
+        Crédito
+        %span.icon-help-with-circle
+      .balance
+        $100

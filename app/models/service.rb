@@ -88,6 +88,10 @@ class Service < ActiveRecord::Base
     timezone_offset_seconds / 3600
   end
 
+  def cost
+    65
+  end
+
   # Callbacks
   def set_defaults
     self.status ||= 'created' if self.respond_to? :status
@@ -188,8 +192,10 @@ class Service < ActiveRecord::Base
 
       service.save!
 
+      user.addresses << address
       user.create_first_payment_provider!(service_params[:payment_method_id])
       user.ensure_first_payment!(service_params)
+      user.send_welcome_email
 
       service.book_aliada!
       return service
@@ -251,6 +257,10 @@ class Service < ActiveRecord::Base
     label_plural 'servicios'
     navigation_label 'Operación'
     navigation_icon 'icon-home'
+    configure :schedules do
+      visible false
+    end
+
     list do
       sort_by :datetime
 

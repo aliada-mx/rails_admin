@@ -29,8 +29,16 @@ class User < ActiveRecord::Base
 
   validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
 
+  validates_presence_of :password, if: :password_required?
+  validates_confirmation_of :password, if: :password_required?
+  validates_length_of :password, within: Devise.password_length, allow_blank: true
+
+  def password_required?
+    !persisted? || !password.nil? || !password_confirmation.nil?
+  end
+
   def self.email_exists?(email)
-    ## Devise is configured to save emails in lower case
+    ## Devise is configured to save emails in lower case lets search them like so
     User.find_by_email(email.strip.downcase).present?
   end
 
@@ -47,6 +55,10 @@ class User < ActiveRecord::Base
 
     # The newest is the default
     PaymentProviderChoice.create!(payment_provider: payment_provider, default: true, user: self)
+  end
+
+  def default_address
+    addresses.first
   end
 
   def default_payment_provider
@@ -75,6 +87,10 @@ class User < ActiveRecord::Base
 
   def timezone
     'Mexico City'
+  end
+
+  def send_welcome_email
+    UserMailer.welcome_email(self).deliver!
   end
 
   rails_admin do
@@ -106,7 +122,9 @@ class User < ActiveRecord::Base
       field :phone
       group :login_info do
         active false
-        field :password
+        field :password do
+          required false
+        end
         field :password_confirmation
         field :current_sign_in_at
         field :sign_in_count
