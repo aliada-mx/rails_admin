@@ -73,9 +73,9 @@ class User < ActiveRecord::Base
         create_service_charge_failed_ticket(service_id, amount, err)
       end
     else
-      Ticket.create_warning(relevant_object_id: service_id,
-                            relevant_object_type: 'Service',
-                            message: "Se intento cobrar servicio #{service_id} pero no ha concluido o no existe")
+      Ticket.create_warning(relevant_object_id: self.id,
+                            relevant_object_type: 'User',
+                            message: "Se intento cobrar servicio de cliente: #{self.id} pero no ha concluido o no existe")
     end  
   end
   
