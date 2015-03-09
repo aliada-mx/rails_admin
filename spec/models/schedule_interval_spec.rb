@@ -45,4 +45,16 @@ describe 'ScheduleInterval' do
       (schedule_interval - other_schedule_interval) == difference
     end
   end
+
+  describe '#include?' do
+    before :each do
+      @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime)
+    end
+
+    it 'returns true if the interval includes the passed schedule' do
+      schedule = Schedule.new(datetime: starting_datetime + 1.hour)
+
+      expect(@schedule_interval.include? schedule).to be true
+    end
+  end
 end

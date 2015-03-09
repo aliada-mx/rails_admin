@@ -35,7 +35,6 @@ aliada.services.initial.live_feedback = function($form){
 
           aliada.dialogs.postal_code_number_missing(postal_code_number);
           aliada.ko.current_step(2);
-          aliada.ko.postal_code_number(''); // Delete it to invalidate the form
           $form.find('#service_address_postal_code_number').select();
         }
       },
@@ -47,6 +46,11 @@ aliada.services.initial.live_feedback = function($form){
 
   $form.on('change',function(e){
     var $input = $(e.target);
+
+    var current_step = aliada.ko.current_step();
+    if(current_step == 4){
+      return;
+    }
 
     switch($input.attr('id')){
       case 'service_user_email':

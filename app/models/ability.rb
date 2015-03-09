@@ -32,16 +32,19 @@ class Ability
             end
           end
         elsif subject_class == Service
-          if [:new_service, :edit_service, :new, :read, :update, :edit].include? action
+          if [:new, :read, :update, :edit, :create].include? action
             if current_user.admin?
               true
             elsif !params.include? :user_id
               false
-            elsif params.include?(:user_id) && action == :new
-              current_user.id == params[:user_id].to_i
+            # Editing a service
             elsif params.include? :service_id
               Service.find(params[:service_id]).user_id == current_user.id
-            elsif subject.present? # subject is the user being edited, read, updated...
+            # Adding a new service
+            elsif params.include?(:user_id)
+              current_user.id == params[:user_id].to_i
+            # subject being edited, read, updated...
+            elsif subject.present? 
               subject.user.id == current_user.id
             else
               false

@@ -1,6 +1,6 @@
 <script type="text/html" id="email_already_exists_template">
     <p>
-        Tú o alguien más con el email <b><%%= email %></b> ya ha usado aliada antes.
+        Tú o alguien más con el email <b>{{ email }}</b> ya ha usado aliada antes.
     </p>
 
     <fieldset>
@@ -17,7 +17,7 @@
         Me gustaría que aliada estuviera aqui
     </h1>
     <p class='left'>
-        Desafortunadamente aliada no está disponible en tu zona por el momento.
+        Desafortunadamente aliada no está disponible en tu zona(C.P. {{ postal_code_number }}) por el momento.
         <br>
         Por favor ten paciencia mientras hacemos el máximo esfuerzo para crecer y ayudar a más personas.
         <br>
@@ -41,7 +41,7 @@
         Lo sentimos, algo salió mal con aliada.mx ya estamos enterados y estamos trabajando para arreglarlo lo más rápido posible.
     </p>
     <p>
-        <%%= error %>
+        {{ error }}
     </p>
 </script>
 
@@ -53,7 +53,7 @@
         Lo sentimos, algo salió mal al guardar tu tarjeta de crédito.
     </p>
     <p>
-        <%%= error %>
+        {{ error }}
     </p>
     <p>
         Prueba con otra tarjeta por favor.
@@ -68,7 +68,7 @@
         Lo sentimos, algo salió mal al guardar tu servicio, por favor revisa.
     </p>
     <p>
-        <%%= error %>
+        {{ error }}
     </p>
 </script>
 

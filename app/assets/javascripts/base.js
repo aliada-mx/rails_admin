@@ -6,7 +6,6 @@
 //
 //= require knockout
 //= require knockout.validation
-//= require knockout.punches.min
 //= require knockout_custom_bindings
 //
 //= require underscore
@@ -64,4 +63,14 @@ aliada.unblock_ui = function(){
     $.unblockUI();
 }
 
+// Configure underscore template interpolation to use {{ variable }}
+_.templateSettings = {
+  evaluate:    /\{\{#([\s\S]+?)\}\}/g,            // {{# console.log("blah") }}
+  interpolate: /\{\{[^#\{]([\s\S]+?)[^\}]\}\}/g,  // {{ title }}
+  escape:      /\{\{\{([\s\S]+?)\}\}\}/g,         // {{{ title }}}
+}
 
+// Utility to redirect to some url
+function redirect_to(url){
+  window.location.replace(url);
+}

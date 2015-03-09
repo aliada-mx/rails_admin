@@ -4,32 +4,32 @@
 
   %ul.summary
     %li{data: {bind: 'css: {checked: current_step() >= 1}'}}
-      %span Duración del servicio: {{ hours }} horas 
-      %a.small-letters{data: {bind: 'visible: current_step() > 1, click: function(){ go_to_step(1) } '}} 
+      %span{data: {bind: 'text_: "Duración del servicio: {{ hours }} horas "'}} 
+      %a.small-letters{data: {bind: 'visible: are_fields_editable("hours"), click: function(){ aliada.ko.current_step(1) } '}} 
         %icon.pencil.small
         editar
 
     %li{data: {bind: 'css: {checked: is_address_done, unchecked: !is_address_done()}'}}
-      %span {{ address }}
-      %a.small-letters{data: {bind: 'visible: (is_address_done() && current_step() !== 2), click: function(){ go_to_step(2) } '}} 
+      %span{data: {bind: 'text: address'}}
+      %a.small-letters{data: {bind: 'visible: are_fields_editable("address"), click: function(){ aliada.ko.current_step(2) } '}} 
         %icon.pencil.small
         editar
 
     %li{data: {bind: 'css: {checked: is_name_email_phone_done, unchecked: !is_name_email_phone_done()}'}}
-      %span {{ name_email_phone }}
-      %a.small-letters{data: {bind: 'visible: (is_name_email_phone_done() && current_step() !== 3), click: function(){ go_to_step(3) } '}} 
+      %span{data: {bind: 'text: name_email_phone'}}
+      %a.small-letters{data: {bind: 'visible: are_fields_editable("name_email_phone"), click: function(){ aliada.ko.current_step(2) } '}} 
         %icon.pencil.small
         editar
 
-    %li{data: {bind: 'css: {checked: current_step() >= 4, unchecked: current_step() < 4}'}}
-      %span {{ date_hour }}
-      %a.small-letters{data: {bind: 'visible: current_step() > 4, click: function(){ go_to_step(4) } '}} 
+    %li{data: {bind: 'css: {checked: is_datetime_done, unchecked: !is_datetime_done()}'}}
+      %span{data: {bind: 'text: friendly_datetime'}}
+      %a.small-letters{data: {bind: 'visible: are_fields_editable("datetime"), click: function(){ aliada.ko.current_step(3) } '}} 
         %icon.pencil.small
         editar
 
   .foot
-    %span.hours {{ hours }} horas:
-    %span.cash ${{ price }} 
+    %span.hours{data: {bind: 'text_: "{{ hours }} horas:"'}}
+    %span.cash{data: {bind: 'text_: "${{ price }}"'}}
   .promotional-code{data: {bind: 'visible: current_step() == 5'}}
     %a
       APLICAR
