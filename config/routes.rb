@@ -35,7 +35,9 @@ Rails.application.routes.draw do
 
     get 'servicio/nuevo', to: 'services#new', as: :new_service
     post 'servicio/create', to: 'services#create', as: :create_service
+
     get 'servicio/:service_id', to: 'services#edit', as: :edit_service, service_id: /\d+/
+    post 'servicio/:service_id', to: 'services#update', as: :update_service, service_id: /\d+/
 
     post 'conekta_card/create', to: 'conekta_cards#create', as: :create_conekta_card
   end

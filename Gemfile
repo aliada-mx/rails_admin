@@ -76,6 +76,9 @@ gem 'rails_admin', github: 'grillermo/rails_admin'
 # permissions
 gem 'cancancan'
 
+# MAILING
+#
+gem 'smtpapi'
 
 group :development, :test do
   # Call 'pry' anywhere in the code to stop execution and get a debugger console

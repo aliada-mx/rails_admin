@@ -10,6 +10,7 @@ class UsersController < ApplicationController
   end
 
   def next_services
+    @services = @user.services.in_the_future.to_a
   end
 
   def previous_services

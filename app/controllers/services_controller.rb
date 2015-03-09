@@ -8,8 +8,12 @@ class ServicesController < ApplicationController
   include ServiceHelper
 
   def initial
-    if user_signed_in?
-      redirect_to new_service_users_path(current_user)
+    if user_signed_in? 
+      if current_user.admin?
+        @user = current_user
+      else
+        redirect_to new_service_users_path(current_user)
+      end
     end
 
     @incomplete_service = IncompleteService.create!
@@ -22,15 +26,16 @@ class ServicesController < ApplicationController
   end
 
   def update
+    service = @user.services.find(params[:service_id])
+    service.update_attributes!(service_params.except(:user, :address))
+
+    next_services_path = next_services_users_path(user_id: @user.id, service_id: service.id)
+
+    return render json: { status: :success, next_path: next_services_path }
   end
 
   def edit
-    service = @user.services.find(params[:service_id])
-    service.update_attributes!(service_params)
-
-    next_services_path = next_services_users(user_id: @user.id, service_id: service_id)
-
-    return render json: { status: :success, next_path: next_services_path }
+    @service = @user.services.find(params[:service_id])
   end
 
   def create_initial

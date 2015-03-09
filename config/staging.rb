@@ -105,8 +105,4 @@ Rails.application.configure do
       :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY']
     }
   }
-
-
-  SendgridToolkit.api_user = "app33559077@heroku.com"
-  SendgridToolkit.api_key = "asy45n6r"
 end

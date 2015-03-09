@@ -27,6 +27,10 @@ class Recurrence < ActiveRecord::Base
     Time.weekdays.select{ |day| day[0] == weekday }.first.second
   end
 
+  def weekday_in_spanish
+    Time.weekdays.select{ |day| day[0] == weekday }.first.third
+  end
+
   def get_ending_datetime
     horizon
   end

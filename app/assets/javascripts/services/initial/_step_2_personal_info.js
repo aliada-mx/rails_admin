@@ -1,7 +1,6 @@
 //= require modules/geo-autocomplete
 //= require modules/map
 
-aliada.services.initial.step_2_personal_info = function(aliada, ko){
   var name_email_phone_default = 'Nombre, correo, teléfono';
   var address_default = 'Dirección';
 

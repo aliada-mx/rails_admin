@@ -1,3 +1,6 @@
+= append :navigation do
+  = render partial: 'common/inner_navigation'
+
 .new_service
   = form_for @service, url: create_service_users_path(@user) do |new_service_form|
     %main
@@ -35,7 +38,7 @@
       = new_service_form.hidden_field :time, data: {bind: 'value: time'}
 
     %aside
-      = render partial: 'services/initial/summary', locals: {initial_service_form: new_service_form}
+      = render partial: 'services/new/summary', locals: {initial_service_form: new_service_form}
 
-  = append :javascript do
-    = javascript_include_tag 'services/new'
+= append :javascript do
+  = javascript_include_tag 'services/new'
