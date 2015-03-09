@@ -148,8 +148,10 @@ end
 
 puts "MIGRANDO AGENDA"
 connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
-  
-  datetime = DateTime.parse"#{row["fecha"].to_s} #{row["hora"]} -0600"
+
+  tz = ActiveSupport::TimeZone.new 'Mexico City'
+  datetime = tz.parse("#{row["fecha"].to_s} #{row["hora"]}").to_datetime
+
   if datetime.minute != 0
     datetime = datetime - 30.minute
   end
@@ -173,7 +175,7 @@ connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
 
     address = User.find(clientes[row["clientes_id"]]).addresses.first
 
-    service = Service.find_or_initialize_by(status: status_service, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], bedrooms: row["recamaras"], bathrooms: row["banos"], service_type_id: type_service.id, datetime: datetime, special_instructions: row["indicacion_instrucciones_esp"], bring_cleaning_products: (row["incluir_productos_limpieza"] == 1), entrance_instructions: row["indicacion_entrada_aliada"], cleaning_supplies_instructions: row["indicacion_donde_utensilios_limpieza"], garbage_instructions: row["indicacion_donde_basura"], attention_instructions: row["indicacion_especial_atencion"], equipment_instructions: row["indicacion_equipo_especial"], forbidden_instructions: row["indicacion_no_tocar"], hours_before_service: 1, hours_after_service: 1, address_id: address.id, zone_id: address.postal_code.zone.id) do |add|
+    service = Service.find_or_initialize_by(status: status_service, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], bedrooms: row["recamaras"], bathrooms: row["banos"], service_type_id: type_service.id, datetime: datetime, special_instructions: row["indicacion_instrucciones_esp"], entrance_instructions: (row["indicacion_entrada_aliada"] == "Cliente en casa"), cleaning_supplies_instructions: row["indicacion_donde_utensilios_limpieza"], garbage_instructions: row["indicacion_donde_basura"], attention_instructions: row["indicacion_especial_atencion"], equipment_instructions: row["indicacion_equipo_especial"], forbidden_instructions: row["indicacion_no_tocar"], hours_before_service: 1, hours_after_service: 1, address_id: address.id, zone_id: address.postal_code.zone.id) do |add|
       add.billed_hours = row["duracion"] ? row["duracion"] : 0
       add.estimated_hours = row["duracion_aprox"]
     end
