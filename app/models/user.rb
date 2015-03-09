@@ -52,8 +52,8 @@ class User < ActiveRecord::Base
   # Given a service id, check whether status is finished,
   # charge the default service provider and change status to finished
   # 
-  def charge_service!(id_s)
-    service_to_charge = Service.find_by(id: id_s, user_id: self.id, status: 'finished')
+  def charge_service!(service_id)
+    service_to_charge = Service.find_by(id: service_id, user_id: self.id, status: 'finished')
     
     
    
@@ -62,21 +62,21 @@ class User < ActiveRecord::Base
         amount = service_to_charge.amount_to_bill
         product = OpenStruct.new({price: amount,
                                    description: 'Servicio aliada',
-                                   id: id_s})
+                                   id: service_id})
     
         default_payment_provider.charge!(product, self)
         
         
         ### Exception handler for when a users payment method does not riff  
       rescue Conekta::Error => err
-        Ticket.create_error(relevant_object_id: id_s,
+        Ticket.create_error(relevant_object_id: service_id,
                             relevant_object_type: 'Service',
                             message: "No se pudo realizar cargo de #{amount} a la tarjeta de #{self.first_name} #{self.last_name}. #{err.message_to_purchaser}")
       end
     else
-      Ticket.create_warning(relevant_object_id: id_s,
+      Ticket.create_warning(relevant_object_id: service_id,
                             relevant_object_type: 'Service',
-                            message: "Se intento cobrar servicio #{id_s} pero no ha concluido o no existe")
+                            message: "Se intento cobrar servicio #{service_id} pero no ha concluido o no existe")
     end  
   end
   
