@@ -67,7 +67,8 @@ class User < ActiveRecord::Base
         default_payment_provider.charge!(product, self)
         
         
-        ### Exception handler for when a users payment method does not riff  
+        ### Exception handler for when a user's payment method throws an exception
+        ### TODO: think about how to handle this for many payment providers
       rescue Conekta::Error => err
         Ticket.create_error(relevant_object_id: service_id,
                             relevant_object_type: 'Service',
