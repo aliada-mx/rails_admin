@@ -66,7 +66,7 @@ class ConektaCard < ActiveRecord::Base
   end
 
   def preauthorize!(user)
-    preauthorization = OpenStruct.new({price: 300,
+    preauthorization = OpenStruct.new({price: 3,
                                        description: "Pre-autorización de tarjeta #{id}",
                                        id: self.id})
     charge!(preauthorization, user)
