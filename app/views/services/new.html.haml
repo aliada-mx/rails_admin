@@ -1,0 +1,41 @@
+.new_service
+  = form_for @service, url: create_service_users_path(@user) do |new_service_form|
+    %main
+      %h1
+        Programa una nueva visita
+
+      %h4
+        ¿Cuántas horas necesitas?
+
+      = render partial: 'common/hours_selector', locals: {form: new_service_form}
+
+      = render partial: 'common/service_type_buttons', locals: {form: new_service_form}
+
+      = render partial: 'common/aliadas_selector', locals: {form: new_service_form}
+
+      %h4
+        Agrega tareas extras (extiende el tiempo de la visita)
+
+      = render partial: 'common/extras', locals: {form: new_service_form}
+
+      %p
+        %icon.icon-calendar
+        Elige el día de la visita
+      = render partial: 'common/calendar'
+      %p.smallis-letters
+        Si quieres reservar para más de un día al final podrás hacerlo.
+
+      %p
+        %icon.icon-clock
+        Selecciona la hora que más te convenga
+
+      = render partial: 'common/time_selector', locals: {form: new_service_form}
+
+      = new_service_form.hidden_field :date, data: {bind: 'value: date'}
+      = new_service_form.hidden_field :time, data: {bind: 'value: time'}
+
+    %aside
+      = render partial: 'services/initial/summary', locals: {initial_service_form: new_service_form}
+
+  = append :javascript do
+    = javascript_include_tag 'services/new'

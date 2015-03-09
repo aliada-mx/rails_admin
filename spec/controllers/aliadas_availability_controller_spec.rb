@@ -1,7 +1,7 @@
 feature 'AliadasAvailabilityController' do
   include TestingSupport::SchedulesHelper
   
-  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 07:00:00') }
+  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
   let(:one_time){ create(:service_type, name: 'one-time') }
   let(:recurrent){ create(:service_type) }
   let(:aliada){ create(:aliada) }
@@ -17,15 +17,12 @@ feature 'AliadasAvailabilityController' do
   describe 'for_calendar' do
     context 'user selected one time service' do
       before do
-        create_one_timer!(starting_datetime + 1.day, hours: 5, conditions: {aliada: aliada, zone: zone} )
+        create_one_timer!(starting_datetime + 1.day, hours: 5, conditions: {aliada: aliada, zone: zone}, timezone: 'UTC' )
         Timecop.freeze(starting_datetime)
-        @original_tz = ENV['TZ']
-        ENV['TZ'] = 'UTC'
       end
 
       after do
         Timecop.return
-        ENV['TZ'] = @original_tz
       end
 
       it 'returns a json with dates times included' do
@@ -37,7 +34,7 @@ feature 'AliadasAvailabilityController' do
         response = JSON.parse(page.body)
         available_date = (starting_datetime + 1.day).strftime('%Y-%m-%d')
         expect(response['dates_times'].has_key?(available_date)).to eql true
-        expect(response['dates_times'][available_date]).to eql [{"value" => "07:00","friendly_time" => " 7:00 am"}]
+        expect(response['dates_times'][available_date]).to eql [{"value" => "07:00","friendly_time" => " 7:00 am", "friendly_datetime"=>"Próx. viernes 02 de enero a las 07:00"}]
       end
     end
   end

@@ -3,7 +3,7 @@ feature 'ServiceController' do
   include TestingSupport::SchedulesHelper
   include TestingSupport::SharedExpectations::ConektaCardExpectations
 
-  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 07:00:00') }
+  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
   let!(:aliada) { create(:aliada) }
   let!(:zone) { create(:zone) }
   let!(:recurrent_service) { create(:service_type) }
@@ -16,26 +16,26 @@ feature 'ServiceController' do
   let!(:extra_2){ create(:extra, name: 'Limpieza de refri')}
   let!(:conekta_card){ create(:payment_method)}
     
+  before do
+    allow_any_instance_of(Service).to receive(:timezone).and_return('UTC')
+  end
+
   describe '#initial' do
     before do
       Timecop.freeze(starting_datetime)
 
       # The - 1 hour is needed because this hour is the one the aliada needs to get there from a previous service
-      create_recurrent!(starting_datetime + 1.day, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada})
+      create_recurrent!(starting_datetime + 1.day - 1.hour, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada}, timezone: 'UTC')
 
       expect(Address.count).to be 0
       expect(Service.count).to be 0
       expect(IncompleteService.count).to be 0
       expect(Aliada.count).to be 1
 
-
       # We have hidden elements in our initial service creation assitant 
       # because we don't show all the steps at once
       @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
       Capybara.ignore_hidden_elements = false
-
-      @original_tz = ENV['TZ']
-      ENV['TZ'] = 'UTC'
 
       visit initial_service_path
     end
@@ -43,7 +43,6 @@ feature 'ServiceController' do
     after do
       Timecop.return
       Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
-      ENV['TZ'] = @original_tz
     end
 
     it 'redirects the logged in user to new service' do
@@ -55,6 +54,7 @@ feature 'ServiceController' do
       expect(current_path).to eql new_service_users_path(user)
     end
 
+    # We have separate tests that uses VCR for the payment logic
     context 'Skipping the payment logic' do
       before :each do
         expect(User.where('role != ?', 'aliada').count).to be 0
@@ -146,6 +146,21 @@ feature 'ServiceController' do
         expect(Schedule.available.count).to be 5
         expect(Schedule.booked.count).to be 20
       end
+
+      it 'logs in the new user' do
+        fill_service_form(conekta_card, one_time_service, starting_datetime + 1.day, extra_1, zone)
+
+        click_button 'Confirmar visita'
+
+        service = Service.first
+        user = service.user
+
+        next_services = next_services_users_path(user)
+
+        visit next_services
+
+        expect(current_path).to eql next_services
+      end
     end
 
     context 'with real payment method' do
@@ -214,7 +229,7 @@ feature 'ServiceController' do
         expect(page.current_path).to eql edit_service_path
       end
 
-      it 'it doesnt let the user edit other users services' do
+      it 'doesnt let the user edit other users services' do
         login_as(user)
 
         edit_service_path = edit_service_users_path(user_id: admin.id, service_id: admin_service.id)
@@ -224,7 +239,7 @@ feature 'ServiceController' do
         expect(page.current_path).not_to eql edit_service_path
       end
 
-      it 'it let the user edit its own services' do
+      it 'let the user edit its own services' do
         login_as(user)
 
         edit_service_path = edit_service_users_path(user_id: user.id, service_id: user.id)
@@ -236,7 +251,7 @@ feature 'ServiceController' do
     end
 
     describe '#new' do
-      it 'it let the user view the new service page' do
+      it 'let the user view the new service page' do
         login_as(user)
 
         new_service_path = new_service_users_path(user)

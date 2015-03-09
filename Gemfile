@@ -61,7 +61,7 @@ gem 'nestive'
 # Authentication
 gem 'devise'
 
-# Time pargin
+# Time parsing for humans
 gem 'chronic'
 
 # PAYMENT SYSTEMS
@@ -71,9 +71,11 @@ gem 'conekta'
 gem 'invert'
 
 # ADMIN
+# 
 gem 'rails_admin', github: 'grillermo/rails_admin'
 # permissions
 gem 'cancancan'
+
 
 group :development, :test do
   # Call 'pry' anywhere in the code to stop execution and get a debugger console

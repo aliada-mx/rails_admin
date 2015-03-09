@@ -1,13 +1,18 @@
 aliada.services.initial.initialize_calendar_times = function(){
   function on_calendar_day_click($el, $content, times, dateProperties){
+    // Reload times
     aliada.ko.times(times || []);
+      
+    // Reset the time
+    aliada.ko.time.default();
 
+    // Set the date
     aliada.ko.date(dateProperties.strdate);
 
     // Broadcast the change so live_feedback can report it
-    aliada.services.initial.form.trigger('change');
+    aliada.services.initial.$form.trigger('change');
 
-    // Only interact with available dates
+    // Bail if there are no available hours
     if( !$el.hasClass('fc-content') ){
       return;
     }
@@ -49,23 +54,19 @@ aliada.services.initial.initialize_calendar_times = function(){
     aliada.calendar.lock(calendar);
 
     // Invalidate the step to force the user to choose
-    aliada.ko.date('');
-    aliada.ko.time('');
+    aliada.ko.date.default();
+    aliada.ko.time.default();
+    // Reset our summary
+    aliada.ko.friendly_datetime.default();
 
     // Get data from server
     aliada.calendar.get_dates_times(hours, service_type_id, postal_code_number).then(function(dates_times){
         // Update the calendar
         calendar.setData(dates_times);
 
-        // Select first date of the calendar as a default
-        var date = $calendar_container.find('.fc-content');
-        // If no date is found empty
-        if(date.length > 0){
-          date.first().click();
-        }else{
-          aliada.ko.times([]);
-          aliada.ko.time('');
-        }
+        // Force the user to select a date first
+        aliada.ko.times.default();
+        aliada.ko.time.default();
 
         aliada.calendar.un_lock(calendar);
       }).caught(function(error){

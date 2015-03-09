@@ -22,6 +22,9 @@ es:
       extra: 'extra'
       incomplete_service: 'registro inconcluso'
     attributes:
+      common: &common_attributes
+        created_at: 'Fecha de creación'
+        updated_at: 'Fecha de última actualización'
       address: &address_attributes
         user: usuario
         postal_code: código postal
@@ -129,6 +132,7 @@ es:
         action_needed: acción sugerida
         classification: tipo de ticket
       incomplete_service:
+        <<: *common_attributes
         <<: *user_attributes
         <<: *service_attributes
         <<: *address_attributes

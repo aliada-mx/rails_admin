@@ -34,7 +34,10 @@ feature 'ApplicationController' do
         click_button 'Confirmar visita'
       end
 
-      expect(page).to have_content '{"status":"error","sender":"conekta","messages":["El recurso no ha sido encontrado."]}'
+      response = JSON.parse(page.body)
+      expect(response['status']).to eql 'error'
+      expect(response['code']).to eql 'conekta_error'
+      expect(response['message']).to eql ["El recurso no ha sido encontrado."]
     end
   end
 end
