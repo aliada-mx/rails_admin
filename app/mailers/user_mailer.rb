@@ -13,7 +13,7 @@ class UserMailer < ApplicationMailer
 
     @user = user
     sendgrid_plain_mail to: 'guillermo.siliceo@gmail.com',
-                             substitutions: {'-name-' => [ user.name ], '-password-' => [ user.password ]},
+                             substitutions: {'-full_name-' => [ user.name ], '-password-' => [ user.password ]},
                              subject: 'Bienvenido a aliada',
                              template_id: id
 
