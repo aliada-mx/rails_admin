@@ -22,3 +22,7 @@ test:
 production:
   <<: *default
   database: aliada_production
+
+staging:
+  <<: *default
+  database: aliada_staging

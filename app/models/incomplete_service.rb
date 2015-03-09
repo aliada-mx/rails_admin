@@ -9,6 +9,10 @@ class IncompleteService < ActiveRecord::Base
     incomplete_service.save!
   end
 
+  def is_complete?
+    self.service.present?
+  end
+
   rails_admin do
     label_plural 'Registros inconclusos'
     parent Service
@@ -18,8 +22,22 @@ class IncompleteService < ActiveRecord::Base
       help 'Si hay servicio, el registro se completo'
     end
 
+    configure :is_complete?, :boolean do
+      virtual?
+      label '¿Completado?'
+    end
+
+
     list do
-      include_fields :email, :postal_code_number, :postal_code_not_found
+      sort_by :created_at
+      include_fields :email, :postal_code_number, :postal_code_not_found, :is_complete?, :created_at
+
+      field :created_at do
+        sort_reverse true
+        pretty_value do
+          value.in_time_zone('Mexico City')
+        end
+      end
     end
   end
 end

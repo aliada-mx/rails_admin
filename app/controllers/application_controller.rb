@@ -1,6 +1,8 @@
 class ApplicationController < ActionController::Base
   include AliadaSupport::RedirectAfterLogin
 
+  before_filter :initialize_js_variables
+   
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
@@ -17,7 +19,7 @@ class ApplicationController < ActionController::Base
 
     !user_signed_in? && redirect_to_login || default_redirect_root_path
   end
-
+  
   def initialize_js_variables
     @conekta_public_key = Rails.application.secrets.conekta_public_key.html_safe
   end
@@ -25,5 +27,9 @@ class ApplicationController < ActionController::Base
   private
     def current_ability
       @current_ability ||= Ability.new(current_user, params)
+    end
+
+    def force_sign_in_user(user)
+      sign_in(:user, user, { :bypass => true })
     end
 end

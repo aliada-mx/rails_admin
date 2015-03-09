@@ -1,8 +1,8 @@
 feature 'ScoresController' do
   include TestingSupport::SchedulesHelper
   
-  let(:starting_datetime) { Time.zone.parse('02 Jan 2015 07:00:00') }
-  let(:service_datetime) { Time.zone.parse('01 Jan 2015 07:00:00') }
+  let(:starting_datetime) { Time.zone.parse('02 Jan 2015 13:00:00') }
+  let(:service_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
   let(:aliada){ create(:aliada) }
   let!(:user){ create(:user) } 
   let!(:other_user){ create(:user) } 

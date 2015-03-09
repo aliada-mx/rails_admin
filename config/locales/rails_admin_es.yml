@@ -22,6 +22,9 @@ es:
       extra: 'extra'
       incomplete_service: 'registro inconcluso'
     attributes:
+      common: &common_attributes
+        created_at: 'Fecha de creación'
+        updated_at: 'Fecha de última actualización'
       address: &address_attributes
         user: usuario
         postal_code: código postal
@@ -115,6 +118,13 @@ es:
         bathrooms: baños
         bedrooms: recámaras
         estimated_hours: Horas estimadas 
+        entrance_instructions: ¿Estará en casa?
+        garbage_instructions: ¿Dónde depositará la basura?
+        cleaning_supplies_instructions: ¿Dónde están los utensilios de limpieza?
+        attention_instructions: Poner especial atención a 
+        equipment_instructions: Usar un producto o equipo específico para limpiar
+        forbidden_instructions: No limpiar /No tocar
+        special_instructions: Otras instrucciones especiales
       service_type:
       ticket:
         relevant_object: Servicio
@@ -122,6 +132,7 @@ es:
         action_needed: acción sugerida
         classification: tipo de ticket
       incomplete_service:
+        <<: *common_attributes
         <<: *user_attributes
         <<: *service_attributes
         <<: *address_attributes

@@ -23,8 +23,7 @@ class User < ActiveRecord::Base
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+  devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable
 
   before_validation :ensure_password
   before_validation :set_default_role
@@ -34,15 +33,23 @@ class User < ActiveRecord::Base
   default_scope { where('users.role in (?)', ['client', 'admin']) }
 
   validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
-
+  validates_presence_of :password, if: :password_required?
+  validates_confirmation_of :password, if: :password_required?
+  validates_length_of :password, within: Devise.password_length, allow_blank: true
+  
   def create_promotional_code
     if self.role == "client"
       Code.generate_unique_code self
     end
   end
 
+  def password_required?
+    !persisted? || !password.nil? || !password_confirmation.nil?
+  end
+
   def self.email_exists?(email)
-    User.find_by_email(email).present?
+    ## Devise is configured to save emails in lower case lets search them like so
+    User.find_by_email(email.strip.downcase).present?
   end
 
   def create_first_payment_provider!(payment_method_id)
@@ -58,6 +65,10 @@ class User < ActiveRecord::Base
 
     # The newest is the default
     PaymentProviderChoice.create!(payment_provider: payment_provider, default: true, user: self)
+  end
+
+  def default_address
+    addresses.first
   end
 
   def default_payment_provider
@@ -91,6 +102,14 @@ class User < ActiveRecord::Base
     role == 'admin'
   end
 
+  def timezone
+    'Mexico City'
+  end
+
+  def send_welcome_email
+    UserMailer.welcome_email(self).deliver!
+  end
+
   rails_admin do
     navigation_label 'Personas'
     navigation_icon 'icon-user'
@@ -120,7 +139,9 @@ class User < ActiveRecord::Base
       field :phone
       group :login_info do
         active false
-        field :password
+        field :password do
+          required false
+        end
         field :password_confirmation
         field :current_sign_in_at
         field :sign_in_count

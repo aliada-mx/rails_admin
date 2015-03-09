@@ -1,5 +1,5 @@
 %fieldset.service_types.radio_buttons.large
-  = form.collection_radio_buttons :service_type_id, ServiceType.all, :id, :name do |radio_button_builder|
+  = form.collection_radio_buttons :service_type_id, ServiceType.all, :id, :name, { checked: ServiceType.recurrent.id } do |radio_button_builder|
 
     - service_type = radio_button_builder.object
     - type = service_type.name
@@ -13,7 +13,7 @@
             MEJOR VALOR
             %icon.sparks
       = label_tag "service_service_type_id_#{service_type.id}", {data: {bind: "from_data: 'service_type'", service_type: service_type.to_json }} do
-        = radio_button_builder.radio_button
+        = radio_button_builder.radio_button 
 
         %span{class: "action-button-#{class_name} size-large"}
           = radio_button_builder.object.display_name

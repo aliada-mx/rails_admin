@@ -1,5 +1,6 @@
 describe 'Schedule' do
-  starting_datetime = Time.zone.now.change({hour: 13})
+  starting_datetime = Time.zone.parse('01 Jan 2015 07:00:00')
+
   let!(:service) { create(:service) }
   let!(:zone) { create(:zone) }
   let!(:aliada) { create(:aliada) }
@@ -18,8 +19,8 @@ describe 'Schedule' do
 
   describe '#available_for_booking' do
     it 'should be listed as available' do
-      expect(Schedule.available_for_booking(zone)).not_to be_empty
-      expect(Schedule.available_for_booking(zone)).to include(schedule)
+      expect(Schedule.available_for_booking(zone, starting_datetime)).not_to be_empty
+      expect(Schedule.available_for_booking(zone, starting_datetime)).to include(schedule)
     end
   end
 end

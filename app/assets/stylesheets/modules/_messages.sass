@@ -1,0 +1,42 @@
+@import 'common/variables'
+@import 'common/mixins'
+
+.message
+  border: 2px solid
+  border-radius: 3px
+  font-weight: 600
+  vertical-align: middle
+  +rem(font-size, 1.3rem)
+  +rem(margin-bottom, 1rem)
+  +rem(padding, 1rem)
+
+  a
+    display: inline-block
+    text-decoration: underline
+
+  span
+    display: inline-block
+    vertical-align: text-top
+    +rem(font-size, 1.5rem)
+    +rem(margin-right, 1rem)
+
+    &.icon-pencil
+      vertical-align: middle
+      +rem(font-size, 1rem)
+
+  &.warning
+    color: $yellow
+    border-color: $yellow
+
+    a
+      color: $yellow
+
+  &.danger
+    color: $pink
+    border-color: $pink
+
+    a
+      color: $pink
+
+  &:last-child
+    margin-bottom: 0

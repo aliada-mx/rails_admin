@@ -4,7 +4,7 @@ class ConektaCardsController < ApplicationController
   def create
     ConektaCard.create_for_user!(@user, conekta_card_params[:conekta_temporary_token])
 
-    render json: { status: :ok, sender: :conekta, messages: I18n.t('conekta.card_created_successfully')}
+    render json: { status: :success, messages: I18n.t('conekta.card_created_successfully')}
   end
 
   private

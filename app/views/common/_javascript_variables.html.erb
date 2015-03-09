@@ -1,7 +1,9 @@
 <script>
     aliada = {
         services: {
-            initial: {}
+            initial: {},
+            edit: {},
+            new: {}
         },
         dialogs: {},
         calendar: {}
@@ -15,4 +17,6 @@
 
     aliada.map_marker_icon = '<%= image_url("map-marker-icon.png") %>';
     aliada.default_map_zoom = 16;
+
+    aliada.rails_environment = '<%= Rails.env %>';
 </script>

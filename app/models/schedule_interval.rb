@@ -1,5 +1,5 @@
 class ScheduleInterval
-  #Represents a contiguous block of schedules inside a single day
+  #Represents a contiguous block of schedules 
 
   include ActiveModel::Validations
 
@@ -37,6 +37,10 @@ class ScheduleInterval
     size == 0
   end
 
+  def include?(other_schedule)
+    @schedules.any? { |schedule| schedule.datetime == other_schedule.datetime }
+  end
+
   # Returns the time difference between the beginning two schedule intervals
   def -(other_schedule_interval)
     return nil unless other_schedule_interval.is_a?(ScheduleInterval)
@@ -64,13 +68,17 @@ class ScheduleInterval
     end
   end
 
-  def self.build_from_range(starting_datetime, ending_datetime, from_existing: false, conditions: {})
+  def wday
+    @schedules.first.datetime.wday
+  end
+
+  def self.build_from_range(starting_datetime, ending_datetime, from_existing: false, conditions: {}, timezone: 'Mexico City')
     schedules = []
     (starting_datetime.to_i .. ending_datetime.to_i).step(1.hour) do |date|
       # If we reached the end...
       break if ending_datetime.to_i == date
 
-      datetime = Time.zone.at(date)
+      datetime = Time.at(date).in_time_zone(timezone)
 
       conditions.merge!({datetime: datetime})
 

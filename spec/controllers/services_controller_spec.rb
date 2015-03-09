@@ -3,7 +3,7 @@ feature 'ServiceController' do
   include TestingSupport::SchedulesHelper
   include TestingSupport::SharedExpectations::ConektaCardExpectations
 
-  starting_datetime = Time.zone.now.change({hour: 13})
+  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
   let!(:aliada) { create(:aliada) }
   let!(:zone) { create(:zone) }
   let!(:recurrent_service) { create(:service_type) }
@@ -16,33 +16,35 @@ feature 'ServiceController' do
   let!(:extra_2){ create(:extra, name: 'Limpieza de refri')}
   let!(:conekta_card){ create(:payment_method)}
     
-
   before do
-    Timecop.freeze(starting_datetime - 1.hour)
-
-    # The - 1 hour is needed because this hour is the one the aliada needs to get there from a previous service
-    create_recurrent!(starting_datetime - 1.hour, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada})
-
-    expect(Address.count).to be 0
-    expect(Service.count).to be 0
-    expect(IncompleteService.count).to be 0
-    expect(Aliada.count).to be 1
-
-
-    # We have hidden elements in our initial service creation assitant 
-    # because we don't show all the steps at once
-    @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
-    Capybara.ignore_hidden_elements = false
-
-    visit initial_service_path
-  end
-
-  after do
-    Timecop.return
-    Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
+    allow_any_instance_of(Service).to receive(:timezone).and_return('UTC')
   end
 
   describe '#initial' do
+    before do
+      Timecop.freeze(starting_datetime)
+
+      # The - 1 hour is needed because this hour is the one the aliada needs to get there from a previous service
+      create_recurrent!(starting_datetime + 1.day - 1.hour, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada}, timezone: 'UTC')
+
+      expect(Address.count).to be 0
+      expect(Service.count).to be 0
+      expect(IncompleteService.count).to be 0
+      expect(Aliada.count).to be 1
+
+      # We have hidden elements in our initial service creation assitant 
+      # because we don't show all the steps at once
+      @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
+      Capybara.ignore_hidden_elements = false
+
+      visit initial_service_path
+    end
+
+    after do
+      Timecop.return
+      Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
+    end
+
     it 'redirects the logged in user to new service' do
       user = create(:user)
 
@@ -52,6 +54,7 @@ feature 'ServiceController' do
       expect(current_path).to eql new_service_users_path(user)
     end
 
+    # We have separate tests that uses VCR for the payment logic
     context 'Skipping the payment logic' do
       before :each do
         expect(User.where('role != ?', 'aliada').count).to be 0
@@ -93,17 +96,24 @@ feature 'ServiceController' do
         expect(service.estimated_hours).to eql 3
         expect(service.bathrooms).to eql 1
         expect(service.bedrooms).to eql 1
-        expect(service.special_instructions).to eql 'nada'
+
+        expect(service.special_instructions).to eql 'Algo especial'
+        expect(service.garbage_instructions).to eql 'Algo de basura'
+        expect(service.attention_instructions).to eql 'al perrito'
+        expect(service.equipment_instructions).to eql 'con pinol mis platos'
+        expect(service.forbidden_instructions).to eql 'no tocar mi colección de amiibos'
+        expect(service.entrance_instructions).to eql true
 
         expect(user.first_name).to eql 'Guillermo'
         expect(user.last_name).to eql 'Siliceo'
         expect(user.email).to eql 'guillermo.siliceo@gmail.com'
         expect(user.phone).to eql '5585519954'
+        expect(user.default_address).to eql address
 
       end
 
       it 'creates a new one time service' do
-        fill_service_form(conekta_card, one_time_service, starting_datetime, extra_1, zone)
+        fill_service_form(conekta_card, one_time_service, starting_datetime + 1.day, extra_1, zone)
 
         click_button 'Confirmar visita'
 
@@ -111,12 +121,12 @@ feature 'ServiceController' do
         expect(service).to be_present
 
         expect(service.service_type_id).to eql one_time_service.id
-        expect(Schedule.available.count).to be 20
-        expect(Schedule.booked.count).to be 5
+        expect(Schedule.available.count).to be 21
+        expect(Schedule.booked.count).to be 4
       end
 
       it 'creates a new recurrent service' do
-        fill_service_form(conekta_card, recurrent_service, starting_datetime, extra_1, zone)
+        fill_service_form(conekta_card, recurrent_service, starting_datetime + 1.day, extra_1, zone)
 
         click_button 'Confirmar visita'
 
@@ -134,8 +144,23 @@ feature 'ServiceController' do
         expect(recurrence.weekday).to eql service.beginning_datetime.weekday
 
         expect(service.service_type_id).to eql recurrent_service.id
-        expect(Schedule.available.count).to be 0
-        expect(Schedule.booked.count).to be 25
+        expect(Schedule.available.count).to be 5
+        expect(Schedule.booked.count).to be 20
+      end
+
+      it 'logs in the new user' do
+        fill_service_form(conekta_card, one_time_service, starting_datetime + 1.day, extra_1, zone)
+
+        click_button 'Confirmar visita'
+
+        service = Service.first
+        user = service.user
+
+        next_services = next_services_users_path(user)
+
+        visit next_services
+
+        expect(current_path).to eql next_services
       end
     end
 
@@ -180,4 +205,63 @@ feature 'ServiceController' do
       end
     end
   end
+
+  context 'created users' do
+    let(:admin){ create(:admin) }
+    let(:user){ create(:user) }
+    let(:address){ create(:address, postal_code: postal_code) }
+    let(:service){ create(:service, 
+                          aliada: aliada,
+                          user: user,
+                          service_type: one_time_service) }
+    let(:admin_service){ create(:service, 
+                                aliada: aliada,
+                                user: admin,
+                                service_type: one_time_service) }
+
+    describe '#edit' do
+      it 'lets the admin edit any user services' do
+        login_as(admin)
+
+        edit_service_path = edit_service_users_path(user_id: user.id, service_id: service.id)
+
+        visit edit_service_path
+        
+        expect(page.current_path).to eql edit_service_path
+      end
+
+      it 'doesnt let the user edit other users services' do
+        login_as(user)
+
+        edit_service_path = edit_service_users_path(user_id: admin.id, service_id: admin_service.id)
+
+        visit edit_service_path
+        
+        expect(page.current_path).not_to eql edit_service_path
+      end
+
+      it 'let the user edit its own services' do
+        login_as(user)
+
+        edit_service_path = edit_service_users_path(user_id: user.id, service_id: user.id)
+
+        visit edit_service_path
+        
+        expect(page.current_path).to eql edit_service_path
+      end
+    end
+
+    describe '#new' do
+      it 'let the user view the new service page' do
+        login_as(user)
+
+        new_service_path = new_service_users_path(user)
+
+        visit new_service_path
+        
+        expect(page.current_path).to eql new_service_path
+      end
+    end
+  end
 end
+

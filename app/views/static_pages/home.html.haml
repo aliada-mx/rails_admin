@@ -1,17 +1,8 @@
 -# Home header
 %section.search-section-wrapper
 
-  %header.container
-    %div.row.header-container
-      %div.logo-container.col-lg-2
-        = link_to image_tag("logo.png", :class => 'logo'), '/';
-      %nav.nav-container.col-lg-10
-        %ul.nav
-          %li ¿Cómo funciona?
-          %li Precios
-          %li Preguntas Frencuentes
-          %li
-            =link_to("Log in", new_user_session_path, { :class => 'action-button-gray'})
+  .white-navigation
+    = render partial: "common/public_navigation"
 
 
   %div.container
@@ -115,27 +106,7 @@
         =image_tag("payment-logos.png", {:title => 'Métodos de pago' })
 
 
-%footer
-  %div.container
-    %div.call-us.col-lg-6
-      =image_tag("phone-white.png", {:title => 'Teléfono'})
-      %p ¿Necesitas ayuda? Llámanos al (55) 4170 8032
-    %div.col-lg-3
-      %nav.bottom-nav
-        %ul
-          %li
-            =link_to("Acerca de nosotros", "/sign_in")
-          %li
-            =link_to("Preguntas frecuentes", "/sign_in")
-          %li
-            =link_to("Términos y condiciones", "/sign_in")
-          %li
-            =link_to("Política de privacidad", "/sign_in")
-          %li
-            =link_to("Contacto", "/sign_in")
-    %div.col-lg-3
-      %p 2014 Aliada. <br> Todos los derechos reservados.
+= render partial: "common/footer"
 
 = append :javascript do
-  = javascript_include_tag 'https://maps.googleapis.com/maps/api/js?libraries=places'
   = javascript_include_tag 'home'

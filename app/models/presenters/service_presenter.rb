@@ -1,4 +1,6 @@
 module Presenters
+  include ApplicationHelper
+
   module ServicePresenter
     def status_enum
       Service::STATUSES

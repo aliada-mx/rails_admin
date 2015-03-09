@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150307004719) do
+ActiveRecord::Schema.define(version: 20150308025352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -163,6 +163,7 @@ ActiveRecord::Schema.define(version: 20150307004719) do
     t.datetime "updated_at",            null: false
     t.string   "name"
     t.string   "payment_provider_type"
+    t.boolean  "disabled"
   end
 
   create_table "payment_provider_choices", id: false, force: true do |t|
@@ -249,7 +250,6 @@ ActiveRecord::Schema.define(version: 20150307004719) do
   end
 
   create_table "services", force: true do |t|
-    t.integer  "zone_id"
     t.integer  "address_id"
     t.integer  "user_id"
     t.integer  "service_type_id"
@@ -267,13 +267,13 @@ ActiveRecord::Schema.define(version: 20150307004719) do
     t.integer  "aliada_id"
     t.datetime "datetime"
     t.decimal  "estimated_hours",                precision: 10, scale: 3
-    t.boolean  "bring_cleaning_products"
-    t.text     "entrance_instructions"
     t.text     "cleaning_supplies_instructions"
     t.text     "garbage_instructions"
     t.text     "attention_instructions"
     t.text     "equipment_instructions"
     t.text     "forbidden_instructions"
+    t.integer  "zone_id"
+    t.boolean  "entrance_instructions"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree

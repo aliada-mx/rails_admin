@@ -1,0 +1,39 @@
+%fieldset.radio_buttons.large
+  = form.collection_radio_buttons :payment_method_id, PaymentMethod.all, :id, :name, { checked: PaymentMethod.first.id } do |builder|
+    - payment_method = builder.object
+
+    .radio_button_container{class: "#{ 'disabled' if payment_method.disabled }"}
+      = builder.radio_button( { disabled: payment_method.disabled } )
+      = builder.label do
+        = image_tag 'payment-card-unchecked.png', class: :unchecked
+        = image_tag 'payment-card-checked.png', class: :checked
+        .foot
+          %h4
+            = builder.text
+          .small-letters
+            = "Crédito y Débito"
+
+
+-#
+  .check-box-container
+    = check_box_tag 'Paypal'
+    %label
+      = image_tag('payment-paypal-unchecked.png', class: :unchecked)
+      = image_tag 'check-large.png', class: :checked
+      .foot
+        %h4
+          = "Cuenta Paypal"
+        .small-letters
+          = " "
+
+
+  .check-box-container.disabled
+    = check_box_tag 'Efectivo'
+    %label
+      = image_tag('payment-cash-disabled.png', class: :unchecked)
+      = image_tag 'check-large.png', class: :checked
+      .foot
+        %h4
+          = "Pago en efectivo"
+        .small-letters
+          = "Muy pronto"

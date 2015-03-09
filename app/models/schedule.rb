@@ -20,8 +20,9 @@ class Schedule < ActiveRecord::Base
   scope :booked, -> {  where(status: 'booked') }
   scope :in_zone, -> (zone) { where(zone: zone) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
+  scope :after_datetime, ->(starting_datetime) { where("datetime >= ?", starting_datetime) }
   scope :ordered_by_aliada_datetime, -> { order(:aliada_id, :datetime) }
-  scope :available_for_booking, ->(zone) { available.in_zone(zone).in_the_future.ordered_by_aliada_datetime }
+  scope :available_for_booking, ->(zone, starting_datetime) { available.in_zone(zone).after_datetime(starting_datetime).ordered_by_aliada_datetime }
 
   state_machine :status, :initial => 'available' do
     transition 'available' => 'booked', on: :book
@@ -33,6 +34,12 @@ class Schedule < ActiveRecord::Base
     label_plural 'horas de servicio'
     navigation_label 'Operación'
     navigation_icon 'icon-calendar'
+
+    configure :datetime do
+      pretty_value do
+        value.in_time_zone('Mexico City')
+      end
+    end
   end
 
   private
