@@ -116,7 +116,7 @@ class AvailabilityForCalendar
 
       value = !continuous_schedule_intervals?(previous_interval, current_interval)
       if value
-        # # binding.pry
+        
         # puts "found broken continuous intervals"
         # puts "previous #{previous_interval.schedules.map { |s| s.datetime }}"
         # puts "current_interval #{current_interval.schedules.map { |s| s.datetime }}"

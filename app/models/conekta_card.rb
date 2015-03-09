@@ -48,10 +48,10 @@ class ConektaCard < ActiveRecord::Base
       reference_id: product.id,
       card: self.token
     })
-   # binding.pry
+   
     payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
     payment.pay!
-    #binding.pry
+    
     return conekta_charge
   end
 
