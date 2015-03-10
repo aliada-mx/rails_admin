@@ -57,9 +57,9 @@ class Availability
       date = datetime.in_time_zone(timezone).strftime('%Y-%m-%d')
       time = datetime.in_time_zone(timezone).strftime('%H:%M')
       friendly_time = datetime.in_time_zone(timezone).strftime('%l:%S %P')
-      friendly_date = I18n.l(datetime.in_time_zone(timezone), format: :future)
+      friendly_datetime = I18n.l(datetime.in_time_zone(timezone), format: :future)
 
-      dates_times[date].push({value: time, friendly_time: friendly_time, friendly_datetime: friendly_date }) 
+      dates_times[date].push({value: time, friendly_time: friendly_time, friendly_datetime: friendly_datetime }) 
     end
 
     dates_times

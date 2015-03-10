@@ -47,9 +47,7 @@ gem 'compass-rails'
  
 # EXCEPTIONS
 #
-# Logging
-gem 'rollbar', '~> 1.2.7'
-# Exception catching
+# Exception catching and logging
 gem 'raygun4ruby'
  
 # JAVASCRIPT 
@@ -119,6 +117,7 @@ group :development, :test do
 end
 
 group :test do
+  # For the lols run it $ rspec --format NyanCatWideFormatter
   gem "nyan-cat-formatter"
 
   # Testing framework
@@ -152,18 +151,10 @@ group :test do
   gem 'vcr'
 end
 
-group :production do
+group :production, :staging do
   # Logging
   gem "lograge"
   # Heroku support
   gem 'rails_12factor'
 end
-
-group :staging do
-  # Logging
-  gem "lograge"
-  # Heroku support
-  gem 'rails_12factor'
-end
-
 
