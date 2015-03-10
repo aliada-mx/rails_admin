@@ -8,7 +8,7 @@ class AdminAbility
         can :dashboard
         can :manage, :all
 
-        can :tickets_resumen
+        can :create_aliada_working_hours
       end
     end
   end
