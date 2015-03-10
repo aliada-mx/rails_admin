@@ -7,7 +7,7 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 #
 require 'factory_girl_rails'
-require_relative '../spec/support/schedules_helper'
+require_relative 'spec/support/schedules_helper'
 include TestingSupport::SchedulesHelper
 
 if ENV['clean']
@@ -55,12 +55,13 @@ puts '11800 postal code'
 FactoryGirl.create(:postal_code, :zoned, zone: zone, number: '11800')
 
 puts 'schedules for the month'
-Time.zone = 'Mexico City'
+# Time.zone = 'Mexico City'
 starting_datetime = Time.zone.now.change(hour: 13) # 7 am Mexico City Time
 aliada = Aliada.first
-zone = Zone.first
+zone = Zone.find_by_postal_code('11800')
 create_recurrent!(starting_datetime, hours: 6, periodicity: 7, timezone: 'Mexico City', conditions: {aliada: aliada, zone: zone})
 create_recurrent!(starting_datetime + 1.day, hours: 6, periodicity: 7, timezone: 'Mexico City',  conditions: {aliada: aliada, zone: zone})
+create_recurrent!(starting_datetime + 3.day, hours: 6, periodicity: 7, timezone: 'Mexico City',  conditions: {aliada: aliada, zone: zone})
 
 puts 'Conekta payment method'
 PaymentMethod.create!(name: 'Pago con tarjeta', payment_provider_type: 'ConektaCard')
