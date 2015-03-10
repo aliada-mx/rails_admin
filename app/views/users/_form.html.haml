@@ -2,7 +2,12 @@
   .actions
     = f.submit 'Save'
 
+%h1 Método de pago
+
 = form_tag create_conekta_card_users_path(@user) do
   = render partial: 'common/conekta_form', locals: {}
   .actions
     = submit_tag 'Guardar Tarjeta'
+
+= link_to destroy_user_session_path, class: 'action-button-gray size-medium right' do
+  Cerrar sesion

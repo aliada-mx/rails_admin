@@ -5,7 +5,7 @@ class AvailabilityForService
   def initialize(service, available_after, aliada_id: nil)
     @service = service
 
-    @requested_schedule_interval = service.to_schedule_interval
+    @requested_schedule_intervals = service.to_schedule_intervals
     # Pull the schedules from db
     @available_schedules = Schedule.available_for_booking(service.zone, available_after)
     if aliada_id.present?
@@ -16,17 +16,12 @@ class AvailabilityForService
 
     # An object to track our availability
     if @recurrent = @service.recurrent?
-      @recurrency_days = @service.periodicity
-      @recurrency_seconds = @recurrency_days.days
-      @minimum_availaibilites = wdays_until_horizon(@requested_schedule_interval.wday, starting_from: available_after)
+      recurrency_days = @service.periodicity
+      @recurrency_seconds = recurrency_days.days
+      @minimum_availaibilites = wdays_until_horizon(@requested_schedule_intervals.first.wday, starting_from: available_after)
     end
 
     @aliadas_availability = Availability.new
-
-    # Limiting variables
-    @requested_starting_hour = @requested_schedule_interval.beginning_of_interval.hour
-    @requested_ending_hour = @requested_schedule_interval.ending_of_interval.hour
-    @requested_wday = @requested_schedule_interval.beginning_of_interval.wday
 
     # save time consecutive schedules 
     # until the desired size is reached
@@ -99,7 +94,7 @@ class AvailabilityForService
     end
 
     def invalid?
-      @available_schedules.empty? || @requested_schedule_interval.empty? || @available_schedules.size < @requested_schedule_interval.size
+      @available_schedules.blank? || @requested_schedule_intervals.empty? || @available_schedules.size < @requested_schedule_intervals.size
     end
 
     # Do we have a pair of continues schedules?
@@ -116,9 +111,11 @@ class AvailabilityForService
 
     def time_matches?
       # Inside hour range
-      @current_schedule.datetime.hour >= @requested_starting_hour &&
-      @current_schedule.datetime.hour <= @requested_ending_hour &&
-      @current_schedule.datetime.wday == @requested_wday
+      @requested_schedule_intervals.any? do |schedule_interval|
+        break if schedule_interval.beginning_of_interval > @current_schedule.datetime
+
+        schedule_interval.include?(@current_schedule)
+      end
     end
 
     def broken_continous_intervals?
@@ -133,7 +130,7 @@ class AvailabilityForService
     end
 
     def enough_continuous_schedules?
-      @continuous_schedules.size == @requested_schedule_interval.size
+      @continuous_schedules.size == @service.total_hours
     end
 
     def allow_to_add_one_timer?

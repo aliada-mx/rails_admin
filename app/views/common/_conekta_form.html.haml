@@ -3,10 +3,10 @@
   .conekta-form
     = hidden_field_tag :conekta_temporary_token
     .field
-      = text_field_tag nil, nil, data: {'conekta' => 'card[name]'}, placeholder: 'Rodolfo Corcuera Meier'
+      = text_field_tag nil, nil, data: {'conekta' => 'card[name]'}, placeholder: 'Adria Gonzáles Sánchez', id: 'conekta_card_name'
       %p NOMBRE COMO APARECE EN TU TARJETA
     .field
-      = text_field_tag nil, nil, data: {'conekta' => 'card[number]'}, placeholder: '1234 5678 1234 5678', class: 'iconized'
+      = text_field_tag nil, nil, data: {'conekta' => 'card[number]'}, placeholder: '1234 5678 1234 5678', class: 'iconized', id: 'conekta_card_number'
       %p NÚMERO DE LA TARJETA
       %span.icon.icon-lock
     .field
@@ -16,11 +16,11 @@
             %span.expiration-date-field
               = select_tag nil, options_for_select([*1..12], 1), data: {'conekta' => 'card[exp_month]'}
               %span /
-              = select_tag nil, options_for_select([*2015..2030], 1), data: {'conekta' => 'card[exp_year]'}
+              = select_tag nil, options_for_select([*2015..2030], 1), data: {'conekta' => 'card[exp_year]'}, id: 'conekta_card_exp_year'
             %p VENCIMIENTO (MM/AA)
           %td
           %td
-            = text_field_tag nil, nil, data: {'conekta' => 'card[cvc]'}, placeholder: '123', class: 'iconized', id: 'card_cvc'
+            = text_field_tag nil, nil, data: {'conekta' => 'card[cvc]'}, placeholder: '123', class: 'iconized', id: 'conekta_card_cvc'
             %p CVC
             %span.icon.image-icon
               =image_tag('cvc.png', {:title => 'Número de tarjeta'})

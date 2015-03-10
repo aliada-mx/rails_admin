@@ -24,7 +24,6 @@
 @import 'modules/messages'
 @import 'modules/navigation'
 @import 'modules/service_history'
-@import 'modules/service-card'
 
 // Modal
 @import 'vex'
@@ -51,8 +50,9 @@ a, input
 
 a
   cursor: pointer
-  &.hover
+  &:hover, &:focus
     text-decoration: underline
+    color: $green
 
 .left
   float: left
@@ -80,6 +80,7 @@ h1
 
 h4
   font-weight: 600
+  +rem(font-size, $medium-font)
 
 icon
   width: 20px
@@ -112,6 +113,8 @@ icon
     background-image: image-url('check.png')
   &.check-active
     background-image: image-url('check-active.png')
+  &.aliada
+    background-image: image-url('aliada-icon.png')
 
 p.medium
   +rem(font-size, $medium-font)
@@ -212,3 +215,4 @@ footer
 @media only screen and (min-device-width : 320px) and (max-device-width : 568px)
   .blocked_ui_dialog
     left: 0% !important
+

@@ -27,17 +27,47 @@ class Recurrence < ActiveRecord::Base
     Time.weekdays.select{ |day| day[0] == weekday }.first.second
   end
 
+  def weekday_in_spanish
+    Time.weekdays.select{ |day| day[0] == weekday }.first.third
+  end
+
   def get_ending_datetime
-    Time.zone.now + Setting.time_horizon_days.day
+    horizon
+  end
+
+  def timezone
+    'Mexico City'
   end
 
   # Returns the datetime for the next service
   def next_datetime
+    starting_datetime_to_book_services(timezone)
+
     if Time.zone.now.wday == weekday
       Time.zone.now.change(hour: hour)
     else
       next_weekday(weekday).change(hour: hour)
     end
+  end
+
+  # Turn the recurrence into an array of schedule intervals
+  def to_schedule_intervals(schedule_interval_seconds_long, conditions: {})
+    beginning_of_schedule_interval = next_datetime
+    end_of_schedule_interval = beginning_of_schedule_interval + schedule_interval_seconds_long
+
+    ending_datetime = get_ending_datetime
+
+    schedule_intervals = []
+    while end_of_schedule_interval < ending_datetime do
+      schedule_interval = ScheduleInterval.build_from_range(beginning_of_schedule_interval, end_of_schedule_interval, conditions: conditions, timezone: timezone)
+
+      schedule_intervals.push(schedule_interval)
+
+      beginning_of_schedule_interval += periodicity.days
+      end_of_schedule_interval += periodicity.days
+    end
+
+    schedule_intervals
   end
 
   rails_admin do

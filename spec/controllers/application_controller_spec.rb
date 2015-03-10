@@ -16,10 +16,13 @@ feature 'ApplicationController' do
     before do
       @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
       Capybara.ignore_hidden_elements = false
+      @original_tz = ENV['TZ']
+      ENV['TZ'] = 'UTC'
     end
 
     after do
       Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
+      ENV['TZ'] = @original_tz
     end
 
     it 'catches the exception and renders a json error' do
@@ -31,7 +34,10 @@ feature 'ApplicationController' do
         click_button 'Confirmar visita'
       end
 
-      expect(page).to have_content '{"status":"error","sender":"conekta","messages":["El recurso no ha sido encontrado."]}'
+      response = JSON.parse(page.body)
+      expect(response['status']).to eql 'error'
+      expect(response['code']).to eql 'conekta_error'
+      expect(response['message']).to eql ["El recurso no ha sido encontrado."]
     end
   end
 end

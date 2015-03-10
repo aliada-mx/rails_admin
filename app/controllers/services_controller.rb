@@ -1,11 +1,19 @@
 class ServicesController < ApplicationController
   layout 'two_columns'
+  load_and_authorize_resource
+  skip_authorize_resource only: [:initial, :create_initial, :check_email, :check_postal_code, :incomplete_service]
+
+  before_filter :set_user
 
   include ServiceHelper
 
   def initial
-    if user_signed_in?
-      redirect_to new_service_users_path(current_user)
+    if user_signed_in? 
+      if current_user.admin?
+        @user = current_user
+      else
+        redirect_to new_service_users_path(current_user)
+      end
     end
 
     @incomplete_service = IncompleteService.create!
@@ -18,22 +26,34 @@ class ServicesController < ApplicationController
   end
 
   def update
+    service = @user.services.find(params[:service_id])
+    service.update_attributes!(service_params.except(:user, :address))
+
+    next_services_path = next_services_users_path(user_id: @user.id, service_id: service.id)
+
+    return render json: { status: :success, next_path: next_services_path }
   end
 
   def edit
-    @service = Service.find(params[:service_id])
+    @service = @user.services.find(params[:service_id])
   end
 
-  def create
+  def create_initial
     begin
       service = Service.create_initial!(service_params)
     rescue ActiveRecord::RecordInvalid => invalid
+      Raygun.track_exception(invalid)
       return render json: { status: :error, code: :invalid, message: invalid.message }
+    rescue Conekta::Error => exception
+      Raygun.track_exception(exception)
+      return render json: { status: :error, code: :conekta_error, message: [exception.message_to_purchaser]}
     end
 
     IncompleteService.mark_as_complete(incomplete_service_params,service)
 
-    return render json: { status: :success, message: 'Hemos guardado creado tu servicio correctamente' }
+    force_sign_in_user(service.user)
+
+    return render json: { status: :success, service_id: service.id, user_id: service.user.id }
   end
 
   def incomplete_service
@@ -104,6 +124,13 @@ class ServicesController < ApplicationController
                                       :conekta_temporary_token,
                                       :aliada_id,
                                       :incomplete_service_id,
+                                      :entrance_instructions,
+                                      :garbage_instructions,
+                                      :cleaning_supplies_instructions,
+                                      :attention_instructions,
+                                      :equipment_instructions,
+                                      :forbidden_instructions,
+                                      :special_instructions,
                                       user: [
                                         :first_name,
                                         :last_name,
@@ -127,5 +154,9 @@ class ServicesController < ApplicationController
                                         :postal_code_number,
                                       ]).merge({conekta_temporary_token: params[:conekta_temporary_token] })
                                       
+  end
+
+  def set_user
+    @user = User.find(params[:user_id]) if params.include? :user_id
   end
 end

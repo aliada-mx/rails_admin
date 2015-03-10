@@ -30,15 +30,17 @@ module AliadaSupport
 
     # A safe datetime we can start booking services
     # too soon and we won't have enough time to organize the aliadas
-    def starting_datetime_to_book_services
-      tomorrow = (Time.zone.now + 1.day ).beginning_of_day
+    def starting_datetime_to_book_services(timezone)
+      now = Time.now.utc.in_time_zone(timezone)
+
+      tomorrow = (now + 1.day ).beginning_of_day
       in_two_days = tomorrow + 1.day
 
-      Time.zone.now.hour < Setting.booking_for_tomorrow_limit ? tomorrow : in_two_days
+      now.hour < Setting.booking_for_tomorrow_limit ? tomorrow : in_two_days
     end
 
     def businesshours_until_horizon
-      businessday_hours = Setting.end_of_aliadas_day - Setting.beginning_of_aliadas_day 
+      businessday_hours = Setting.businessday_hours
       days_until_horizon = (horizon - Time.zone.now)/24.hours
 
       (businessday_hours * days_until_horizon).round

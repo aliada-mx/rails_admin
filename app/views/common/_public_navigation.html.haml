@@ -11,4 +11,9 @@
         %li
           = link_to("Preguntas Frecuentes", :faq, {})
         %li
-          = link_to("Log in", new_user_session_path, { :class => 'action-button-gray'})
+          - if user_signed_in?
+            %a{href: edit_users_path(current_user), title: 'Mi cuenta', class: 'account-link' }
+              %span.icon.icon-user
+              Mi Cuenta
+          - else
+            = link_to("Log in", new_user_session_path, { :class => 'action-button-gray'})

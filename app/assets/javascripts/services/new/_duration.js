@@ -1,4 +1,4 @@
-aliada.services.initial.step_1_duration = function(aliada, ko){
+aliada.services.new.duration = function(aliada, ko){
 
   _(aliada.ko).extend({
     bedrooms: ko.observable(1),

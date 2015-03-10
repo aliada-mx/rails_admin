@@ -5,9 +5,8 @@
 
 .fields
   padding: 20px 0 20px 40px
-  label
+  .field-row
     position: relative
-  label.field-row
     margin: 10px 0
     width: 100%
     display: inline-block
@@ -16,6 +15,13 @@
     left: -40px
     float: left
     top: 0px
+
+  textarea
+    width: 100%
+    border: none
+    border-bottom: 1px solid $dark_gray
+    margin: 5px 0
+    resize: vertical
 
   input[type=text]
     &.full-width
@@ -37,6 +43,7 @@ input
   &.important-placeholder
     +input-placeholder
       font-weight: 800
+      color: $darkest_gray
   &.error
     color: $error
     +input-placeholder
