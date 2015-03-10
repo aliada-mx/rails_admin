@@ -23,8 +23,8 @@
           = address_form.text_field :street, placeholder: 'Calle', class: 'full-width', data: {bind: 'textInput: street'}
         .field-row
           %icon.icon-hash
-          = address_form.text_field :number, placeholder: 'Número Exterior', class: 'two-thirds-width', data: {bind: 'textInput: interior_number'}
-          = address_form.text_field :interior_number, placeholder: 'Interior', class: 'third-width important-placeholder', data: {bind: 'textInput: number'}
+          = address_form.text_field :number, placeholder: 'Número Exterior', class: 'two-thirds-width', data: {bind: 'textInput: number'}
+          = address_form.text_field :interior_number, placeholder: 'Interior', class: 'third-width important-placeholder', data: {bind: 'textInput: interior_number'}
         .field-row
           = address_form.text_field :colony, placeholder: 'Colonia', class: 'full-width', data: {bind: 'textInput: colony'}
         .field-row

@@ -58,10 +58,10 @@ puts 'schedules for the month'
 # Time.zone = 'Mexico City'
 starting_datetime = Time.zone.now.change(hour: 13) # 7 am Mexico City Time
 aliada = Aliada.first
-zone = Zone.find_by_postal_code('11800')
+zone = Zone.find_by_postal_code_number('11800')
 create_recurrent!(starting_datetime, hours: 6, periodicity: 7, timezone: 'Mexico City', conditions: {aliada: aliada, zone: zone})
-create_recurrent!(starting_datetime + 1.day, hours: 6, periodicity: 7, timezone: 'Mexico City',  conditions: {aliada: aliada, zone: zone})
-create_recurrent!(starting_datetime + 3.day, hours: 6, periodicity: 7, timezone: 'Mexico City',  conditions: {aliada: aliada, zone: zone})
+create_recurrent!(starting_datetime + 2.day, hours: 6, periodicity: 7, timezone: 'Mexico City',  conditions: {aliada: aliada, zone: zone})
+create_recurrent!(starting_datetime + 5.day, hours: 6, periodicity: 7, timezone: 'Mexico City',  conditions: {aliada: aliada, zone: zone})
 
 puts 'Conekta payment method'
 PaymentMethod.create!(name: 'Pago con tarjeta', payment_provider_type: 'ConektaCard')

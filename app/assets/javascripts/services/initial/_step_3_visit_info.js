@@ -8,24 +8,24 @@ aliada.services.initial.step_3_visit_info = function(aliada, ko){
     var on_step_3 = function(){ return aliada.ko.current_step() == 3 };
 
     _(aliada.ko).extend({
-        friendly_datetime: ko.observable('').extend({
-          default_value: 'Fecha y hora de la visita'
-        }),
-        dates: ko.observableArray([]),
-        date: ko.observable('').extend({
-          required: { onlyIf: on_step_3 },
-          default_value: ''
-        }),
+      friendly_datetime: ko.observable('').extend({
+        default_value: 'Fecha y hora de la visita'
+      }),
+      dates: ko.observableArray([]),
+      date: ko.observable('').extend({
+        required: { onlyIf: on_step_3 },
+        default_value: ''
+      }),
 
-        times: ko.observableArray([]).extend({
-          default_value: []
-        }),
-        time: ko.observable('').extend({
-          required: { onlyIf: on_step_3 },
-          default_value: ''
-        }),
+      times: ko.observableArray([]).extend({
+        default_value: []
+      }),
+      time: ko.observable('').extend({
+        required: { onlyIf: on_step_3 },
+        default_value: ''
+      }),
 
-        service_type: ko.observable(default_service_type),
+      service_type: ko.observable(default_service_type),
     });
 
     aliada.ko.is_recurrent_service = ko.computed(function(){
