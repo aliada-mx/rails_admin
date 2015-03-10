@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150308025352) do
+ActiveRecord::Schema.define(version: 20150310005655) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -269,8 +269,8 @@ ActiveRecord::Schema.define(version: 20150308025352) do
     t.text     "attention_instructions"
     t.text     "equipment_instructions"
     t.text     "forbidden_instructions"
-    t.time     "begin_time"
-    t.time     "end_time"
+    t.time     "aliada_reported_begin_time"
+    t.time     "aliada_reported_end_time"
     t.boolean  "entrance_instructions"
   end
 

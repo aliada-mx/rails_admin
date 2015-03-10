@@ -6,8 +6,8 @@ class AliadasController < ApplicationController
     @service_to_finish = Service.where(id: params[:service],  aliada_id: @aliada.id, status: 'aliada_assigned').where("datetime <= ?", DateTime.now).take
     if @service_to_finish
       
-      @service_to_finish.begin_time = params[:begin_time]
-      @service_to_finish.end_time = params[:end_time]
+      @service_to_finish.aliada_reported_begin_time = params[:begin_time]
+      @service_to_finish.aliada_reported_end_time = params[:end_time]
       @service_to_finish.finish!
       @service_to_finish.user.charge_service!(@service_to_finish.id)
       redirect_to :back

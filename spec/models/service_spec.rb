@@ -116,8 +116,8 @@ feature 'Service' do
   describe '#amount_to_bill' do
     it 'returns the amount result of calculating hours and multiplying by price' do
       s = Service.create(price: 65,
-                         begin_time: Time.now, 
-                         end_time: Time.now + 3.hour,
+                         aliada_reported_begin_time: Time.now, 
+                         aliada_reported_end_time: Time.now + 3.hour,
                          datetime: starting_datetime,
                          estimated_hours: 3,
                          service_type: one_time_service
@@ -127,8 +127,8 @@ feature 'Service' do
     it 'returns 0 with invalid begin and end' do
       s = Service.create(price: 65,
                          service_type: one_time_service,
-                         begin_time: Time.now, 
-                         end_time: Time.now - 3.hour,
+                         aliada_reported_begin_time: Time.now, 
+                         aliada_reported_end_time: Time.now - 3.hour,
                          datetime: starting_datetime,
                          estimated_hours: 3
                          )
