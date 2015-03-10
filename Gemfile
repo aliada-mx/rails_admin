@@ -44,8 +44,13 @@ gem 'aws-sdk', '~> 1.5.7'
 gem 'bootstrap-sass'
 # Sass framework
 gem 'compass-rails'
-# Exception monitoring
+ 
+# EXCEPTIONS
+#
+# Logging
 gem 'rollbar', '~> 1.2.7'
+# Exception catching
+gem 'raygun4ruby'
  
 # JAVASCRIPT 
 #
@@ -81,6 +86,8 @@ gem 'cancancan'
 # MAILING
 #
 gem 'smtpapi'
+
+# 
 
 group :development, :test do
   # Call 'pry' anywhere in the code to stop execution and get a debugger console

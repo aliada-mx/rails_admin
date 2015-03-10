@@ -42,8 +42,10 @@ class ServicesController < ApplicationController
     begin
       service = Service.create_initial!(service_params)
     rescue ActiveRecord::RecordInvalid => invalid
+      Raygun.track_exception(invalid)
       return render json: { status: :error, code: :invalid, message: invalid.message }
     rescue Conekta::Error => exception
+      Raygun.track_exception(exception)
       return render json: { status: :error, code: :conekta_error, message: [exception.message_to_purchaser]}
     end
 
