@@ -7,37 +7,37 @@
   .fields
     .personal-info
       = initial_service_form.fields_for :user do |user_form|
-        %label.field-row.email
+        .field-row.email
           %icon.icon-user
-          = user_form.text_field :email, placeholder: 'Correo electrónico', class: 'full-width', data: {bind: 'value: email, valueUpdate: "change"'}
-        %label.field-row
-          = user_form.text_field :first_name, placeholder: 'Nombres(s)', class: 'half-width', data: {bind: 'value: first_name'}
-          = user_form.text_field :last_name, placeholder: 'Apellido(s)', class: 'half-width', data: {bind: 'value: last_name'}
-        %label.field-row
-          = user_form.text_field :phone, placeholder: 'Teléfono (10 digitos)', data: {bind: 'value: phone'}
+          = user_form.text_field :email, placeholder: 'Correo electrónico', class: 'full-width', data: {bind: 'textInput: email, valueUpdate: "change"'}
+        .field-row
+          = user_form.text_field :first_name, placeholder: 'Nombres(s)', class: 'half-width', data: {bind: 'textInput: first_name'}
+          = user_form.text_field :last_name, placeholder: 'Apellido(s)', class: 'half-width', data: {bind: 'textInput: last_name'}
+        .field-row
+          = user_form.text_field :phone, placeholder: 'Teléfono (10 digitos)', data: {bind: 'textInput: phone'}
 
     .address
       = initial_service_form.fields_for :address do |address_form|
-        %label.field-row
+        .field-row
           %icon.icon-home
-          = address_form.text_field :street, placeholder: 'Calle', class: 'full-width', data: {bind: 'value: street'}
-        %label.field-row
+          = address_form.text_field :street, placeholder: 'Calle', class: 'full-width', data: {bind: 'textInput: street'}
+        .field-row
           %icon.icon-hash
-          = address_form.text_field :number, placeholder: 'Número Exterior', class: 'two-thirds-width', data: {bind: 'value: number'}
-          = address_form.text_field :interior_number, placeholder: 'Interior', class: 'third-width important-placeholder', data: {bind: 'value: interior_number'}
-        %label.field-row
-          = address_form.text_field :colony, placeholder: 'Colonia', class: 'full-width', data: {bind: 'value: colony'}
-        %label.field-row
-          = address_form.text_field :between_streets, placeholder: 'Entre calles', class: 'full-width', data: {bind: 'value: between_streets'}
-        %label.field-row
-          = address_form.text_field :city, placeholder: 'Ciudad/Delegación', class: 'half-width', data: {bind: 'value: city'}
-          = address_form.text_field :state, placeholder: 'Estado/Distrito', class: 'half-width', data: {bind: 'value: state'}
-        %label.field-row
-          = address_form.text_field :postal_code_number, placeholder: 'Código postal', data: {bind: 'value: postal_code_number'}, class: 'two-thirds-width'
+          = address_form.text_field :number, placeholder: 'Número Exterior', class: 'two-thirds-width'
+          = address_form.text_field :interior_number, placeholder: 'Interior', class: 'third-width important-placeholder'
+        .field-row
+          = address_form.text_field :colony, placeholder: 'Colonia', class: 'full-width', data: {bind: 'textInput: colony'}
+        .field-row
+          = address_form.text_field :between_streets, placeholder: 'Entre calles', class: 'full-width', data: {bind: 'textInput: between_streets'}
+        .field-row
+          = address_form.text_field :city, placeholder: 'Ciudad/Delegación', class: 'half-width', data: {bind: 'textInput: city'}
+          = address_form.text_field :state, placeholder: 'Estado/Distrito', class: 'half-width', data: {bind: 'textInput: state'}
+        .field-row
+          = address_form.text_field :postal_code_number, placeholder: 'Código postal', data: {bind: 'textInput: postal_code_number'}, class: 'two-thirds-width'
 
-        = address_form.hidden_field :latitude, as: :hidden, data: {bind: 'value: latitude'}
-        = address_form.hidden_field :longitude, as: :hidden, data: {bind: 'value: longitude'}
-        = address_form.hidden_field :map_zoom, as: :hidden, data: {bind: 'value: map_zoom'}
+        = address_form.hidden_field :latitude, as: :hidden, data: {bind: 'textInput: latitude'}
+        = address_form.hidden_field :longitude, as: :hidden, data: {bind: 'textInput: longitude'}
+        = address_form.hidden_field :map_zoom, as: :hidden, data: {bind: 'textInput: map_zoom'}
 
   %h4
     Si el PIN verde no indica la dirección, por favor arrástralo hasta la dirección correcta

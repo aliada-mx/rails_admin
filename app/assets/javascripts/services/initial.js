@@ -134,9 +134,4 @@ $(document).ready(function() {
   }, aliada.ko, "beforeChange");
 
   aliada.services.initial.live_feedback(aliada.services.initial.$form)
-
-  // When a user begins to type the validation error is gone
-  aliada.services.initial.$form.find('input').on('click', function(){
-    $(this).removeClass('error');
-  })
 });
