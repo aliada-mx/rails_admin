@@ -42,8 +42,9 @@ a, input
 
 a
   cursor: pointer
-  &.hover
+  &:hover, &:focus
     text-decoration: underline
+    color: $green
 
 .left
   float: left
@@ -198,3 +199,4 @@ footer
 @media only screen and (min-device-width : 320px) and (max-device-width : 568px)
   .blocked_ui_dialog
     left: 0% !important
+

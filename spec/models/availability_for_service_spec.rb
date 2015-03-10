@@ -25,16 +25,18 @@ describe 'AvailabilityForService' do
 
         @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours)
 
-        @service = double(to_schedule_interval: @schedule_interval,
+        @service = double(to_schedule_intervals: [@schedule_interval],
                           user: @user,
                           recurrence: @recurrence,
                           zone: zone,
                           one_timer?: true,
                           periodicity: nil,
+                          timezone: 'UTC',
+                          total_hours: @schedule_interval.size,
                           recurrent?: false)
         @finder = AvailabilityForService.new(@service, starting_datetime)
 
-        @service_datetime = starting_datetime_to_book_services().change(hour: 7)
+        @service_datetime = starting_datetime_to_book_services(@service.timezone).change(hour: 7)
       end
 
       after do
@@ -71,12 +73,11 @@ describe 'AvailabilityForService' do
 
       it 'doesnt find an available datetime when the requested hour happens before the available schedules' do
         before_availability_schedule_interval = ScheduleInterval.build_from_range(starting_datetime - 1.hour, ending_datetime)
-        service = double(to_schedule_interval: before_availability_schedule_interval,
-                         recurrence: @recurrence,
+        service = double(to_schedule_intervals: [before_availability_schedule_interval],
                          user: @user,
                          zone: zone,
-                         one_timer?: true,
-                          periodicity: nil,
+                         timezone: 'UTC',
+                         total_hours: before_availability_schedule_interval.size,
                          recurrent?: false)
         aliadas_availability = AvailabilityForService.new(service, starting_datetime).find
         
@@ -85,12 +86,11 @@ describe 'AvailabilityForService' do
       
       it 'doesnt find an available datetime when the requested hour happens after the available schedules' do
         after_availability_schedule_interval = ScheduleInterval.build_from_range(starting_datetime + 7.hour, ending_datetime + 7.hour)
-        service = double(to_schedule_interval: after_availability_schedule_interval,
-                         recurrence: @recurrence,
+        service = double(to_schedule_intervals: [after_availability_schedule_interval],
                          user: @user,
                          zone: zone,
-                         one_timer?: true,
-                          periodicity: nil,
+                         timezone: 'UTC',
+                         total_hours: after_availability_schedule_interval.size,
                          recurrent?: false)
         aliadas_availability = AvailabilityForService.find_aliadas_availability(service, starting_datetime)
         
@@ -100,12 +100,11 @@ describe 'AvailabilityForService' do
       it 'doesnt find a availability for banned aliadas' do
         user = double(banned_aliadas: [aliada_2])
 
-        service = double(to_schedule_interval: @schedule_interval,
+        service = double(to_schedule_intervals: [@schedule_interval],
                          user: user,
-                         recurrence: @recurrence,
                          zone: zone,
-                         one_timer?: true,
-                          periodicity: nil,
+                         timezone: 'UTC',
+                         total_hours: @schedule_interval.size,
                          recurrent?: false)
         
         aliadas_availability = AvailabilityForService.find_aliadas_availability(service, starting_datetime)
@@ -123,25 +122,21 @@ describe 'AvailabilityForService' do
     end
 
     context 'for a recurrent service ' do
-
       before do
         Timecop.freeze(starting_datetime)
 
-        create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada: aliada, zone: zone} )
-        create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada: aliada_2, zone: zone} )
-        create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada: aliada_3, zone: zone} )
+        intervals = create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada: aliada, zone: zone} )
+                    create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada: aliada_2, zone: zone} )
+                    create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada: aliada_3, zone: zone} )
 
-        schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours, conditions: {aliada_id: aliada.id})
-
-        @service = double(to_schedule_interval: schedule_interval,
-                         user: @user,
-                         recurrence: @recurrence,
-                         datetime: @service_datetime,
-                         zone: zone,
-                         one_timer?: false,
-                         periodicity: 7,
-                         days_count_to_end_of_recurrency: 5,
-                         recurrent?: true)
+        @service = double(to_schedule_intervals: intervals,
+                          user: @user,
+                          recurrence: @recurrence,
+                          datetime: @service_datetime,
+                          zone: zone,
+                          periodicity: 7,
+                          total_hours: 5,
+                          recurrent?: true)
         @finder = AvailabilityForService.new(@service, starting_datetime)
       end
 
@@ -185,14 +180,18 @@ describe 'AvailabilityForService' do
       end
 
       it 'doesnt find an available datetime when the requested hour happens before the available schedules' do
-        before_availability_schedule_interval = ScheduleInterval.build_from_range(starting_datetime - 1.hour, ending_datetime)
+        before_availability_schedule_interval = create_recurrent!(starting_datetime - 1.hour, 
+                                                                  hours: 5,
+                                                                  periodicity: 7,
+                                                                  persist: false,
+                                                                  conditions: {aliada: aliada, zone: zone} )
 
-        service = double(to_schedule_interval: before_availability_schedule_interval,
+        service = double(to_schedule_intervals: before_availability_schedule_interval,
                          user: @user,
                          recurrence: @recurrence,
-                         one_timer?: true,
                          zone: zone,
                          periodicity: 7,
+                         total_hours: 5,
                          recurrent?: false)
         aliadas_availability = AvailabilityForService.new(service, starting_datetime).find
         
@@ -200,13 +199,18 @@ describe 'AvailabilityForService' do
       end
       
       it 'doesnt find an available datetime when the requested hour happens after the available schedules' do
-        after_availability_schedule_interval = ScheduleInterval.build_from_range(starting_datetime + 7.hour, ending_datetime + 7.hour)
-        service = double(to_schedule_interval: after_availability_schedule_interval,
+        after_availability_schedule_interval = create_recurrent!(starting_datetime + 7.hour, 
+                                                                 hours: 7,
+                                                                 periodicity: 7,
+                                                                 persist: false,
+                                                                 conditions: {aliada: aliada, zone: zone} )
+
+        service = double(to_schedule_intervals: after_availability_schedule_interval,
                          user: @user,
                          recurrence: @recurrence,
                          zone: zone,
-                         one_timer?: true,
                          periodicity: 7,
+                         total_hours: 5,
                          recurrent?: false)
         aliadas_availability = AvailabilityForService.new(service, starting_datetime).find
         
@@ -214,17 +218,21 @@ describe 'AvailabilityForService' do
       end
 
       it 'doesnt find availability when the recurrence is too small(not enough schedules intervals)' do
-        availability_schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours)
+        availability_schedule_interval = create_recurrent!(starting_datetime, 
+                                                           hours: 5,
+                                                           periodicity: 7,
+                                                           persist: false,
+                                                           conditions: {aliada: aliada, zone: zone} )
 
         Schedule.where(datetime: starting_datetime, aliada_id: aliada_3.id).last.update(status: 'booked')
 
-        service = double(to_schedule_interval: availability_schedule_interval,
+        service = double(to_schedule_intervals: availability_schedule_interval,
                          user: @user,
                          datetime: @service_datetime,
                          recurrence: @recurrence,
                          zone: zone,
-                         one_timer?: false,
                          periodicity: 7,
+                         total_hours: 5,
                          days_count_to_end_of_recurrency: 5,
                          recurrent?: true)
         aliadas_availability = AvailabilityForService.new(service, starting_datetime).find
@@ -242,15 +250,14 @@ describe 'AvailabilityForService' do
       before do
         Timecop.freeze(starting_datetime)
 
-        create_one_timer!(starting_datetime, hours: 7, conditions: {aliada: aliada, zone: zone} )
-        create_one_timer!(starting_datetime, hours: 7, conditions: {aliada: aliada_2, zone: zone} )
+        interval = create_one_timer!(starting_datetime, hours: 7, conditions: {aliada: aliada, zone: zone} )
+                   create_one_timer!(starting_datetime, hours: 7, conditions: {aliada: aliada_2, zone: zone} )
 
-        @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours)
-
-        @service = double(to_schedule_interval: @schedule_interval,
+        @service = double(to_schedule_intervals: [interval],
                           user: @user,
                           zone: zone,
                           one_timer?: true,
+                          total_hours: interval.size,
                           periodicity: nil,
                           recurrent?: false)
         @finder = AvailabilityForService.new(@service, starting_datetime, aliada_id: aliada.id)

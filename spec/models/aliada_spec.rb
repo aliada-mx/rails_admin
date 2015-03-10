@@ -1,5 +1,6 @@
 describe 'Aliada' do
-  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 07:00:00') }
+  let(:timezone){ 'UTC' }
+  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
   let(:ending_datetime){ starting_datetime + 6.hour}
   let(:aliada){ create(:aliada) }
   let(:other_aliada){ create(:aliada) }

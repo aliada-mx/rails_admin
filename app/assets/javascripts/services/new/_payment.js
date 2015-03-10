@@ -1,14 +1,14 @@
 //= require modules/conekta
 
-aliada.services.initial.step_4_payment = function(ko){
+aliada.services.new.payment = function(ko){
   function create_service($form){
     return new Promise(function(resolve,reject){
       $form.ajaxSubmit({
+        url: aliada.ko.form_action(),
         success: function(response){
-          log('service creation response', response)
           switch(response.status){
             case 'success':
-              resolve();
+              resolve(response);
               break;
 
             case 'error':
@@ -25,11 +25,20 @@ aliada.services.initial.step_4_payment = function(ko){
 
   }
 
-  function go_to_success(){
-    aliada.ko.current_step(5);
+  function go_to_success_or_redirect(response){
+    if (_(response).has('next_path')){
+      redirect_to(response.next_path);
+      return;
+    }
+
+    aliada.ko.service_id(response.service_id)
+    aliada.ko.user_id(response.user_id)
+
+    // Change the form so we can update the service from the same form
+    aliada.ko.form_action(aliada.ko.edit_service_users_path());
   }
 
-  $(aliada.services.initial.form).on('submit', function(e){
+  $(aliada.services.initial.$form).on('submit', function(e){
     e.preventDefault();
     aliada.block_ui();
     var $token_input = $('#conekta_temporary_token');
@@ -37,7 +46,7 @@ aliada.services.initial.step_4_payment = function(ko){
 
     aliada.add_conekta_token_to_form(form, $token_input)
           .then(create_service)
-          .then(go_to_success)
+          .then(go_to_success_or_redirect)
           .caught(ConektaFailed, function(exception){
             aliada.dialogs.conekta_error(exception.message);
           })

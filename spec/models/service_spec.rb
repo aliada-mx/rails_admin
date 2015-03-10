@@ -3,13 +3,14 @@ feature 'Service' do
   include TestingSupport::SchedulesHelper
   include AliadaSupport::DatetimeSupport
 
-  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 07:00:00') }
+  let(:timezone){ 'UTC' }
+  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
   let!(:user) { create(:user) }
   let!(:aliada) { create(:aliada) }
   let!(:zone) { create(:zone) }
   let!(:recurrence){ create(:recurrence, 
-                            weekday: starting_datetime.weekday,
-                            hour: starting_datetime.hour,
+                            weekday: ( starting_datetime + 1.day - 1.hour).weekday,
+                            hour: ( starting_datetime + 1.day - 1.hour).hour,
                             periodicity: 7) }
   let!(:recurrent_service) { create(:service_type, name: 'recurrent') }
   let!(:one_time_service) { create(:service_type, name: 'one-time') }
@@ -18,11 +19,13 @@ feature 'Service' do
                          user: user,
                          recurrence: recurrence,
                          zone: zone,
+                         timezone: 'UTC',
                          service_type: one_time_service,
                          datetime: starting_datetime + 1.day,
                          estimated_hours: 3) }
   before do
     Timecop.freeze(starting_datetime)
+    allow_any_instance_of(Service).to receive(:timezone).and_return(timezone)
   end
 
   after do
@@ -31,29 +34,29 @@ feature 'Service' do
 
   before(:each, recurrent: false) do
     # Tomorrow because we never book for the same day, and - 1 hour to account the aliada traveling time
-    create_one_timer!(starting_datetime + 1.day - 1.hour, hours: 4, conditions: {aliada: aliada, zone: zone} )
+    create_one_timer!(starting_datetime + 1.day - 1.hour, hours: 4, conditions: {aliada: aliada, zone: zone}, timezone: timezone )
   end
 
   # Create the needed schedules
   before(:each, recurrent: true) do
     # Tomorrow because we never book for the same day, and - 1 hour to account the aliada traveling time
-    create_recurrent!(starting_datetime + 1.day - 1.hour, hours: 4, periodicity: 7, conditions: {aliada: aliada, zone: zone})
+    create_recurrent!(starting_datetime + 1.day - 1.hour, hours: 4, periodicity: 7, conditions: {aliada: aliada, zone: zone}, timezone: timezone)
   end
 
   describe '#book_aliada!' do
     it 'allows it to mark one time service schedules´ as booked', recurrent: false do
-      available_schedules = Schedule.available_for_booking(zone, starting_datetime_to_book_services)
+      available_schedules = Schedule.available_for_booking(zone, starting_datetime_to_book_services(timezone))
       expect(available_schedules.count).to be 4
       expect(Schedule.booked.count).to be 0
 
       service.book_aliada!
 
       expect(Schedule.booked.count).to be 4
-      expect(Schedule.available_for_booking(zone, starting_datetime_to_book_services).count).to be 0
+      expect(Schedule.available_for_booking(zone, starting_datetime_to_book_services(timezone)).count).to be 0
     end
 
     it 'allows it to mark recurrent service schedules´ as booked', recurrent: true do
-      available_schedules = Schedule.available_for_booking(zone, starting_datetime_to_book_services)
+      available_schedules = Schedule.available_for_booking(zone, starting_datetime_to_book_services(timezone))
       expect(available_schedules.count).to be 20
       expect(Schedule.booked.count).to be 0
 
@@ -79,7 +82,7 @@ feature 'Service' do
     end
 
     it 'validates the service doesnt end too late' do
-      too_late = '2014-10-31 18:00:00 -0600'.in_time_zone
+      too_late = '2014-10-31 04:00:00 -0600'.in_time_zone
 
       service.datetime = too_late
 
@@ -107,7 +110,7 @@ feature 'Service' do
 
   describe '#days_count_to_end_of_recurrency' do
     it 'returns 4 for the number of thursdays on january 2015 without counting the first' do
-      expect(starting_datetime).to eql Time.zone.parse('01 Jan 2015 07:00:00')
+      expect(starting_datetime).to eql Time.zone.parse('01 Jan 2015 13:00:00')
       expect(Setting.time_horizon_days).to be 30
       expect(service.days_count_to_end_of_recurrency).to be 4
     end

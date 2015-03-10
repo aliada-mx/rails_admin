@@ -62,7 +62,7 @@ gem 'nestive'
 gem 'devise'
 gem 'simple_token_authentication', '~> 1.0'
 
-# Time pargin
+# Time parsing for humans
 gem 'chronic'
 
 # PAYMENT SYSTEMS
@@ -72,10 +72,15 @@ gem 'conekta'
 gem 'invert'
 
 # ADMIN
+# 
 gem 'rails_admin', github: 'grillermo/rails_admin'
 # permissions
 gem 'cancancan'
 
+
+# MAILING
+#
+gem 'smtpapi'
 
 
 group :development, :test do

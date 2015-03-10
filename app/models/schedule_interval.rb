@@ -1,5 +1,5 @@
 class ScheduleInterval
-  #Represents a contiguous block of schedules inside a single day
+  #Represents a contiguous block of schedules 
 
   include ActiveModel::Validations
 
@@ -35,6 +35,10 @@ class ScheduleInterval
 
   def empty?
     size == 0
+  end
+
+  def include?(other_schedule)
+    @schedules.any? { |schedule| schedule.datetime == other_schedule.datetime }
   end
 
   # Returns the time difference between the beginning two schedule intervals

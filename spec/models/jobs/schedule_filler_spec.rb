@@ -2,7 +2,7 @@ describe 'Schedule Filler' do
 
   # Preconditions:
   let(:starting_datetime){ Time.zone.parse('01 Jan 2015 00:00:00') }
-  let(:recurrence_service_datetime) { Time.zone.parse('04 Jan 2015 07:00:00') }
+  let(:recurrence_service_datetime) { Time.zone.parse('04 Jan 2015 13:00:00') }
   total_available_hours = 8
   total_service_hours = 3
   # aliada recurrence

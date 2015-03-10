@@ -87,7 +87,7 @@ class AvailabilityForCalendar
     end
 
     def invalid?
-       @available_schedules.empty? || @hours.zero? || @available_schedules.size < @hours || @zone.nil?
+       @available_schedules.blank? || @hours.zero? || @available_schedules.size < @hours || @zone.nil?
     end
 
     def enough_continuous_schedules?

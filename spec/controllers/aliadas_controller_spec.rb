@@ -1,7 +1,7 @@
 feature 'AliadasController' do
   
   let!(:conekta_card){ create(:conekta_card) }
-  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 07:00:00') }
+  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 14:00:00') }
   let!(:user) { create(:user) }
   let!(:aliada) { create(:aliada) }
   let!(:zone) { create(:zone) }

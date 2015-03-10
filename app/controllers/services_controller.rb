@@ -8,8 +8,12 @@ class ServicesController < ApplicationController
   include ServiceHelper
 
   def initial
-    if user_signed_in?
-      redirect_to new_service_users_path(current_user)
+    if user_signed_in? 
+      if current_user.admin?
+        @user = current_user
+      else
+        redirect_to new_service_users_path(current_user)
+      end
     end
 
     @incomplete_service = IncompleteService.create!
@@ -22,22 +26,32 @@ class ServicesController < ApplicationController
   end
 
   def update
+    service = @user.services.find(params[:service_id])
+    service.update_attributes!(service_params.except(:user, :address))
+
+    next_services_path = next_services_users_path(user_id: @user.id, service_id: service.id)
+
+    return render json: { status: :success, next_path: next_services_path }
   end
 
   def edit
-    @service = Service.find(params[:service_id])
+    @service = @user.services.find(params[:service_id])
   end
 
   def create_initial
     begin
-      service = Service.create_initial!(service_params, @current_timezone)
+      service = Service.create_initial!(service_params)
     rescue ActiveRecord::RecordInvalid => invalid
       return render json: { status: :error, code: :invalid, message: invalid.message }
+    rescue Conekta::Error => exception
+      return render json: { status: :error, code: :conekta_error, message: [exception.message_to_purchaser]}
     end
 
     IncompleteService.mark_as_complete(incomplete_service_params,service)
 
-    return render json: { status: :success, message: 'Hemos guardado creado tu servicio correctamente' }
+    force_sign_in_user(service.user)
+
+    return render json: { status: :success, service_id: service.id, user_id: service.user.id }
   end
 
   def incomplete_service

@@ -210,6 +210,9 @@ es:
       default: ! '%A, %d de %B de %Y %H:%M:%S %z'
       long: ! '%d de %B de %Y %H:%M'
       short: ! '%d de %b %H:%M'
+      future: 'Próx. %A %d de %B a las %H:%M'
+      week_day:  '%A %e'
+      friendly_time: '%l:%S %P'
     pm: pm
   conekta: 
     card_created_successfully: 'Guardamos exitosamente tu tarjeta'
