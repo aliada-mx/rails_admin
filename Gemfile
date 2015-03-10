@@ -159,4 +159,11 @@ group :production do
   gem 'rails_12factor'
 end
 
+group :staging do
+  # Logging
+  gem "lograge"
+  # Heroku support
+  gem 'rails_12factor'
+end
+
 
