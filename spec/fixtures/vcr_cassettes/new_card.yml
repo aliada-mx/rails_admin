@@ -30,9 +30,9 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sat, 07 Mar 2015 03:02:00 GMT
+      - Tue, 10 Mar 2015 00:32:19 GMT
       Etag:
-      - '"68400ad6f357a81f2c0328898def719c"'
+      - '"3e92b28ce30aeb81e9f762c6d5eb88fa"'
       Server:
       - nginx/1.1.19
       Status:
@@ -40,11 +40,11 @@ http_interactions:
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - dbe4ecd2345a55e11841f2e112eaf2c5
+      - 676da63333d66e9e2f53a7d520d1de3b
       X-Runtime:
-      - '0.064765'
+      - '0.111103'
       Content-Length:
-      - '2090'
+      - '2711'
       Connection:
       - keep-alive
     body:
@@ -59,9 +59,12 @@ http_interactions:
         Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_UteUiFHoRKZzVPJH","created_at":1425517443,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
         Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_UBoKiDhSKYQqR5AP","created_at":1425697141,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
         Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_irvmTvX1CiivY2eq","created_at":1425697211,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_KxZi7zvL2QaEJsQ4","created_at":1425697272,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_NJhRCrBEkcrr2aBK","created_at":1425941641,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_MNVCBHUE5XDSjHh7","created_at":1425946755,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
         Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"}],"subscription":null}'
     http_version: 
-  recorded_at: Sat, 07 Mar 2015 03:00:51 GMT
+  recorded_at: Tue, 10 Mar 2015 00:31:03 GMT
 - request:
     method: post
     uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/customers/cus_M3V9nERCq9qDLZdD1/cards?token=tok_test_visa_4242
@@ -94,9 +97,9 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sat, 07 Mar 2015 03:01:12 GMT
+      - Tue, 10 Mar 2015 00:31:28 GMT
       Etag:
-      - '"02bf528f867f27c9272587b5af8747ef"'
+      - '"c2909a984e4df580769655e5cc635669"'
       Server:
       - nginx/1.1.19
       Status:
@@ -104,22 +107,22 @@ http_interactions:
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - 6a08c68e607ea1dbeb37dcd7c091e587
+      - 64aab13c7e3237894a111a2f95f117aa
       X-Runtime:
-      - '0.081944'
+      - '0.114118'
       Content-Length:
       - '206'
       Connection:
       - keep-alive
     body:
       encoding: UTF-8
-      string: '{"id":"card_KxZi7zvL2QaEJsQ4","created_at":1425697272,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+      string: '{"id":"card_9xDJ6F3cFNNU9Qz3","created_at":1425947488,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
         Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"}'
     http_version: 
-  recorded_at: Sat, 07 Mar 2015 03:00:52 GMT
+  recorded_at: Tue, 10 Mar 2015 00:31:03 GMT
 - request:
     method: post
-    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=30000&card=card_KxZi7zvL2QaEJsQ4&currency=MXN&description=Pre-autorizaci%C3%B3n%20de%20tarjeta%206&reference_id=6
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=300&card=card_9xDJ6F3cFNNU9Qz3&currency=MXN&description=Pre-autorizaci%C3%B3n%20de%20tarjeta%203&reference_id=3
     body:
       encoding: UTF-8
       string: ''
@@ -149,9 +152,9 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sat, 07 Mar 2015 03:02:05 GMT
+      - Tue, 10 Mar 2015 00:32:23 GMT
       Etag:
-      - '"bde7a85ca72b2991a2cb68f2a56668d3"'
+      - '"013ac12babb39e0d2a610c626cb37d5b"'
       Server:
       - nginx/1.1.19
       Status:
@@ -159,32 +162,31 @@ http_interactions:
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - 6505cf91780e41583d0d82f1195ecee6
+      - aa4aad8b7e88294ead696b873654f16d
       X-Runtime:
-      - '2.709316'
+      - '2.816854'
       Content-Length:
-      - '676'
+      - '673'
       Connection:
       - keep-alive
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        eyJpZCI6IjU0ZmE2YTJiMTljZTg4NzRkZDAwMDRkMCIsImxpdmVtb2RlIjpm
-        YWxzZSwiY3JlYXRlZF9hdCI6MTQyNTY5NzMyMywic3RhdHVzIjoicGFpZCIs
+        eyJpZCI6IjU0ZmUzYjk1MTljZTg4NjRjMTAwMDFkMyIsImxpdmVtb2RlIjpm
+        YWxzZSwiY3JlYXRlZF9hdCI6MTQyNTk0NzU0MSwic3RhdHVzIjoicGFpZCIs
         ImN1cnJlbmN5IjoiTVhOIiwiZGVzY3JpcHRpb24iOiJQcmUtYXV0b3JpemFj
-        acOzbiBkZSB0YXJqZXRhIDYiLCJyZWZlcmVuY2VfaWQiOiI2IiwiZmFpbHVy
+        acOzbiBkZSB0YXJqZXRhIDMiLCJyZWZlcmVuY2VfaWQiOiIzIiwiZmFpbHVy
         ZV9jb2RlIjpudWxsLCJmYWlsdXJlX21lc3NhZ2UiOm51bGwsIm1vbnRobHlf
         aW5zdGFsbG1lbnRzIjpudWxsLCJvYmplY3QiOiJjaGFyZ2UiLCJhbW91bnQi
-        OjMwMDAwLCJwYWlkX2F0IjoxNDI1Njk3MzI1LCJmZWUiOjEyOTksImN1c3Rv
-        bWVyX2lkIjoiY3VzX00zVjluRVJDcTlxRExaZEQxIiwicmVmdW5kcyI6W10s
-        InBheW1lbnRfbWV0aG9kIjp7Im5hbWUiOiJKb3JnZSBMb3BleiIsImV4cF9t
-        b250aCI6IjEyIiwiZXhwX3llYXIiOiIxOSIsImF1dGhfY29kZSI6IjE1MzY2
-        MCIsIm9iamVjdCI6ImNhcmRfcGF5bWVudCIsInR5cGUiOiJjcmVkaXQiLCJs
-        YXN0NCI6IjQyNDIiLCJicmFuZCI6InZpc2EiLCJpc3N1ZXIiOiIiLCJhY2Nv
-        dW50X3R5cGUiOiIiLCJjb3VudHJ5IjoiVVMiLCJmcmF1ZF9zY29yZSI6bnVs
-        bCwiZnJhdWRfaW5kaWNhdG9ycyI6W119LCJkZXRhaWxzIjp7Im5hbWUiOm51
-        bGwsInBob25lIjpudWxsLCJlbWFpbCI6bnVsbCwibGluZV9pdGVtcyI6W119
-        fQ==
+        OjMwMCwicGFpZF9hdCI6MTQyNTk0NzU0MywiZmVlIjozMDAsImN1c3RvbWVy
+        X2lkIjoiY3VzX00zVjluRVJDcTlxRExaZEQxIiwicmVmdW5kcyI6W10sInBh
+        eW1lbnRfbWV0aG9kIjp7Im5hbWUiOiJKb3JnZSBMb3BleiIsImV4cF9tb250
+        aCI6IjEyIiwiZXhwX3llYXIiOiIxOSIsImF1dGhfY29kZSI6IjE2NTg0MCIs
+        Im9iamVjdCI6ImNhcmRfcGF5bWVudCIsInR5cGUiOiJjcmVkaXQiLCJsYXN0
+        NCI6IjQyNDIiLCJicmFuZCI6InZpc2EiLCJpc3N1ZXIiOiIiLCJhY2NvdW50
+        X3R5cGUiOiIiLCJjb3VudHJ5IjoiVVMiLCJmcmF1ZF9zY29yZSI6bnVsbCwi
+        ZnJhdWRfaW5kaWNhdG9ycyI6W119LCJkZXRhaWxzIjp7Im5hbWUiOm51bGws
+        InBob25lIjpudWxsLCJlbWFpbCI6bnVsbCwibGluZV9pdGVtcyI6W119fQ==
     http_version: 
-  recorded_at: Sat, 07 Mar 2015 03:00:56 GMT
+  recorded_at: Tue, 10 Mar 2015 00:31:07 GMT
 recorded_with: VCR 2.9.3

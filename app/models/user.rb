@@ -63,9 +63,9 @@ class User < ActiveRecord::Base
         product = OpenStruct.new({price: amount,
                                    description: 'Servicio aliada',
                                    id: service_id})
-    
-        default_payment_provider.charge!(product, self)
         
+        default_payment_provider.charge!(product, self)
+       
         
         ### Exception handler for when a user's payment method throws an exception
         ### TODO: think about how to handle this for many payment providers

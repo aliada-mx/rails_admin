@@ -6,7 +6,9 @@ describe 'User' do
   let!(:service){ create(:service, 
                          aliada: aliada,
                          user: user,
-                         datetime: starting_datetime) }
+                         datetime: starting_datetime,
+                         begin_time: Time.now,
+                         end_time: Time.now + 3.hours) }
   let!(:other_service){ create(:service, 
                                aliada: other_aliada,
                                user: user,
@@ -72,9 +74,10 @@ describe 'User' do
       service.estimated_hours = 3
       
       service.save
-      #Binding.pry
+      
 
-      VCR.use_cassette('conekta_charge', match_requests_on: [:conekta_preauthorization]) do
+      VCR.use_cassette('conekta_user_charge', match_requests_on:[:conekta_preauthorization]) do
+        
         user.charge_service!(service.id)
       end
       expect(Payment.all.count).to eql 1

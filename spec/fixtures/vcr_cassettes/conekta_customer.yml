@@ -32,9 +32,9 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sat, 07 Mar 2015 03:02:23 GMT
+      - Tue, 10 Mar 2015 00:31:32 GMT
       Etag:
-      - '"f8cfacfacf4be748faf620e49763222e"'
+      - '"8539f5c313e008f93d320d0847f892a3"'
       Server:
       - nginx/1.1.19
       Status:
@@ -42,18 +42,18 @@ http_interactions:
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - 4a81c37321facc4626a17784c2b647dd
+      - 9aa8c93b6e567d4716ea186495a421a4
       X-Runtime:
-      - '0.109011'
+      - '0.181593'
       Content-Length:
       - '434'
       Connection:
       - keep-alive
     body:
       encoding: UTF-8
-      string: '{"id":"cus_ELLNuM9xoAoD73AHC","email":"user-39@aliada.mx","name":"Test
-        User","phone":"123456","livemode":false,"default_card_id":"card_ap8q8GMt5mf8p92c","object":"customer","created_at":1425697343,"cards":[{"id":"card_ap8q8GMt5mf8p92c","created_at":1425697343,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
-        Lopez","customer_id":"cus_ELLNuM9xoAoD73AHC"}],"subscription":null}'
+      string: '{"id":"cus_CfyCNmVox6ERfojvs","email":"user-39@aliada.mx","name":"Test
+        User","phone":"123456","livemode":false,"default_card_id":"card_1bEhyh71KXHWzvBr","object":"customer","created_at":1425947492,"cards":[{"id":"card_1bEhyh71KXHWzvBr","created_at":1425947492,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_CfyCNmVox6ERfojvs"}],"subscription":null}'
     http_version: 
-  recorded_at: Sat, 07 Mar 2015 03:01:14 GMT
+  recorded_at: Tue, 10 Mar 2015 00:31:08 GMT
 recorded_with: VCR 2.9.3

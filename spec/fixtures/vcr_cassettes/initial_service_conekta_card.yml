@@ -32,9 +32,9 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sat, 07 Mar 2015 03:01:19 GMT
+      - Tue, 10 Mar 2015 00:33:02 GMT
       Etag:
-      - '"77f05977f1eafe6f2ca2f280fc8d074d"'
+      - '"c782393831b6a64bff633fd31f0520bc"'
       Server:
       - nginx/1.1.19
       Status:
@@ -42,23 +42,23 @@ http_interactions:
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - 825e0e635e0579a4a02ca3820bd707e9
+      - 693023ec9ca39d5a72940f5aacf17b77
       X-Runtime:
-      - '0.110646'
+      - '0.136459'
       Content-Length:
       - '456'
       Connection:
       - keep-alive
     body:
       encoding: UTF-8
-      string: '{"id":"cus_t2casnryN1SWeYDbX","email":"guillermo.siliceo@gmail.com","name":"Guillermo
-        Siliceo","phone":"5585519954","livemode":false,"default_card_id":"card_zVNTrpTip7cFyKdp","object":"customer","created_at":1425697279,"cards":[{"id":"card_zVNTrpTip7cFyKdp","created_at":1425697279,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
-        Lopez","customer_id":"cus_t2casnryN1SWeYDbX"}],"subscription":null}'
+      string: '{"id":"cus_zo3QteqovYLJGXJGR","email":"guillermo.siliceo@gmail.com","name":"Guillermo
+        Siliceo","phone":"5585519954","livemode":false,"default_card_id":"card_SYJUbAPgtu8j72J3","object":"customer","created_at":1425947582,"cards":[{"id":"card_SYJUbAPgtu8j72J3","created_at":1425947582,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_zo3QteqovYLJGXJGR"}],"subscription":null}'
     http_version: 
-  recorded_at: Fri, 06 Mar 2015 18:00:00 GMT
+  recorded_at: Thu, 01 Jan 2015 07:00:00 GMT
 - request:
     method: post
-    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=30000&card=card_zVNTrpTip7cFyKdp&currency=MXN&description=Pre-autorizaci%C3%B3n%20de%20tarjeta%209&reference_id=9
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=300&card=card_SYJUbAPgtu8j72J3&currency=MXN&description=Pre-autorizaci%C3%B3n%20de%20tarjeta%2010&reference_id=10
     body:
       encoding: UTF-8
       string: ''
@@ -88,9 +88,9 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sat, 07 Mar 2015 03:01:23 GMT
+      - Tue, 10 Mar 2015 00:33:05 GMT
       Etag:
-      - '"c6460183b5ff24df255130c85762aed4"'
+      - '"c771020a784ea1c9b9edb9dfc8ffea89"'
       Server:
       - nginx/1.1.19
       Status:
@@ -98,32 +98,31 @@ http_interactions:
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - c4cbd751679bd9c1a295b7f99048cc8d
+      - 1e86cb21530877cde9a654f5e4a4e030
       X-Runtime:
-      - '3.045047'
+      - '2.763532'
       Content-Length:
-      - '676'
+      - '675'
       Connection:
       - keep-alive
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        eyJpZCI6IjU0ZmE2YTAwMjQxMjI5OTA0MTAwMDU5OSIsImxpdmVtb2RlIjpm
-        YWxzZSwiY3JlYXRlZF9hdCI6MTQyNTY5NzI4MCwic3RhdHVzIjoicGFpZCIs
+        eyJpZCI6IjU0ZmUzYmJlMTljZTg4Mzk2ZjAwMDFiYiIsImxpdmVtb2RlIjpm
+        YWxzZSwiY3JlYXRlZF9hdCI6MTQyNTk0NzU4Miwic3RhdHVzIjoicGFpZCIs
         ImN1cnJlbmN5IjoiTVhOIiwiZGVzY3JpcHRpb24iOiJQcmUtYXV0b3JpemFj
-        acOzbiBkZSB0YXJqZXRhIDkiLCJyZWZlcmVuY2VfaWQiOiI5IiwiZmFpbHVy
-        ZV9jb2RlIjpudWxsLCJmYWlsdXJlX21lc3NhZ2UiOm51bGwsIm1vbnRobHlf
-        aW5zdGFsbG1lbnRzIjpudWxsLCJvYmplY3QiOiJjaGFyZ2UiLCJhbW91bnQi
-        OjMwMDAwLCJwYWlkX2F0IjoxNDI1Njk3MjgzLCJmZWUiOjEyOTksImN1c3Rv
-        bWVyX2lkIjoiY3VzX3QyY2FzbnJ5TjFTV2VZRGJYIiwicmVmdW5kcyI6W10s
-        InBheW1lbnRfbWV0aG9kIjp7Im5hbWUiOiJKb3JnZSBMb3BleiIsImV4cF9t
-        b250aCI6IjEyIiwiZXhwX3llYXIiOiIxOSIsImF1dGhfY29kZSI6IjE2MDcy
-        NiIsIm9iamVjdCI6ImNhcmRfcGF5bWVudCIsInR5cGUiOiJjcmVkaXQiLCJs
-        YXN0NCI6IjQyNDIiLCJicmFuZCI6InZpc2EiLCJpc3N1ZXIiOiIiLCJhY2Nv
-        dW50X3R5cGUiOiIiLCJjb3VudHJ5IjoiVVMiLCJmcmF1ZF9zY29yZSI6bnVs
-        bCwiZnJhdWRfaW5kaWNhdG9ycyI6W119LCJkZXRhaWxzIjp7Im5hbWUiOm51
-        bGwsInBob25lIjpudWxsLCJlbWFpbCI6bnVsbCwibGluZV9pdGVtcyI6W119
-        fQ==
+        acOzbiBkZSB0YXJqZXRhIDEwIiwicmVmZXJlbmNlX2lkIjoiMTAiLCJmYWls
+        dXJlX2NvZGUiOm51bGwsImZhaWx1cmVfbWVzc2FnZSI6bnVsbCwibW9udGhs
+        eV9pbnN0YWxsbWVudHMiOm51bGwsIm9iamVjdCI6ImNoYXJnZSIsImFtb3Vu
+        dCI6MzAwLCJwYWlkX2F0IjoxNDI1OTQ3NTg1LCJmZWUiOjMwMCwiY3VzdG9t
+        ZXJfaWQiOiJjdXNfem8zUXRlcW92WUxKR1hKR1IiLCJyZWZ1bmRzIjpbXSwi
+        cGF5bWVudF9tZXRob2QiOnsibmFtZSI6IkpvcmdlIExvcGV6IiwiZXhwX21v
+        bnRoIjoiMTIiLCJleHBfeWVhciI6IjE5IiwiYXV0aF9jb2RlIjoiMjA3ODEx
+        Iiwib2JqZWN0IjoiY2FyZF9wYXltZW50IiwidHlwZSI6ImNyZWRpdCIsImxh
+        c3Q0IjoiNDI0MiIsImJyYW5kIjoidmlzYSIsImlzc3VlciI6IiIsImFjY291
+        bnRfdHlwZSI6IiIsImNvdW50cnkiOiJVUyIsImZyYXVkX3Njb3JlIjpudWxs
+        LCJmcmF1ZF9pbmRpY2F0b3JzIjpbXX0sImRldGFpbHMiOnsibmFtZSI6bnVs
+        bCwicGhvbmUiOm51bGwsImVtYWlsIjpudWxsLCJsaW5lX2l0ZW1zIjpbXX19
     http_version: 
-  recorded_at: Fri, 06 Mar 2015 18:00:00 GMT
+  recorded_at: Thu, 01 Jan 2015 07:00:00 GMT
 recorded_with: VCR 2.9.3
