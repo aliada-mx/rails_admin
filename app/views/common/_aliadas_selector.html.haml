@@ -1,4 +1,8 @@
-= select_tag 'aliadas_selector', options_from_collection_for_select(@user.past_aliadas, :id, :name), class: 'selectpicker'
+%h4
+  %icon.icon-aliada
+  Elige a tu Aliada
+
+= select_tag 'aliadas_selector', options_from_collection_for_select(@user.aliadas, :id, :name), class: 'selectpicker'
 
 = append :javascript do
   = javascript_include_tag 'jquery.selectBoxIt'

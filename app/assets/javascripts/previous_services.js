@@ -13,7 +13,7 @@ $(function(){
     });
     disableForm(form, value);
     return false;
-  }
+  };
 
   disableForm = function(form, value){
     form.children('.unchecked').each(function(){
@@ -25,7 +25,7 @@ $(function(){
         $(this).toggleClass('disabled');
       }
       $(this).prop("onclick", null);
-    })
+    });
 
   };
 
