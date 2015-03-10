@@ -4,8 +4,8 @@ aliada.services.initial.initialize_calendar_times = function(){
 
     aliada.ko.date(dateProperties.strdate);
 
-    // Broadcast the change so live_feedback can report it
-    aliada.services.initial.form.trigger('change');
+    // Broadcast the change so it gets saves to the incomplete service
+    aliada.services.initial.$form.trigger('change');
 
     // Only interact with available dates
     if( !$el.hasClass('fc-content') ){
