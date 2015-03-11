@@ -3,9 +3,7 @@
 @import 'bootstrap/mixins/grid'
 @import 'compass/css3/box-shadow'
 
-.container.two-columns
-  margin-bottom: 50px
-
+body.two-columns
   header
     +make-xs-column(12)
 
@@ -21,6 +19,7 @@
     min-width: 300px
     width: 57%
     float: left
+    margin-bottom: 50px
 
   aside
     +box-sizing(border-box)
@@ -36,16 +35,22 @@
       text-align: center
       padding-top: 50px
 
+  .wrapper-sticky
+    &.sticky-active
+      aside
+        +soft-transition($property: top, $easing: cubic-bezier(0.175, 0.885, 0.32, 1.275))
+
 
 @media screen and(max-width: 400px) 
-  .container.two-columns
-    main
-      padding: 10px
-      margin: 10px !important
-    aside
-      width: 100%
-      padding-top: 0 
-      padding-bottom: 0 
-      padding-left: 0 
-      padding-right: 0 
-      margin-left: 0
+  .two-columns
+    .container
+      main
+        padding: 10px
+        margin: 10px !important
+      aside
+        width: 100%
+        padding-top: 0 
+        padding-bottom: 0 
+        padding-left: 0 
+        padding-right: 0 
+        margin-left: 0

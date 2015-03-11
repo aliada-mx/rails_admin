@@ -27,5 +27,9 @@ module Presenters
       # Remove the trailing comma
       list.strip![0..-2]
     end
+
+    def postal_code_number
+      default_address.postal_code.number
+    end
   end
 end

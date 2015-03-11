@@ -9,7 +9,7 @@ class UserMailer < ApplicationMailer
   end
 
   def welcome_email(user)
-    id = '371f2a77-45c5-4644-b3be-0639395a4ca3'
+    id = 'c25504da-8cb2-49be-a4c4-16ca4de53b41'
 
     @user = user
     sendgrid_plain_mail to: 'guillermo.siliceo@gmail.com',

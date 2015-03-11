@@ -27,7 +27,7 @@ class AvailabilityForCalendar
   end
 
   def self.find_availability(hours, zone, available_after, recurrent: false, periodicity: nil, aliada_id: nil)
-    AvailabilityForCalendar.new(hours, zone, available_after, recurrent: recurrent, periodicity: periodicity).find
+    AvailabilityForCalendar.new(hours, zone, available_after, recurrent: recurrent, periodicity: periodicity, aliada_id: aliada_id).find
   end
      
   # It will try to build as many aliada_availabilities that matches the requested number of hours

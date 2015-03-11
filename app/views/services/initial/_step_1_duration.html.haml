@@ -11,7 +11,4 @@
 
   = render partial: 'common/hours_selector', locals: {form: initial_service_form}
 
-  %h4
-    Agrega tareas extras (extiende el tiempo de la visita)
-
-  = render partial: 'common/extras', locals: {form: initial_service_form}
+  = render partial: 'common/extras', locals: {form: initial_service_form, collapsed: false}

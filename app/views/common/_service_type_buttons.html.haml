@@ -5,9 +5,9 @@
     - type = service_type.name
     - class_name = type == 'recurrent' ? 'green' : 'transparent'
 
-    %div{class: "radio-button-container #{type}"}
+    %div{class: "radio-button-container #{type} #{promotional ? '' : 'non-promotional'}"}
       .head
-        - if type == 'recurrent'
+        - if type == 'recurrent' && promotional
           %span.best-value
             %icon.sparks
             MEJOR VALOR
@@ -26,11 +26,13 @@
               %icon.check.small
 
             $#{service_type.price_per_hour} pesos/hora
-          - service_type.benefits_list.each do |benefit|
-            %li.small-letters
-              - if type == 'recurrent'
-                %icon.check-active.small
-              - else
-                %icon.check.small
-              = benefit
+
+          - if promotional
+            - service_type.benefits_list.each do |benefit|
+              %li.small-letters
+                - if type == 'recurrent'
+                  %icon.check-active.small
+                - else
+                  %icon.check.small
+                = benefit
 

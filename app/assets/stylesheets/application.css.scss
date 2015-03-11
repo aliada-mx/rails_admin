@@ -1,14 +1,8 @@
 @import 'common/base';
 
-// Boostrap
-@import 'bootstrap-sprockets';
-@import 'common/bootstrap';
-
 // Controllers
 @import 'static_pages';
 @import 'services';
 @import 'recurrences';
 @import 'users';
 
-//Icomoon Fonts
-@import "common/icomoon";

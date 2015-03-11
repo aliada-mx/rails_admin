@@ -1,9 +1,10 @@
+= append(:body_class){ ' home ' }
+
 -# Home header
 %section.search-section-wrapper
 
   .white-navigation
     = render partial: "common/public_navigation"
-
 
   %div.container
     %div.row.search-container
@@ -18,7 +19,12 @@
         %legend
           Pide una profesional de la limpieza en menos de un minuto desde $65/hr.
         .action-button-container
-          %a.action-button.size-extra-large{href: initial_service_path} Pide tu primer visita
+          - if user_signed_in?
+            = link_to new_service_users_path(@user), {class: ' action-button size-extra-large'} do
+              Programa nueva visita
+          - else
+            = link_to initial_service_path, {class: ' action-button size-extra-large'} do
+              Pide tu primer visita
 
 
 %section.media-section-wrapper

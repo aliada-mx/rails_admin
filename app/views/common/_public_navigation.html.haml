@@ -12,7 +12,7 @@
           = link_to("Preguntas Frecuentes", :faq, {})
         %li
           - if user_signed_in?
-            %a{href: edit_users_path(current_user), title: 'Mi cuenta', class: 'account-link' }
+            %a{href: edit_users_path(@user), title: 'Mi cuenta', class: 'account-link' }
               %span.icon.icon-user
               Mi Cuenta
           - else

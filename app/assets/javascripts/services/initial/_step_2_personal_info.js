@@ -150,6 +150,11 @@ aliada.services.initial.step_2_personal_info = function(aliada, ko){
 
   // On entering the step
   $(document).on('entering_step_2',function(){
+    // Follow the scroll
+    if(!isMobile.any){
+      $('aside').hcSticky({stickTo: $('main'), top: '20'});
+    }
+
     // Initialize map only once the container is visible otherwise the map renders incorrectly
     if(should_init_map_autocomplete){
       initialize_map_and_autocomplete();

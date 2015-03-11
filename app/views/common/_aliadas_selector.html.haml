@@ -1,13 +1,9 @@
-%h4
-  %icon.icon-aliada
-  Elige a tu Aliada
-
-= select_tag 'aliadas_selector', options_from_collection_for_select(@user.aliadas, :id, :name), class: 'selectpicker'
+= select_tag 'aliadas_selector', options_from_collection_for_select(@user.aliadas + [ @any_aliada, @other_aliada ], :id, :name, '0'), class: 'selectpicker'
 
 = append :javascript do
   = javascript_include_tag 'jquery.selectBoxIt'
   :javascript
-    $(".selectpicker").selectBoxIt({
+    $("#aliadas_selector").selectBoxIt({
       // Trigger events on original dom element
       aggressiveChange: true,
       autoWidth: false
