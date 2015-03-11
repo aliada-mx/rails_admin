@@ -34,7 +34,7 @@ feature 'AliadasAvailabilityController' do
         response = JSON.parse(page.body)
         available_date = (starting_datetime + 1.day).strftime('%Y-%m-%d')
         expect(response['dates_times'].has_key?(available_date)).to eql true
-        expect(response['dates_times'][available_date]).to eql [{"value" => "07:00","friendly_time" => " 7:00 am", "friendly_datetime"=>"Próx. viernes 02 de enero a las 07:00"}]
+        expect(response['dates_times'][available_date]).to eql [{"value" => "07:00","friendly_time" => " 7:00 am", "friendly_datetime"=>"Próx. viernes 02 de enero a las  7:00 am"}]
       end
     end
   end

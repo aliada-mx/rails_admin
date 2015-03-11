@@ -44,7 +44,7 @@ describe 'Availability' do
 
       dates_times = @aliadas_availability.for_calendario('Mexico City')
 
-      expect(dates_times).to eql ({"2015-01-01"=>[{:value=>"16:00", :friendly_time=>" 4:00 pm", :friendly_datetime=>"Próx. jueves 01 de enero a las 16:00"}]})
+      expect(dates_times).to eql ({"2015-01-01"=>[{:value=>"16:00", :friendly_time=>" 4:00 pm", :friendly_datetime=>"Próx. jueves 01 de enero a las  4:00 pm"}]})
     end
   end
 

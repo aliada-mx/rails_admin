@@ -35,7 +35,7 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
   });
 
   aliada.ko.price = ko.computed(function(){
-      return Math.ceil(aliada.ko.hours() * aliada.ko.cost_per_hour());
+    return Math.ceil(aliada.ko.hours() * aliada.ko.cost_per_hour());
   });
     
   // Hours selector

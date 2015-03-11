@@ -10,7 +10,8 @@
         editar
 
     %li.checked
-      %span #{@user.default_address.name}
+      - if @user.default_address
+        %span #{@user.default_address.name}
       %a.small-letters
         %icon.pencil.small
         editar

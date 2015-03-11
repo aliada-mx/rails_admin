@@ -35,7 +35,7 @@ aliada.services.initial.step_4_payment = function(ko){
     aliada.ko.user_id(response.user_id)
 
     // Change the form so we can update the service from the same form
-    aliada.ko.form_action(aliada.ko.edit_service_users_path());
+    aliada.ko.form_action(aliada.ko.update_service_users_path());
 
     aliada.ko.current_step(5);
   }

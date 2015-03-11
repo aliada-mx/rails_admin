@@ -113,6 +113,10 @@ class User < ActiveRecord::Base
     services.in_the_past.joins(:aliada).order('aliada_id').map(&:aliada)
   end
 
+  def aliadas
+    services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }
+  end
+
   def set_default_role
     self.role ||= 'client' if self.respond_to? :role
   end

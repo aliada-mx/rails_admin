@@ -7,6 +7,7 @@
   background-color: white
   +rem(font-size, $medium-font)
   +rem(padding, 0)
+  overflow: hidden
   &.initial
     +box-shadow($medium-gray 0px 0px 4px)
     padding: 12px 20px 20px
@@ -23,20 +24,19 @@
       +rem(font-size, $extra-large-font)
       vertical-align: middle
 
-    .promotional-code
-      position: relative
-      float: right
-      width: 215px
+  .promotional-code
+    position: relative
+    float: right
+    width: 230px
+    margin: 10px 0
+    a
+      position: absolute
+      right: 0
+      top: 1px
+      color: $green
 
-      a
-        position: absolute
-        right: 0
-        top: 1px
-        color: $green
-
-      input[type=text]
-        width: 100%
-
+    input[type=text]
+      width: 100%
 
 
 ul.summary
