@@ -28,7 +28,7 @@ feature 'ApplicationController' do
     it 'catches the exception and renders a json error' do
       visit initial_service_path
 
-      fill_service_form(conekta_card, one_time_service, starting_datetime, extra_1, zone)
+      fill_initial_service_form(conekta_card, one_time_service, starting_datetime, extra_1, zone)
 
       VCR.use_cassette('initial_service_conekta_card_without_token') do
         click_button 'Confirmar visita'

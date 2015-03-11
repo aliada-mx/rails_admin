@@ -21,5 +21,7 @@
 
     aliada.rails_environment = '<%= Rails.env %>';
 
-    raygun_api_key = '<%= Raygun.configuration.api_key %>'
+    raygun_api_key = '<%= Raygun.configuration.api_key %>';
+
+    aliada.user.id = <%= @user.try(:id) %>;
 </script>

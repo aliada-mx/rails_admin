@@ -94,7 +94,11 @@ class User < ActiveRecord::Base
   end
 
   def send_welcome_email
-    UserMailer.welcome_email(self).deliver!
+    UserMailer.welcome(self).deliver!
+  end
+
+  def send_confirmation_email(service)
+    UserMailer.service_confirmation(self, service).deliver!
   end
 
   rails_admin do
