@@ -6,6 +6,7 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
     additional: ko.observable(1),
     forced_hours: ko.observable(null),
     extras_hours: ko.observable(0),
+    extra_items: ko.observableArray([{item: 'ola'},{item: 'bola'}]),
     cost_per_hour: ko.observable(aliada.cost_per_hour),
   });
 
@@ -31,13 +32,12 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
       }else{
         return aliada.ko.forced_hours() + extras_hours;
       }
-      return hours > aliada.minimum_hours_service ? hours : aliada.minimum_hours_service
-  });
+      return hours > aliada.minimum_hours_service ? hours : aliada.minimum_hours_service});
 
   aliada.ko.price = ko.computed(function(){
     return Math.ceil(aliada.ko.hours() * aliada.ko.cost_per_hour());
   });
-    
+
   // Hours selector
   $('#hours_space_room_selector').on('change', function(){
     var $selected = $(this).find(':selected');
@@ -49,11 +49,16 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
   });
 
   // Set hours depending on selected extras
-  $('#extras').on('change',function(){
+  $('#extras').on('change',function(e){
       var extras_hours = _.reduce($(this).find(':checked'), function(total, checkbox){
         return total + parseFloat($(checkbox).data('hours'));
-      }, 0)
+      }, 0);
 
+      var extra_items = _.map($(this).find(':checked'), function(checkbox){
+        return "+" + $(checkbox).siblings('label').find('h4').text();
+      });
+
+      aliada.ko.extra_items(extra_items);
       aliada.ko.extras_hours(extras_hours);
   });
 }
