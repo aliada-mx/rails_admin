@@ -42,7 +42,6 @@ class AvailabilityForCalendar
       @wday_hour = availability_group_key
 
       if should_add_current_schedule? 
-        # puts "adding continuous schedule #{@current_schedule.datetime}"
         add_continuous_schedules
 
         store! if enough_continuous_schedules?
@@ -67,17 +66,15 @@ class AvailabilityForCalendar
     # To track recurrences we use key common unique per week day hour
     # because for the calendar is enough to know there is at least one
     def availability_group_key
-      "#{@current_schedule.datetime.wday}_#{@current_schedule.datetime.hour}"
+      "#{@current_schedule.datetime.wday}_#{@current_schedule.datetime.hour}_#{@current_aliada_id}"
     end
 
     def store!
       trim_to_size
-      # puts "storeing with key #{@wday_hour} the #{@continuous_schedules.first.datetime}"
 
       if @recurrent 
         if broken_continous_intervals?
-          # puts "broken continuity #{@wday_hour} the #{@continuous_schedules.first.datetime}"
-          # If we dont have a perfect recurrence we have nothing
+          # If we dont have a continous recurrence we have nothing
           remove_wday_availability!
           return
         end
@@ -114,15 +111,7 @@ class AvailabilityForCalendar
       # The first time there is no previous
       return false if previous_interval.blank?
 
-      value = !continuous_schedule_intervals?(previous_interval, current_interval)
-      if value
-        # # binding.pry
-        # puts "found broken continuous intervals"
-        # puts "previous #{previous_interval.schedules.map { |s| s.datetime }}"
-        # puts "current_interval #{current_interval.schedules.map { |s| s.datetime }}"
-        # puts " "
-      end
-      value
+      !continuous_schedule_intervals?(previous_interval, current_interval)
     end
 
     def remove_wday_availability!
@@ -135,7 +124,6 @@ class AvailabilityForCalendar
 
         @aliadas_availability.delete_if do |aliada_id, aliada_availability| 
           minimum_availabilities = wdays_until_horizon[aliada_availability.first.wday]
-          # puts "minimum_availabilities #{minimum_availabilities} vs aliada_availability #{aliada_availability.size}"
 
           aliada_availability.size < minimum_availabilities
         end

@@ -162,6 +162,28 @@ describe 'AvailabilityForCalendar' do
         expect(aliadas_availability.schedules_intervals.all? { |interval| interval.aliada_id == aliada.id }).to be true
         expect(aliadas_availability.schedules_intervals.any? { |interval| interval.aliada_id == aliada_2.id }).to be false
       end
+
+      it 'fiends the summed availability of all aliadas even if they have the same availabilites' do
+        create_recurrent!(starting_datetime + 4.hours, hours: 3, periodicity: 7, conditions: {aliada: aliada_3, zone: zone} )
+
+        aliadas_availability = AvailabilityForCalendar.new(3, zone, starting_datetime, recurrent: true, periodicity: 7).find
+
+        expect(aliadas_availability.size).to be 4
+        expect(aliadas_availability.schedules_intervals.size).to be 20
+
+        aliada_1_availability = aliadas_availability.for_aliada(aliada)
+        aliada_2_availability = aliadas_availability.for_aliada(aliada_2)
+        aliada_3_availability = aliadas_availability.for_aliada(aliada_3)
+
+        expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
+        expect(aliada_1_availability.schedules_intervals.size).to be 10
+        
+        expect(aliada_2_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime + 4.hour
+        expect(aliada_2_availability.schedules_intervals.size).to be 5
+
+        expect(aliada_3_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime + 4.hour
+        expect(aliada_3_availability.schedules_intervals.size).to be 5
+      end
     end
 
     context 'with a pre chosen aliada' do
