@@ -8,6 +8,7 @@
 //= require knockout.validation
 //= require knockout_custom_bindings
 //
+//= require isMobile
 //= require underscore
 //= require bluebird.min
 //= require vex
@@ -19,6 +20,13 @@
 //= require_self
 
 vex.defaultOptions.className = 'vex-theme-plain';
+
+// Catch exceptions with raygun
+Raygun.init(raygun_api_key).attach();
+
+function report_error(e){
+    Raygun.send(e, ko.toJSON(aliada.ko));
+}
 
 // Config blockUI
 _.extend($.blockUI.defaults.css,{
@@ -74,3 +82,15 @@ _.templateSettings = {
 function redirect_to(url){
   window.location.replace(url);
 };
+
+// Utility function for smooth scrolling with a href='#id'
+initialize_scroll_anchors = function(){
+  $('a[href*=#]').on('click', function(event){     
+    event.preventDefault();
+    smooth_scroll(this.hash);
+  });
+}
+
+smooth_scroll = function(target){
+  $('html,body').animate({scrollTop:$(target).offset().top}, 500);
+}

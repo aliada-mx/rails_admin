@@ -4,12 +4,13 @@
   margin: 0 auto
   display: block
 
-@mixin soft-transition($time: 300ms)
-  -webkit-transition: all $time cubic-bezier(0,.5,.5,1)
-  -moz-transition: all $time cubic-bezier(0,.5,.5,1)
-  -ms-transition: all $time cubic-bezier(0,.5,.5,1)
-  -o-transition: all $time cubic-bezier(0,.5,.5,1)
-  transition: all $time cubic-bezier(0,.5,.5,1)
+@mixin soft-transition($time: 300ms, $property: all, $easing: cubic-bezier(0,.5,.5,1))
+  -webkit-transition: $property $time $easing
+  -moz-transition: $property $time $easing
+  -ms-transition: $property $time $easing
+  -o-transition: $property $time $easing
+  transition: $property $time $easing
+
 
 @mixin round-corners
   +border-radius(3px)
@@ -60,6 +61,9 @@
   color: action-button-text-color($color)
   cursor: pointer
   +soft-transition
+  &:link
+    color: action-button-text-color($color) 
+    text-decoration: none
   &:hover
     background-color: action-button-hover-background-color($color)
     color: white

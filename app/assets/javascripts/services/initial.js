@@ -3,7 +3,7 @@
 //= require jquery.calendario
 //= require modules/calendar
 //= require modules/dialogs
-//= require jquery.autogrow-textarea
+//= require jquery.hc-sticky.min
 //
 //= require services/initial/_step_1_duration
 //= require services/initial/_step_2_personal_info
@@ -139,4 +139,5 @@ $(document).ready(function() {
   aliada.services.initial.$form.find('input').on('click', function(){
     $(this).removeClass('error');
   })
+  
 });

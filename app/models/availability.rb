@@ -49,6 +49,7 @@ class Availability
   # format expected by jquery.calendario
   def for_calendario(timezone)
     # A hash with an array as default value for new keys
+    # to get unique datetimes
     dates_times = Hash.new{ |h,k| h[k] = [] }
 
     schedules_intervals.map do |schedule_interval|
@@ -60,6 +61,7 @@ class Availability
       friendly_datetime = I18n.l(datetime.in_time_zone(timezone), format: :future)
 
       dates_times[date].push({value: time, friendly_time: friendly_time, friendly_datetime: friendly_datetime }) 
+      dates_times[date].uniq!
     end
 
     dates_times

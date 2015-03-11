@@ -20,3 +20,4 @@ $('#conekta_card_exp_year').val('2017')
 $('#conekta_card_name').val('Prueba pruebon pruebita')
 $('#conekta_card_number').val('4242424242424242')
 $('#conekta_card_cvc').val('123')
+$('aside').hcSticky({stickTo: $('main'), top: '20'});

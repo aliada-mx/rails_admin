@@ -1,30 +1,30 @@
-.initial.summary-container.one-time
+.summary-container
   %h1
     Resúmen
 
   %ul.summary
     %li.checked
       %span{data: {bind: 'text_: "Duración del servicio: {{ hours }} horas "'}} 
-      %a.small-letters
+      = link_to '#service_duration', class: 'small-letters' do
         %icon.pencil.small
         editar
 
     %li.checked
       - if @user.default_address
         %span #{@user.default_address.name}
-      %a.small-letters
+      = link_to edit_users_path(@user), class: 'small-letters' do
         %icon.pencil.small
         editar
 
     %li.checked
       %span #{@user.name}, #{@user.email}, #{@user.phone}
-      %a.small-letters
+      = link_to edit_users_path(@user), class: 'small-letters' do
         %icon.pencil.small
         editar
 
     %li{data: {bind: 'css: {checked: is_datetime_done, unchecked: !is_datetime_done()}'}}
       %span{data: {bind: 'text: friendly_datetime'}}
-      %a.small-letters
+      = link_to '#service_datetime', class: 'small-letters' do
         %icon.pencil.small
         editar
 

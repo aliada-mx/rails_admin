@@ -23,6 +23,9 @@ class ServicesController < ApplicationController
   end
 
   def new
+    @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
+    @other_aliada = Aliada.second
+    @first = Aliada.first
   end
 
   def update
