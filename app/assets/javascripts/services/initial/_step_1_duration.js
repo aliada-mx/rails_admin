@@ -6,7 +6,7 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
     additional: ko.observable(1),
     forced_hours: ko.observable(null),
     extras_hours: ko.observable(0),
-    extra_items: ko.observableArray([{item: 'ola'},{item: 'bola'}]),
+    extra_items: ko.observableArray([]),
     cost_per_hour: ko.observable(aliada.cost_per_hour),
   });
 
