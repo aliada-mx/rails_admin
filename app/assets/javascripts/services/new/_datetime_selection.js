@@ -57,6 +57,6 @@ aliada.services.new.datetime_selection = function(aliada, ko){
     });
 
     // Calendar time logic Separated for structure purposes
-    aliada.services.initial.initialize_calendar_times();
+    aliada.services.new.initialize_calendar_times();
 
 }

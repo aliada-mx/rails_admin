@@ -1,4 +1,4 @@
-aliada.services.initial.initialize_calendar_times = function(){
+aliada.services.new.initialize_calendar_times = function(){
   function on_calendar_day_click($el, $content, times, dateProperties){
     // Reload times
     aliada.ko.times(times || []);
@@ -10,12 +10,14 @@ aliada.services.initial.initialize_calendar_times = function(){
     aliada.ko.date(dateProperties.strdate);
 
     // Broadcast the change so live_feedback can report it
-    aliada.services.initial.$form.trigger('change');
+    aliada.services.new.$form.trigger('change');
 
     // Bail if there are no available hours
     if( !$el.hasClass('fc-content') ){
       return;
     }
+
+    smooth_scroll('#choose-time');
 
     //Remove previous selected
     $('.fc-selected-day').removeClass("fc-selected-day");
@@ -85,13 +87,11 @@ aliada.services.initial.initialize_calendar_times = function(){
         on_day_click: on_calendar_day_click 
       });
 
-    // Update calendar on choosing an aliada
-    $('')
-
     // When the service type changes the dates available change so update the calendar
     $('.service_types.radio_buttons').on('change', function(e){
         e.preventDefault();
         update_calendar();
+        smooth_scroll('#choose-aliada');
       });
 
     // Aliadas changing
@@ -103,6 +103,10 @@ aliada.services.initial.initialize_calendar_times = function(){
       var $selected = $(this).find(':selected');
 
       aliada.user.aliada_id = $selected.val();
-        update_calendar();
+      update_calendar();
+      smooth_scroll('#choose-date');
     });
+
+    // Update calendar on load
+    update_calendar();
 };

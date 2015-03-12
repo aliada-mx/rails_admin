@@ -97,6 +97,10 @@ class User < ActiveRecord::Base
     UserMailer.welcome(self).deliver!
   end
 
+  def send_confirmation_email(service)
+    UserMailer.service_confirmation(self, service).deliver!
+  end
+
   rails_admin do
     navigation_label 'Personas'
     navigation_icon 'icon-user'

@@ -87,8 +87,8 @@ aliada.services.initial.initialize_calendar_times = function(){
         // Update calendar when leaving second step so it has enough time to be ready 
         // becase thats when we have a postal code to search our availability
         $(document).on('leaving_step_2',function(){
-                update_calendar();
-            });
+          update_calendar();
+        });
 
         // When the service type changes the dates available change so update the calendar
         $('.service_types.radio_buttons').on('change', function(e){
