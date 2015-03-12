@@ -1,5 +1,5 @@
 class ApplicationMailer < ActionMailer::Base
-  default :from => "hola@aliada.mx"
+  default :from => "info@aliada.mx"
 
   def sendgrid_template_mail(to: '', substitutions: {}, category: 'transactional', template_id: '')
     header = Smtpapi::Header.new
@@ -18,10 +18,6 @@ class ApplicationMailer < ActionMailer::Base
 
     headers['X-SMTPAPI'] = header.to_json
 
-    mail to: to, subject: "", body: ""
-  end
-
-  def sendgrid_plain_mail(to: '', substitutions: {}, category: 'transactional', template_id: '', subject: '')
-    mail to: to, subject: subject
+    mail to: to
   end
 end
