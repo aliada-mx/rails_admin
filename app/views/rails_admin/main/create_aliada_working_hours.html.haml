@@ -1,4 +1,57 @@
-.create_aliada_working_hours
-  Hacer muchas cosas padres
-
+.create_aliada_working_hours.col-lg-12
+  %div.table-responsive.working_hours_table
+    %table.table
+      %thead
+        %tr
+          %th 
+          %th Lunes
+          %th Martes
+          %th Miércoles
+          %th Jueves
+          %th Viernes
+          %th Sábado
+          %th Domingo
+      %tbody
+      - wh = @object.aliada_working_hours 
+      = form_tag "" do
+        - (7..21).each do |i|
+          %tr 
+            %th
+              = i.hour.pretty_duration
+            %td
+              - if not wh.select{|n| n.weekday == 'monday' && n.hour == i}.empty?
+                = check_box_tag :value, 1, true, onclick: "toggleOldRecurrence(this);", class: "recurrence", id: "monday_#{i}"
+              - else
+                = check_box_tag :value, 1, false, onclick: "toggleNewRecurrence(this);", class: "new-recurrence", id: "monday_#{i}"
+            %td
+              - if not wh.select{|n| n.weekday == 'tuesday' && n.hour == i}.empty?
+                = check_box_tag :value, 1, true, onclick: "toggleOldRecurrence(this);", class: "recurrence", id: "tuesday_#{i}"
+              - else
+                = check_box_tag :value, 1, false, onclick: "toggleNewRecurrence(this)", class: "new-recurrence", id: "tuesday_#{i}"
+            %td
+              - if not wh.select{|n| n.weekday == 'wednesday' && n.hour == i}.empty?
+                = check_box_tag :value, 1, true, onclick: "toggleOldRecurrence(this);", class: "recurrence", id: "wednesday_#{i}"
+              - else
+                = check_box_tag :value, 1, false, onclick: "toggleNewRecurrence(this)", class: "new-recurrence", id: "wednesday_#{i}"
+            %td
+              - if not wh.select{|n| n.weekday == 'thursday' && n.hour == i}.empty?
+                = check_box_tag :value, 1, true, onclick: "toggleOldRecurrence(this);", class: "recurrence", id: "thursday_#{i}"
+              - else
+                = check_box_tag :value, 1, false, onclick: "toggleNewRecurrence(this)", class: "new-recurrence", id: "thursday_#{i}"
+            %td
+              - if not wh.select{|n| n.weekday == 'friday' && n.hour == i}.empty?
+                = check_box_tag :value, 1, true, onclick: "toggleOldRecurrence(this);", class: "recurrence", id: "friday_#{i}"
+              - else
+                = check_box_tag :value, 1, false, onclick: "toggleNewRecurrence(this)", class: "new-recurrence", id: "friday_#{i}"
+            %td
+              - if not wh.select{|n| n.weekday == 'saturday' && n.hour == i}.empty?
+                = check_box_tag :value, 1, true, onclick: "toggleOldRecurrence(this);", class: "recurrence", id: "saturday_#{i}"
+              - else
+                = check_box_tag :value, 1, false, onclick: "toggleNewRecurrence(this)", class: "new-recurrence", id: "saturday_#{i}"
+            %td
+              - if not wh.select{|n| n.weekday == 'sunday' && n.hour == i}.empty?
+                = check_box_tag :value, 1, true, onclick: "toggleOldRecurrence(this);", class: "recurrence", id: "sunday_#{i}"
+              - else
+                = check_box_tag :value, 1, false, onclick: "toggleNewRecurrence(this)", class: "new-recurrence", id: "sunday_#{i}"
+    
 = javascript_include_tag 'rails_admin/actions/create_aliada_working_hours'

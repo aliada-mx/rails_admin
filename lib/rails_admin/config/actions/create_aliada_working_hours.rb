@@ -11,17 +11,13 @@ module RailsAdmin
           true
         end
 
-        register_instance_option :link_icon do
-          false
-        end
-
         register_instance_option :http_methods do
           [:get, :post]
         end
 
         register_instance_option :link_icon do
           # Escoger uno bonito de http://getbootstrap.com/2.3.2/base-css.html#icons
-          'icon-move'
+          'icon-time'
         end
 
         # Might cause random bugs if enabled
