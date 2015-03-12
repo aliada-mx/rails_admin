@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150310005655) do
+ActiveRecord::Schema.define(version: 20150311010529) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -219,6 +219,7 @@ ActiveRecord::Schema.define(version: 20150310005655) do
     t.integer  "zone_id"
   end
 
+  add_index "schedules", ["datetime", "aliada_id"], name: "index_schedules_on_datetime_and_aliada_id", unique: true, using: :btree
   add_index "schedules", ["service_id"], name: "index_schedules_on_service_id", using: :btree
   add_index "schedules", ["user_id"], name: "index_schedules_on_user_id", using: :btree
 

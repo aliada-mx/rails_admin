@@ -78,7 +78,8 @@ class User < ActiveRecord::Base
         ### Exception handler for when a user's payment method throws an exception
         ### TODO: think about how to handle this for many payment providers
       rescue Conekta::Error => err
-        create_service_charge_failed_ticket(service_id, amount, err)
+        service_to_charge.create_service_charge_failed_ticket(user, amount, err)
+       
       end
     else
       Ticket.create_warning(relevant_object_id: self.id,
@@ -87,11 +88,7 @@ class User < ActiveRecord::Base
     end  
   end
   
-  def create_service_charge_failed_ticket(service_id, amount,error)
-    Ticket.create_error(relevant_object_id: service_id,
-                        relevant_object_type: 'Service',
-                        message: "No se pudo realizar cargo de #{amount} a la tarjeta de #{self.first_name} #{self.last_name}. #{error.message_to_purchaser}")
-  end
+  
   
   def create_payment_provider_choice(payment_provider)
     # Switch the default

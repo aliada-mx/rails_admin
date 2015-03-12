@@ -89,6 +89,12 @@ class Service < ActiveRecord::Base
     timezone_offset_seconds / 3600
   end
 
+  def create_service_charge_failed_ticket(user, amount,error)
+    Ticket.create_error(relevant_object_id: self.id,
+                        relevant_object_type: 'Service',
+                        message: "No se pudo realizar cargo de #{amount} a la tarjeta de #{user.first_name} #{user.last_name}. #{error.message_to_purchaser}")
+  end
+  
   def cost
     65
   end
