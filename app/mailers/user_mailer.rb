@@ -1,24 +1,17 @@
 class UserMailer < ApplicationMailer
   def welcome(user)
-    id = Setting.sendgrid_templates_ids[:welcome]
+    template_id = Setting.sendgrid_templates_ids[:welcome]
 
-    @user = user
-    sendgrid_plain_mail to: 'guillermo.siliceo@gmail.com',
-                             substitutions: {'-full_name-' => [ user.name ], '-password-' => [ user.password ]},
-                             subject: 'Bienvenido a aliada',
-                             template_id: id
-
+    sendgrid_template_mail to: 'guillermo@aliada.mx',
+                           substitutions: {'-full_name-' => [ user.name ], '-password-' => [ user.password ]},
+                           template_id: template_id
   end
 
   def service_confirmation(user, service)
-    id = Setting.sendgrid_templates_ids[:service_confirmation]
+    template_id = Setting.sendgrid_templates_ids[:service_confirmation]
 
-    @user = user
-    sendgrid_plain_mail to: 'guillermo.siliceo@gmail.com',
-                             substitutions: {'-full_name-' => [ user.name ], 
-                                             '-password-' => [ user.password ]},
-                             subject: 'Bienvenido a aliada',
-                             template_id: id
-
+    sendgrid_template_mail to: 'guillermo@aliada.mx',
+                                substitutions: {'-user_full_name-' => [ user.name ]},
+                                template_id: template_id
   end
 end
