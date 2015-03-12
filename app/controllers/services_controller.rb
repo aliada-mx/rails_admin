@@ -23,9 +23,20 @@ class ServicesController < ApplicationController
   end
 
   def new
-    @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
-    @other_aliada = Aliada.second
-    @first = Aliada.first
+    # @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
+    # @other_aliada = Aliada.second
+    # @first = Aliada.first
+  end
+
+  def create_new
+    begin
+      service = Service.create_new!(service_params, @user)
+    rescue ActiveRecord::RecordInvalid => invalid
+      Raygun.track_exception(invalid)
+      return render json: { status: :error, code: :invalid, message: invalid.message }
+    end
+
+    return render json: { status: :success, service_id: service.id }
   end
 
   def update

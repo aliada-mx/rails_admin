@@ -8,14 +8,16 @@
 //
 //= require services/new/_duration
 //= require services/new/_datetime_selection
+//= require services/new/_form_submission
 
 $(document).ready(function() {
-  aliada.services.initial.$form = $('#new_service');
-  create_initial_service_path = Routes.create_initial_service_path();
+  aliada.services.new.$form = $('#new_service');
+  aliada.services.new.form_action = Routes.create_new_service_users_path(aliada.user.id);
 
   // KNOCKOUT initialization
   aliada.ko = {
-    invalid_form: ko.observable(false),
+    current_step: ko.observable(1),
+    service_id: ko.observable('')
   };
 
   aliada.services.new.duration(aliada, ko);
@@ -39,6 +41,8 @@ $(document).ready(function() {
     $('aside').hcSticky({stickTo: $('main'), top: '20'});
   }
 
-  aliada.services.initial.initialize_calendar_times();
+  aliada.services.new.bind_form_submission(aliada.services.new.$form);
+
+  aliada.services.new.initialize_calendar_times();
 
 });

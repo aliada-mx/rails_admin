@@ -3,43 +3,10 @@
 
 = append(:body_class){ ' new_service ' }
 
-= form_for @service, url: create_service_users_path(@user) do |new_service_form|
+= form_for @service, url: create_new_service_users_path(@user) do |new_service_form|
   %main
-    %h1#service_duration
-      Programa una nueva visita
-
-    %h4
-      %icon.calendar
-      ¿Cuántas horas necesitas?
-
-    = render partial: 'common/hours_selector', locals: {form: new_service_form}
-
-    = render partial: 'common/extras', locals: {form: new_service_form, collapsed: false}
-
-    %h4
-      ¿Qué tipo de servicio necesitas?
-    = render partial: 'common/service_type_buttons', locals: {form: new_service_form, promotional: false}
-
-    %h4
-      %icon.aliada
-      Elige a tu Aliada
-    = render partial: 'common/aliadas_selector', locals: {form: new_service_form}
-
-    %p#service_datetime
-      %icon.icon-calendar
-      Elige el día de la visita
-    = render partial: 'common/calendar'
-    %p.smallis-letters
-      Si quieres reservar para más de un día al final podrás hacerlo.
-
-    %p
-      %icon.icon-clock
-      Selecciona la hora que más te convenga
-
-    = render partial: 'common/time_selector', locals: {form: new_service_form}
-
-    = new_service_form.hidden_field :date, data: {bind: 'value: date'}
-    = new_service_form.hidden_field :time, data: {bind: 'value: time'}
+    = render partial: 'services/new/step_1_duration_datetime', locals: {new_service_form: new_service_form}
+    = render partial: 'services/new/step_2_success', locals: {new_service_form: new_service_form}
 
   %aside
     = render partial: 'services/new/summary', locals: {initial_service_form: new_service_form}
