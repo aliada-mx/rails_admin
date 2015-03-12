@@ -30,6 +30,11 @@ defaults: &defaults
   cost_per_hour: 65
   booking_for_tomorrow_limit: 23 # After this hour you cant book a service for tomorrow, in UTC or 5 pm in Mexico City Time
 
+  sendgrid_templates_ids: 
+    welcome: 'c25504da-8cb2-49be-a4c4-16ca4de53b41' 
+    service_confirmation: 'c25504da-8cb2-49be-a4c4-16ca4de53b41' 
+
+
 development:
   <<: *defaults
 
@@ -38,6 +43,9 @@ test:
 
 production:
   <<: *defaults
+  sendgrid_templates_ids: 
+    welcome: 'c25504da-8cb2-49be-a4c4-16ca4de53b41' 
+    service_confirmation: 'c25504da-8cb2-49be-a4c4-16ca4de53b41' 
 
 staging:
   <<: *defaults
