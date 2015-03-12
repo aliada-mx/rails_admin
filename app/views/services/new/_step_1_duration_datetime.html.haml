@@ -14,7 +14,7 @@
 
   %h4
     ¿Qué tipo de servicio necesitas?
-  = render partial: 'common/service_type_buttons', locals: {form: new_service_form, promotional: false}
+  = render partial: 'common/service_type_buttons', locals: {form: new_service_form, promotional: false, disable_one_time: false}
 
   %h4#choose-aliada
     %icon.aliada
@@ -25,8 +25,6 @@
     %icon.icon-calendar
     Elige el día de la visita
   = render partial: 'common/calendar'
-  %p.smallis-letters
-    Si quieres reservar para más de un día al final podrás hacerlo.
 
   %h4#choose-time
     %icon.icon-clock

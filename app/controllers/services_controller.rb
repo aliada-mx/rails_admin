@@ -22,6 +22,24 @@ class ServicesController < ApplicationController
                            address: Address.new)
   end
 
+  def create_initial
+    begin
+      service = Service.create_initial!(service_params)
+    rescue ActiveRecord::RecordInvalid => invalid
+      Raygun.track_exception(invalid)
+      return render json: { status: :error, code: :invalid, message: invalid.message }
+    rescue Conekta::Error => exception
+      Raygun.track_exception(exception)
+      return render json: { status: :error, code: :conekta_error, message: [exception.message_to_purchaser]}
+    end
+
+    IncompleteService.mark_as_complete(incomplete_service_params,service)
+
+    force_sign_in_user(service.user)
+
+    return render json: { status: :success, service_id: service.id, user_id: service.user.id }
+  end
+
   def new
     # @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
     # @other_aliada = Aliada.second
@@ -39,6 +57,10 @@ class ServicesController < ApplicationController
     return render json: { status: :success, service_id: service.id }
   end
 
+  def edit
+    @service = @user.services.find(params[:service_id])
+  end
+
   def update
     service = @user.services.find(params[:service_id])
     service.update_attributes!(service_params.except(:user, :address))
@@ -46,28 +68,6 @@ class ServicesController < ApplicationController
     next_services_path = next_services_users_path(user_id: @user.id, service_id: service.id)
 
     return render json: { status: :success, next_path: next_services_path }
-  end
-
-  def edit
-    @service = @user.services.find(params[:service_id])
-  end
-
-  def create_initial
-    begin
-      service = Service.create_initial!(service_params)
-    rescue ActiveRecord::RecordInvalid => invalid
-      Raygun.track_exception(invalid)
-      return render json: { status: :error, code: :invalid, message: invalid.message }
-    rescue Conekta::Error => exception
-      Raygun.track_exception(exception)
-      return render json: { status: :error, code: :conekta_error, message: [exception.message_to_purchaser]}
-    end
-
-    IncompleteService.mark_as_complete(incomplete_service_params,service)
-
-    force_sign_in_user(service.user)
-
-    return render json: { status: :success, service_id: service.id, user_id: service.user.id }
   end
 
   def incomplete_service

@@ -18,7 +18,7 @@
 
         .foot
           .actions
-            %a.action-button.size-large
+            = link_to edit_service_users_path(user_id: @user.id, service_id: service.id), class: 'action-button size-large' do
               %span.icon-pencil.icon-button
               Modificar servicio
 
@@ -48,19 +48,20 @@
             %span.hours #{ humanize_hours service.total_hours }
             %span.cash $65
 
-  - if services_count % 2 == 0
-    .service-card-wrapper.col-lg-12.new-service-card.horizontal
-      .service-card.empty
-        = link_to new_service_users_path(@user) do
-          Programa una nueva visita
+  - if services_count == index + 1
+    - if services_count % 2 == 0
+      .service-card-wrapper.col-lg-12.new-service-card.horizontal
+        .service-card.empty
+          = link_to new_service_users_path(@user) do
+            Programa una nueva visita
 
-  -else
-    .service-card-wrapper.col-lg-6.new-service-card.vertical
-      .service-card.empty
-        = link_to new_service_users_path(@user) do
-          Programa una nueva visita
+    -else
+      .service-card-wrapper.col-lg-6.new-service-card.vertical
+        .service-card.empty
+          = link_to new_service_users_path(@user) do
+            Programa una nueva visita
 
 
-  .clearfix
+      .clearfix
 
 

@@ -198,11 +198,6 @@ feature 'ServiceController' do
     before do
       Timecop.freeze(starting_datetime)
 
-      # The - 1 hour is needed because this hour is the one the aliada needs to get there from a previous service
-      create_recurrent!(starting_datetime + 1.day - 1.hour, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada}, timezone: 'UTC')
-
-      expect(Address.count).to be 1
-      expect(Aliada.count).to be 1
 
       # We have hidden elements in our initial service creation assitant 
       # because we don't show all the steps at once
@@ -210,7 +205,6 @@ feature 'ServiceController' do
       Capybara.ignore_hidden_elements = false
 
       visit initial_service_path
-
 
       login_as(user)
     end
@@ -224,37 +218,87 @@ feature 'ServiceController' do
       let(:user_service){ create(:service, 
                             aliada: aliada,
                             user: user,
+                            estimated_hours: 3,
                             service_type: one_time_service) }
       let(:admin_service){ create(:service, 
                                   aliada: aliada,
                                   user: admin,
                                   service_type: one_time_service) }
 
-      it 'lets the admin edit any user services' do
-        logout
-        login_as(admin)
+      describe 'viewing permissions' do
+        it 'lets the admin see the edit page of any service' do
+          logout
+          login_as(admin)
 
-        edit_service_path = edit_service_users_path(user_id: user.id, service_id: user_service.id)
+          edit_service_path = edit_service_users_path(user_id: user.id, service_id: user_service.id)
 
-        visit edit_service_path
-        
-        expect(page.current_path).to eql edit_service_path
+          visit edit_service_path
+          
+          expect(page.current_path).to eql edit_service_path
+        end
+
+        it 'doesnt let the user see the edit page ofr other users services' do
+          edit_service_path = edit_service_users_path(user_id: admin.id, service_id: admin_service.id)
+
+          visit edit_service_path
+          
+          expect(page.current_path).not_to eql edit_service_path
+        end
+
+        it 'let the user see the edit pages for its own services' do
+          edit_service_path = edit_service_users_path(user_id: user.id, service_id: user_service.id)
+
+          visit edit_service_path
+          
+          expect(page.current_path).to eql edit_service_path
+        end
       end
 
-      it 'doesnt let the user edit other users services' do
-        edit_service_path = edit_service_users_path(user_id: admin.id, service_id: admin_service.id)
+      describe 'editing side effects' do
 
-        visit edit_service_path
-        
-        expect(page.current_path).not_to eql edit_service_path
-      end
+        context 'recurrent services' do
+          before do
+            The - 1 hour is needed because this hour is the one the aliada needs to get there from a previous service
 
-      it 'let the user edit its own services' do
-        edit_service_path = edit_service_users_path(user_id: user.id, service_id: user.id)
+            schedules_intervals = create_recurrent!(starting_datetime + 1.day - 1.hour, 
+                                                    hours: 5,
+                                                    periodicity: recurrent_service.periodicity ,
+                                                    conditions: {zone: zone, aliada: aliada, service: user_service}, timezone: 'UTC')
 
-        visit edit_service_path
-        
-        expect(page.current_path).to eql edit_service_path
+
+            visit edit_service_users_path(user_id: user.id, service_id: user_service.id)
+          end
+
+          it 'doesnt let you downgrade from recurent to one time'
+
+          it 'doesnt reschedule the service when hours doesnt change' do
+            edit_service_path 
+
+            service_previous_attributes = user_service.attributes
+
+            fill_in 'service_special_instructions', with: 'Something different than previous value'
+            fill_in 'service_garbage_instructions', with: 'Something different than previous value'
+
+            click_button 'Confirmar visita'
+
+            service_new_attributes = user_service.reload.attributes
+
+            attributes_diff = HashDiff.diff(service_previous_attributes, service_new_attributes)
+
+            expect(attributes_diff).to eql []
+
+            expect(user_service).not_to have_received(:reschedule)
+          end
+
+          it 'lets the user edit the service hours updating the schedules' do
+            # edit_service_path = edit_service_users_path(user_id: user.id, service_id: user.id)
+
+            # visit edit_service_path
+
+            # fill_hidden_input 'service_estimated_hours', with: 3
+            # expect(service.estimated_hours).to eql 3
+          end
+        end
       end
     end
 

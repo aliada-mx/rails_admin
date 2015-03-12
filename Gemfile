@@ -149,6 +149,9 @@ group :test do
 
   # Record requests to be replayed on tests
   gem 'vcr'
+
+  # Hashes diffs
+  gem 'hashdiff'
 end
 
 group :production, :staging do

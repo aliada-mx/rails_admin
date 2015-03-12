@@ -10,6 +10,10 @@ class ServiceType < ActiveRecord::Base
     ServiceType.where(name: 'recurrent').first 
   end
 
+  def self.one_time
+    ServiceType.where(name: 'one-time').first 
+  end
+
   def recurrent?
     name == 'recurrent'
   end

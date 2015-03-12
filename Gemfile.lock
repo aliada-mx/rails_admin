@@ -180,6 +180,7 @@ GEM
       haml (>= 3.1, < 5.0)
       html2haml (>= 1.0.1)
       railties (>= 4.0.1)
+    hashdiff (0.2.2)
     hike (1.2.3)
     hitimes (1.2.2)
     html2haml (2.0.0)
@@ -446,6 +447,7 @@ DEPENDENCIES
   guard-livereload
   guard-sass
   haml-rails
+  hashdiff
   invert
   jbuilder (~> 2.0)
   jquery-rails
