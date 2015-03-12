@@ -289,6 +289,10 @@ class Service < ActiveRecord::Base
       end
       field :datetime do
         sort_reverse false
+        pretty_value do
+          
+          I18n.l(value , format: :friendly).titleize
+        end
       end
       field :status
     end
