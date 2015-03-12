@@ -78,7 +78,7 @@ class User < ActiveRecord::Base
         ### Exception handler for when a user's payment method throws an exception
         ### TODO: think about how to handle this for many payment providers
       rescue Conekta::Error => err
-        service_to_charge.create_service_charge_failed_ticket(user, amount, err)
+        service_to_charge.create_service_charge_failed_ticket(self, amount, err)
        
       end
     else
