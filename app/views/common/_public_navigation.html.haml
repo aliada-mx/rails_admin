@@ -16,8 +16,7 @@
               %span.icon.icon-user
               Mis servicios
             - if @user.admin?
-              -
-              = link_to("Ir al admin", rails_admin.dashboard_path )
+              = link_to("- Aliadadmin", rails_admin.dashboard_path )
 
           - else
             = link_to("Log in", new_user_session_path, { :class => 'action-button-gray'})
