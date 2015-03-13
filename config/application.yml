@@ -33,7 +33,7 @@ defaults: &defaults
  
   sendgrid_templates_ids: 
     welcome: '371f2a77-45c5-4644-b3be-0639395a4ca3' 
-    service_confirmation: '5fcc2d0e-9ada-42c5-8c8d-b570694f49e5'
+    service_confirmation_password: '5fcc2d0e-9ada-42c5-8c8d-b570694f49e5'
     aliada_changed: 'ba8d08bb-ec8f-48ce-b1be-611fd592aef0'
     hour_changed: 'e69adba7-9b10-4b9d-bae7-e9dfdb8433e9'
     untimely_cancelation: 'f9bbeba4-aad4-41c2-b00d-ede6f71e9544'
