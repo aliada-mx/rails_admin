@@ -32,7 +32,7 @@ class Ability
             end
           end
         elsif subject_class == Service
-          if [:new, :read, :update, :edit, :create].include? action
+          if [:new, :read, :update, :edit, :create_new].include? action
             if current_user.admin?
               true
             elsif !params.include? :user_id

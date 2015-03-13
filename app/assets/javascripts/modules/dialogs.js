@@ -44,6 +44,7 @@ aliada.dialogs.postal_code_number_missing = function(postal_code_number){
 
 aliada.dialogs.platform_error = function(error){
     var platform_error_template = _.template($('#platform_error_template').html());
+    log('platform_error ',error)
 
     vex.open({
         content: platform_error_template({error: error}),

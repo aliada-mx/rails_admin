@@ -19,6 +19,10 @@ module Presenters
       services.in_the_future.first
     end
 
+    def payment_provider_name
+      default_payment_provider.friendly_name
+    end
+
     def payment_provider_choices_list
       list = ' '
       payment_provider_choices.each do |choice|
@@ -26,6 +30,10 @@ module Presenters
       end
       # Remove the trailing comma
       list.strip![0..-2]
+    end
+
+    def postal_code_number
+      default_address.postal_code.number
     end
   end
 end

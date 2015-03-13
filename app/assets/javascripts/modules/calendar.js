@@ -4,7 +4,7 @@ aliada.calendar.initialize = function(options){
       on_day_click = options.on_day_click;
 
   var calendario = $(container).calendario({
-      caldata: aliada.dates,
+      caldata: dates,
       weekabbrs: ['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'],
       months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
       displayMonthAbbr: false,
@@ -36,17 +36,13 @@ aliada.calendar.initialize = function(options){
   return calendario;
 }
 
-aliada.calendar.get_dates_times = function(hours, service_type_id, postal_code_number){
+aliada.calendar.get_dates_times = function(availability_options){
   return new Promise(function(resolve,reject){
     $.ajax(Routes.aliadas_availability_path(), {
       method: 'POST',
       dataType: "json",
       beforeSend: add_csrf_token,
-      data:{
-        hours: hours,
-        service_type_id: service_type_id,
-        postal_code_number: postal_code_number,
-      }
+      data: availability_options,
     }).done(function(response){
       if(response.status == 'success'){
         resolve(response.dates_times);

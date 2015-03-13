@@ -1,28 +1,30 @@
 @import 'common/variables'
 @import 'bootstrap/mixins/grid'
 
-.container.one-column
-  margin-bottom: 50px
+.one-column
+  .container
+    margin-bottom: 50px
 
-  header
-    +make-xs-column(12)
+    header
+      +make-xs-column(12)
 
-  nav
-    +make-xs-column(12)
+    nav
+      +make-xs-column(12)
 
-  main
-    +make-xs-column(12)
-    padding: 35px 25px
-    background-color: white
-    content: ""
-    display: table
-    clear: both
+    main
+      +make-xs-column(12)
+      padding: 35px 25px
+      background-color: white
+      content: ""
+      display: table
+      clear: both
 
-  aside
-    +make-xs-column(12)
-    padding: 42px
+    aside
+      +make-xs-column(12)
+      padding: 42px
 
 @media screen and(max-width: 400px) 
-  .container.two-columns
-    main, aside
-      padding: 10px
+  .one-column
+    .container
+      main, aside
+        padding: 10px

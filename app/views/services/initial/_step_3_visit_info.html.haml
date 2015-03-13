@@ -4,16 +4,17 @@
   %p
     Elige la frecuencia de la visita
 
-  = render partial: 'common/service_type_buttons', locals: {form: initial_service_form}
+  = render partial: 'common/service_type_buttons', locals: {form: initial_service_form, promotional: true}
 
-  %p
+  %h4#choose-date
     %icon.icon-calendar
     Elige el día de la visita
   = render partial: 'common/calendar'
+
   %p.smallis-letters
     Si quieres reservar para más de un día al final podrás hacerlo.
 
-  %p
+  %h4#choose-time
     %icon.icon-clock
     Selecciona la hora que más te convenga
 

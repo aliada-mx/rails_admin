@@ -3,7 +3,7 @@
   Escoge una fecha en el calendario
 <!-- /ko -->
 <!-- ko ifnot: _(times()).isEmpty() -->
-%fieldset.radio_buttons.medium{data: {bind: 'foreach: times'}}
+%fieldset.time-selector.radio_buttons.medium{data: {bind: 'foreach: times'}}
   = label_tag '', '', data: {bind: 'attr: {for: "time_choice_"+value}'} do
     %input{type: 'radio', name: 'time_choice', data: {bind: 'attr: {value: value, id: "time_choice_"+value}, checked: $root.time, click: function(){ $root.friendly_datetime(friendly_datetime); return true; }'} }
     %span{data: {bind: 'text: friendly_time'}, class: "action-button-transparent size-medium"}

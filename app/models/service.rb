@@ -200,6 +200,26 @@ class Service < ActiveRecord::Base
     end
   end
 
+  def self.create_new!(service_params, user)
+    ActiveRecord::Base.transaction do
+      address = user.default_address
+      service = Service.new(service_params.except!(:user, :address))
+
+      service.address = address
+      service.user = user
+      service.combine_date_time
+      service.set_hours_before_after_service
+      service.ensure_recurrence!
+
+      service.save!
+
+      user.send_confirmation_email(service)
+
+      service.book_aliada!
+      return service
+    end
+  end
+
   def self.create_initial!(service_params)
     ActiveRecord::Base.transaction do
       address = Address.create!(service_params[:address])

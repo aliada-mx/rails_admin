@@ -1,6 +1,6 @@
 //= require services/new/_calendar
 
-aliada.services.new.visit_info = function(aliada, ko){
+aliada.services.new.datetime_selection = function(aliada, ko){
     // Select default service type from the form
     var $selected_service_type = $('.service_types.radio_buttons').find(':checked');
     var default_service_type = $selected_service_type.parent('label').data('service-type');
@@ -26,6 +26,25 @@ aliada.services.new.visit_info = function(aliada, ko){
         service_type: ko.observable(default_service_type),
     });
 
+    aliada.ko.hours = ko.computed(function(){
+        var hours = 0
+        var extras_hours = aliada.ko.extras_hours();
+        hours += extras_hours
+
+        if (_.isNull(aliada.ko.forced_hours())){
+          var bathrooms_hours = (aliada.bathrooms_multiplier * aliada.ko.bathrooms());
+          var bedrooms_hours = (aliada.bedrooms_multiplier * aliada.ko.bedrooms());
+          hours += bathrooms_hours + bedrooms_hours;
+        }else{
+          return aliada.ko.forced_hours() + extras_hours;
+        }
+        return hours > aliada.minimum_hours_service ? hours : aliada.minimum_hours_service
+    });
+
+    aliada.ko.price = ko.computed(function(){
+      return Math.ceil(aliada.ko.hours() * aliada.ko.service_type().price_per_hour );
+    });
+
     aliada.ko.is_recurrent_service = ko.computed(function(){
       return aliada.ko.service_type().name == 'recurrent';
     });
@@ -38,5 +57,6 @@ aliada.services.new.visit_info = function(aliada, ko){
     });
 
     // Calendar time logic Separated for structure purposes
-    aliada.services.initial.initialize_calendar_times();
+    aliada.services.new.initialize_calendar_times();
+
 }
