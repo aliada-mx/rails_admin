@@ -65,6 +65,7 @@ gem 'nestive'
 
 # Authentication
 gem 'devise'
+gem 'simple_token_authentication', '~> 1.0'
 
 # Time parsing for humans
 gem 'chronic'
@@ -81,13 +82,17 @@ gem 'rails_admin', github: 'grillermo/rails_admin'
 # permissions
 gem 'cancancan'
 
+
 # MAILING
 #
 gem 'smtpapi'
 
+
 # 
 
+
 group :development, :test do
+  gem 'guard-rspec', require: false
   # Call 'pry' anywhere in the code to stop execution and get a debugger console
   gem 'pry-rails'
   # Automatically call pry on exception

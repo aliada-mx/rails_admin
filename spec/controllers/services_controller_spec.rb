@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 feature 'ServiceController' do
   include TestingSupport::ServiceControllerHelper
   include TestingSupport::SchedulesHelper

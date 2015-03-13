@@ -165,10 +165,15 @@ GEM
       pry (>= 0.9.12)
       shellany (~> 0.0)
       thor (>= 0.18.1)
+    guard-compat (1.2.1)
     guard-livereload (2.4.0)
       em-websocket (~> 0.5)
       guard (~> 2.8)
       multi_json (~> 1.8)
+    guard-rspec (4.5.0)
+      guard (~> 2.1)
+      guard-compat (~> 1.1)
+      rspec (>= 2.99.0, < 4.0)
     guard-sass (1.6.0)
       guard (>= 2.8.0)
       sass (>= 3.1)
@@ -362,6 +367,10 @@ GEM
     settingslogic (2.0.9)
     sexp_processor (4.4.5)
     shellany (0.0.1)
+    simple_token_authentication (1.8.0)
+      actionmailer (>= 3.2.6, < 5)
+      actionpack (>= 3.2.6, < 5)
+      devise (~> 3.2)
     simplecov (0.9.1)
       docile (~> 1.1.0)
       multi_json (~> 1.0)
@@ -444,6 +453,7 @@ DEPENDENCIES
   factory_girl_rails
   foreigner
   guard-livereload
+  guard-rspec
   guard-sass
   haml-rails
   invert
@@ -475,6 +485,7 @@ DEPENDENCIES
   ruby-prof
   sass-rails (~> 5.0)
   settingslogic
+  simple_token_authentication (~> 1.0)
   simplecov
   smtpapi
   spring

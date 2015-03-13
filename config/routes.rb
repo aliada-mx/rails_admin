@@ -44,6 +44,17 @@ Rails.application.routes.draw do
 
   post 'aliadas-availability', to: 'aliadas_availability#for_calendar', as: :aliadas_availability
 
+
+  devise_scope :aliadas do
+    get 'aliadas/servicios/:token', to: 'aliadas#services', as: :aliadas_services
+    post 'aliadas/servicios/finish/:token', to: 'aliadas#finish', as: :finish_service
+  end
+
+
+
+
+
+
   resources :schedules
 
   match 'calificar-servicio/:service_id', to: 'scores#create_by_service_id', as: :score_service, via: [:get, :post]

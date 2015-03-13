@@ -1,0 +1,7 @@
+%h1 Tus servicios
+=   @usuario
+- @upcoming_services.each do |i|
+  %p= i.bathrooms
+  %p= i.bedrooms
+  %p= i.status
+  %p= i.address.attributes
