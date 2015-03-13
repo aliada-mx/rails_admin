@@ -12,6 +12,7 @@ class AliadasAvailabilityController < ApplicationController
 
     available_after = starting_datetime_to_book_services(timezone)
     
+
     service_type = ServiceType.find(params[:service_type_id])
     zone = Zone.find_by_postal_code_number(params[:postal_code_number])
 

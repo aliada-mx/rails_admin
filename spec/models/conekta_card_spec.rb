@@ -9,7 +9,7 @@ describe 'ConektaCard' do
                       email: 'user-39@aliada.mx',
                       conekta_customer_id: "cus_M3V9nERCq9qDLZdD1") } 
   let(:token){ 'tok_test_visa_4242' }
-  let(:fake_product){ double(price_for_conekta: 3000,
+  let(:fake_product){ double(price: 300,
                              description: 'fake test product',
                              id: 1)}
 
@@ -26,11 +26,12 @@ describe 'ConektaCard' do
     it 'creates a charge' do
       VCR.use_cassette('conekta_charge') do
         card.token = token
-
-        conekta_charge = card.charge!(fake_product)
+        
+        
+        conekta_charge = card.charge!(fake_product,user)
         charge = eval(conekta_charge.inspect)
 
-        expect(charge['amount']).to eql 3000
+        expect(charge['amount']).to eql 30000
         expect(charge['status']).to eql 'paid'
         expect(charge['livemode']).to eql false
         expect(charge['object']).to eql 'charge'

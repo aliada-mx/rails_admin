@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
 
   # Exception raised by conekta
   rescue_from Conekta::Error do |exception|
-    render json: { status: :error, sender: :conekta, messages: [exception.message_to_purchaser]}
+    render json: { status: :warning, sender: :conekta, messages: [exception.message_to_purchaser]}
   end
 
   # Force signing in if the user does not have permission
