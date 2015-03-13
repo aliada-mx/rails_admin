@@ -2,7 +2,7 @@ class ServiceMailer < ApplicationMailer
 
   def aliada_changed(service)
     template_id = Setting.sendgrid_templates_ids[:aliada_changed]
-     service = service.joins(:users).joins(:service_types).joins(:aliadas)
+     service = Service.where(id: service.id).joins(:users).joins(:service_type).joins(:aliada).first
     
     sendgrid_template_mail to: 'alex@aliada.mx',
     substitutions:
@@ -17,7 +17,7 @@ class ServiceMailer < ApplicationMailer
   
   def hour_changed(service)
     template_id = Setting.sendgrid_templates_ids[:hour_changed]
-     service = service.joins(:users).joins(:service_types).joins(:aliadas)
+     service = Service.where(id: service.id).joins(:users).joins(:service_type).joins(:aliada).first
     
     sendgrid_template_mail to: 'alex@aliada.mx',
     substitutions:
@@ -35,7 +35,7 @@ class ServiceMailer < ApplicationMailer
   def untimely_cancelation(service)
     template_id = Setting.sendgrid_templates_ids[:untimely_cancelation]
     
-    service = service.joins(:users).joins(:addresses).joins(:service_types).joins(:aliadas)
+    service = Service.where(id: service.id).joins(:users).joins(:address).joins(:service_type).joins(:aliada).first
     
     sendgrid_template_mail to: 'alex@aliada.mx',
     substitutions:
@@ -53,7 +53,7 @@ class ServiceMailer < ApplicationMailer
   def address_changed(service, previous_address)
     template_id = Setting.sendgrid_templates_ids[:change_service_address]
     
-    service = service.joins(:users).joins(:service_types).joins(:aliadas)
+    service = Service.where(id: service.id).joins(:users).joins(:service_type).joins(:aliada)
     
     sendgrid_template_mail to: 'alex@aliada.mx',
     substitutions:
@@ -70,7 +70,7 @@ class ServiceMailer < ApplicationMailer
   
   def timely_cancelation
     template_id = Setting.sendgrid_templates_ids[:timely_cancelation]
-    service = service.joins(:users).joins(:addresses).joins(:service_types).joins(:aliadas)
+    service = Service.where(id: service.id).joins(:users).joins(:address).joins(:service_type).joins(:aliada).first
     
     sendgrid_template_mail to: 'alex@aliada.mx',
     substitutions:

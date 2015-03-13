@@ -11,7 +11,7 @@ class UserMailer < ApplicationMailer
   def recover_password(user)
      template_id = Setting.sendgrid_templates_ids[:reset_password]
     
-    service = service.joins(:addresses).joins(:service_types).joins(:aliadas)
+    service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada).first
     
     sendgrid_template_mail to: 'alex@aliada.mx',
     substitutions:
@@ -23,9 +23,9 @@ class UserMailer < ApplicationMailer
   
   def service_confirmation(user, service)
     template_id = Setting.sendgrid_templates_ids[:service_confirmation]
-    
-    service = service.joins(:addresses).joins(:service_types).joins(:aliadas)
-    
+   # binding.pry
+    service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada).first
+   # binding.pry
     sendgrid_template_mail to: 'alex@aliada.mx',
     substitutions:
       {'-user_full_name-' => [ user.full_name  ],
@@ -42,7 +42,7 @@ class UserMailer < ApplicationMailer
   def service_confirmation_pwd(user, service)
     template_id = Setting.sendgrid_templates_ids[:service_confirmation_password]
     
-    service = service.joins(:addresses).joins(:service_types).joins(:aliadas)
+    service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada)
     
     sendgrid_template_mail to: 'alex@aliada.mx',
     substitutions:
@@ -60,7 +60,7 @@ class UserMailer < ApplicationMailer
   ###todo implement billing hours
   def billing_receipt(user, service)
     template_id = Setting.sendgrid_templates_ids[:service_receipt]
-    service = service.joins(:addresses).joins(:service_types).joins(:aliadas)
+    service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada).first
     
     sendgrid_template_mail to: 'alex@aliada.mx',
     substitutions:
