@@ -70,6 +70,16 @@ class ServiceMailer < ApplicationMailer
   
   def timely_cancelation
     template_id = Setting.sendgrid_templates_ids[:timely_cancelation]
+    service = service.joins(:users).joins(:addresses).joins(:service_types).joins(:aliadas)
+    
+    sendgrid_template_mail to: 'alex@aliada.mx',
+    substitutions:
+      {'-user_full_name-' => [service.user.full_name],
+      '-service_date-' => [(I18n.l service.datetime, format: '%A %d')],
+      '-service_time-' => [(I18n.l service.datetime, format: '%I %p')] ,
+      '-service_address-' => [service.address.full_address],
+      '-service_type_name-' => [service.service_type.display_name]},
+    template_id: template_id
   end
 
   def reminder
