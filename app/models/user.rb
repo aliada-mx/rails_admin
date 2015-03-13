@@ -72,6 +72,11 @@ class User < ActiveRecord::Base
   def aliadas
     services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }
   end
+  
+  def full_name
+    return "#{self.first_name} #{self.last_name}"
+  end
+
 
   def set_default_role
     self.role ||= 'client' if self.respond_to? :role
