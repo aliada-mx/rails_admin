@@ -2,19 +2,8 @@ class CustomDeviseMailer < Devise::Mailer
 default :from => "info@aliada.mx"
 
   include Rails.application.routes.url_helpers
-  ###TODO implement devise
-  def recover_password(user)
-    template_id = Setting.sendgrid_templates_ids[:reset_password]
-    
-    service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada).first
-    
-    sendgrid_template_mail to: 'alex@aliada.mx',
-    substitutions:
-      {'-user_full_name-' => [ user.full_name  ],
-      '-password_change_url-' => [ service.aliada.full_name],
-      '-password_change_request_at-' => [ '' ]},
-    template_id: template_id
-  end
+ 
+  
 def sendgrid_template_mail(to: '', substitutions: {}, category: 'transactional', template_id: '')
     header = Smtpapi::Header.new
     header.set_substitutions(substitutions)
@@ -45,10 +34,10 @@ def sendgrid_template_mail(to: '', substitutions: {}, category: 'transactional',
     (sendgrid_template_mail to: record.email,
     substitutions:
       {'-user_full_name-' => [ record.full_name  ], ###Because we added this method in User
-      '-password_change_url-' => [ edit_user_password_url],
+      '-password_change_url-' => [ "#{edit_user_password_url}?reset_password_token=#{token}" ],
       '-password_change_request_at-' => [ '' ]},
     template_id: template_id).deliver!
-    # code to be added here later
+    # deliver! is necessary since Devise calls this method
   end
   
   def unlock_instructions(record, token, opts={})
