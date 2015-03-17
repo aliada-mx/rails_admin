@@ -34,6 +34,7 @@ feature 'ApplicationController' do
         click_button 'Confirmar visita'
       end
 
+
       response = JSON.parse(page.body)
       expect(response['status']).to eql 'error'
       expect(response['code']).to eql 'conekta_error'

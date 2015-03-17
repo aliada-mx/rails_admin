@@ -271,6 +271,8 @@ ActiveRecord::Schema.define(version: 20150311010529) do
     t.text     "forbidden_instructions"
     t.integer  "zone_id"
     t.boolean  "entrance_instructions"
+    t.time     "aliada_reported_begin_time"
+    t.time     "aliada_reported_end_time"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
@@ -313,8 +315,10 @@ ActiveRecord::Schema.define(version: 20150311010529) do
     t.string   "last_name"
     t.string   "conekta_customer_id"
     t.decimal  "credits",                precision: 7, scale: 2
+    t.string   "authentication_token"
   end
 
+  add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 

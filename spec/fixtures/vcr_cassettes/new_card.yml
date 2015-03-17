@@ -1,62 +1,6 @@
 ---
 http_interactions:
 - request:
-    method: post
-    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/customers?cards%5B%5D=tok_test_visa_4242&email=user-39@aliada.mx&name=Test%20User&phone=123456
-    body:
-      encoding: UTF-8
-      string: ''
-    headers:
-      User-Agent:
-      - Conekta/v1 RubyBindings/0.5.2
-      X-Conekta-Client-User-Agent:
-      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
-        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
-      Accept:
-      - application/vnd.conekta-v1.0.0+json
-      Accept-Language:
-      - es
-      Content-Length:
-      - '0'
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Cache-Control:
-      - max-age=0, private, must-revalidate
-      Conekta-Media-Type:
-      - conekta-v1.0.0; format=json
-      Content-Type:
-      - application/json; charset=utf-8
-      Date:
-      - Thu, 19 Feb 2015 16:42:17 GMT
-      Etag:
-      - '"ee49d21037365e846a08bd0e1d753f17"'
-      Server:
-      - nginx/1.1.19
-      Status:
-      - 200 OK
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains
-      X-Request-Id:
-      - ef9a93636346dd5386c8f40026cccbaa
-      X-Runtime:
-      - '0.295133'
-      Content-Length:
-      - '434'
-      Connection:
-      - keep-alive
-    body:
-      encoding: UTF-8
-      string: '{"id":"cus_M3V9nERCq9qDLZdD1","email":"user-39@aliada.mx","name":"Test
-        User","phone":"123456","livemode":false,"default_card_id":"card_RTQYBFXAu3FL7ALb","object":"customer","created_at":1424364137,"cards":[{"id":"card_RTQYBFXAu3FL7ALb","created_at":1424364137,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
-        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"}],"subscription":null}'
-    http_version: 
-  recorded_at: Thu, 19 Feb 2015 16:41:36 GMT
-- request:
     method: get
     uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/customers/cus_M3V9nERCq9qDLZdD1
     body:
@@ -66,8 +10,8 @@ http_interactions:
       User-Agent:
       - Conekta/v1 RubyBindings/0.5.2
       X-Conekta-Client-User-Agent:
-      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
-        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.2.0","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"Alejandros-MacBook-Pro-2.local","release":"14.0.0","version":"Darwin
+        Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro5,5"}}'
       Accept:
       - application/vnd.conekta-v1.0.0+json
       Accept-Language:
@@ -86,9 +30,9 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Thu, 19 Feb 2015 16:42:07 GMT
+      - Tue, 10 Mar 2015 00:32:19 GMT
       Etag:
-      - '"ee49d21037365e846a08bd0e1d753f17"'
+      - '"3e92b28ce30aeb81e9f762c6d5eb88fa"'
       Server:
       - nginx/1.1.19
       Status:
@@ -96,74 +40,31 @@ http_interactions:
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - 18f1ace27e120b1402502f0475a59a56
+      - 676da63333d66e9e2f53a7d520d1de3b
       X-Runtime:
-      - '0.049466'
+      - '0.111103'
       Content-Length:
-      - '434'
+      - '2711'
       Connection:
       - keep-alive
     body:
       encoding: UTF-8
       string: '{"id":"cus_M3V9nERCq9qDLZdD1","email":"user-39@aliada.mx","name":"Test
         User","phone":"123456","livemode":false,"default_card_id":"card_RTQYBFXAu3FL7ALb","object":"customer","created_at":1424364137,"cards":[{"id":"card_RTQYBFXAu3FL7ALb","created_at":1424364137,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_7XtReoXhwPgUGNZW","created_at":1425425680,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_uec524UkUNEe46Pu","created_at":1425425921,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_8AHqRzTgFc8rwuc5","created_at":1425429732,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_Ktcv5WFAkPWQ8EHy","created_at":1425477979,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_9jrmffDyaVhDLc64","created_at":1425510025,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_UteUiFHoRKZzVPJH","created_at":1425517443,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_UBoKiDhSKYQqR5AP","created_at":1425697141,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_irvmTvX1CiivY2eq","created_at":1425697211,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_KxZi7zvL2QaEJsQ4","created_at":1425697272,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_NJhRCrBEkcrr2aBK","created_at":1425941641,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"},{"id":"card_MNVCBHUE5XDSjHh7","created_at":1425946755,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
         Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"}],"subscription":null}'
     http_version: 
-  recorded_at: Thu, 19 Feb 2015 16:42:02 GMT
-- request:
-    method: get
-    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/customers/cus_M3V9nERCq9qDLZdD1
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Conekta/v1 RubyBindings/0.5.2
-      X-Conekta-Client-User-Agent:
-      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
-        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
-      Accept:
-      - application/vnd.conekta-v1.0.0+json
-      Accept-Language:
-      - es
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Cache-Control:
-      - max-age=0, private, must-revalidate
-      Conekta-Media-Type:
-      - conekta-v1.0.0; format=json
-      Content-Type:
-      - application/json; charset=utf-8
-      Date:
-      - Thu, 19 Feb 2015 16:55:05 GMT
-      Etag:
-      - '"ee49d21037365e846a08bd0e1d753f17"'
-      Server:
-      - nginx/1.1.19
-      Status:
-      - 200 OK
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains
-      X-Request-Id:
-      - a065098ac2938d71062abeac34440f40
-      X-Runtime:
-      - '0.047920'
-      Content-Length:
-      - '434'
-      Connection:
-      - keep-alive
-    body:
-      encoding: UTF-8
-      string: '{"id":"cus_M3V9nERCq9qDLZdD1","email":"user-39@aliada.mx","name":"Test
-        User","phone":"123456","livemode":false,"default_card_id":"card_RTQYBFXAu3FL7ALb","object":"customer","created_at":1424364137,"cards":[{"id":"card_RTQYBFXAu3FL7ALb","created_at":1424364137,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
-        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"}],"subscription":null}'
-    http_version: 
-  recorded_at: Thu, 19 Feb 2015 16:54:23 GMT
+  recorded_at: Tue, 10 Mar 2015 00:31:03 GMT
 - request:
     method: post
     uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/customers/cus_M3V9nERCq9qDLZdD1/cards?token=tok_test_visa_4242
@@ -174,61 +75,8 @@ http_interactions:
       User-Agent:
       - Conekta/v1 RubyBindings/0.5.2
       X-Conekta-Client-User-Agent:
-      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
-        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
-      Accept:
-      - application/vnd.conekta-v1.0.0+json
-      Accept-Language:
-      - es
-      Content-Length:
-      - '0'
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 200
-      message: 
-    headers:
-      Cache-Control:
-      - no-cache
-      Conekta-Media-Type:
-      - conekta-v1.0.0; format=json
-      Content-Type:
-      - application/json; charset=utf-8
-      Date:
-      - Thu, 19 Feb 2015 16:54:29 GMT
-      Server:
-      - nginx/1.1.19
-      Status:
-      - 200 OK
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains
-      X-Request-Id:
-      - f02d7033978de822b842015ce174aab1
-      X-Runtime:
-      - '0.027017'
-      Content-Length:
-      - '206'
-      Connection:
-      - keep-alive
-    body:
-      encoding: ASCII-8BIT
-      string: '{"id":"card_pSwoseKzEwBr9SDM","created_at":1390944545,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
-        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"}'
-    http_version: 
-  recorded_at: Thu, 19 Feb 2015 16:54:23 GMT
-- request:
-    method: post
-    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=300&card=card_pSwoseKzEwBr9SDM&currency=MXN&description=Pre-autorizaci%C3%B3n%20de%20tarjeta%2014&reference_id=
-    body:
-      encoding: UTF-8
-      string: ''
-    headers:
-      User-Agent:
-      - Conekta/v1 RubyBindings/0.5.2
-      X-Conekta-Client-User-Agent:
-      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
-        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.2.0","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"Alejandros-MacBook-Pro-2.local","release":"14.0.0","version":"Darwin
+        Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro5,5"}}'
       Accept:
       - application/vnd.conekta-v1.0.0+json
       Accept-Language:
@@ -249,9 +97,9 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Mon, 16 Feb 2015 21:19:11 GMT
+      - Tue, 10 Mar 2015 00:31:28 GMT
       Etag:
-      - '"c6fb4ff08df67fc64caa86263f314fed"'
+      - '"c2909a984e4df580769655e5cc635669"'
       Server:
       - nginx/1.1.19
       Status:
@@ -259,31 +107,86 @@ http_interactions:
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - 0ff592ebf84d6aeccc0abc6e93db687b
+      - 64aab13c7e3237894a111a2f95f117aa
       X-Runtime:
-      - '2.183659'
+      - '0.114118'
       Content-Length:
-      - '672'
+      - '206'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: '{"id":"card_9xDJ6F3cFNNU9Qz3","created_at":1425947488,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_M3V9nERCq9qDLZdD1"}'
+    http_version: 
+  recorded_at: Tue, 10 Mar 2015 00:31:03 GMT
+- request:
+    method: post
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=300&card=card_9xDJ6F3cFNNU9Qz3&currency=MXN&description=Pre-autorizaci%C3%B3n%20de%20tarjeta%203&reference_id=3
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - Conekta/v1 RubyBindings/0.5.2
+      X-Conekta-Client-User-Agent:
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.2.0","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"Alejandros-MacBook-Pro-2.local","release":"14.0.0","version":"Darwin
+        Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro5,5"}}'
+      Accept:
+      - application/vnd.conekta-v1.0.0+json
+      Accept-Language:
+      - es
+      Content-Length:
+      - '0'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Conekta-Media-Type:
+      - conekta-v1.0.0; format=json
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 10 Mar 2015 00:32:23 GMT
+      Etag:
+      - '"013ac12babb39e0d2a610c626cb37d5b"'
+      Server:
+      - nginx/1.1.19
+      Status:
+      - 200 OK
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Request-Id:
+      - aa4aad8b7e88294ead696b873654f16d
+      X-Runtime:
+      - '2.816854'
+      Content-Length:
+      - '673'
       Connection:
       - keep-alive
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        eyJpZCI6IjU0ZTI1ZWNjMTljZTg4NzMzZDAwMDIyNCIsImxpdmVtb2RlIjpm
-        YWxzZSwiY3JlYXRlZF9hdCI6MTQyNDEyMTU0OCwic3RhdHVzIjoicGFpZCIs
+        eyJpZCI6IjU0ZmUzYjk1MTljZTg4NjRjMTAwMDFkMyIsImxpdmVtb2RlIjpm
+        YWxzZSwiY3JlYXRlZF9hdCI6MTQyNTk0NzU0MSwic3RhdHVzIjoicGFpZCIs
         ImN1cnJlbmN5IjoiTVhOIiwiZGVzY3JpcHRpb24iOiJQcmUtYXV0b3JpemFj
-        acOzbiBkZSB0YXJqZXRhIDQiLCJyZWZlcmVuY2VfaWQiOiIiLCJmYWlsdXJl
-        X2NvZGUiOm51bGwsImZhaWx1cmVfbWVzc2FnZSI6bnVsbCwibW9udGhseV9p
-        bnN0YWxsbWVudHMiOm51bGwsIm9iamVjdCI6ImNoYXJnZSIsImFtb3VudCI6
-        MzAwLCJwYWlkX2F0IjoxNDI0MTIxNTUwLCJmZWUiOjI5OSwiY3VzdG9tZXJf
-        aWQiOiJjdXNfaDlUTVh6WUFBc1FNWnFtOHQiLCJyZWZ1bmRzIjpbXSwicGF5
-        bWVudF9tZXRob2QiOnsibmFtZSI6IkpvcmdlIExvcGV6IiwiZXhwX21vbnRo
-        IjoiMTIiLCJleHBfeWVhciI6IjE5IiwiYXV0aF9jb2RlIjoiMzE0MzczIiwi
-        b2JqZWN0IjoiY2FyZF9wYXltZW50IiwidHlwZSI6ImNyZWRpdCIsImxhc3Q0
-        IjoiNDI0MiIsImJyYW5kIjoidmlzYSIsImlzc3VlciI6IiIsImFjY291bnRf
-        dHlwZSI6IiIsImNvdW50cnkiOiJVUyIsImZyYXVkX3Njb3JlIjpudWxsLCJm
-        cmF1ZF9pbmRpY2F0b3JzIjpbXX0sImRldGFpbHMiOnsibmFtZSI6bnVsbCwi
-        cGhvbmUiOm51bGwsImVtYWlsIjpudWxsLCJsaW5lX2l0ZW1zIjpbXX19
+        acOzbiBkZSB0YXJqZXRhIDMiLCJyZWZlcmVuY2VfaWQiOiIzIiwiZmFpbHVy
+        ZV9jb2RlIjpudWxsLCJmYWlsdXJlX21lc3NhZ2UiOm51bGwsIm1vbnRobHlf
+        aW5zdGFsbG1lbnRzIjpudWxsLCJvYmplY3QiOiJjaGFyZ2UiLCJhbW91bnQi
+        OjMwMCwicGFpZF9hdCI6MTQyNTk0NzU0MywiZmVlIjozMDAsImN1c3RvbWVy
+        X2lkIjoiY3VzX00zVjluRVJDcTlxRExaZEQxIiwicmVmdW5kcyI6W10sInBh
+        eW1lbnRfbWV0aG9kIjp7Im5hbWUiOiJKb3JnZSBMb3BleiIsImV4cF9tb250
+        aCI6IjEyIiwiZXhwX3llYXIiOiIxOSIsImF1dGhfY29kZSI6IjE2NTg0MCIs
+        Im9iamVjdCI6ImNhcmRfcGF5bWVudCIsInR5cGUiOiJjcmVkaXQiLCJsYXN0
+        NCI6IjQyNDIiLCJicmFuZCI6InZpc2EiLCJpc3N1ZXIiOiIiLCJhY2NvdW50
+        X3R5cGUiOiIiLCJjb3VudHJ5IjoiVVMiLCJmcmF1ZF9zY29yZSI6bnVsbCwi
+        ZnJhdWRfaW5kaWNhdG9ycyI6W119LCJkZXRhaWxzIjp7Im5hbWUiOm51bGws
+        InBob25lIjpudWxsLCJlbWFpbCI6bnVsbCwibGluZV9pdGVtcyI6W119fQ==
     http_version: 
-  recorded_at: Mon, 16 Feb 2015 19:00:00 GMT
+  recorded_at: Tue, 10 Mar 2015 00:31:07 GMT
 recorded_with: VCR 2.9.3

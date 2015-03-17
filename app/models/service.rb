@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Service < ActiveRecord::Base
   include Presenters::ServicePresenter
   include AliadaSupport::DatetimeSupport
@@ -93,6 +94,12 @@ class Service < ActiveRecord::Base
     timezone_offset_seconds / 3600
   end
 
+  def create_service_charge_failed_ticket(user, amount,error)
+    Ticket.create_error(relevant_object_id: self.id,
+                        relevant_object_type: 'Service',
+                        message: "No se pudo realizar cargo de #{amount} a la tarjeta de #{user.first_name} #{user.last_name}. #{error.message_to_purchaser}")
+  end
+  
   def cost
     (estimated_hours_without_extras * service_type.price_per_hour).ceil
   end
@@ -166,6 +173,21 @@ class Service < ActiveRecord::Base
     aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
 
     aliada_availability.book(self)
+  end
+  
+  #calculates the price to be charged for a service
+  def amount_to_bill
+    
+    hours = self.aliada_reported_end_time.hour - self.aliada_reported_begin_time.hour
+    minutes = self.aliada_reported_end_time.min - self.aliada_reported_begin_time.min 
+    amount = (hours*(self.service_type.price_per_hour))+(minutes * ((self.service_type.price_per_hour)/60.0))
+    
+   
+    if amount > 0 && (self.aliada_reported_end_time.to_date === self.aliada_reported_begin_time.to_date)
+      return amount
+    else
+      return 0
+    end
   end
 
   def self.create_new!(service_params, user)
