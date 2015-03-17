@@ -21,3 +21,4 @@ feature 'Admin ability to browse as a user' do
     end
   end
 end
+

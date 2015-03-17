@@ -1,36 +1,41 @@
 %fieldset.service_types.radio_buttons.large
-  = form.collection_radio_buttons :service_type_id, ServiceType.all, :id, :name, { checked: ServiceType.recurrent.id } do |radio_button_builder|
+  - disabled = disable_one_time ? ServiceType.one_time.id : nil
+
+  = form.collection_radio_buttons :service_type_id, ServiceType.all, :id, :name, { checked: @service.service_type.try(:id) || ServiceType.recurrent.id, disabled: disabled } do |radio_button_builder|
 
     - service_type = radio_button_builder.object
-    - type = service_type.name
-    - class_name = type == 'recurrent' ? 'green' : 'transparent'
+    - name = service_type.name
+    - button_background = name == 'recurrent' ? 'green' : 'transparent'
+    - disabled_class = disabled == service_type.id ? 'disabled' : ''
 
-    %div{class: "radio-button-container #{type}"}
+    %div{class: "radio-button-container #{name} #{promotional ? '' : 'non-promotional'}"}
       .head
-        - if type == 'recurrent'
+        - if name == 'recurrent' && promotional
           %span.best-value
             %icon.sparks
             MEJOR VALOR
             %icon.sparks
-      = label_tag "service_service_type_id_#{service_type.id}", {data: {bind: "from_data: 'service_type'", service_type: service_type.to_json }} do
+      = label_tag "service_service_type_id_#{service_type.id}", {data: {bind: "from_data: 'service_type'", service_type: service_type.to_json }, class: disabled_class }  do
         = radio_button_builder.radio_button 
 
-        %span{class: "action-button-#{class_name} size-large"}
+        %span{class: "action-button-#{button_background} size-large"}
           = radio_button_builder.object.display_name
 
         %ul.benefits
           %li.small-letters
-            - if type == 'recurrent'
+            - if name == 'recurrent'
               %icon.check-active.small
             - else
               %icon.check.small
 
             $#{service_type.price_per_hour} pesos/hora
-          - service_type.benefits_list.each do |benefit|
-            %li.small-letters
-              - if type == 'recurrent'
-                %icon.check-active.small
-              - else
-                %icon.check.small
-              = benefit
+
+          - if promotional
+            - service_type.benefits_list.each do |benefit|
+              %li.small-letters
+                - if name == 'recurrent'
+                  %icon.check-active.small
+                - else
+                  %icon.check.small
+                = benefit
 

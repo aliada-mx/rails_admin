@@ -1,8 +1,8 @@
-= append :javascript do
-  = javascript_include_tag 'previous_services'
+= append(:body_class){ ' previous-services ' }
 
 .service_history.col-lg-12
-  .service_history_header HISTORIAL DE VISITAS
+  .service_history_header 
+    \- HISTORIAL DE VISITAS -
   %div.table-responsive.service_history_table
     %table.table
       %thead
@@ -14,6 +14,12 @@
           %th Costo 
           %th Calificación
       %tbody
+      - if @services.empty?
+        %tr
+          %td
+            %p.center
+              Aun no has recibido tu primer servicio :)
+
       - @services.each do |service|
         %tr
           %td
@@ -51,3 +57,6 @@
                 = radio_button_tag :value, 1, false, onclick: "submitRating(#{service.id}, 1)", class: "unchecked", id: "#{service.id}_1"
                 %span
                 = hidden_field_tag :service_id, service.id
+
+= append :javascript do
+  = javascript_include_tag 'previous_services'

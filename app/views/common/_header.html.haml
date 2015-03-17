@@ -5,6 +5,9 @@
         = image_tag 'logo-contrast.png', class: 'logo-contrast'
       .help-container
         - if user_signed_in?
+          - if @user.admin?
+            %p
+              Hola admin #{ @user.name }
           %span.icon.icon-user
           %a{href: edit_users_path(@user), title: 'Mi cuenta', class: 'account-link' }
             Mi Cuenta

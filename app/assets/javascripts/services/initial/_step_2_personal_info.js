@@ -1,37 +1,29 @@
 //= require modules/geo-autocomplete
 //= require modules/map
 
+aliada.services.initial.step_2_personal_info = function(aliada, ko){
   var name_email_phone_default = 'Nombre, correo, teléfono';
   var address_default = 'Dirección';
 
-  var on_step_2 = function(){ return aliada.ko.current_step() == 2 };
+  var on_step_2 = function(){ return aliada.ko.current_step() == 2; };
 
   // Knockout model
 
   // Batch extend and validate required
-  aliada.step_2_required_fields = [ 'first_name',
-                                    'email',
-                                    'last_name',
-                                    'phone',
-                                    'street',
-                                    'number',
-                                    'colony',
-                                    'between_streets',
-                                    'city',
-                                    'state',
-                                    'postal_code_number' ]
+  aliada.step_2_required_fields = [ 'first_name', 'email', 'last_name', 'phone', 'street', 'number', 'colony', 'between_streets', 'city', 'state', 'postal_code_number' ];
+
   _.each(aliada.step_2_required_fields, function(element){
     aliada.ko[element] = ko.observable('').extend({ required: { onlyIf: on_step_2 } })
   });
 
   _(aliada.ko).extend({
     email: ko.observable('').extend({
-      email: true
+      required: true
     }),
     latitude: ko.observable(''),
     longitude: ko.observable(''),
     interior_number: ko.observable(''),
-    map_zoom: ko.observable(aliada.default_map_zoom),
+    map_zoom: ko.observable(aliada.default_map_zoom)
   });
 
 
@@ -94,7 +86,7 @@
 
   // Is the step done
   aliada.ko.is_address_done = ko.computed(function(){
-    return aliada.ko.address() != address_default;;
+    return aliada.ko.address() != address_default;
   });
 
 
@@ -158,10 +150,15 @@
 
   // On entering the step
   $(document).on('entering_step_2',function(){
+    // Follow the scroll
+    if(!isMobile.any){
+      $('aside').hcSticky({stickTo: $('main'), top: '20'});
+    }
+
     // Initialize map only once the container is visible otherwise the map renders incorrectly
     if(should_init_map_autocomplete){
       initialize_map_and_autocomplete();
       should_init_map_autocomplete = false;
     }
   });
-}
+};

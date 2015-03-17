@@ -9,5 +9,11 @@ module TestingSupport
       option = find(:xpath, option_xpath).text
       select(option, :from => from)
     end
+
+    def remove_disabled(id)
+      input = find(:xpath, "//*[@id='#{id}']")
+      native = input.native
+      native.remove_attribute('disabled')
+    end
   end
 end

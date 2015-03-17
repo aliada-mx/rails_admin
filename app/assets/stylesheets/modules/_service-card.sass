@@ -6,11 +6,18 @@
 
   &:last-child
     .service-card
-      min-height: 205px
       margin-bottom: 0
 
+  &.new-service-card
+    display: table
+    height: 100%
+    &.horizontal
+      height: 210px
+    
+    .service-card
+      height: 100%
+
 .service-card
-  min-height: 415px
   +box-shadow($medium-gray 0px 0px 4px)
   +rem(margin-bottom, 4rem)
 
@@ -40,11 +47,12 @@
     text-align: center
     width: 100%
 
-    span
+    a
       display: table-cell
       vertical-align: middle
       font-weight: 600
       +rem(font-size, $medium-font)
+      color: $pink
 
   .body
     background: white

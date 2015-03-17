@@ -1,18 +1,19 @@
-.initial_service
-  = form_for @service, url: create_initial_service_path do |initial_service_form|
-    %main
-      - ['duration', 'personal_info', 'visit_info', 'payment', 'success'].each_with_index do |step_name, step|
+= append(:body_class){ 'initial_service' }
 
-        = render partial: "services/initial/step_#{step+1}_#{step_name}", locals: {:initial_service_form => initial_service_form,
-                                                                                   :@user => @user,
-                                                                                   :@address => @address,
-                                                                                   :@postal_code => @postal_code}
+= form_for @service, url: create_initial_service_path do |initial_service_form|
+  %main
+    - ['duration', 'personal_info', 'visit_info', 'payment', 'success'].each_with_index do |step_name, step|
 
-    %aside
-      = render partial: 'services/initial/summary', locals: {initial_service_form: initial_service_form}
+      = render partial: "services/initial/step_#{step+1}_#{step_name}", locals: {:initial_service_form => initial_service_form,
+                                                                                 :@user => @user,
+                                                                                 :@address => @address,
+                                                                                 :@postal_code => @postal_code}
 
-      .aliada_seal
-        = image_tag 'sello-de-garantia.png'
+  %aside
+    = render partial: 'services/initial/summary', locals: {initial_service_form: initial_service_form}
+
+    .aliada_seal
+      = image_tag 'sello-de-garantia.png'
 
 = append :javascript do
   = javascript_include_tag 'services/initial'

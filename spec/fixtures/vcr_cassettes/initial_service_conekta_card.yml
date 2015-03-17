@@ -10,8 +10,8 @@ http_interactions:
       User-Agent:
       - Conekta/v1 RubyBindings/0.5.2
       X-Conekta-Client-User-Agent:
-      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
-        Kernel Version 13.4.0: Sun Aug 17 19:50:11 PDT 2014; root:xnu-2422.115.4~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.2.0","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"Alejandros-MacBook-Pro-2.local","release":"14.0.0","version":"Darwin
+        Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro5,5"}}'
       Accept:
       - application/vnd.conekta-v1.0.0+json
       Accept-Language:
@@ -32,9 +32,9 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Mon, 16 Feb 2015 21:19:08 GMT
+      - Tue, 10 Mar 2015 00:33:02 GMT
       Etag:
-      - '"21248477bdfceba05d177246ea46a145"'
+      - '"c782393831b6a64bff633fd31f0520bc"'
       Server:
       - nginx/1.1.19
       Status:
@@ -42,23 +42,23 @@ http_interactions:
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - eb4ba8285cc16d12835f74e63faf151e
+      - 693023ec9ca39d5a72940f5aacf17b77
       X-Runtime:
-      - '0.260049'
+      - '0.136459'
       Content-Length:
       - '456'
       Connection:
       - keep-alive
     body:
       encoding: UTF-8
-      string: '{"id":"cus_h9TMXzYAAsQMZqm8t","email":"guillermo.siliceo@gmail.com","name":"Guillermo
-        Siliceo","phone":"5585519954","livemode":false,"default_card_id":"card_yn7zTctQoodNEve5","object":"customer","created_at":1424121548,"cards":[{"id":"card_yn7zTctQoodNEve5","created_at":1424121548,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
-        Lopez","customer_id":"cus_h9TMXzYAAsQMZqm8t"}],"subscription":null}'
+      string: '{"id":"cus_zo3QteqovYLJGXJGR","email":"guillermo.siliceo@gmail.com","name":"Guillermo
+        Siliceo","phone":"5585519954","livemode":false,"default_card_id":"card_SYJUbAPgtu8j72J3","object":"customer","created_at":1425947582,"cards":[{"id":"card_SYJUbAPgtu8j72J3","created_at":1425947582,"active":true,"last4":"4242","object":"card","exp_month":"12","exp_year":"19","brand":"VISA","name":"Jorge
+        Lopez","customer_id":"cus_zo3QteqovYLJGXJGR"}],"subscription":null}'
     http_version: 
-  recorded_at: Mon, 16 Feb 2015 19:00:00 GMT
+  recorded_at: Thu, 01 Jan 2015 07:00:00 GMT
 - request:
     method: post
-    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=300&card=card_yn7zTctQoodNEve5&currency=MXN&description=Pre-autorizaci%C3%B3n%20de%20tarjeta%204&reference_id=
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=300&card=card_SYJUbAPgtu8j72J3&currency=MXN&description=Pre-autorizaci%C3%B3n%20de%20tarjeta%2010&reference_id=10
     body:
       encoding: UTF-8
       string: ''
@@ -66,8 +66,8 @@ http_interactions:
       User-Agent:
       - Conekta/v1 RubyBindings/0.5.2
       X-Conekta-Client-User-Agent:
-      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
-        Kernel Version 13.4.0: Sun Aug 17 19:50:11 PDT 2014; root:xnu-2422.115.4~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.2.0","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"Alejandros-MacBook-Pro-2.local","release":"14.0.0","version":"Darwin
+        Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro5,5"}}'
       Accept:
       - application/vnd.conekta-v1.0.0+json
       Accept-Language:
@@ -88,9 +88,9 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Mon, 16 Feb 2015 21:19:11 GMT
+      - Tue, 10 Mar 2015 00:33:05 GMT
       Etag:
-      - '"c6fb4ff08df67fc64caa86263f314fed"'
+      - '"c771020a784ea1c9b9edb9dfc8ffea89"'
       Server:
       - nginx/1.1.19
       Status:
@@ -98,31 +98,31 @@ http_interactions:
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - 0ff592ebf84d6aeccc0abc6e93db687b
+      - 1e86cb21530877cde9a654f5e4a4e030
       X-Runtime:
-      - '2.183659'
+      - '2.763532'
       Content-Length:
-      - '672'
+      - '675'
       Connection:
       - keep-alive
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        eyJpZCI6IjU0ZTI1ZWNjMTljZTg4NzMzZDAwMDIyNCIsImxpdmVtb2RlIjpm
-        YWxzZSwiY3JlYXRlZF9hdCI6MTQyNDEyMTU0OCwic3RhdHVzIjoicGFpZCIs
+        eyJpZCI6IjU0ZmUzYmJlMTljZTg4Mzk2ZjAwMDFiYiIsImxpdmVtb2RlIjpm
+        YWxzZSwiY3JlYXRlZF9hdCI6MTQyNTk0NzU4Miwic3RhdHVzIjoicGFpZCIs
         ImN1cnJlbmN5IjoiTVhOIiwiZGVzY3JpcHRpb24iOiJQcmUtYXV0b3JpemFj
-        acOzbiBkZSB0YXJqZXRhIDQiLCJyZWZlcmVuY2VfaWQiOiIiLCJmYWlsdXJl
-        X2NvZGUiOm51bGwsImZhaWx1cmVfbWVzc2FnZSI6bnVsbCwibW9udGhseV9p
-        bnN0YWxsbWVudHMiOm51bGwsIm9iamVjdCI6ImNoYXJnZSIsImFtb3VudCI6
-        MzAwLCJwYWlkX2F0IjoxNDI0MTIxNTUwLCJmZWUiOjI5OSwiY3VzdG9tZXJf
-        aWQiOiJjdXNfaDlUTVh6WUFBc1FNWnFtOHQiLCJyZWZ1bmRzIjpbXSwicGF5
-        bWVudF9tZXRob2QiOnsibmFtZSI6IkpvcmdlIExvcGV6IiwiZXhwX21vbnRo
-        IjoiMTIiLCJleHBfeWVhciI6IjE5IiwiYXV0aF9jb2RlIjoiMzE0MzczIiwi
-        b2JqZWN0IjoiY2FyZF9wYXltZW50IiwidHlwZSI6ImNyZWRpdCIsImxhc3Q0
-        IjoiNDI0MiIsImJyYW5kIjoidmlzYSIsImlzc3VlciI6IiIsImFjY291bnRf
-        dHlwZSI6IiIsImNvdW50cnkiOiJVUyIsImZyYXVkX3Njb3JlIjpudWxsLCJm
-        cmF1ZF9pbmRpY2F0b3JzIjpbXX0sImRldGFpbHMiOnsibmFtZSI6bnVsbCwi
-        cGhvbmUiOm51bGwsImVtYWlsIjpudWxsLCJsaW5lX2l0ZW1zIjpbXX19
+        acOzbiBkZSB0YXJqZXRhIDEwIiwicmVmZXJlbmNlX2lkIjoiMTAiLCJmYWls
+        dXJlX2NvZGUiOm51bGwsImZhaWx1cmVfbWVzc2FnZSI6bnVsbCwibW9udGhs
+        eV9pbnN0YWxsbWVudHMiOm51bGwsIm9iamVjdCI6ImNoYXJnZSIsImFtb3Vu
+        dCI6MzAwLCJwYWlkX2F0IjoxNDI1OTQ3NTg1LCJmZWUiOjMwMCwiY3VzdG9t
+        ZXJfaWQiOiJjdXNfem8zUXRlcW92WUxKR1hKR1IiLCJyZWZ1bmRzIjpbXSwi
+        cGF5bWVudF9tZXRob2QiOnsibmFtZSI6IkpvcmdlIExvcGV6IiwiZXhwX21v
+        bnRoIjoiMTIiLCJleHBfeWVhciI6IjE5IiwiYXV0aF9jb2RlIjoiMjA3ODEx
+        Iiwib2JqZWN0IjoiY2FyZF9wYXltZW50IiwidHlwZSI6ImNyZWRpdCIsImxh
+        c3Q0IjoiNDI0MiIsImJyYW5kIjoidmlzYSIsImlzc3VlciI6IiIsImFjY291
+        bnRfdHlwZSI6IiIsImNvdW50cnkiOiJVUyIsImZyYXVkX3Njb3JlIjpudWxs
+        LCJmcmF1ZF9pbmRpY2F0b3JzIjpbXX0sImRldGFpbHMiOnsibmFtZSI6bnVs
+        bCwicGhvbmUiOm51bGwsImVtYWlsIjpudWxsLCJsaW5lX2l0ZW1zIjpbXX19
     http_version: 
-  recorded_at: Mon, 16 Feb 2015 19:00:00 GMT
+  recorded_at: Thu, 01 Jan 2015 07:00:00 GMT
 recorded_with: VCR 2.9.3

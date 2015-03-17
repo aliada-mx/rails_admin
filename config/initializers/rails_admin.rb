@@ -22,13 +22,12 @@ RailsAdmin.config do |config|
     show
     edit
     delete
-    show_in_app
+    
     create_aliada_working_hours do
       visible do
         bindings[:abstract_model].model.to_s == 'Aliada'
       end
     end
-    
 
     ## With an audit adapter, you can add:
     # history_index

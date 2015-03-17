@@ -54,11 +54,19 @@ zone = FactoryGirl.create(:zone)
 puts '11800 postal code'
 FactoryGirl.create(:postal_code, :zoned, zone: zone, number: '11800')
 
-puts 'schedules for the month'
-Time.zone = 'Mexico City'
-starting_datetime = Time.zone 
-create_recurrent!(Time.zone.now.change({hour: 7}), hours: 6, periodicity: 7, timezone: 'Mexico City', conditions: {aliada: aliada, zone: zone})
-create_recurrent!(Time.zone.now.change({hour: 7})+1.day, hours: 6, periodicity: 7, timezone: 'Mexico City',  conditions: {aliada: aliada, zone: zone})
+puts 'schedules for a week'
 
-puts 'Conekta payment method'
-PaymentMethod.create!(name: 'Pago con tarjeta', payment_provider_type: 'ConektaCard')
+# Paste the contents of this function
+def create_from_copypaste
+  Schedule.destroy_all
+  starting_datetime = Time.zone.now.change(hour: 13) # 7 am Mexico City Time
+  aliada = Aliada.first
+  zone = Zone.first
+
+  require_relative 'spec/support/schedules_helper'
+  include TestingSupport::SchedulesHelper
+
+  6.times do |i|
+    create_recurrent!(starting_datetime + i.day, hours: 6, periodicity: 7, conditions: {aliada: aliada, zone: zone})
+  end
+end

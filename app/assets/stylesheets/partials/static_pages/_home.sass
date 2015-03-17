@@ -2,184 +2,184 @@
 @import 'common/variables'
 @import 'common/mixins'
 
-body
+body.home
   display: table
   height: 100%
   width: 100%
 
-.search-section-wrapper
-  background: url("temp-background.jpg") no-repeat center center
-  background-size: cover
-  background-color: black
-  box-sizing: border-box
-  position: relative
-  height: 750px
+  .search-section-wrapper
+    background: url("temp-background.jpg") no-repeat center center
+    background-size: cover
+    background-color: black
+    box-sizing: border-box
+    position: relative
+    height: 750px
 
 
-  .search-container
-    +rem(margin, 10rem 0)
-    +rem(padding, 1.5rem 0)
-    vertical-align: middle
-    width: 100%
+    .search-container
+      +rem(margin, 10rem 0)
+      +rem(padding, 1.5rem 0)
+      vertical-align: middle
+      width: 100%
 
-    .search-slogan-container
-      +rem(margin, 0 0 10rem)
-      text-align: center
+      .search-slogan-container
+        +rem(margin, 0 0 10rem)
+        text-align: center
 
-      .slogan
-        display: inline-block
-        +rem(margin, 0 auto 1rem)
-        position: relative
-        +rem(font-size, 7rem)
-        font-weight: 600
-        letter-spacing: -3px
-        color: white
+        .slogan
+          display: inline-block
+          +rem(margin, 0 auto 1rem)
+          position: relative
+          +rem(font-size, 7rem)
+          font-weight: 600
+          letter-spacing: -3px
+          color: white
 
-        .shine
-          max-width: 15px
-          position: absolute
-          right: -15px
-          top: 10px
+          .shine
+            max-width: 15px
+            position: absolute
+            right: -15px
+            top: 10px
+            width: 100%
+
+        .motto
+          font-style: italic
+          +rem(font-size, 2.5rem)
+
+      .search-form-container
+        +rem(margin, 0 0 4rem)
+        text-align: center
+
+        legend
+          border: none
+          color: white
+          +rem(margin, 0 0 1rem)
+          +rem(font-size, 1.8rem)
           width: 100%
 
-      .motto
-        font-style: italic
-        +rem(font-size, 2.5rem)
+        .action-button-container
+          width: 300px
+          display: inline-block
+          .action-button
+            height: 55px
+            line-height: 0
+            +action-button($dark_pink)
 
-    .search-form-container
-      +rem(margin, 0 0 4rem)
+
+  .media-section-wrapper
+    background-color: $lightest-gray
+
+    .media-section-container
+      +rem(margin, 3rem 0)
       text-align: center
 
-      legend
-        border: none
-        color: white
-        +rem(margin, 0 0 1rem)
-        +rem(font-size, 1.8rem)
-        width: 100%
-
-      .action-button-container
-        width: 300px
+      .media-logo
         display: inline-block
-        .action-button
-          height: 55px
-          line-height: 0
-          +action-button($dark_pink)
+        margin: 0
+        width: 18%
+
+        img
+          display: inline-block
+          max-height: 40px
 
 
-.media-section-wrapper
-  background-color: $lightest-gray
+  .payment-section-wrapper
+    background-color: white
+    +rem(padding, 5rem 0)
 
-  .media-section-container
-    +rem(margin, 3rem 0)
-    text-align: center
-
-    .media-logo
-      display: inline-block
-      margin: 0
-      width: 18%
-
-      img
-        display: inline-block
-        max-height: 40px
-
-
-.payment-section-wrapper
-  background-color: white
-  +rem(padding, 5rem 0)
-
-  .payment-description
-    text-align: right
-    +rem(font-size, 1.5rem)
-
-    p
-      margin: 0
-
-  .payment-logos
-    img
-      display: inline-block
-      max-width: 320px
-      vertical-align: middle
-      width: 100%
-
-
-.why-section-wrapper
-  background-color: white
-  +rem(padding-bottom, 6rem)
-
-  .why-section-container
-    text-align: center
-
-    h3.why-section-title
-      color: $medium_gray
-      font-weight: 600
-      letter-spacing: -2px
-      +rem(margin, 4.5rem 0)
-      +rem(font-size, 2.8rem)
-
-    .why-description
-      color: $medium_gray
-      +rem(margin, 2rem auto 4rem)
-      max-width: 250px
-
-    img
-      display: block
-      +rem(margin, 2rem auto)
-      max-width: 90px
-      width: 100%
-
-
-.service-section-wrapper
-  background-color: white
-  +rem(padding-bottom, 6rem)
-
-  .service-section-container
-    text-align: center
-
-    h2.service-section-title
-      color: $medium_gray
-      font-weight: 600
-      letter-spacing: -2px
-      +rem(margin, 4.5rem 0 1rem)
-      +rem(font-size, 3.5rem)
-
-    .service-subtitle
-      color: $medium_gray
-      margin: 0 auto 4rem
+    .payment-description
+      text-align: right
       +rem(font-size, 1.5rem)
 
-    .service-description
-      color: $green
-      +rem(margin, 2rem auto 4rem)
-      max-width: 150px
+      p
+        margin: 0
 
-    img
-      display: block
-      +rem(margin, 2rem auto)
-      max-width: 60px
-      width: 100%
+    .payment-logos
+      img
+        display: inline-block
+        max-width: 320px
+        vertical-align: middle
+        width: 100%
 
-.warranty-section-wrapper
-  background-color: $lightest-gray
-  text-align: center
-  +rem(padding, 5rem 0)
 
-  .warranty-section-container
+  .why-section-wrapper
+    background-color: white
+    +rem(padding-bottom, 6rem)
 
-    .warranty-logo
-      display: inline-block
-      max-width: 140px
-      vertical-align: middle
-      width: 100%
-      +rem(margin-right, 4rem)
+    .why-section-container
+      text-align: center
 
-    .warranty-description
-      color: $green
-      display: inline-block
-      font-weight: 400
-      letter-spacing: -2px
-      max-width: 420px
-      text-align: left
-      vertical-align: middle
-      width: 100%
-      +rem(font-size, 3.5rem)
+      h3.why-section-title
+        color: $medium_gray
+        font-weight: 600
+        letter-spacing: -2px
+        +rem(margin, 4.5rem 0)
+        +rem(font-size, 2.8rem)
+
+      .why-description
+        color: $medium_gray
+        +rem(margin, 2rem auto 4rem)
+        max-width: 250px
+
+      img
+        display: block
+        +rem(margin, 2rem auto)
+        max-width: 90px
+        width: 100%
+
+
+  .service-section-wrapper
+    background-color: white
+    +rem(padding-bottom, 6rem)
+
+    .service-section-container
+      text-align: center
+
+      h2.service-section-title
+        color: $medium_gray
+        font-weight: 600
+        letter-spacing: -2px
+        +rem(margin, 4.5rem 0 1rem)
+        +rem(font-size, 3.5rem)
+
+      .service-subtitle
+        color: $medium_gray
+        margin: 0 auto 4rem
+        +rem(font-size, 1.5rem)
+
+      .service-description
+        color: $green
+        +rem(margin, 2rem auto 4rem)
+        max-width: 150px
+
+      img
+        display: block
+        +rem(margin, 2rem auto)
+        max-width: 60px
+        width: 100%
+
+  .warranty-section-wrapper
+    background-color: $lightest-gray
+    text-align: center
+    +rem(padding, 5rem 0)
+
+    .warranty-section-container
+
+      .warranty-logo
+        display: inline-block
+        max-width: 140px
+        vertical-align: middle
+        width: 100%
+        +rem(margin-right, 4rem)
+
+      .warranty-description
+        color: $green
+        display: inline-block
+        font-weight: 400
+        letter-spacing: -2px
+        max-width: 420px
+        text-align: left
+        vertical-align: middle
+        width: 100%
+        +rem(font-size, 3.5rem)
 

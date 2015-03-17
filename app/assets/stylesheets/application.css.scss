@@ -1,9 +1,5 @@
 @import 'common/base';
 
-// Boostrap
-@import 'bootstrap-sprockets';
-@import 'common/bootstrap';
-
 // Controllers
 @import 'static_pages';
 @import 'services';
@@ -12,5 +8,3 @@
 
 //Icomoon Fonts
 @import "common/icomoon";
-
-@import 'rails_admin/actions/create_aliada_working_hours'

@@ -34,15 +34,27 @@ Rails.application.routes.draw do
     get 'historial', to: 'users#previous_services', as: :previous_services
 
     get 'servicio/nuevo', to: 'services#new', as: :new_service
-    post 'servicio/create', to: 'services#create', as: :create_service
+    post 'servicio/create', to: 'services#create_new', as: :create_new_service
 
     get 'servicio/:service_id', to: 'services#edit', as: :edit_service, service_id: /\d+/
-    post 'servicio/:service_id', to: 'services#update', as: :update_service, service_id: /\d+/
+    patch 'servicio/:service_id', to: 'services#update', as: :update_service, service_id: /\d+/
+    post 'servicio/:service_id', to: 'services#update', as: :update_service_post, service_id: /\d+/
 
     post 'conekta_card/create', to: 'conekta_cards#create', as: :create_conekta_card
   end
 
   post 'aliadas-availability', to: 'aliadas_availability#for_calendar', as: :aliadas_availability
+
+
+  devise_scope :aliadas do
+    get 'aliadas/servicios/:token', to: 'aliadas#services', as: :aliadas_services
+    post 'aliadas/servicios/finish/:token', to: 'aliadas#finish', as: :finish_service
+  end
+
+
+
+
+
 
   resources :schedules
 

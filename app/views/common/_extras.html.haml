@@ -1,4 +1,7 @@
-%fieldset.checkboxes.extra_large#extras
+%h4{class: collapsable ? 'extras-toggle-button' : ''}
+  Agrega tareas extras (extiende el tiempo de la visita)
+
+%fieldset.checkboxes.extra_large#extras{class: collapsable ? 'collapsed' : ''}
   = form.collection_check_boxes(:extra_ids, Extra.all, :id, :name) do |builder|
     .check-box-container
       = builder.check_box data: { hours: builder.object.hours }
@@ -10,3 +13,16 @@
             = builder.text
           .small-letters
             = "+#{builder.object.hours} hora/s extra"
+
+- if collapsable 
+  = append :javascript do
+    :javascript
+      (function(){
+        var $extras = $('#extras')
+
+        $('.extras-toggle-button').click(function(){
+          $(this).toggleClass('toggled');
+          $extras.slideToggle();
+        });
+      })()
+

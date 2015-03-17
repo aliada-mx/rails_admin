@@ -17,7 +17,7 @@ include AliadaSupport::DatetimeSupport
 
   # TODO optimize to get all aliadas even those without services but the ones with services 
   # must have services.datetime >= Time.zone.now.beginning_of_day
-  scope :for_booking, ->(aliadas_ids) { where(id: aliadas_ids).eager_load(:services) }
+  scope :for_booking, ->(aliadas_ids) { where(id: aliadas_ids).eager_load(:services).eager_load(:zones) }
 
   # We override the default_scope class method so the user default scope from
   # which we inherited does not override ours

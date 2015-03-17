@@ -152,7 +152,7 @@ connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
 
   tz = ActiveSupport::TimeZone.new 'Mexico City'
   datetime = tz.parse("#{row["fecha"].to_s} #{row["hora"]}").to_datetime
-  
+
   if datetime.minute != 0
     datetime = datetime - 30.minute
   end

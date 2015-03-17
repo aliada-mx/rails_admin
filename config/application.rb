@@ -26,7 +26,6 @@ module AliadaWebApp
       g.test_framework :rspec
     end
 
-
     Conekta.api_key = Rails.application.secrets.conekta_secret_key
 
     ActionMailer::Base.delivery_method = :smtp

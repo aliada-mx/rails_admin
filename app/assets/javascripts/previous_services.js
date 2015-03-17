@@ -25,7 +25,7 @@ $(function(){
         $(this).toggleClass('disabled');
       }
       $(this).prop("onclick", null);
-    })
+    });
 
   };
 

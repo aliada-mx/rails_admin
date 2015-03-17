@@ -68,7 +68,7 @@ class ScheduleFiller
         end
         
         # Assign the client to the aliada's schedule
-        ScheduleInterval.new(schedules).book_schedules!(aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, service_id: service.id)
+        ScheduleInterval.new(schedules).book_schedules(aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, service_id: service.id)
       end
     end
   end
@@ -127,7 +127,7 @@ class ScheduleFiller
         end
         
         # Assign the client to the aliada's schedule
-        ScheduleInterval.new(schedules).book_schedules!(aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, service_id: service.id)
+        ScheduleInterval.new(schedules).book_schedules(aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, service_id: service.id)
       end
     end
   end  

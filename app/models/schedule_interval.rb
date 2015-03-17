@@ -1,12 +1,12 @@
 class ScheduleInterval
   #Represents a contiguous block of schedules 
-
   include ActiveModel::Validations
 
   validate :schedules_presence
   validate :schedules_continuity
 
   attr_accessor :schedules, :aliada_id, :skip_validations
+  attr_reader :previous_schedule
 
   def initialize(schedules, skip_validations: false, aliada_id: nil)
     # Because the users of this class might reuse the passed array we must ensure
@@ -16,17 +16,53 @@ class ScheduleInterval
     @aliada_id = aliada_id
   end
 
+  def in_first_working_hour_of_the_day?
+    # If right at the beginning_of_aliadas_day
+    return true if @schedules.first.datetime.hour == Setting.beginning_of_aliadas_day
+
+    # Or already calculated
+    return @in_first_working_hour_of_the_day if !@in_first_working_hour_of_the_day.nil?
+
+    calculate_previous_schedule
+     
+    # Cache to avoid doing double queries
+    @in_first_working_hour_of_the_day = @previous_schedule.nil? or !@previous_schedule.available?
+    return @in_first_working_hour_of_the_day
+  end
+
+  def calculate_previous_schedule
+    # If the previous schedule does not exists we definitely are at the first hour
+    first_schedule = @schedules.first
+    zone = first_schedule.zone
+    aliada = first_schedule.aliada
+
+    @previous_schedule ||= Schedule.previous_aliada_schedule(zone, first_schedule, aliada).first
+  end
+
+  def in_last_working_hour_of_the_day?
+    # If right at the end_of_aliadas_day
+    return true if @schedules.last.datetime.hour == Setting.end_of_aliadas_day - 1
+
+    return @in_last_working_hour_of_the_day if !@in_last_working_hour_of_the_day.nil?
+
+    # If the next schedule does not exists we definitely are at the last hour
+    last_schedule = @schedules.last
+    zone = last_schedule.zone
+    aliada = last_schedule.aliada
+
+    next_schedule = Schedule.next_aliada_schedule(zone, last_schedule, aliada).first
+
+    # Cache to avoid doing double queries
+    @in_last_working_hour_of_the_day = next_schedule.nil? 
+    return @in_last_working_hour_of_the_day
+  end
+
   def beginning_of_interval
     @schedules.first.datetime
   end
 
   def ending_of_interval
     @schedules.last.datetime
-  end
-
-  # The number of hours it spans to
-  def hours_long
-    @schedules.last.datetime.hour - @schedules.first.datetime.hour
   end
 
   def size
@@ -56,13 +92,13 @@ class ScheduleInterval
     @schedules.map(&:save!)
   end
 
-  def book_schedules!(aliada_id: nil, user_id: nil, service_id: nil)
+  def book_schedules(aliada_id: nil, user_id: nil, service_id: nil)
     @schedules.each do |schedule|
       schedule.aliada_id = aliada_id
       schedule.user_id = user_id
       schedule.service_id = service_id
       if aliada_id.present? && user_id.present? && service_id.present?
-        schedule.book!
+        schedule.book
       end
       schedule.save!
     end
@@ -72,13 +108,12 @@ class ScheduleInterval
     @schedules.first.datetime.wday
   end
 
-  def self.build_from_range(starting_datetime, ending_datetime, from_existing: false, conditions: {}, timezone: 'Mexico City')
+  def self.build_from_range(starting_datetime, ending_datetime, from_existing: false, conditions: {})
     schedules = []
-    (starting_datetime.to_i .. ending_datetime.to_i).step(1.hour) do |date|
-      # If we reached the end...
-      break if ending_datetime.to_i == date
 
-      datetime = Time.at(date).in_time_zone(timezone)
+    Time.iterate_in_hour_steps(starting_datetime, ending_datetime).each do |datetime|
+      # If we reached the end...
+      break if ending_datetime.to_i == datetime
 
       conditions.merge!({datetime: datetime})
 
@@ -115,6 +150,24 @@ class ScheduleInterval
     end
 
     continues
+  end
+
+  # Following the business rules we determine what would be the first datetime for a service
+  def beginning_of_service_interval
+    calculate_previous_schedule
+
+    if @previous_schedule.nil?
+      return beginning_of_interval
+    elsif @previous_schedule.available?
+      return beginning_of_interval
+    elsif !@previous_schedule.available?
+      return @schedules.second.datetime
+    end
+  end
+   
+  # Following the business rules we determine what would be the first datetime for a service
+  def end_of_interval_for_service
+    ending_of_interval
   end
 
   private

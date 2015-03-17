@@ -1,6 +1,11 @@
 class User < ActiveRecord::Base
+
+  #Required to enable token authentication
+  acts_as_token_authenticatable
+
   include Presenters::UserPresenter
   include UsersHelper
+
 
   ROLES = [
     ['client', 'Cliente'],
@@ -28,6 +33,9 @@ class User < ActiveRecord::Base
   default_scope { where('users.role in (?)', ['client', 'admin']) }
 
   validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
+  
+
+
 
   validates_presence_of :password, if: :password_required?
   validates_confirmation_of :password, if: :password_required?
@@ -48,7 +56,40 @@ class User < ActiveRecord::Base
 
     create_payment_provider_choice(payment_provider)
   end
-
+  
+  # Given a service id, check whether status is finished,
+  # charge the default service provider and change status to finished
+  # 
+  def charge_service!(service_id)
+    service_to_charge = Service.find_by(id: service_id, user_id: self.id, status: 'finished')
+    
+    
+   
+    if service_to_charge
+      begin
+        amount = service_to_charge.amount_to_bill
+        product = OpenStruct.new({price: amount,
+                                   description: 'Servicio aliada',
+                                   id: service_id})
+        
+        default_payment_provider.charge!(product, self)
+       
+        
+        ### Exception handler for when a user's payment method throws an exception
+        ### TODO: think about how to handle this for many payment providers
+      rescue Conekta::Error => err
+        service_to_charge.create_service_charge_failed_ticket(self, amount, err)
+       
+      end
+    else
+      Ticket.create_warning(relevant_object_id: self.id,
+                            relevant_object_type: 'User',
+                            message: "Se intento cobrar servicio de cliente: #{self.id} pero no ha concluido o no existe")
+    end  
+  end
+  
+  
+  
   def create_payment_provider_choice(payment_provider)
     # Switch the default
     PaymentProviderChoice.where(user: self).update_all default: false
@@ -67,6 +108,10 @@ class User < ActiveRecord::Base
 
   def past_aliadas
     services.in_the_past.joins(:aliada).order('aliada_id').map(&:aliada)
+  end
+
+  def aliadas
+    services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }.uniq
   end
 
   def set_default_role
@@ -90,7 +135,11 @@ class User < ActiveRecord::Base
   end
 
   def send_welcome_email
-    UserMailer.welcome_email(self).deliver!
+    UserMailer.welcome(self).deliver!
+  end
+
+  def send_confirmation_email(service)
+    UserMailer.service_confirmation(self, service).deliver!
   end
 
   rails_admin do

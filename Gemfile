@@ -45,6 +45,11 @@ gem 'bootstrap-sass'
 # Sass framework
 gem 'compass-rails'
  
+# EXCEPTIONS
+#
+# Exception catching and logging
+gem 'raygun4ruby'
+ 
 # JAVASCRIPT 
 #
 gem 'rails-assets-underscore'
@@ -60,9 +65,7 @@ gem 'nestive'
 
 # Authentication
 gem 'devise'
-
-# Time parsing for humans
-gem 'chronic'
+gem 'simple_token_authentication', '~> 1.0'
 
 # PAYMENT SYSTEMS
 gem 'conekta'
@@ -76,11 +79,17 @@ gem 'rails_admin', github: 'grillermo/rails_admin'
 # permissions
 gem 'cancancan'
 
+
 # MAILING
 #
 gem 'smtpapi'
 
+
+# 
+
+
 group :development, :test do
+  gem 'guard-rspec', require: false
   # Call 'pry' anywhere in the code to stop execution and get a debugger console
   gem 'pry-rails'
   # Automatically call pry on exception
@@ -110,6 +119,7 @@ group :development, :test do
 end
 
 group :test do
+  # For the lols run it $ rspec --format NyanCatWideFormatter
   gem "nyan-cat-formatter"
 
   # Testing framework
@@ -143,11 +153,13 @@ group :test do
   gem 'vcr'
 end
 
-group :production do
-  # Logging
-  gem "lograge"
+group :production, :staging do
   # Heroku support
   gem 'rails_12factor'
 end
 
 
+group :production, :staging, :development do
+  # Quiet down the partials rendering
+  gem "lograge"
+end
