@@ -1,0 +1,59 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=19500&card=tok_test_visa_4242&currency=MXN&description=Servicio%20aliada&reference_id=84
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - Conekta/v1 RubyBindings/0.5.2
+      X-Conekta-Client-User-Agent:
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.2.0","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"Alejandros-MacBook-Pro-2.local","release":"14.0.0","version":"Darwin
+        Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro5,5"}}'
+      Accept:
+      - application/vnd.conekta-v1.0.0+json
+      Accept-Language:
+      - es
+      Content-Length:
+      - '0'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Conekta-Media-Type:
+      - conekta-v1.0.0; format=json
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 10 Mar 2015 00:33:22 GMT
+      Etag:
+      - '"b69c52c21e18adb5a21332fe69ff9816"'
+      Server:
+      - nginx/1.1.19
+      Status:
+      - 200 OK
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Request-Id:
+      - a93eefa96b495e78ccb6fe2f97425e2f
+      X-Runtime:
+      - '2.560455'
+      Content-Length:
+      - '640'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: '{"id":"54fe3bcf19ce884005000169","livemode":false,"created_at":1425947599,"status":"paid","currency":"MXN","description":"Servicio
+        aliada","reference_id":"84","failure_code":null,"failure_message":null,"monthly_installments":null,"object":"charge","amount":19500,"paid_at":1425947602,"fee":946,"customer_id":"","refunds":[],"payment_method":{"name":"Jorge
+        Lopez","exp_month":"12","exp_year":"19","auth_code":"224483","object":"card_payment","type":"credit","last4":"4242","brand":"visa","issuer":"","account_type":"","country":"US","fraud_score":null,"fraud_indicators":[]},"details":{"name":null,"phone":null,"email":null,"line_items":[]}}'
+    http_version: 
+  recorded_at: Tue, 10 Mar 2015 00:32:05 GMT
+recorded_with: VCR 2.9.3
