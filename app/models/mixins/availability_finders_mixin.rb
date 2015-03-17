@@ -33,12 +33,12 @@ module Mixins
       @previous_aliada_id = @current_aliada_id
     end
 
-    def aliada_changed?
-      @previous_aliada_id != @current_aliada_id
-    end
-
     def continuous_schedule_intervals?(previous_interval, current_interval)
       (current_interval - previous_interval) == @recurrency_seconds
+    end
+
+    def sort_schedules!
+      @available_schedules.sort_by! { |schedule| [ schedule.aliada_id, schedule.datetime ] }
     end
   end
 end

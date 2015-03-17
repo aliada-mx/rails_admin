@@ -14,7 +14,7 @@ class Service < ActiveRecord::Base
   ]
   validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
   # accessors for forms
-  attr_accessor :postal_code, :time, :date, :payment_method_id, :conekta_temporary_token, :timezone
+  attr_accessor :postal_code, :payment_method_id, :conekta_temporary_token, :timezone
 
   belongs_to :address
   belongs_to :user, inverse_of: :services, foreign_key: :user_id
@@ -73,8 +73,13 @@ class Service < ActiveRecord::Base
   delegate :recurrent?, to: :service_type
   delegate :one_timer?, to: :service_type
   delegate :periodicity, to: :service_type
+  delegate :weekday_in_spanish, to: :recurrence
 
   def timezone
+    'Mexico City'
+  end
+
+  def self.timezone
     'Mexico City'
   end
 
@@ -96,7 +101,7 @@ class Service < ActiveRecord::Base
   end
   
   def cost
-    65
+    (estimated_hours_without_extras * service_type.price_per_hour).ceil
   end
 
   # Callbacks
@@ -110,8 +115,8 @@ class Service < ActiveRecord::Base
     self.hours_after_service = Setting.end_of_aliadas_day == datetime.try(:hour) ? 0 : Setting.hours_after_service
   end
 
-  def combine_date_time
-    self.datetime = ActiveSupport::TimeZone[timezone].parse("#{self.date} #{self.time}")
+  def self.parse_date_time(params)
+    ActiveSupport::TimeZone[self.timezone].parse("#{params[:date]} #{params[:time]}")
   end
 
   def ensure_recurrence!
@@ -123,7 +128,6 @@ class Service < ActiveRecord::Base
                                            total_hours: total_hours,
                                            hour: beginning_datetime.hour,
                                            weekday: datetime.weekday)
-      self.save!
     end
   end
 
@@ -145,10 +149,9 @@ class Service < ActiveRecord::Base
     hours_before_service + estimated_hours + hours_after_service
   end
 
-  # Starting now how many days we'll provide service to the end of
-  # the recurrence
-  def days_count_to_end_of_recurrency
-    wdays_until_horizon(Time.zone.now.wday, starting_from: starting_datetime_to_book_services(timezone))
+  # Starting the next recurrence day how many days we'll provide service until the horizon
+  def days_count_to_end_of_recurrency(starting_after_datetime)
+    wdays_until_horizon(datetime.wday, starting_from: next_day_of_recurrence(starting_after_datetime))
   end
 
   def ending_datetime
@@ -160,29 +163,16 @@ class Service < ActiveRecord::Base
     datetime - hours_before_service.hours
   end
 
-  def book_aliada!(aliada_id: nil)
-    available_after = starting_datetime_to_book_services(timezone)
+  def book_aliada(aliada_id: nil)
+    available_after = starting_datetime_to_book_services
 
     aliadas_availability = AvailabilityForService.find_aliadas_availability(self, available_after, aliada_id: aliada_id)
 
-    aliada_availability = AliadaChooser.find_aliada_availability(aliadas_availability, self)
+    raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
 
-    aliada = aliada_availability.aliada
-    schedules_intervals = aliada_availability.schedules_intervals
+    aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
 
-    if schedules_intervals.present? && aliada.present?
-      schedules_intervals.each do |schedule_interval|
-        schedule_interval.book_schedules!(aliada_id: aliada.id, user_id: user_id, service_id: self.id)
-      end
-      assign!(aliada)
-    else
-      mark_as_missing!
-    end
-    save!
-  end
-
-  def to_schedule_interval
-    ScheduleInterval.build_from_range(beginning_datetime, ending_datetime)
+    aliada_availability.book(self)
   end
   
   #calculates the price to be charged for a service
@@ -202,33 +192,35 @@ class Service < ActiveRecord::Base
 
   def self.create_new!(service_params, user)
     ActiveRecord::Base.transaction do
+      service_params[:datetime] = Service.parse_date_time(service_params)
+
       address = user.default_address
       service = Service.new(service_params.except!(:user, :address))
 
       service.address = address
       service.user = user
-      service.combine_date_time
       service.set_hours_before_after_service
       service.ensure_recurrence!
 
       service.save!
 
-      user.send_confirmation_email(service)
+      service.book_aliada
 
-      service.book_aliada!
+      user.send_confirmation_email(service)
       return service
     end
   end
 
   def self.create_initial!(service_params)
     ActiveRecord::Base.transaction do
+      service_params[:datetime] = Service.parse_date_time(service_params)
+
       address = Address.create!(service_params[:address])
       user = User.create!(service_params[:user])
       service = Service.new(service_params.except!(:user, :address))
 
       service.address = address
       service.user = user
-      service.combine_date_time
       service.set_hours_before_after_service
       service.ensure_recurrence!
 
@@ -237,24 +229,108 @@ class Service < ActiveRecord::Base
       user.addresses << address
       user.create_first_payment_provider!(service_params[:payment_method_id])
       user.ensure_first_payment!(service_params)
-      user.send_welcome_email
 
-      service.book_aliada!
+      service.book_aliada
+
+      user.send_welcome_email
       return service
     end
   end
 
+  # We can't use the name 'update' because thats a builtin method
+  def update_existing!(service_params)
+    ActiveRecord::Base.transaction do
+      service_params['datetime'] = Service.parse_date_time(service_params)
+      self.attributes = service_params.except(:user, :address)
+
+      set_hours_before_after_service
+      ensure_not_downgrading!
+      ensure_recurrence!
+
+      reschedule! if needs_rescheduling?
+      save!
+    end
+  end
+
+  def needs_rescheduling?
+    return estimated_hours_changed? ||
+           datetime_changed? ||
+           aliada_id_changed?
+  end
+
+  # We don't want the users to go from a recurrent to a one time
+  # the code doesnt handle that case and the business does not want that
+  def ensure_not_downgrading!
+    if service_type_id_changed?
+      previous_service_type = ServiceType.find(service_type_id_was)
+      current_service_type = ServiceType.find(service_type_id)
+
+      if previous_service_type.recurrent? && current_service_type.one_timer?
+        raise AliadaExceptions::ServiceDowgradeImpossible
+      end
+    end
+  end
+
+  def reschedule!
+    available_after = starting_datetime_to_book_services
+
+    finder = AvailabilityForService.new(self, available_after, aliada_id: self.aliada_id)
+
+    service_schedules = self.schedules.after_datetime(available_after)
+    # The user might have used his/her own schedules
+    finder.inject_availability(service_schedules)
+
+    aliadas_availability = finder.find
+
+    raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
+
+    aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
+
+    aliada_availability.book(self)
+
+    # We might have not used some or all those schedules the service has so enable them
+    aliada_availability.enable_unused_schedules(service_schedules)
+  end
+
   def one_time_schedule_intervals
-    ScheduleInterval.build_from_range(datetime, ending_datetime)
+    ScheduleInterval.build_from_range(beginning_datetime, ending_datetime)
+  end
+   
+  def next_day_of_recurrence(starting_after_datetime)
+    next_day = starting_after_datetime.change(hour: self.beginning_datetime.hour)
+    day = self.datetime
+
+    while next_day.wday != day.wday
+      next_day += 1.day
+    end
+
+    next_day
   end
 
-  def recurrent_schedule_intervals
-    recurrence.to_schedule_intervals(total_hours.hours)
+  def recurrent_schedule_intervals(starting_after_datetime)
+    recurrence_days = self.days_count_to_end_of_recurrency(starting_after_datetime)
+    starting_datetime = next_day_of_recurrence(starting_after_datetime)
+    schedules_intervals = []
+
+    recurrence_days.times do |i|
+      ending_datetime = starting_datetime + total_hours.hours
+
+      schedules_intervals.push(ScheduleInterval.build_from_range(starting_datetime, ending_datetime)) if starting_datetime < horizon
+
+      starting_datetime += periodicity.day
+    end
+    schedules_intervals
   end
 
-  def to_schedule_intervals
+  # To build schedules we must know where do we start
+  # because services are booked at an specific range
+  def requested_schedules(starting_after_datetime)
+    requested_intervals(starting_after_datetime).inject([]) { |schedules, interval| interval.schedules + schedules }.sort.reverse
+  end
+
+  def requested_intervals(starting_after_datetime)
     if service_type.recurrent?
-      recurrent_schedule_intervals
+      recurrent_schedule_intervals(starting_after_datetime)
     else
       [one_time_schedule_intervals]
     end
@@ -277,20 +353,11 @@ class Service < ActiveRecord::Base
     message = 'No podemos registrar un servicio que empieza o termina fuera del horario de trabajo'
 
     beginning_of_aliadas_day = Time.now.utc.change(hour: Setting.beginning_of_aliadas_day)
-    end_of_aliadas_day = Setting.end_of_aliadas_day
-    datetime_hour = datetime.hour
+    end_of_aliadas_day = beginning_of_aliadas_day + Setting.businessday_hours.hours
 
-    found = false
-    while true
-      break if beginning_of_aliadas_day.hour == end_of_aliadas_day
-
-      if datetime_hour == beginning_of_aliadas_day.hour 
-        found = true
-        break
-      end
-
-      beginning_of_aliadas_day += 1.hour
-    end 
+    found = Time.iterate_in_hour_steps(beginning_of_aliadas_day, end_of_aliadas_day).any? do |current_datime|
+      current_datime.hour == self.datetime.hour
+    end
 
     errors.add(:datetime, message) unless found
   end
@@ -303,6 +370,10 @@ class Service < ActiveRecord::Base
       visible false
     end
 
+    configure :extra_services do
+      visible false
+    end
+
     list do
       sort_by :datetime
 
@@ -311,6 +382,10 @@ class Service < ActiveRecord::Base
       end
       field :datetime do
         sort_reverse false
+        pretty_value do
+          
+          I18n.l(value , format: :friendly).titleize
+        end
       end
       field :status
     end

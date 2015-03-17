@@ -18,7 +18,7 @@ aliada.services.initial.step_2_personal_info = function(aliada, ko){
 
   _(aliada.ko).extend({
     email: ko.observable('').extend({
-      email: true
+      required: true
     }),
     latitude: ko.observable(''),
     longitude: ko.observable(''),

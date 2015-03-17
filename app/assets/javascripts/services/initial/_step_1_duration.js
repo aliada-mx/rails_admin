@@ -3,7 +3,6 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
   _(aliada.ko).extend({
     bedrooms: ko.observable(1),
     bathrooms: ko.observable(1),
-    additional: ko.observable(1),
     forced_hours: ko.observable(null),
     extras_hours: ko.observable(0),
   });
@@ -19,7 +18,7 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
   });
 
   // Hours selector
-  $('#hours_space_room_selector').on('change', function(){
+  $('#service_estimated_hours').on('change', function(){
     var $selected = $(this).find(':selected');
     var hours = $selected.val();
     aliada.ko.forced_hours(parseFloat(hours));

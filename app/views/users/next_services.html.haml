@@ -1,4 +1,5 @@
 - services_count = @services.size
+= append(:body_class){ ' next-services ' }
 
 - @services.each_with_index do |service,index|
   - if service.recurrent?
@@ -9,31 +10,9 @@
             Recurrente
             =image_tag("recurrence.png", {:title => 'Servicio recurrente'})
           .title
-            = "Todos los #{ service.recurrence.weekday_in_spanish }"
+            Todos los #{ensure_plural(service.weekday_in_spanish) }
           .small-letters
-            = I18n.l(service.datetime , format: :friendly_time).capitalize
-
-        .body
-          = render partial: 'common/service_summary'
-
-        .foot
-          .actions
-            %a.action-button.size-large
-              %span.icon-pencil.icon-button
-              Modificar servicio
-
-          .numbers
-            %span.hours 4 horas
-            %span.cash $65
-
-  - else
-    .service-card-wrapper.col-lg-6
-      .service-card.one-time
-        .head
-          .title
-            = I18n.l(service.datetime , format: :week_day).capitalize
-          .small-letters
-            = I18n.l(service.datetime , format: :friendly_time).capitalize
+            = service.friendly_time
 
         .body
           = render partial: 'common/service_summary', locals: {service: service}
@@ -45,22 +24,43 @@
               Modificar servicio
 
           .numbers
-            %span.hours #{ humanize_hours service.total_hours }
-            %span.cash $65
+            %span.hours #{ service.estimated_hours_with_extras } horas
+            %span.cash #{ service.cost } 
 
-  - if services_count % 2 == 0
-    .service-card-wrapper.col-lg-12.new-service-card.horizontal
-      .service-card.empty
-        = link_to new_service_users_path(@user) do
-          Programa una nueva visita
+  - else
+    .service-card-wrapper.col-lg-6
+      .service-card.one-time
+        .head
+          .title
+            = I18n.l(service.datetime , format: :week_day).capitalize
+          .small-letters
+            = service.friendly_time
 
-  -else
-    .service-card-wrapper.col-lg-6.new-service-card.vertical
-      .service-card.empty
-        = link_to new_service_users_path(@user) do
-          Programa una nueva visita
+        .body
+          = render partial: 'common/service_summary', locals: {service: service}
 
+        .foot
+          .actions
+            = link_to edit_service_users_path(user_id: @user.id, service_id: service.id), class: 'action-button size-large' do
+              %span.icon-pencil.icon-button
+              Modificar servicio
 
-  .clearfix
+          .numbers
+            %span.hours #{ humanize_hours service.estimated_hours_with_extras }
+            %span.cash $#{ service.cost }
 
+  - if services_count == index + 1
+    - if services_count % 2 == 0
+      .service-card-wrapper.col-lg-12.new-service-card.horizontal
+        .service-card.empty
+          = link_to new_service_users_path(@user) do
+            Programa una nueva visita
 
+    -else
+      .service-card-wrapper.col-lg-6.new-service-card.vertical
+        .service-card.empty
+          = link_to new_service_users_path(@user) do
+            Programa una nueva visita
+
+= append :javascript do
+  = javascript_include_tag 'next_services'

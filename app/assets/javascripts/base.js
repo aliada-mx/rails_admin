@@ -22,7 +22,7 @@
 vex.defaultOptions.className = 'vex-theme-plain';
 
 // Catch exceptions with raygun
-Raygun.init(raygun_api_key).attach();
+// Raygun.init(raygun_api_key).attach();
 
 function report_error(e){
     Raygun.send(e, ko.toJSON(aliada.ko));
@@ -92,5 +92,40 @@ initialize_scroll_anchors = function(){
 }
 
 smooth_scroll = function(target){
-  $('html,body').animate({scrollTop:$(target).offset().top}, 500);
+  $('html,body').stop().animate({scrollTop:$(target).offset().top - 20}, 500);
+}
+
+
+aliada.highlighted_element = undefined;
+
+function highlight(element){
+    if(typeof aliada.highlighted_element === 'undefined' || aliada.highlighted_element != element){
+        unhighlight(aliada.highlighted_element);
+    }
+    pulsate(element);
+    aliada.highlighted_element = element;
+
+    window.setTimeout(function(){
+        unhighlight(element);
+    },3000)
+
+    function pulsate(element){
+        $(element).pulsate({
+          color: "#12B795", // set the color of the pulse
+          reach: 10,                              // how far the pulse goes in px
+          speed: 1000,                            // how long one pulse takes in ms
+          pause: 0,                               // how long the pause between pulses is in ms
+          glow: true,                             // if the glow should be shown too
+          repeat: true,                           // will repeat forever if true, if given a number will repeat for that many times
+          onHover: false                          // if true only pulsate if user hovers over the element
+        });
+    }
+}
+
+function unhighlight(element){
+    $(element).pulsate('destroy');
+}
+
+function update_calendar(){
+  $.event.trigger({type: 'update-calendar'});
 }

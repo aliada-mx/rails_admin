@@ -4,7 +4,7 @@ feature 'ServiceController' do
   include TestingSupport::SchedulesHelper
   include TestingSupport::SharedExpectations::ConektaCardExpectations
 
-  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
+  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') } # 7 am Mexico City
   let!(:aliada) { create(:aliada) }
   let!(:zone) { create(:zone) }
   let!(:recurrent_service) { create(:service_type) }
@@ -19,14 +19,14 @@ feature 'ServiceController' do
     
   before do
     allow_any_instance_of(Service).to receive(:timezone).and_return('UTC')
+    allow(Service).to receive(:timezone).and_return('UTC')
   end
 
   describe '#initial' do
     before do
       Timecop.freeze(starting_datetime)
 
-      # The - 1 hour is needed because this hour is the one the aliada needs to get there from a previous service
-      create_recurrent!(starting_datetime + 1.day - 1.hour, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada}, timezone: 'UTC')
+      create_recurrent!(starting_datetime + 1.day, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada})
 
       expect(Address.count).to be 0
       expect(Service.count).to be 0
@@ -96,6 +96,10 @@ feature 'ServiceController' do
 
         click_button 'Confirmar visita'
 
+        response = JSON.parse(page.body)
+        expect(response['status']).to_not eql 'error'
+        expect(response['service_id']).to be_present
+
         service = Service.first
         expect(service).to be_present
         expect(service.service_type_id).to eql one_time_service.id
@@ -107,6 +111,10 @@ feature 'ServiceController' do
         fill_initial_service_form(conekta_card, recurrent_service, starting_datetime + 1.day, extra_1, zone)
 
         click_button 'Confirmar visita'
+
+        response = JSON.parse(page.body)
+        expect(response['status']).to_not eql 'error'
+        expect(response['service_id']).to be_present
 
         service = Service.first
         expect(service).to be_present
@@ -136,6 +144,9 @@ feature 'ServiceController' do
 
         click_button 'Confirmar visita'
 
+        response = JSON.parse(page.body)
+        expect(response['status']).to_not eql 'error'
+        expect(response['service_id']).to be_present
         service = Service.first
         user = service.user
 
@@ -155,8 +166,8 @@ feature 'ServiceController' do
         expect(PaymentProviderChoice.count).to be 0
       end
 
-      it 'creates a pre-authorization payment when choosing conekta' do
-        fill_initial_service_form(conekta_card, one_time_service, starting_datetime, extra_1, zone)
+      it 'creates a pre-acthorization payment when choosing conekta' do
+        fill_initial_service_form(conekta_card, one_time_service, starting_datetime + 1.day, extra_1, zone)
 
         fill_hidden_input 'conekta_temporary_token', with: 'tok_test_visa_4242'
 
@@ -164,6 +175,9 @@ feature 'ServiceController' do
           click_button 'Confirmar visita'
         end
 
+        response = JSON.parse(page.body)
+        expect(response['status']).to_not eql 'error'
+        expect(response['service_id']).to be_present
         payment = Payment.first
         conekta_card = ConektaCard.first
         payment_provider_choice = PaymentProviderChoice.first
@@ -199,19 +213,12 @@ feature 'ServiceController' do
     before do
       Timecop.freeze(starting_datetime)
 
-      # The - 1 hour is needed because this hour is the one the aliada needs to get there from a previous service
-      create_recurrent!(starting_datetime + 1.day - 1.hour, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada}, timezone: 'UTC')
-
-      expect(Address.count).to be 1
-      expect(Aliada.count).to be 1
-
       # We have hidden elements in our initial service creation assitant 
       # because we don't show all the steps at once
       @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
       Capybara.ignore_hidden_elements = false
 
       visit initial_service_path
-
 
       login_as(user)
     end
@@ -225,37 +232,158 @@ feature 'ServiceController' do
       let(:user_service){ create(:service, 
                             aliada: aliada,
                             user: user,
-                            service_type: one_time_service) }
+                            datetime: starting_datetime,
+                            estimated_hours: 4,
+                            zone: zone,
+                            service_type: recurrent_service) }
       let(:admin_service){ create(:service, 
                                   aliada: aliada,
                                   user: admin,
                                   service_type: one_time_service) }
 
-      it 'lets the admin edit any user services' do
-        logout
-        login_as(admin)
+      describe 'viewing permissions' do
+        it 'lets the admin see the edit page of any service' do
+          logout
+          login_as(admin)
 
-        edit_service_path = edit_service_users_path(user_id: user.id, service_id: user_service.id)
+          edit_service_path = edit_service_users_path(user_id: user.id, service_id: user_service.id)
 
-        visit edit_service_path
-        
-        expect(page.current_path).to eql edit_service_path
+          visit edit_service_path
+          
+          expect(page.current_path).to eql edit_service_path
+        end
+
+        it 'doesnt let the user see the edit page ofr other users services' do
+          edit_service_path = edit_service_users_path(user_id: admin.id, service_id: admin_service.id)
+
+          visit edit_service_path
+          
+          expect(page.current_path).not_to eql edit_service_path
+        end
+
+        it 'let the user see the edit pages for its own services' do
+          edit_service_path = edit_service_users_path(user_id: user.id, service_id: user_service.id)
+
+          visit edit_service_path
+          
+          expect(page.current_path).to eql edit_service_path
+        end
       end
 
-      it 'doesnt let the user edit other users services' do
-        edit_service_path = edit_service_users_path(user_id: admin.id, service_id: admin_service.id)
+      describe 'editing side effects' do
+        let(:next_day_of_service) { Time.zone.parse('2015-01-08 13:00:00') }
 
-        visit edit_service_path
-        
-        expect(page.current_path).not_to eql edit_service_path
-      end
+        before do
+          allow_any_instance_of(User).to receive(:aliadas).and_return([aliada])
+          allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
+          allow_any_instance_of(User).to receive(:postal_code_number).and_return(11800)
+        end
 
-      it 'let the user edit its own services' do
-        edit_service_path = edit_service_users_path(user_id: user.id, service_id: user.id)
+        context 'recurrent services' do
+          before do
+            booked_intervals = create_recurrent!(starting_datetime, 
+                                                 hours: 5,
+                                                 periodicity: recurrent_service.periodicity ,
+                                                 conditions: {zone: zone,
+                                                              aliada: aliada,
+                                                              service: user_service,
+                                                              status: 'booked'})
+            available_schedules_intervals = create_recurrent!(starting_datetime + 5.hours, 
+                                                              hours: 1,
+                                                              periodicity: recurrent_service.periodicity ,
+                                                              conditions: {zone: zone, aliada: aliada})
 
-        visit edit_service_path
-        
-        expect(page.current_path).to eql edit_service_path
+            @booked_schedules_datetimes = intervals_array_to_schedules_datetimes(booked_intervals)
+            @available_schedules_datetimes = intervals_array_to_schedules_datetimes(available_schedules_intervals)
+            @schedules_datetimes_to_book = ( @available_schedules_datetimes - @booked_schedules_datetimes ).select { |s| s > next_day_of_service }
+
+            visit edit_service_users_path(user_id: user.id, service_id: user_service.id)
+
+            @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
+            Capybara.ignore_hidden_elements = false
+          end
+
+          after do
+            Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
+          end
+
+          it 'doesnt let you downgrade from recurent to one time' do
+
+          end
+
+          it 'doesnt reschedule the service when datetime, estimated or hours change' do
+            expect_any_instance_of(Service).not_to receive(:reschedule!)
+
+            fill_in 'service_special_instructions', with: 'Something different than previous value'
+            fill_in 'service_garbage_instructions', with: 'Something different than previous value'
+
+            click_button 'Guardar cambios'
+          end
+
+          it 'doesnt let you dowgrade to one time service from a recurrent' do
+            expect(user_service).to be_recurrent
+
+            fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
+            fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
+            choose "service_service_type_id_#{one_time_service.id}", disabled: true
+            # Simulate somebody manipulating the form
+            remove_disabled "service_service_type_id_#{one_time_service.id}"
+
+            click_button 'Guardar cambios'
+
+            response = JSON.parse(page.body)
+            expect(response['status']).to eql 'error'
+            expect(response['code']).to eql 'downgrade_impossible'
+          end
+
+          it 'reschedules the service when the estimated hours change' do
+            expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
+            expect(user_service.schedules.count).to eql 25
+            expect(user_service.schedules.map(&:datetime).sort).to eql @booked_schedules_datetimes.sort
+            expect(user_service.estimated_hours).to eql 4
+
+            select_by_value(5.0, from:'service_estimated_hours')
+            fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
+            fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
+
+            click_button 'Guardar cambios'
+
+            response = JSON.parse(page.body)
+            expect(response['status']).to_not eql 'error'
+            expect(response['service_id']).to be_present
+
+            service = Service.find(response['service_id'])
+
+            expect(service.estimated_hours).to eql 5
+            expect(service.schedules.count).to eql 29
+
+            expect(@schedules_datetimes_to_book - service.schedules.map(&:datetime)).to be_empty 
+          end
+
+          it 'makes available schedules previously booked but not used anymore by the service' do
+            expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
+            expect(user_service.schedules.count).to eql 25
+            expect(Schedule.available.count).to eql 5
+            expect(user_service.schedules.map(&:datetime).sort).to eql @booked_schedules_datetimes.sort
+            expect(user_service.estimated_hours).to eql 4
+
+            select_by_value(3.0, from: 'service_estimated_hours')
+            fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
+            fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
+
+            click_button 'Guardar cambios'
+
+            response = JSON.parse(page.body)
+            expect(response['status']).to_not eql 'error'
+            expect(response['service_id']).to be_present
+
+            service = Service.find(response['service_id'])
+
+            expect(service.estimated_hours).to eql 3
+            expect(service.schedules.count).to eql 21 # enabled 4 schedules
+            expect(Schedule.available.count).to eql 9
+          end
+        end
       end
     end
 
@@ -268,6 +396,11 @@ feature 'ServiceController' do
         allow_any_instance_of(User).to receive(:aliadas).and_return([aliada])
         allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
         allow_any_instance_of(User).to receive(:postal_code_number).and_return(11800)
+
+        schedules_intervals = create_recurrent!(starting_datetime + 1.day, 
+                                                hours: 5,
+                                                periodicity: recurrent_service.periodicity ,
+                                                conditions: { zone: zone, aliada: aliada } )  
       end
 
       it 'let the user view the new service page' do
@@ -285,6 +418,7 @@ feature 'ServiceController' do
           click_button 'Confirmar visita'
 
           response = JSON.parse(page.body)
+          expect(response['status']).to_not eql 'error'
           expect(response['service_id']).to be_present
 
           service = Service.find(response['service_id'].to_i)
@@ -302,6 +436,7 @@ feature 'ServiceController' do
           click_button 'Confirmar visita'
 
           response = JSON.parse(page.body)
+          expect(response['status']).to_not eql 'error'
           expect(response['service_id']).to be_present
 
           service = Service.find(response['service_id'].to_i)
@@ -318,6 +453,8 @@ feature 'ServiceController' do
         end
       end
     end
+
+
   end
 end
 

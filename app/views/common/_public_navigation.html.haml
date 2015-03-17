@@ -12,8 +12,11 @@
           = link_to("Preguntas Frecuentes", :faq, {})
         %li
           - if user_signed_in?
-            %a{href: edit_users_path(@user), title: 'Mis servicios', class: 'account-link' }
+            %a{href: next_services_users_path(@user), title: 'Mis servicios', class: 'account-link' }
               %span.icon.icon-user
               Mis servicios
+            - if @user.admin?
+              = link_to("- Aliadadmin", rails_admin.dashboard_path )
+
           - else
             = link_to("Log in", new_user_session_path, { :class => 'action-button-gray'})
