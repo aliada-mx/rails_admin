@@ -147,6 +147,22 @@ class User < ActiveRecord::Base
     UserMailer.service_confirmation(self, service).deliver!
   end
 
+  def send_service_confirmation_pwd(service)
+    UserMailer.service_confirmation_pwd(self, service).deliver!
+  end
+
+  def send_billing_receipt(service)
+    UserMailer.billing_receipt(self, service)
+  end
+  
+  def send_payment_problem_email(payment_method)
+    UserMailer.payment_problem(self, payment_method)
+  end
+  
+  def send_address_change_email(new_address, prev_address)
+    UserMailer.user_address_changed(self, new_address, prev_address)
+  end
+
   rails_admin do
     navigation_label 'Personas'
     navigation_icon 'icon-user'
