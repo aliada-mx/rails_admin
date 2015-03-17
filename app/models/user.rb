@@ -70,7 +70,7 @@ class User < ActiveRecord::Base
   end
 
   def aliadas
-    services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }
+    services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }.uniq
   end
 
   def set_default_role

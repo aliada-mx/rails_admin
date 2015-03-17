@@ -52,11 +52,14 @@ ko.extenders.default_value = function(target, option) {
 
     target.default = function(){
       target(target.default_value);
-      };
+    };
+
+    // Alias
+    target.reset = target.default;
 
     target.is_default = function(){
       return target() === target.default_value;
-      };
+    };
 
     target.is_not_default = function(){
         return !target.is_default();

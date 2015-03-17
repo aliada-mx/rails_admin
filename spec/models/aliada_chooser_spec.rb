@@ -23,9 +23,9 @@ describe 'AliadaChooser' do
     before :each do
       Timecop.freeze(starting_datetime)
 
-      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_1.id, zone_id: zone_1.id}, timezone: 'UTC')
-      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_2.id, zone_id: zone_1.id}, timezone: 'UTC')
-      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_3.id, zone_id: zone_1.id}, timezone: 'UTC')
+      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_1.id, zone_id: zone_1.id})
+      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_2.id, zone_id: zone_1.id})
+      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_3.id, zone_id: zone_1.id})
 
       @aliadas_availability = AvailabilityForService.find_aliadas_availability(service_1, starting_datetime - 1.hour)
     end

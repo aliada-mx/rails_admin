@@ -4,20 +4,15 @@ module AliadaSupport
       Time.zone.now + Setting.time_horizon_days.days
     end
 
-    def next_weekday(weekday)
-      Chronic.time_class = Time.zone
-      Chronic.parse("next #{weekday}")
-    end
-
-    # Optionally counting today not included because as per business rule we cant book an aliada for today
+    # How many 'thursdays' until horizon
+    # without counting today because we can't book today
     def wdays_until_horizon(wday, starting_from: Time.zone.now)
       count = 0
 
-      while starting_from < horizon do
-        count +=1 if starting_from.wday == wday
-
-        starting_from += 1.day
+      Time.iterate_in_days_steps(starting_from, horizon).each do |day|
+        count +=1 if day.wday == wday && day < horizon.beginning_of_day
       end
+
       count
     end
 
@@ -30,10 +25,10 @@ module AliadaSupport
 
     # A safe datetime we can start booking services
     # too soon and we won't have enough time to organize the aliadas
-    def starting_datetime_to_book_services(timezone)
-      now = Time.now.utc.in_time_zone(timezone)
+    def starting_datetime_to_book_services
+      now = Time.zone.now.beginning_of_aliadas_day
 
-      tomorrow = (now + 1.day ).beginning_of_day
+      tomorrow = (now + 1.day)
       in_two_days = tomorrow + 1.day
 
       now.hour < Setting.booking_for_tomorrow_limit ? tomorrow : in_two_days

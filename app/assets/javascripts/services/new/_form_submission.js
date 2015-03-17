@@ -34,6 +34,7 @@ aliada.services.new.bind_form_submission = function($form){
                                                                         service_id: response.service_id})
 
     aliada.ko.current_step(2);
+    smooth_scroll('#success-title');
   }
 
   $form.on('submit', function(e){

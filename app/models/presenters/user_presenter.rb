@@ -15,6 +15,10 @@ module Presenters
       email
     end
 
+    def contact_data
+      "#{name}, #{email}, #{phone}"
+    end
+
     def next_service
       services.in_the_future.first
     end

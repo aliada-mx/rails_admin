@@ -4,9 +4,9 @@ aliada.dialogs.email_already_exists = function(email){
 
     vex.open({
         content: email_exists_template({email: email}),
-        showCloseButton: false,
-        escapeButtonCloses: false,
-        overlayClosesOnClick: false,
+        showCloseButton: true,
+        escapeButtonCloses: true,
+        overlayClosesOnClick: true,
         contentClassName: 'email_already_exists',
         afterOpen: function(){
             $('#try-another-email-button').click(function(){
@@ -67,5 +67,30 @@ aliada.dialogs.invalid_service = function(error){
     vex.open({
         content: invalida_service_template({error: error}),
         contentClassName: 'error',
+    });  
+};
+
+aliada.dialogs.succesfull_service_changes = function(next_path){
+    // Preload template
+    var update_success_template = _.template($('#update_success_template').html());
+
+    vex.open({
+        content: update_success_template,
+        showCloseButton: true,
+        escapeButtonCloses: true,
+        overlayClosesOnClick: true,
+        contentClassName: 'update_success_dialog',
+        afterOpen: function(){
+            $('#try-another-email-button').click(function(){
+                var dialog = $(this).parents('.vex-content').data().vex;
+
+                vex.close(dialog.id);
+
+                $('#service_user_attributes_email').select();
+            });
+        },
+        afterClose: function(){
+          redirect_to(next_path);
+        }
     });  
 };

@@ -39,27 +39,16 @@
 
   .vex-close
     position: absolute
-    top: 0
-    right: 0
+    top: -17px
+    right: -17px
     cursor: pointer
-
-    &:before
-      position: absolute
-      content: "\00D7"
-      font-size: 26px
-      font-weight: normal
-      line-height: 31px
-      height: 30px
-      width: 30px
-      text-align: center
-      top: 3px
-      right: 3px
-      background: transparent
-
-    &:hover:before, &:active:before
-      color: $dark_pink
-      background: #e0e0e0
-
+    background: image-url('close-sprite.png')
+    background-size: 35px
+    background-repeat: no-repeat
+    width: 35px
+    height: 35px
+    &:hover
+      background-position: 0 -35px
 
   .vex-dialog-form
 

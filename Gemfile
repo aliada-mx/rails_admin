@@ -66,9 +66,6 @@ gem 'nestive'
 # Authentication
 gem 'devise'
 
-# Time parsing for humans
-gem 'chronic'
-
 # PAYMENT SYSTEMS
 gem 'conekta'
 
@@ -149,15 +146,15 @@ group :test do
 
   # Record requests to be replayed on tests
   gem 'vcr'
-
-  # Hashes diffs
-  gem 'hashdiff'
 end
 
 group :production, :staging do
-  # Logging
-  gem "lograge"
   # Heroku support
   gem 'rails_12factor'
 end
 
+
+group :production, :staging, :development do
+  # Quiet down the partials rendering
+  gem "lograge"
+end

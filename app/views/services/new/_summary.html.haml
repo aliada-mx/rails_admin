@@ -5,12 +5,6 @@
   %ul.summary
 
     %li.checked
-      %span #{@user.name}, #{@user.email}, #{@user.phone}
-      = link_to edit_users_path(@user), class: 'small-letters', target: '_blank' do
-        %icon.pencil.small
-        editar
-
-    %li.checked
       - if @user.default_address
         %span #{@user.default_address.name}
       -# TODO let user edit address per service
@@ -26,7 +20,7 @@
 
     - if @user.default_payment_provider
       %li.checked
-        %span Tu pago se efectuará con: #{@user.payment_provider_name}
+        %span Pago: #{@user.payment_provider_name}
       -# TODO let user edit address per service
         = link_to edit_users_path(@user), class: 'small-letters', target: '_blank' do
           %icon.pencil.small
@@ -51,3 +45,4 @@
 
 .aliada_seal
   = image_tag 'sello-de-garantia.png'
+

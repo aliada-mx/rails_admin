@@ -16,7 +16,7 @@ module TestingSupport
     end
 
     def fill_service_fields(service_type, starting_datetime, extra, zone)
-      fill_hidden_input 'service_estimated_hours', with: 3
+      select_by_value(3.0, from:'service_estimated_hours')
       fill_hidden_input 'service_bathrooms', with: '1'
       fill_hidden_input 'service_bedrooms', with: '1'
 

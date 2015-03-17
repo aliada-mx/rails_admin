@@ -5,12 +5,6 @@
   %ul.summary
 
     %li.checked
-      %span #{@user.name}, #{@user.email}, #{@user.phone}
-      = link_to edit_users_path(@user), class: 'small-letters', target: '_blank' do
-        %icon.pencil.small
-        editar
-
-    %li.checked
       - if @user.default_address
         %span #{@user.default_address.name}
       -# TODO let user edit address per service
@@ -33,7 +27,7 @@
           editar
 
     %li{data: {bind: 'css: {checked: is_datetime_done, unchecked: !is_datetime_done()}'}}
-      %span{data: {bind: 'text: friendly_datetime'}}
+      %span{data: {bind: 'text_: "{{ service_type_display_name }}: {{ friendly_datetime }}"'}}
       = link_to '#choose-date', class: 'small-letters' do
         %icon.pencil.small
         editar
@@ -47,7 +41,7 @@
       APLICAR
     = text_field_tag 'promo-code', nil, placeholder: 'código promocional'
 
-= initial_service_form.submit 'Confirmar visita', id: 'next_button', class: 'action-button-pink size-extra-large', data: {bind: 'css: { disabled: !is_datetime_done() }  '}
+= initial_service_form.submit 'Guardar cambios', id: 'next_button', class: 'action-button-pink size-extra-large', data: {bind: 'css: { disabled: !is_datetime_done() }  '}
 
 .aliada_seal
   = image_tag 'sello-de-garantia.png'

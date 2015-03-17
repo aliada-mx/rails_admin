@@ -8,11 +8,12 @@ FactoryGirl.define do
     datetime Time.zone.now.in_time_zone('Mexico City').change(hour: Setting.beginning_of_aliadas_day, min: 0)
     association :service_type, factory: :service_type
 
-    service_special_instructions ''
-    service_garbage_instructions ''
-    service_attention_instructions ''
-    service_equipment_instructions ''
-    service_forbidden_instructions ''
+    special_instructions ''
+    garbage_instructions ''
+    attention_instructions ''
+    equipment_instructions ''
+    forbidden_instructions ''
+    cleaning_supplies_instructions ''
 
     # By defaul factory girl does Class.new()
     # we want the attributes passed to the constructor

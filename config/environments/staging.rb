@@ -105,6 +105,4 @@ Rails.application.configure do
       :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY']
     }
   }
-
-  config.host = 'stagin.aliada.mx'
 end

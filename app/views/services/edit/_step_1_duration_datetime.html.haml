@@ -3,22 +3,20 @@
     Modificar tu servicio
 
   %h4
-    %icon.calendar
-    Cambia el número de horas
-
-  = edit_service_form.hidden_field 'estimated_hours', data: {bind: 'attr: {value: hours}'}
-
-  = render partial: 'common/hours_selector', locals: {form: edit_service_form}
-
-  = render partial: 'common/extras', locals: {form: edit_service_form, collapsed: true}
-
-  %h4
     ¿Qué tipo de servicio necesitas?
   = render partial: 'common/service_type_buttons', locals: {form: edit_service_form, promotional: false, disable_one_time: @service.recurrent?}
 
+  %h4
+    %icon.calendar
+    Cambia el número de horas
+
+  = render partial: 'common/hours_selector', locals: {form: edit_service_form}
+
+  = render partial: 'common/extras', locals: {form: edit_service_form, collapsable: true}
+
   %h4#choose-aliada
     %icon.aliada
-    Cambia tu aliada
+    Elige tu aliada
   = render partial: 'common/aliadas_selector', locals: {form: edit_service_form}
 
   %h4#choose-date
@@ -26,7 +24,7 @@
     Elige el día de la visita
   = render partial: 'common/calendar'
 
-  %h4#choose-time
+  %h4
     %icon.icon-clock
     Selecciona la hora que más te convenga
 

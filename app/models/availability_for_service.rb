@@ -1,13 +1,16 @@
 class AvailabilityForService
   include Mixins::AvailabilityFindersMixin
   include AliadaSupport::DatetimeSupport
+  attr_reader :report
 
   def initialize(service, available_after, aliada_id: nil)
     @service = service
+    @available_after = available_after
 
-    @requested_schedule_intervals = service.to_schedule_intervals
+    @requested_schedules = service.requested_schedules(available_after) # Non persisted schedules
+
     # Pull the schedules from db
-    @available_schedules = Schedule.available_for_booking(service.zone, available_after)
+    @available_schedules = Schedule.available_for_booking(service.zone, @available_after)
     if aliada_id.present?
       @available_schedules = @available_schedules.where(aliada_id: aliada_id)
     end
@@ -18,7 +21,7 @@ class AvailabilityForService
     if @recurrent = @service.recurrent?
       recurrency_days = @service.periodicity
       @recurrency_seconds = recurrency_days.days
-      @minimum_availaibilites = wdays_until_horizon(@requested_schedule_intervals.first.wday, starting_from: available_after)
+      @minimum_availaibilites = @service.days_count_to_end_of_recurrency(available_after)
     end
 
     @aliadas_availability = Availability.new
@@ -30,10 +33,19 @@ class AvailabilityForService
     # skip aliadas we detected cannot fulfill the service
     # User banned aliadas
     @aliadas_to_skip =  @service.user.banned_aliadas.map(&:id)
+
+    @report = []
   end
 
   def self.find_aliadas_availability(service, available_after, aliada_id: nil)
-    AvailabilityForService.new(service, available_after, aliada_id: aliada_id).find
+    finder = AvailabilityForService.new(service, available_after, aliada_id: aliada_id)
+    availability = finder.find
+    availability
+  end
+
+  def inject_availability(schedules)
+    @available_schedules = @available_schedules + schedules
+    sort_schedules!
   end
      
   # It will try to bind as many aliada_availabilities that matches the requested hours
@@ -63,7 +75,10 @@ class AvailabilityForService
     end
     
     clear_not_enough_availabilities
+    @report.push({message: 'Not found any availability'}) if @aliadas_availability.empty?
+
     @aliadas_availability
+
   end
 
   private
@@ -90,11 +105,15 @@ class AvailabilityForService
       @continuous_schedules = []
       # The schedule that just blew up our continuous_schedules might start another so
       # lets start by adding it
-      add_continuous_schedules
+      add_continuous_schedules if time_matches?
     end
 
     def invalid?
-      @available_schedules.blank? || @requested_schedule_intervals.empty? || @available_schedules.size < @requested_schedule_intervals.size
+      invalid = @available_schedules.blank? || @requested_schedules.empty? || @available_schedules.size < @requested_schedules.size
+
+      @report.push('Invalid, impossible to proceed') if invalid
+
+      invalid
     end
 
     # Do we have a pair of continues schedules?
@@ -110,12 +129,13 @@ class AvailabilityForService
     end
 
     def time_matches?
-      # Inside hour range
-      @requested_schedule_intervals.any? do |schedule_interval|
-        break if schedule_interval.beginning_of_interval > @current_schedule.datetime
-
-        schedule_interval.include?(@current_schedule)
+      value = @requested_schedules.any? do |schedule|
+        schedule.datetime == @current_schedule.datetime
       end
+
+      @report.push({message: 'Found 1 broken schedule continuity', objects: [@current_schedule] }) unless value
+
+      value 
     end
 
     def broken_continous_intervals?
@@ -124,9 +144,13 @@ class AvailabilityForService
       # The first time there is no previous
       return false if previous_interval.blank?
 
-      current_interval = ScheduleInterval.new(@continuous_schedules)
+      current_interval = ScheduleInterval.new(@continuous_schedules, aliada_id: @current_aliada_id)
 
-      !continuous_schedule_intervals?(previous_interval, current_interval)
+      value = !continuous_schedule_intervals?(previous_interval, current_interval)
+
+      @report.push({message: 'Found 1 broken recurrent continuity', objects: [previous_interval, current_interval] }) if value
+
+      value
     end
 
     def enough_continuous_schedules?
@@ -154,7 +178,10 @@ class AvailabilityForService
     def clear_not_enough_availabilities
       if @aliadas_availability.present? && @minimum_availaibilites.present? 
         @aliadas_availability.delete_if do |aliada_id, aliada_availability| 
-          aliada_availability.size < @minimum_availaibilites
+          value = aliada_availability.size < @minimum_availaibilites
+
+          @report.push({message: 'Cleared a too small availability', objects: [@minimum_availaibilites, aliada_availability] }) if value
+          value
         end
       end
     end

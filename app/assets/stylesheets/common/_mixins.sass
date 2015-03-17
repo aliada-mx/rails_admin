@@ -61,7 +61,15 @@
   color: action-button-text-color($color)
   cursor: pointer
   +soft-transition
+  &.active
+    background-color: action-button-hover-background-color($color)
+    color: white !important
+    cursor: default
+    pointer-events: none
   &:link
+    color: action-button-text-color($color) 
+    text-decoration: none
+  &:focus
     color: action-button-text-color($color) 
     text-decoration: none
   &:hover
@@ -100,6 +108,26 @@
     .icon-button
       +rem(font-size, 1rem)
 
+@mixin arrow($direction)
+  @if $direction == down
+    width: 0
+    height: 0
+    border-top: none
+    border-bottom: 12px solid $green
+    border-right: 6px solid transparent
+    border-left: 6px solid transparent
+  @if $direction == up
+    width: 0
+    height: 0
+    +soft-transition
+    border-top: 12px solid $green
+    border-right: 6px solid transparent
+    border-left: 6px solid transparent
+    margin: 0 auto
+    position: absolute
+    top: 40%
+    right: 0
+    left: 0
 
 
 
@@ -155,3 +183,25 @@
   background: rgba(255, 255, 255, $opacity)
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#99ffffff, endColorstr=#99ffffff )
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99ffffff, endColorstr=#99ffffff)"
+
+
+// To be placed inside a body tag
+@mixin sticky-footer
+  .container
+    main
+      padding-bottom: 0
+      margin-bottom: 80px
+
+  min-height: 100%
+  position: relative
+  &:after
+    content: ''
+    display: block
+    height: 100px
+    min-height: 100%
+    position: relative
+
+  footer
+    position: absolute
+    bottom: 0
+    width: 100%
