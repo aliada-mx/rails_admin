@@ -27,6 +27,7 @@ class ScheduleFiller
                                                                ending_of_recurrence,
                                                                from_existing: false,
                                                                conditions: {aliada_id: aliada_recurrence.aliada_id, 
+                                                                            recurrence_id: aliada_recurrence.recurrence_id,
                                                                             zone_id: aliada_recurrence.zone_id, 
                                                                             service_id: nil})
         schedule_intervals.persist!
@@ -98,6 +99,7 @@ class ScheduleFiller
                                                                ending_of_recurrence,
                                                                from_existing: false,
                                                                conditions: {aliada_id: aliada_recurrence.aliada_id, 
+                                                                            recurrence_id: aliada_recurrence.recurrence_id,
                                                                             zone_id: aliada_recurrence.zone_id, 
                                                                             service_id: nil})
           schedule_intervals.persist!

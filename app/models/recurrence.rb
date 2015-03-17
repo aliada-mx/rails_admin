@@ -21,6 +21,11 @@ class Recurrence < ActiveRecord::Base
   belongs_to :aliada
   belongs_to :zone
   has_many :services
+  has_many :schedules
+
+  # Scopes
+  scope :active, -> { where(status: 'active') }
+  scope :inactive, -> { where(status: 'inactive') }
 
   default_scope { where(owner: 'user') }
 

@@ -271,6 +271,7 @@ class Service < ActiveRecord::Base
         sort_reverse false
       end
       field :status
+      field :aliada
     end
 
   end

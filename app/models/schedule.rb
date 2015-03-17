@@ -14,9 +14,12 @@ class Schedule < ActiveRecord::Base
   belongs_to :zone
   belongs_to :aliada 
   belongs_to :service
+  belongs_to :recurrence
 
   # Scopes
-  scope :available, -> { where(status: 'available').where('user_id IS NULL') }
+  scope :busy_candidate, -> { where(status: ['booked','available']) }
+  scope :available, -> { where(status: 'available') }
+  scope :busy, -> { where(status: 'busy') }
   scope :booked, -> {  where(status: 'booked') }
   scope :in_zone, -> (zone) { where(zone: zone) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
@@ -25,7 +28,10 @@ class Schedule < ActiveRecord::Base
   scope :available_for_booking, ->(zone, starting_datetime) { available.in_zone(zone).after_datetime(starting_datetime).ordered_by_aliada_datetime }
 
   state_machine :status, :initial => 'available' do
-    transition 'available' => 'booked', on: :book
+    transition ['available', 'busy'] => 'booked', on: :book
+    transition ['booked', 'busy'] => 'available', on: :enable
+    transition ['available', 'booked'] => 'busy', on: :get_busy
+    transition 'booked' => 'on-transit', on: :transiting
   end
 
   after_initialize :set_default_values

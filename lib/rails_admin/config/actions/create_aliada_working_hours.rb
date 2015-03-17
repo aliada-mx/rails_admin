@@ -27,12 +27,17 @@ module RailsAdmin
         
         register_instance_option :controller do
           Proc.new do
-            @object
-            params
-            request.post?
-            
-            # redirect_to back_or_index
-            render :action => @action.template_name
+
+            if request.post? and params[:recurrences]
+              activated_recurrences = params[:recurrences][:activated_recurrences] ? params[:recurrences][:activated_recurrences] : []
+              disabled_recurrences =  params[:recurrences][:disabled_recurrences] ? params[:recurrences][:disabled_recurrences] : []
+              new_recurrences = params[:recurrences][:new_recurrences] ? params[:recurrences][:new_recurrences] : []
+              AliadaWorkingHour.update_from_admin params[:id], activated_recurrences, disabled_recurrences, new_recurrences
+              render json: { status: :success, url: rails_admin.create_aliada_working_hours_path }
+            else
+              # redirect_to back_or_index
+              render :action => @action.template_name
+            end            
           end
         end
 

@@ -64,6 +64,10 @@ include AliadaSupport::DatetimeSupport
     businesshours_until_horizon - service_hours
   end
 
+  def timezone
+    'Mexico City'
+  end
+
   rails_admin do
     label_plural 'aliadas'
     navigation_label 'Personas'
