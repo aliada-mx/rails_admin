@@ -68,7 +68,7 @@ class ServiceMailer < ApplicationMailer
    
   end
   
-  def timely_cancelation
+  def timely_cancelation(service)
     template_id = Setting.sendgrid_templates_ids[:timely_cancelation]
     service = Service.where(id: service.id).joins(:users).joins(:address).joins(:service_type).joins(:aliada).first
     
@@ -82,7 +82,17 @@ class ServiceMailer < ApplicationMailer
     template_id: template_id
   end
 
-  def reminder
+  def reminder(service)
     template_id = Setting.sendgrid_templates_ids[:reminder]
+    service = Service.where(id: service.id).joins(:users).joins(:address).joins(:service_type).joins(:aliada).first
+    
+    sendgrid_template_mail to: 'alex@aliada.mx',
+    substitutions:
+      {'-user_full_name-' => [service.user.full_name],
+      '-service_date-' => [(I18n.l service.datetime, format: '%A %d')],
+      '-service_time-' => [(I18n.l service.datetime, format: '%I %p')] ,
+      '-service_address-' => [service.address.full_address],
+      '-service_type_name-' => [service.service_type.display_name]},
+    template_id: template_id
   end
 end
