@@ -124,15 +124,19 @@ class Service < ActiveRecord::Base
     ActiveSupport::TimeZone[self.timezone].parse("#{params[:date]} #{params[:time]}")
   end
 
-  def ensure_recurrence!
+  def ensure_updated_recurrence!
     return unless recurrent?
 
+    recurrence_attributes = {user_id: user_id,
+                             periodicity: service_type.periodicity,
+                             total_hours: total_hours,
+                             hour: beginning_datetime.hour,
+                             weekday: datetime.weekday }
+
     if self.recurrence.blank?
-      self.recurrence = Recurrence.create!(user_id: user_id,
-                                           periodicity: service_type.periodicity,
-                                           total_hours: total_hours,
-                                           hour: beginning_datetime.hour,
-                                           weekday: datetime.weekday)
+      self.recurrence = Recurrence.create!(recurrence_attributes)
+    else
+      self.recurrence.update_attributes!(recurrence_attributes)
     end
   end
 
@@ -209,7 +213,7 @@ class Service < ActiveRecord::Base
       service.address = address
       service.user = user
       service.set_hours_before_after_service
-      service.ensure_recurrence!
+      service.ensure_updated_recurrence!
 
       service.save!
 
@@ -231,7 +235,7 @@ class Service < ActiveRecord::Base
       service.address = address
       service.user = user
       service.set_hours_before_after_service
-      service.ensure_recurrence!
+      service.ensure_updated_recurrence!
 
       service.save!
 
@@ -254,7 +258,7 @@ class Service < ActiveRecord::Base
 
       set_hours_before_after_service
       ensure_not_downgrading!
-      ensure_recurrence!
+      ensure_updated_recurrence!
 
       reschedule! if needs_rescheduling?
       save!
@@ -299,6 +303,15 @@ class Service < ActiveRecord::Base
 
     # We might have not used some or all those schedules the service has so enable them
     aliada_availability.enable_unused_schedules(service_schedules)
+  end
+
+  def update_recurrence!
+    if self.recurrence
+      self.recurrence.update_attributes!(periodicity: service_type.periodicity,
+                                         total_hours: total_hours,
+                                         hour: beginning_datetime.hour,
+                                         weekday: datetime.weekday)
+    end
   end
 
   def one_time_schedule_intervals

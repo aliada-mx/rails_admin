@@ -1,7 +1,10 @@
 aliada.services.edit.bind_form_submission = function($form) {
   function update_service($form) {
     return new Promise(function(resolve, reject) {
+      data = {}
+      data[$form[0].submitted] = true // The clicked button is stored at the original DOM form
       $form.ajaxSubmit({
+        data: data,
         success: function(response) {
           switch (response.status) {
             case 'success':
@@ -34,9 +37,9 @@ aliada.services.edit.bind_form_submission = function($form) {
   $form.on('submit', function(e) {
     e.preventDefault();
 
-    if(aliada.ko.clicked_button() == 'cancel_button'){
+    if(this.submitted == 'cancel_button'){
       aliada.dialogs.confirm_service_cancel().then(submit)
-    }else{
+    }else if(this.submitted == 'update_button'){
       submit();
     }
 

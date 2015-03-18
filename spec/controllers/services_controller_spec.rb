@@ -243,6 +243,10 @@ feature 'ServiceController' do
                                   user: admin,
                                   service_type: one_time_service) }
 
+      before do
+        user_service.ensure_updated_recurrence!
+      end
+
       describe 'viewing permissions' do
         it 'lets the admin see the edit page of any service' do
           logout
@@ -303,6 +307,11 @@ feature 'ServiceController' do
 
             @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
             Capybara.ignore_hidden_elements = false
+
+            expect(user_service.schedules.count).to eql 25
+            expect(Schedule.available.count).to eql 5
+            expect(user_service.schedules.map(&:datetime).sort).to eql @booked_schedules_datetimes.sort
+            expect(user_service.estimated_hours).to eql 4
           end
 
           after do
@@ -340,10 +349,6 @@ feature 'ServiceController' do
 
           it 'reschedules the service when the estimated hours change' do
             expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
-            expect(user_service.schedules.count).to eql 25
-            expect(user_service.schedules.map(&:datetime).sort).to eql @booked_schedules_datetimes.sort
-            expect(user_service.estimated_hours).to eql 4
-
             select_by_value(5.0, from:'service_estimated_hours')
             fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
             fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
@@ -364,11 +369,6 @@ feature 'ServiceController' do
 
           it 'makes available schedules previously booked but not used anymore by the service' do
             expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
-            expect(user_service.schedules.count).to eql 25
-            expect(Schedule.available.count).to eql 5
-            expect(user_service.schedules.map(&:datetime).sort).to eql @booked_schedules_datetimes.sort
-            expect(user_service.estimated_hours).to eql 4
-
             select_by_value(3.0, from: 'service_estimated_hours')
             fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
             fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
@@ -385,39 +385,51 @@ feature 'ServiceController' do
             expect(service.schedules.count).to eql 21 # enabled 4 schedules
             expect(Schedule.available.count).to eql 9
           end
+
+          it 'changes the recurrence attributes' do
+            expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
+            expect(user_service.recurrence.total_hours).to eql 5
+
+            select_by_value(5.0, from: 'service_estimated_hours')
+
+            click_button 'Guardar cambios'
+
+            response = JSON.parse(page.body)
+            expect(response['status']).to_not eql 'error'
+            expect(response['service_id']).to be_present
+
+            service = Service.find(response['service_id'])
+
+            expect(service.recurrence.total_hours).to eql 6
+          end
         end
       end
 
       describe '#cancel' do
+        before do
+          @future_service_interval = create_one_timer!( starting_datetime, hours: 3, conditions: { zone: zone, aliada: aliada, service: user_service, status: 'booked' } )
+          @previous_service_interval = create_one_timer!( starting_datetime - 1.day, hours: 3, conditions: { zone: zone, aliada: aliada, service: user_service, status: 'booked' } )
 
-        context 'for recurrent service' do
-          before do
-            @future_service_interval = create_one_timer!( starting_datetime, hours: 3, conditions: { zone: zone, aliada: aliada, service: user_service, status: 'booked' } )
-            @previous_service_interval = create_one_timer!( starting_datetime - 1.day, hours: 3, conditions: { zone: zone, aliada: aliada, service: user_service, status: 'booked' } )
+          allow_any_instance_of(User).to receive(:aliadas).and_return([aliada])
+          allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
+          allow_any_instance_of(User).to receive(:postal_code_number).and_return(11800)
 
-            allow_any_instance_of(User).to receive(:aliadas).and_return([aliada])
-            allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
-            allow_any_instance_of(User).to receive(:postal_code_number).and_return(11800)
-          end
+          edit_service_path = edit_service_users_path(user_id: user.id, service_id: user_service.id)
 
-          it 'enables the future schedules' do
-            expect(user_service.schedules.booked.sort).to eql ( @future_service_interval.schedules + @previous_service_interval.schedules ).sort
-            expect((@future_service_interval.schedules + @previous_service_interval.schedules).all?{ |schedule| schedule.booked? }).to eql true
-
-            with_rack_test_driver do
-              page.driver.submit :post, edit_service_users_path(user_id: user.id, service_id: user_service.id), { clicked_button: 'cancel_button' }
-            end
-            
-            expect(user_service.schedules.reload.booked.sort).to eql ( @previous_service_interval.schedules.sort )
-            expect(@future_service_interval.schedules.all?{ |schedule| schedule.reload.available? }).to eql true
-            expect(@previous_service_interval.schedules.all?{ |schedule| schedule.reload.booked? }).to eql true
-          end
+          visit edit_service_path
+          
+          expect(page.current_path).to eql edit_service_path
         end
 
-        context 'for one time service' do
-          it 'enables the future schedules' do
-            
-          end
+        it 'enables the future schedules' do
+          expect(user_service.schedules.booked.sort).to eql ( @future_service_interval.schedules + @previous_service_interval.schedules ).sort
+          expect((@future_service_interval.schedules + @previous_service_interval.schedules).all?{ |schedule| schedule.booked? }).to eql true
+
+          click_button 'Cancelar'
+          
+          expect(user_service.schedules.reload.booked.sort).to eql ( @previous_service_interval.schedules.sort )
+          expect(@future_service_interval.schedules.all?{ |schedule| schedule.reload.available? }).to eql true
+          expect(@previous_service_interval.schedules.all?{ |schedule| schedule.reload.booked? }).to eql true
         end
       end
     end
@@ -434,10 +446,9 @@ feature 'ServiceController' do
         allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
         allow_any_instance_of(User).to receive(:postal_code_number).and_return(11800)
 
-        schedules_intervals = create_recurrent!(starting_datetime + 1.day, 
-                                                hours: 5,
-                                                periodicity: recurrent_service.periodicity ,
-                                                conditions: { zone: zone, aliada: aliada } )  
+        create_recurrent!(starting_datetime + 1.day, hours: 5,
+                                                     periodicity: recurrent_service.periodicity ,
+                                                     conditions: { zone: zone, aliada: aliada } )  
       end
 
       it 'let the user view the new service page' do

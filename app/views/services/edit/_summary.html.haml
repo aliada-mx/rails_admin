@@ -41,10 +41,8 @@
       APLICAR
     = text_field_tag 'promo-code', nil, placeholder: 'código promocional'
 
-= hidden_field_tag 'clicked_button', 'update', data: {bind: 'value: clicked_button'}
-= edit_service_form.submit 'Guardar cambios', id: 'update_button', class: 'action-button-pink size-extra-large', data: {bind: 'css: { disabled: !is_datetime_done() }'}
+= submit_tag 'Guardar cambios', id: 'update_button', name: 'update_button', class: 'action-button-pink size-extra-large', data: {bind: 'css: { disabled: !is_datetime_done() }'}, onclick: 'this.form.submitted = this.name'
 
-= edit_service_form.submit 'Cancelar', id: 'cancel_button', name: 'cancel', class: 'action-button-transparent size-extra-large' 
-
+= submit_tag 'Cancelar', id: 'cancel_button', name: 'cancel_button', class: 'action-button-transparent size-extra-large', onclick: 'this.form.submitted = this.name' 
 .aliada_seal
   = image_tag 'sello-de-garantia.png'
