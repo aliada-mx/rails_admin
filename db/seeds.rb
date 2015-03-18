@@ -61,7 +61,7 @@ def create_from_copypaste
   Schedule.destroy_all
   starting_datetime = Time.zone.now.change(hour: 13) # 7 am Mexico City Time
   aliada = Aliada.first
-  zone = Zone.first
+  zone = Zone.find_by_postal_code_number('11800')
 
   require_relative 'spec/support/schedules_helper'
   include TestingSupport::SchedulesHelper

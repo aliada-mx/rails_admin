@@ -81,7 +81,7 @@ class ServicesController < ApplicationController
     service = @user.services.find(params[:service_id])
 
     begin
-      if params[:clicked_button] == 'update'
+      if params[:clicked_button] == 'update_button'
         service.update_existing!(service_params)
       elsif params[:clicked_button] == 'cancel_button'
         service.cancel!

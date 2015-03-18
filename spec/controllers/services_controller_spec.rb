@@ -77,6 +77,7 @@ feature 'ServiceController' do
         extras = service.extras
         service_aliada = service.aliada
 
+        expect(service_aliada).to be_present
         expect(service).to be_present
         expect(service_aliada).to eql aliada
         expect(extras).to include extra_1
@@ -123,6 +124,7 @@ feature 'ServiceController' do
         recurrence.aliada = recurrence.aliada
         user = service.user
         
+        expect(service.aliada).to be_present
         expect(recurrence.owner).to eql 'user'
         expect(recurrence.hour).to eql service.beginning_datetime.hour
         expect(recurrence.weekday).to eql service.beginning_datetime.weekday
@@ -403,7 +405,7 @@ feature 'ServiceController' do
             expect((@future_service_interval.schedules + @previous_service_interval.schedules).all?{ |schedule| schedule.booked? }).to eql true
 
             with_rack_test_driver do
-              page.driver.submit :post, edit_service_users_path(user_id: user.id, service_id: user_service.id), { clicked_button: 'cancel' }
+              page.driver.submit :post, edit_service_users_path(user_id: user.id, service_id: user_service.id), { clicked_button: 'cancel_button' }
             end
             
             expect(user_service.schedules.reload.booked.sort).to eql ( @previous_service_interval.schedules.sort )

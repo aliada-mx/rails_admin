@@ -32,10 +32,6 @@ aliada.services.edit.bind_form_submission = function($form) {
   }
 
   $form.on('submit', function(e) {
-    if (_(response).has('next_path')) {
-      aliada.dialogs.succesfull_service_changes(response.next_path);
-      return;
-    }
     e.preventDefault();
 
     if(aliada.ko.clicked_button() == 'cancel_button'){
@@ -47,7 +43,7 @@ aliada.services.edit.bind_form_submission = function($form) {
     function submit(){
       aliada.block_ui();
 
-      update_service($form).then(redirect)
+      update_service($form).then(go_to_success_or_redirect)
         .caught(ServiceCreationFailed, function(exception) {
           report_error(exception)
 

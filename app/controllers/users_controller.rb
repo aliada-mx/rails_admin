@@ -14,7 +14,7 @@ class UsersController < ApplicationController
   end
 
   def previous_services
-    @services = User.find(params[:user_id]).services.in_the_past
+    @services = User.find(params[:user_id]).services.in_the_past.not_canceled
   end
 
   private

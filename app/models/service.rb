@@ -33,7 +33,7 @@ class Service < ActiveRecord::Base
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
   scope :on_day, -> (datetime) { where('datetime >= ?', datetime.beginning_of_day).where('datetime <= ?', datetime.end_of_day) } 
-  scope :not_canceled, -> { where('status != ?', 'canceled') }
+  scope :not_canceled, -> { where('services.status != ?', 'canceled') }
 
   # Validations
   validate :datetime_is_hour_o_clock
