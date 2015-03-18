@@ -388,6 +388,7 @@ class Service < ActiveRecord::Base
         end
       end
       field :status
+      field :aliada
     end
 
   end

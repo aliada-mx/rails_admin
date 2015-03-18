@@ -9,10 +9,10 @@ describe 'Schedule Filler' do
   let(:zone){ create(:zone) }
   let(:aliada){ create(:aliada) }
   let(:user){ create(:user) }
-  let!(:aliada_recurrence) { create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, zone: zone, aliada: aliada, total_hours: total_available_hours, owner: 'aliada') }
+  let!(:aliada_recurrence) { create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, aliada: aliada, total_hours: total_available_hours, owner: 'aliada') }
   
   # client's recurrence, built with aliada's recurrence
-  let!(:client_recurrence) { create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, zone: zone, aliada: aliada, user: user, total_hours: total_service_hours, owner: 'user') }
+  let!(:client_recurrence) { create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, aliada: aliada, user: user, total_hours: total_service_hours, owner: 'user') }
 
   # services scheduled for client's schedule
   let!(:first_service){ create(:service, aliada: aliada, user: user, recurrence: client_recurrence, datetime: recurrence_service_datetime, special_instructions: "first service") }
@@ -55,14 +55,14 @@ describe 'Schedule Filler' do
     it "shows error of client's recurrence without services in it" do
       other_aliada = create(:aliada)
       # client's recurrence, built without aliada's recurrence
-      other_client_recurrence = create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, zone: zone, aliada: other_aliada, user: user, total_hours: total_service_hours)
+      other_client_recurrence = create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, aliada: other_aliada, user: user, total_hours: total_service_hours)
       expect{ScheduleFiller.perform}.to raise_error(RuntimeError)
     end
   
     it "shows error of client's recurrence without an aliada's recurrence" do
       other_aliada = create(:aliada)
       # client's recurrence, built without aliada's recurrence
-      other_client_recurrence = create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, zone: zone, aliada: other_aliada, user: user, total_hours: total_service_hours)
+      other_client_recurrence = create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, aliada: other_aliada, user: user, total_hours: total_service_hours)
       service = create(:service, aliada: other_aliada, user: user, recurrence: other_client_recurrence, datetime: recurrence_service_datetime, special_instructions: "first service")
       expect{ScheduleFiller.perform}.to raise_error(RuntimeError)
     end

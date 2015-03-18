@@ -7,19 +7,22 @@ class Schedule < ActiveRecord::Base
   ]
 
   # Validations
-  validates_presence_of [:datetime, :status, :aliada_id, :zone]
+  validates_presence_of [:datetime, :status, :aliada_id]
   validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[0] } }
   validate :schedule_within_working_hours
 
   # Associations
-  belongs_to :zone
   belongs_to :aliada 
   belongs_to :service
+  belongs_to :recurrence
+  has_and_belongs_to_many :zones
 
   # Scopes
-  scope :available, -> { where(status: 'available').where('user_id IS NULL') }
+  scope :busy_candidate, -> { where(status: ['booked','available']) }
+  scope :available, -> { where(status: 'available') }
+  scope :busy, -> { where(status: 'busy') }
   scope :booked, -> {  where(status: 'booked') }
-  scope :in_zone, -> (zone) { where(zone: zone) }
+  scope :in_zone, -> (zone) { joins(:zones).where("schedules_zones.zone_id = ?", zone.id) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
   scope :after_datetime, ->(starting_datetime) { where("datetime >= ?", starting_datetime) }
   scope :ordered_by_aliada_datetime, -> { order(:aliada_id, :datetime) }
@@ -42,8 +45,11 @@ class Schedule < ActiveRecord::Base
   }
 
   state_machine :status, :initial => 'available' do
+    transition ['available', 'busy'] => 'booked', on: :book
+    transition ['booked', 'busy'] => 'available', on: :enable
     transition 'booked' => 'available', on: :enable_booked
-    transition 'available' => 'booked', on: :book
+    transition ['available', 'booked'] => 'busy', on: :get_busy
+    transition 'booked' => 'on-transit', on: :transiting
 
     after_transition on: :enable_booked do |schedule, transition|
       schedule.service_id = nil

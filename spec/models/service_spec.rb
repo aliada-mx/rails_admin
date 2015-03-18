@@ -34,13 +34,13 @@ feature 'Service' do
 
   before(:each, recurrent: false) do
     # Tomorrow because we never book for the same day
-    create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada, zone: zone})
+    create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada, zones: [zone]})
   end
 
   # Create the needed schedules
   before(:each, recurrent: true) do
     # Tomorrow because we never book for the same day
-    create_recurrent!(starting_datetime + 1.day, hours: 4, periodicity: 7, conditions: {aliada: aliada, zone: zone})
+    create_recurrent!(starting_datetime + 1.day, hours: 4, periodicity: 7, conditions: {aliada: aliada, zones: [zone]})
   end
 
   describe '#book_aliada' do

@@ -16,30 +16,29 @@ class ScheduleInterval
     @aliada_id = aliada_id
   end
 
-  def in_first_working_hour_of_the_day?
+  def in_first_working_hour_of_the_day? zone
     # If right at the beginning_of_aliadas_day
     return true if @schedules.first.datetime.hour == Setting.beginning_of_aliadas_day
 
     # Or already calculated
     return @in_first_working_hour_of_the_day if !@in_first_working_hour_of_the_day.nil?
 
-    calculate_previous_schedule
+    calculate_previous_schedule zone
      
     # Cache to avoid doing double queries
     @in_first_working_hour_of_the_day = @previous_schedule.nil? or !@previous_schedule.available?
     return @in_first_working_hour_of_the_day
   end
 
-  def calculate_previous_schedule
+  def calculate_previous_schedule zone
     # If the previous schedule does not exists we definitely are at the first hour
     first_schedule = @schedules.first
-    zone = first_schedule.zone
     aliada = first_schedule.aliada
 
     @previous_schedule ||= Schedule.previous_aliada_schedule(zone, first_schedule, aliada).first
   end
 
-  def in_last_working_hour_of_the_day?
+  def in_last_working_hour_of_the_day? zone
     # If right at the end_of_aliadas_day
     return true if @schedules.last.datetime.hour == Setting.end_of_aliadas_day - 1
 
@@ -47,7 +46,6 @@ class ScheduleInterval
 
     # If the next schedule does not exists we definitely are at the last hour
     last_schedule = @schedules.last
-    zone = last_schedule.zone
     aliada = last_schedule.aliada
 
     next_schedule = Schedule.next_aliada_schedule(zone, last_schedule, aliada).first
@@ -153,8 +151,8 @@ class ScheduleInterval
   end
 
   # Following the business rules we determine what would be the first datetime for a service
-  def beginning_of_service_interval
-    calculate_previous_schedule
+  def beginning_of_service_interval zone
+    calculate_previous_schedule zone
 
     if @previous_schedule.nil?
       return beginning_of_interval

@@ -16,11 +16,11 @@ feature 'AliadasAvailabilityController' do
   let!(:service){ create(:service, user: user) }
 
   before do
-    create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada, zone: zone})
-    create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada_2, zone: zone})
+    create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada, zones: [zone]})
+    create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada_2, zones: [zone]})
     Timecop.freeze(starting_datetime)
 
-    booked_interval = create_one_timer!(starting_datetime + 2.day, hours: 5, conditions: {aliada: aliada, zone: zone, service: service, status: 'booked'} )
+    booked_interval = create_one_timer!(starting_datetime + 2.day, hours: 5, conditions: {aliada: aliada, zones: [zone], service: service, status: 'booked'} )
     @booked_schedules = booked_interval.schedules
   end
 
