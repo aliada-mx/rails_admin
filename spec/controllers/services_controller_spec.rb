@@ -407,8 +407,8 @@ feature 'ServiceController' do
 
       describe '#cancel' do
         before do
-          @future_service_interval = create_one_timer!( starting_datetime, hours: 3, conditions: { zone: zone, aliada: aliada, service: user_service, status: 'booked' } )
-          @previous_service_interval = create_one_timer!( starting_datetime - 1.day, hours: 3, conditions: { zone: zone, aliada: aliada, service: user_service, status: 'booked' } )
+          @future_service_interval = create_one_timer!( starting_datetime, hours: 3, conditions: { zones: [zone], aliada: aliada, service: user_service, status: 'booked' } )
+          @previous_service_interval = create_one_timer!( starting_datetime - 1.day, hours: 3, conditions: { zones: [zone], aliada: aliada, service: user_service, status: 'booked' } )
 
           allow_any_instance_of(User).to receive(:aliadas).and_return([aliada])
           allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
