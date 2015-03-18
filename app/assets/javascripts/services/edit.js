@@ -17,7 +17,7 @@ $(document).ready(function() {
   // KNOCKOUT initialization
   aliada.ko = {
     current_step: ko.observable(1),
-    service_id: ko.observable('')
+    service_id: ko.observable(''),
   };
 
   aliada.services.edit.duration(aliada, ko);
