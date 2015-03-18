@@ -25,7 +25,7 @@ describe 'Availability' do
                                    address: address_1) }
 
   before do
-    create_one_timer!(starting_datetime, hours: 5, conditions: {aliada_id: aliada.id, zone_id: zone_1.id} )
+    create_one_timer!(starting_datetime, hours: 5, conditions: {aliada_id: aliada.id, zones: [zone_1]} )
     @first_five_schedules = Schedule.all.limit(5)
     @last_five_schedules = Schedule.all.where('id not in (?)', @first_five_schedules.map(&:id))
 
@@ -42,7 +42,7 @@ describe 'Availability' do
     it 'should return the availability in the right format' do
       @aliadas_availability.add('key', @first_five_schedules, aliada.id)
 
-      dates_times = @aliadas_availability.for_calendario('Mexico City')
+      dates_times = @aliadas_availability.for_calendario('Mexico City', zone_1)
 
       expect(dates_times).to eql ( { "2015-01-01"=>[{:value=>"16:00", :friendly_time=>" 4:00 pm", :friendly_datetime=>"jueves 01 de enero,  4:00 pm"}] } )
     end

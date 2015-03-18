@@ -44,6 +44,7 @@ gem 'aws-sdk', '~> 1.5.7'
 gem 'bootstrap-sass'
 # Sass framework
 gem 'compass-rails'
+gem 'chronic'
  
 # EXCEPTIONS
 #

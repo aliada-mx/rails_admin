@@ -63,16 +63,16 @@ describe 'ScheduleInterval' do
     let(:aliada) { create(:aliada) }
 
     it 'returns the first time if begins at the aliadas beginning_of_aliadas_day' do
-      @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime, conditions: {zone: zone})
+      @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime, conditions: {zones: [zone]})
 
-      expect(@schedule_interval.beginning_of_service_interval).to eql starting_datetime
+      expect(@schedule_interval.beginning_of_service_interval(zone) ).to eql starting_datetime
     end
 
     it 'returns the second time if the previous schedule is taken' do
-      Schedule.create!(datetime: starting_datetime, zone: zone, aliada: aliada, status: 'booked')
-      @schedule_interval = ScheduleInterval.build_from_range(starting_datetime + 1.hour, ending_datetime, conditions: {zone: zone, aliada: aliada})
+      Schedule.create!(datetime: starting_datetime, zones: [zone], aliada: aliada, status: 'booked')
+      @schedule_interval = ScheduleInterval.build_from_range(starting_datetime + 1.hour, ending_datetime, conditions: {zones: [zone], aliada: aliada})
 
-      expect(@schedule_interval.beginning_of_service_interval).to eql starting_datetime + 2.hour
+      expect(@schedule_interval.beginning_of_service_interval(zone) ).to eql starting_datetime + 2.hour
     end
   end
 end

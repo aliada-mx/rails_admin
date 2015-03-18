@@ -12,7 +12,7 @@
           %th Sábado
           %th Domingo
       %tbody
-      - wh = @object.aliada_working_hours.where("zone_id = ?", @object.zones.first.id)
+      - wh = @object.aliada_working_hours
       - (7..21).each do |i|
         %tr 
           %th

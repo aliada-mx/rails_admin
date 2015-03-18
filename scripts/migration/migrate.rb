@@ -131,11 +131,7 @@ connection.query("SELECT * FROM horarios").each do |row|
   
   if (aliadas[row["aliadas_id"]])
     aliada = Aliada.find(aliadas[row["aliadas_id"]])
-    zone_id = nil
-    if not aliada.zones.empty?
-      zone_id = aliada.zones.first.id
-    end
-    recurrence = AliadaWorkingHour.find_or_initialize_by(aliada_id: aliada.id, weekday: row["dia"].downcase, hour: row["hora"].hour, periodicity: 7, owner: 'aliada', total_hours: 1, user_id: nil, zone_id: zone_id)
+    recurrence = AliadaWorkingHour.find_or_initialize_by(aliada_id: aliada.id, weekday: row["dia"].downcase, hour: row["hora"].hour, periodicity: 7, owner: 'aliada', total_hours: 1, user_id: nil)
 
     if recurrence.new_record?
       recurrence.save
@@ -189,14 +185,16 @@ connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
     if service.id
       servicios[row["id"]] = service.id
 
-      schedule = Schedule.find_or_initialize_by(datetime: datetime, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], status: 'booked', service_id: service.id, zone_id: address.postal_code.zone.id)
+      aliada = Aliada.find(aliadas[row["aliadas_id"]])
+      schedule = Schedule.find_or_initialize_by(datetime: datetime, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], status: 'booked', service_id: service.id)
 
       if schedule.new_record?
         begin
+          schedule.zones = aliada.zones
           schedule.save
         rescue => e
           agenda_errors += 1
-          puts "AGENDA_ERROR ID #{row["id"]} ALIADA #{Aliada.find(aliadas[row["aliadas_id"]]).first_name} DATETIME #{datetime}"
+          puts "AGENDA_ERROR ID #{row["id"]} ALIADA #{aliada.first_name} DATETIME #{datetime}"
           #puts "SCHEDULE #{row["id"]} #{schedule.errors.messages.to_yaml}" if not schedule.errors.messages.empty?
         end
       end
@@ -218,18 +216,6 @@ puts "AGENDA_ERRORS #{agenda_errors}"
 
 puts "MIGRANDO RECURRENCIAS"
 connection.query("SELECT * FROM recurrencias").each do |row|
-
-  if aliadas[row["aliadas_id"]]
-    zone = Aliada.find(aliadas[row["aliadas_id"]]).zones.first
-  else
-    zone = nil
-  end
-
-  #zone = nil
-  #if row["cp"] != ""
-  #  cp = PostalCode.find_or_create_by(number: row["cp"].to_s.rjust(5, '0')) # only migrating the first zone associated to the postal_code
-  #  zone = cp.zone.id
-  #end
  
   if row["monday"] == 1
     weekday = "monday"
@@ -246,37 +232,42 @@ connection.query("SELECT * FROM recurrencias").each do |row|
   elsif row["sunday"] == 1
     weekday = "sunday"
   else
-    weekday = ""
+    weekday = nil
   end
 
-  # SE ESTÁN CREANDO RECURRENCIAS CON ZONAS DISTINTAS
-  # Por el traslado - hour = hour - 1 | total hours = duracion aprox + 2
-  recurrence = Recurrence.find_or_initialize_by(periodicity: 7, owner: 'user', weekday: weekday, hour: row["hora"].hour - 1, total_hours: row["duracion_aprox"] + 2, user_id: clientes[row["clientes_id"]], aliada_id: aliadas[row["aliadas_id"]], zone_id: zone)
+  if weekday
 
-  if recurrence.new_record?
-    recurrence.save
-    puts "RECURRENCE #{row["id"]} #{recurrence.errors.messages.to_yaml}" if not recurrence.errors.messages.empty?
-  end
+    # SE ESTÁN CREANDO RECURRENCIAS CON ZONAS DISTINTAS
+    # Por el traslado - hour = hour - 1 | total hours = duracion aprox + 2
+    recurrence = Recurrence.find_or_initialize_by(periodicity: 7, owner: 'user', weekday: weekday, hour: row["hora"].hour - 1, total_hours: row["duracion_aprox"] + 2, user_id: clientes[row["clientes_id"]], aliada_id: aliadas[row["aliadas_id"]])
 
-  #Actualizar servicios  
-  if recurrence_with_service[row["id"]]
-    recurrence_with_service[row["id"]].each do |id|
-      Service.find(id).update_attribute(:recurrence_id, recurrence.id)
+    if recurrence.new_record?
+      recurrence.save
+      puts "RECURRENCE #{row["id"]} #{recurrence.errors.messages.to_yaml}" if not recurrence.errors.messages.empty?
     end
-  end
 
-  #Actualizar schedules
-  if recurrence_with_schedule[row["id"]]
-    aliada_working_hour = AliadaWorkingHour.find_or_create_by(aliada_id: recurrence.aliada_id, weekday: weekday, hour: recurrence.hour, periodicity: 7, owner: 'aliada', total_hours: 1, zone_id: zone)
-    
-    #if aliada_working_hour.new_record?
-    #  aliada_working_hour.status = 'inactive'
-    #  aliada_working_hour.save
-    #end
+    #Actualizar servicios  
+    if recurrence_with_service[row["id"]]
+      recurrence_with_service[row["id"]].each do |id|
+        Service.find(id).update_attribute(:recurrence_id, recurrence.id)
+      end
+    end
 
-    schedule = Schedule.find(recurrence_with_schedule[row["id"]])
-    puts "RECURRENCE #{row["id"]} WITH SCHEDULE #{recurrence_with_schedule[row["id"]]} ALIADAWORKINGHOUR #{aliada_working_hour.id}"
-    schedule.update_attribute(:recurrence_id, aliada_working_hour.id)
+    #Actualizar schedules
+    if recurrence_with_schedule[row["id"]] and 
+      aliada_working_hour = AliadaWorkingHour.find_or_initialize_by(aliada_id: recurrence.aliada_id, weekday: weekday, hour: recurrence.hour - 1, periodicity: 7, owner: 'aliada', total_hours: 1)
+      
+      if aliada_working_hour.new_record? 
+        aliada_working_hour.status = 'inactive'
+        aliada_working_hour.save!
+        puts "INACTIVE ALIADA WORKING HOUR #{aliada_working_hour.id}"
+      end
+
+      schedule = Schedule.find(recurrence_with_schedule[row["id"]])
+      puts "RECURRENCE #{row["id"]} WITH SCHEDULE #{recurrence_with_schedule[row["id"]]} ALIADAWORKINGHOUR #{aliada_working_hour.id}"
+      schedule.update_attribute(:recurrence_id, aliada_working_hour.id)
+    end
+
   end
 
 end

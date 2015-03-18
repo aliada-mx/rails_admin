@@ -23,7 +23,7 @@ class AliadaWorkingHour < Recurrence
       aliada = Aliada.find(aliada_id)
 
       aliada.zones.each do |zone|
-        awh = AliadaWorkingHour.find_or_create_by(aliada_id: aliada_id, weekday: recurrence[:weekday], hour: recurrence[:hour], periodicity: 7, owner: 'aliada', total_hours: 1, user_id: nil, zone_id: zone.id)
+        awh = AliadaWorkingHour.find_or_create_by(aliada_id: aliada_id, weekday: recurrence[:weekday], hour: recurrence[:hour], periodicity: 7, owner: 'aliada', total_hours: 1, user_id: nil)
         # fill 30 days of schedules
         awh.create_schedules_until_horizon        
       end
@@ -38,10 +38,11 @@ class AliadaWorkingHour < Recurrence
     starting_datetime = Chronic.parse("next #{self.weekday}").change(hour: self.hour)
 
     recurrence_days = wdays_until_horizon(self.wday, starting_from: starting_datetime)
-    
+
     recurrence_days.times do |i|
-      schedule = Schedule.find_or_initialize_by(aliada_id: self.aliada_id, zone_id: self.zone_id, datetime: starting_datetime)
+      schedule = Schedule.find_or_initialize_by(aliada_id: self.aliada_id, datetime: starting_datetime)
       if schedule.new_record?
+        schedule.zones = self.aliada.zones
         schedule.recurrence_id = self.id
         schedule.save!
       else

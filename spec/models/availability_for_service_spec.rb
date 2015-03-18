@@ -19,9 +19,9 @@ describe 'AvailabilityForService' do
       before do
         Timecop.freeze(starting_datetime)
 
-        create_one_timer!(starting_datetime - 1.hour, hours: 7, conditions: {aliada: aliada, zone: zone} )
-        create_one_timer!(starting_datetime - 1.hour, hours: 7, conditions: {aliada: aliada_2, zone: zone} )
-        create_one_timer!(starting_datetime - 1.hour, hours: 7, conditions: {aliada: aliada_3, zone: zone} )
+        create_one_timer!(starting_datetime - 1.hour, hours: 7, conditions: {aliada: aliada, zones: [zone]} )
+        create_one_timer!(starting_datetime - 1.hour, hours: 7, conditions: {aliada: aliada_2, zones: [zone]} )
+        create_one_timer!(starting_datetime - 1.hour, hours: 7, conditions: {aliada: aliada_3, zones: [zone]} )
 
         @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours)
 
@@ -125,9 +125,9 @@ describe 'AvailabilityForService' do
       before do
         Timecop.freeze(starting_datetime)
 
-        intervals = create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada: aliada, zone: zone} )
-                    create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada: aliada_2, zone: zone} )
-                    create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada: aliada_3, zone: zone} )
+        intervals = create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada: aliada, zones: [zone]} )
+                    create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada: aliada_2, zones: [zone]} )
+                    create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada: aliada_3, zones: [zone]} )
 
         @service = double(requested_schedules: intervals.reduce([]){ |schedules, interval| schedules + interval.schedules },
                           user: @user,
@@ -185,7 +185,7 @@ describe 'AvailabilityForService' do
                                                                   hours: 5,
                                                                   periodicity: 7,
                                                                   persist: false,
-                                                                  conditions: {aliada: aliada, zone: zone} )
+                                                                  conditions: {aliada: aliada, zones: [zone]} )
 
 
         service = double(requested_schedules: before_availability_schedule_interval.reduce([]){ |schedules, interval| schedules + interval.schedules },
@@ -206,7 +206,7 @@ describe 'AvailabilityForService' do
                                                                  hours: 7,
                                                                  periodicity: 7,
                                                                  persist: false,
-                                                                 conditions: {aliada: aliada, zone: zone} )
+                                                                 conditions: {aliada: aliada, zones: [zone]} )
 
         service = double(requested_schedules: after_availability_schedule_interval.reduce([]){ |schedules, interval| schedules + interval.schedules },
                          user: @user,
@@ -226,7 +226,7 @@ describe 'AvailabilityForService' do
                                                            hours: 5,
                                                            periodicity: 7,
                                                            persist: false,
-                                                           conditions: {aliada: aliada, zone: zone} )
+                                                           conditions: {aliada: aliada, zones: [zone]} )
 
         Schedule.where(datetime: starting_datetime, aliada_id: aliada_3.id).last.update(status: 'booked')
 
@@ -254,8 +254,8 @@ describe 'AvailabilityForService' do
       before do
         Timecop.freeze(starting_datetime)
 
-        interval = create_one_timer!(starting_datetime, hours: 7, conditions: {aliada: aliada, zone: zone} )
-                   create_one_timer!(starting_datetime, hours: 7, conditions: {aliada: aliada_2, zone: zone} )
+        interval = create_one_timer!(starting_datetime, hours: 7, conditions: {aliada: aliada, zones: [zone]} )
+                   create_one_timer!(starting_datetime, hours: 7, conditions: {aliada: aliada_2, zones: [zone]} )
 
         @service = double(requested_schedules: interval.schedules,
                           user: @user,
