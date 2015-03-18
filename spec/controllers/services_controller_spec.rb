@@ -61,8 +61,8 @@ feature 'ServiceController' do
         expect(User.where('role != ?', 'aliada').count).to be 0
         expect(Schedule.available.count).to be 25
 
-        User.any_instance.stub(:create_payment_provider!).and_return(nil)
-        User.any_instance.stub(:ensure_first_payment!).and_return(nil)
+        allow_any_instance_of(User).to receive(:create_payment_provider!).and_return(nil)
+        allow_any_instance_of(User).to receive(:ensure_first_payment!).and_return(nil)
 
         expect(current_path).to eq initial_service_path
       end
