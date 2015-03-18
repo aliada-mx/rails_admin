@@ -116,24 +116,6 @@
 
 /* Drop Down down arrow container
 
-.selectboxit-arrow-container
-  /* Positions the down arrow
-  width: 30px
-  position: absolute
-  right: 0
-
-/* Drop Down down arrow
-
-.selectboxit .selectboxit-arrow-container .selectboxit-arrow
-  /* Horizontally centers the down arrow
-  margin: 0 auto
-  position: absolute
-  top: 40%
-  right: 0
-  left: 0
-  &.ui-icon
-    top: 30%
-
 /* Drop Down down arrow for jQueryUI and jQuery Mobile
 
 /* Drop Down individual option icon positioning
@@ -180,29 +162,23 @@
  *-------------
  *Note: Feel free to remove all of the CSS underneath this line if you are not using the default theme
 
+.selectboxit-arrow-container
+  /* Positions the down arrow
+  width: 30px
+  position: absolute
+  right: 0
+
 .selectboxit-btn
   border-bottom: 1px solid $dark_gray
   &.selectboxit-enabled
     &:hover, &:focus
       text-decoration: none
       background-position: 0 -15px
-
-.selectboxit-btn
   .selectboxit-default-arrow
-    width: 0
-    height: 0
-    +soft-transition
-    border-top: 12px solid $green
-    border-right: 6px solid transparent
-    border-left: 6px solid transparent
+    +arrow(up)
   &.selectboxit-open
     .selectboxit-default-arrow
-      width: 0
-      height: 0
-      border-top: none
-      border-bottom: 12px solid $green
-      border-right: 6px solid transparent
-      border-left: 6px solid transparent
+      +arrow(down)
 
 
 .selectboxit-hover

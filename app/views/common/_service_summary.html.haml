@@ -1,11 +1,13 @@
 %ul.summary
   %li.checked
-    Duración del servicio: 4 horas
-  %li.unchecked
-    Pago: Mastercard - 2930
-  %li.unchecked
-    Dirección: Calle, 23, #322, Colonia, Estado, CP, México DF
-  %li.unchecked
-    Datos de contacto: Nombre, nombre@correo.com 55 3203 3290
+    Aliada: #{ service.aliada.name }
+  %li.checked
+    Duración del servicio: #{ humanize_hours service.estimated_hours_with_extras }
+  %li.checked
+    Pago: : #{@user.payment_provider_name}
+  %li.checked
+    Dirección : #{service.address.name}
+  %li.checked
+    Datos de contacto: #{@user.contact_data}
 
   

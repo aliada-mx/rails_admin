@@ -9,11 +9,7 @@ class ServicesController < ApplicationController
 
   def initial
     if user_signed_in? 
-      if current_user.admin?
-        @user = current_user
-      else
-        redirect_to new_service_users_path(current_user)
-      end
+      redirect_to new_service_users_path(current_user)
     end
 
     @incomplete_service = IncompleteService.create!
@@ -22,45 +18,26 @@ class ServicesController < ApplicationController
                            address: Address.new)
   end
 
-  def new
-    # @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
-    # @other_aliada = Aliada.second
-    # @first = Aliada.first
-  end
-
-  def create_new
-    begin
-      service = Service.create_new!(service_params, @user)
-    rescue ActiveRecord::RecordInvalid => invalid
-      Raygun.track_exception(invalid)
-      return render json: { status: :error, code: :invalid, message: invalid.message }
-    end
-
-    return render json: { status: :success, service_id: service.id }
-  end
-
-  def update
-    service = @user.services.find(params[:service_id])
-    service.update_attributes!(service_params.except(:user, :address))
-
-    next_services_path = next_services_users_path(user_id: @user.id, service_id: service.id)
-
-    return render json: { status: :success, next_path: next_services_path }
-  end
-
-  def edit
-    @service = @user.services.find(params[:service_id])
-  end
-
   def create_initial
     begin
       service = Service.create_initial!(service_params)
     rescue ActiveRecord::RecordInvalid => invalid
+
       Raygun.track_exception(invalid)
       return render json: { status: :error, code: :invalid, message: invalid.message }
     rescue Conekta::Error => exception
+
       Raygun.track_exception(exception)
-      return render json: { status: :error, code: :conekta_error, message: [exception.message_to_purchaser]}
+      return render json: { status: :error, code: :conekta_error, message: exception.message_to_purchaser}
+    rescue AliadaExceptions::AvailabilityNotFound => exception
+
+      Raygun.track_exception(exception)
+      return render json: { status: :error, code: :availability_not_found, message: 'Lo sentimos no encontramos disponibilidad :('}
+
+    rescue Exception => exception
+
+      Raygun.track_exception(exception)
+      raise exception
     end
 
     IncompleteService.mark_as_complete(incomplete_service_params,service)
@@ -68,6 +45,65 @@ class ServicesController < ApplicationController
     force_sign_in_user(service.user)
 
     return render json: { status: :success, service_id: service.id, user_id: service.user.id }
+  end
+
+  def new
+    @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
+  end
+
+  def create_new
+    begin
+      service = Service.create_new!(service_params, @user)
+    rescue ActiveRecord::RecordInvalid => invalid
+
+      Raygun.track_exception(invalid)
+      return render json: { status: :error, code: :invalid, message: invalid.message }
+    rescue AliadaExceptions::AvailabilityNotFound => exception
+
+      Raygun.track_exception(exception)
+      return render json: { status: :error, code: :availability_not_found, message: 'Lo sentimos no encontramos disponibilidad :('}
+
+    rescue Exception => exception
+
+      Raygun.track_exception(exception)
+      raise exception
+    end
+
+    return render json: { status: :success, service_id: service.id }
+  end
+
+  def edit
+    @service = @user.services.find(params[:service_id])
+    @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
+  end
+
+  def update
+    service = @user.services.find(params[:service_id])
+
+    begin
+      service.update_existing!(service_params)
+    rescue ActiveRecord::RecordInvalid => invalid
+
+      Raygun.track_exception(invalid)
+      return render json: { status: :error, code: :invalid, message: invalid.message }
+    rescue AliadaExceptions::AvailabilityNotFound => exception
+
+      Raygun.track_exception(exception)
+      return render json: { status: :error, code: :availability_not_found, message: 'Lo sentimos no encontramos disponibilidad :('}
+
+    rescue AliadaExceptions::ServiceDowgradeImpossible => exception
+
+      Raygun.track_exception(exception)
+      return render json: { status: :error, code: :downgrade_impossible, message: 'Lo sentimos no podemos cambiar a ese tipo de servicio :('}
+    rescue Exception => exception
+
+      Raygun.track_exception(exception)
+      raise exception
+    end
+
+    next_services_path = next_services_users_path(user_id: @user.id, service_id: service.id)
+
+    return render json: { status: :success, next_path: next_services_path, service_id: service.id }
   end
 
   def incomplete_service

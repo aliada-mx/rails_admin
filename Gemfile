@@ -67,9 +67,6 @@ gem 'nestive'
 gem 'devise'
 gem 'simple_token_authentication', '~> 1.0'
 
-# Time parsing for humans
-gem 'chronic'
-
 # PAYMENT SYSTEMS
 gem 'conekta'
 
@@ -157,9 +154,12 @@ group :test do
 end
 
 group :production, :staging do
-  # Logging
-  gem "lograge"
   # Heroku support
   gem 'rails_12factor'
 end
 
+
+group :production, :staging, :development do
+  # Quiet down the partials rendering
+  gem "lograge"
+end

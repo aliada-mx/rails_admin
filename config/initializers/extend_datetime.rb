@@ -16,10 +16,25 @@ module WeekdayPatch
         ['saturday', 6, 'Sábado'],
       ]
     end
+    
+    # Iterate in a range step by step hours
+    def iterate_in_hour_steps(start, end_)
+      Enumerator.new { |y| loop { y.yield start; start += 1.hour } }.take_while { |d| d < end_ }
+    end
+    #
+    # Iterate in a range step by step days
+    def iterate_in_days_steps(start, end_)
+      Enumerator.new { |y| loop { y.yield start; start += 1.day } }.take_while { |d| d < end_ }
+    end
   end
+
 
   def weekday
     self.class.weekdays.select{ |day| day[1] == wday }.first.first
+  end
+
+  def beginning_of_aliadas_day
+    self.change(hour: Setting.beginning_of_aliadas_day)
   end
 end
 

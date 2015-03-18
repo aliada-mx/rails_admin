@@ -6,6 +6,7 @@
             edit: {},
             new: {}
         },
+        service: {},
         user: {},
         dialogs: {},
         calendar: {}
@@ -23,5 +24,8 @@
 
     raygun_api_key = '<%= Raygun.configuration.api_key %>';
 
-    aliada.user.id = <%= @user.try(:id) %>;
+    aliada.user.id = <%= @user.try(:id) || 'null' %>;
+
+    <%= area :extra_javascript_variables do %>
+    <% end %>
 </script>

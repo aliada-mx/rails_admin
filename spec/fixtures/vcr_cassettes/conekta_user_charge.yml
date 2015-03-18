@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=19500&card=tok_test_visa_4242&currency=MXN&description=Servicio%20aliada&reference_id=84
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=19500&card=tok_test_visa_4242&currency=MXN&description=Servicio%20aliada&reference_id=61
     body:
       encoding: UTF-8
       string: ''
@@ -10,8 +10,8 @@ http_interactions:
       User-Agent:
       - Conekta/v1 RubyBindings/0.5.2
       X-Conekta-Client-User-Agent:
-      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.2.0","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"Alejandros-MacBook-Pro-2.local","release":"14.0.0","version":"Darwin
-        Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro5,5"}}'
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
+        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
       Accept:
       - application/vnd.conekta-v1.0.0+json
       Accept-Language:
@@ -32,9 +32,10 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Tue, 10 Mar 2015 00:33:22 GMT
+      - Tue, 17 Mar 2015 17:48:39 GMT
       Etag:
-      - '"b69c52c21e18adb5a21332fe69ff9816"'
+      - '"dc8b77d3d65b606ae828728a25c6a1df"'
+
       Server:
       - nginx/1.1.19
       Status:
@@ -42,18 +43,18 @@ http_interactions:
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - a93eefa96b495e78ccb6fe2f97425e2f
+      - 207518076278d0f137db1c6dbc6a81fd
       X-Runtime:
-      - '2.560455'
+      - '3.346843'
       Content-Length:
       - '640'
       Connection:
       - keep-alive
     body:
       encoding: UTF-8
-      string: '{"id":"54fe3bcf19ce884005000169","livemode":false,"created_at":1425947599,"status":"paid","currency":"MXN","description":"Servicio
-        aliada","reference_id":"84","failure_code":null,"failure_message":null,"monthly_installments":null,"object":"charge","amount":19500,"paid_at":1425947602,"fee":946,"customer_id":"","refunds":[],"payment_method":{"name":"Jorge
-        Lopez","exp_month":"12","exp_year":"19","auth_code":"224483","object":"card_payment","type":"credit","last4":"4242","brand":"visa","issuer":"","account_type":"","country":"US","fraud_score":null,"fraud_indicators":[]},"details":{"name":null,"phone":null,"email":null,"line_items":[]}}'
+      string: '{"id":"550868f319ce8857b40046d2","livemode":false,"created_at":1426614515,"status":"paid","currency":"MXN","description":"Servicio
+        aliada","reference_id":"61","failure_code":null,"failure_message":null,"monthly_installments":null,"object":"charge","amount":19500,"paid_at":1426614519,"fee":946,"customer_id":"","refunds":[],"payment_method":{"name":"Jorge
+        Lopez","exp_month":"12","exp_year":"19","auth_code":"000000","object":"card_payment","type":"credit","last4":"4242","brand":"visa","issuer":"","account_type":"","country":"US","fraud_score":null,"fraud_indicators":[]},"details":{"name":null,"phone":null,"email":null,"line_items":[]}}'
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 00:32:05 GMT
+  recorded_at: Tue, 17 Mar 2015 17:47:09 GMT
 recorded_with: VCR 2.9.3

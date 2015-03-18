@@ -8,6 +8,11 @@
   text-decoration: underline
   &:hover
     color: $green
+  &:before
+    content: '-'
+  &.toggled
+    &:before
+      content: '+'
 
 #extras
   height: 100%
