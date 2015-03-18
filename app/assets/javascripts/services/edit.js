@@ -17,7 +17,8 @@ $(document).ready(function() {
   // KNOCKOUT initialization
   aliada.ko = {
     current_step: ko.observable(1),
-    service_id: ko.observable('')
+    service_id: ko.observable(''),
+    clicked_button: ko.observable('update')
   };
 
   aliada.services.edit.duration(aliada, ko);
@@ -75,6 +76,14 @@ $(document).ready(function() {
     aliada.service.aliada_id = $(this).find(':selected').val();
 
     update_calendar();
+  });
+
+  $('#update_button').on('click',function(){
+    aliada.ko.clicked_button('update_button');
+  });
+
+  $('#cancel_button').on('click',function(){
+    aliada.ko.clicked_button('cancel_button');
   });
 
 });

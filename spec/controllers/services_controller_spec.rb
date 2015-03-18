@@ -385,7 +385,42 @@ feature 'ServiceController' do
           end
         end
       end
+
+      describe '#cancel' do
+
+        context 'for recurrent service' do
+          before do
+            @future_service_interval = create_one_timer!( starting_datetime, hours: 3, conditions: { zone: zone, aliada: aliada, service: user_service, status: 'booked' } )
+            @previous_service_interval = create_one_timer!( starting_datetime - 1.day, hours: 3, conditions: { zone: zone, aliada: aliada, service: user_service, status: 'booked' } )
+
+            allow_any_instance_of(User).to receive(:aliadas).and_return([aliada])
+            allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
+            allow_any_instance_of(User).to receive(:postal_code_number).and_return(11800)
+          end
+
+          it 'enables the future schedules' do
+            expect(user_service.schedules.booked.sort).to eql ( @future_service_interval.schedules + @previous_service_interval.schedules ).sort
+            expect((@future_service_interval.schedules + @previous_service_interval.schedules).all?{ |schedule| schedule.booked? }).to eql true
+
+            with_rack_test_driver do
+              page.driver.submit :post, edit_service_users_path(user_id: user.id, service_id: user_service.id), { clicked_button: 'cancel' }
+            end
+            
+            expect(user_service.schedules.reload.booked.sort).to eql ( @previous_service_interval.schedules.sort )
+            expect(@future_service_interval.schedules.all?{ |schedule| schedule.reload.available? }).to eql true
+            expect(@previous_service_interval.schedules.all?{ |schedule| schedule.reload.booked? }).to eql true
+          end
+        end
+
+        context 'for one time service' do
+          it 'enables the future schedules' do
+            
+          end
+        end
+      end
     end
+
+
 
     describe '#new' do
       let(:new_service_path) { new_service_users_path(user) }
@@ -453,8 +488,6 @@ feature 'ServiceController' do
         end
       end
     end
-
-
   end
 end
 

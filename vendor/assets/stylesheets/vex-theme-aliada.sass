@@ -77,17 +77,6 @@
       +pie-clearfix()
 
   .vex-dialog-button
-    +border-radius(0)
-    border: 0
-    float: right
-    margin: 0 0 0 .5em
-    font-family: inherit
-    text-transform: uppercase
-    letter-spacing: .1em
-    font-size: .8em
-    line-height: 1em
-    padding: .75em 2em
-
     &.vex-last
       margin-left: 0
 
@@ -100,13 +89,13 @@
       @media (max-width: 568px)
         +vex-animation(none)
 
-    &.vex-dialog-button-primary
-      background: $green
-      color: #fff
+    &.vex-dialog-ok-button
+      width: 85px
+      float: right
 
-    &.vex-dialog-button-secondary
-      background: #e0e0e0
-      color: #777
+    &.vex-dialog-cancel-button
+      width: 85px
+      float: right
 
 .vex-loading-spinner.vex-theme-plain
   height: 2.5em

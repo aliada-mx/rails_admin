@@ -81,7 +81,11 @@ class ServicesController < ApplicationController
     service = @user.services.find(params[:service_id])
 
     begin
-      service.update_existing!(service_params)
+      if params[:clicked_button] == 'update'
+        service.update_existing!(service_params)
+      elsif params[:clicked_button] == 'cancel_button'
+        service.cancel!
+      end
     rescue ActiveRecord::RecordInvalid => invalid
 
       Raygun.track_exception(invalid)

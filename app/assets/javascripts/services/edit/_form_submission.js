@@ -27,33 +27,45 @@ aliada.services.edit.bind_form_submission = function($form) {
       aliada.dialogs.succesfull_service_changes(response.next_path);
       return;
     }
-
     aliada.ko.current_step(2);
     smooth_scroll('#success-title');
   }
 
   $form.on('submit', function(e) {
+    if (_(response).has('next_path')) {
+      aliada.dialogs.succesfull_service_changes(response.next_path);
+      return;
+    }
     e.preventDefault();
-    aliada.block_ui();
 
-    update_service($form).then(go_to_success_or_redirect)
-      .caught(ServiceCreationFailed, function(exception) {
-        report_error(exception)
+    if(aliada.ko.clicked_button() == 'cancel_button'){
+      aliada.dialogs.confirm_service_cancel().then(submit)
+    }else{
+      submit();
+    }
 
-        aliada.dialogs.invalid_service(exception.message);
-      })
-      .caught(PlatformError, function(exception) {
-        report_error(exception)
+    function submit(){
+      aliada.block_ui();
 
-        aliada.dialogs.platform_error(exception.message);
-      })
-      .caught(function(exception) {
-        report_error(exception)
+      update_service($form).then(redirect)
+        .caught(ServiceCreationFailed, function(exception) {
+          report_error(exception)
 
-        aliada.dialogs.platform_error(exception);
-      })
-      .finally(function() {
-        aliada.unblock_ui();
-      })
+          aliada.dialogs.invalid_service(exception.message);
+        })
+        .caught(PlatformError, function(exception) {
+          report_error(exception)
+
+          aliada.dialogs.platform_error(exception.message);
+        })
+        .caught(function(exception) {
+          report_error(exception)
+
+          aliada.dialogs.platform_error(exception);
+        })
+        .finally(function() {
+          aliada.unblock_ui();
+        })
+    }
   });
 }

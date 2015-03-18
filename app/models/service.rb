@@ -32,8 +32,9 @@ class Service < ActiveRecord::Base
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
-
   scope :on_day, -> (datetime) { where('datetime >= ?', datetime.beginning_of_day).where('datetime <= ?', datetime.end_of_day) } 
+  scope :not_canceled, -> { where('status != ?', 'canceled') }
+
   # Validations
   validate :datetime_is_hour_o_clock
   validate :datetime_within_working_hours
@@ -51,7 +52,7 @@ class Service < ActiveRecord::Base
     transition 'created' => 'aliada_missing', :on => :mark_as_missing
     transition 'created' => 'paid', :on => :pay
     transition ['created', 'aliada_assigned', 'in-progress'] => 'finished', :on => :finish
-    transition ['created', 'aliada_assigned' ] => 'cancelled', :on => :cancel
+    transition ['created', 'aliada_assigned' ] => 'canceled', :on => :cancel
 
     after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
 
@@ -66,6 +67,10 @@ class Service < ActiveRecord::Base
         recurrence.aliada = aliada if service.recurrent?
         recurrence.save!
       end
+    end
+
+    before_transition on: :cancel do |service, transition|
+      service.cancel_schedules!
     end
   end
 
@@ -188,6 +193,10 @@ class Service < ActiveRecord::Base
     else
       return 0
     end
+  end
+
+  def cancel_schedules!
+    self.schedules.in_the_future.map(&:enable_booked!)
   end
 
   def self.create_new!(service_params, user)

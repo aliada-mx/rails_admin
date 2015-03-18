@@ -62,5 +62,12 @@
           = link_to new_service_users_path(@user) do
             Programa una nueva visita
 
+- if @services.empty?
+  .service-card-wrapper.col-lg-6.new-service-card.vertical
+    .service-card.empty
+      = link_to new_service_users_path(@user) do
+        Programa una nueva visita
+
+
 = append :javascript do
   = javascript_include_tag 'next_services'
