@@ -26,7 +26,7 @@ feature 'ServiceController' do
     before do
       Timecop.freeze(starting_datetime)
 
-      create_recurrent!(starting_datetime + 1.day, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zone: zone, aliada: aliada})
+      create_recurrent!(starting_datetime + 1.day, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zones: [zone], aliada: aliada})
 
       expect(Address.count).to be 0
       expect(Service.count).to be 0
@@ -290,14 +290,14 @@ feature 'ServiceController' do
             booked_intervals = create_recurrent!(starting_datetime, 
                                                  hours: 5,
                                                  periodicity: recurrent_service.periodicity ,
-                                                 conditions: {zone: zone,
+                                                 conditions: {zones: [zone],
                                                               aliada: aliada,
                                                               service: user_service,
                                                               status: 'booked'})
             available_schedules_intervals = create_recurrent!(starting_datetime + 5.hours, 
                                                               hours: 1,
                                                               periodicity: recurrent_service.periodicity ,
-                                                              conditions: {zone: zone, aliada: aliada})
+                                                              conditions: {zones: [zone], aliada: aliada})
 
             @booked_schedules_datetimes = intervals_array_to_schedules_datetimes(booked_intervals)
             @available_schedules_datetimes = intervals_array_to_schedules_datetimes(available_schedules_intervals)
@@ -446,9 +446,10 @@ feature 'ServiceController' do
         allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
         allow_any_instance_of(User).to receive(:postal_code_number).and_return(11800)
 
-        create_recurrent!(starting_datetime + 1.day, hours: 5,
-                                                     periodicity: recurrent_service.periodicity ,
-                                                     conditions: { zone: zone, aliada: aliada } )  
+        schedules_intervals = create_recurrent!(starting_datetime + 1.day, 
+                                                hours: 5,
+                                                periodicity: recurrent_service.periodicity ,
+                                                conditions: { zones: [zone], aliada: aliada } )  
       end
 
       it 'let the user view the new service page' do

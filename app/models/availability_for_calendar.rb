@@ -74,7 +74,7 @@ class AvailabilityForCalendar
 
     end
 
-    clear_not_large_enough_availabilities
+    clear_not_large_enough_availabilities @zone
     clear_not_enough_availabilities
     @aliadas_availability
   end
@@ -157,7 +157,7 @@ class AvailabilityForCalendar
       @aliadas_availability.delete(interval_key)
     end
 
-    def clear_not_large_enough_availabilities
+    def clear_not_large_enough_availabilities zone
       return unless @aliadas_availability.present? 
 
       @aliadas_availability.delete_if do |availability_key, aliada_availability|
@@ -165,10 +165,10 @@ class AvailabilityForCalendar
         aliada_availability.each do |interval|
           if interval.size == @requested_service_hours
 
-            delete = !(interval.in_first_working_hour_of_the_day? && interval.in_last_working_hour_of_the_day?)
+            delete = !(interval.in_first_working_hour_of_the_day?(zone) && interval.in_last_working_hour_of_the_day?(zone) )
           elsif interval.size == @minimum_service_hours
 
-            delete = !(interval.in_first_working_hour_of_the_day? || interval.in_last_working_hour_of_the_day?)
+            delete = !(interval.in_first_working_hour_of_the_day?(zone) || interval.in_last_working_hour_of_the_day?(zone) )
           elsif interval.size == @maximum_service_hours
 
             delete = false

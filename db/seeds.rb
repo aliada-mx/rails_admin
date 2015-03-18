@@ -67,6 +67,6 @@ def create_from_copypaste
   include TestingSupport::SchedulesHelper
 
   6.times do |i|
-    create_recurrent!(starting_datetime + i.day, hours: 6, periodicity: 7, conditions: {aliada: aliada, zone: zone})
+    create_recurrent!(starting_datetime + i.day, hours: 6, periodicity: 7, conditions: {aliada: aliada, zones: [zone]})
   end
 end

@@ -3,7 +3,14 @@ FactoryGirl.define do
     status 'available'
     datetime Time.now    
     association :aliada, factory: :aliada
-    association :zone, factory: :zone
+
+    transient do
+      zone { create(:zone) }
+    end
+
+    after :build do |schedule, evaluator|
+      schedule.zones << evaluator.zone
+    end
 
     trait :with_service do
       transient do

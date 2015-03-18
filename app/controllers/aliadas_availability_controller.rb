@@ -21,7 +21,7 @@ class AliadasAvailabilityController < ApplicationController
 
     availability = find_availability(hours, zone, available_after, aliada_id, service_type, service: service)
 
-    return render json: { status: :success, dates_times: availability.for_calendario('Mexico City') }
+    return render json: { status: :success, dates_times: availability.for_calendario('Mexico City', zone) }
   end
 
   private

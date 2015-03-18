@@ -18,8 +18,8 @@ describe 'AvailabilityForCalendar' do
       before do
         Timecop.freeze(starting_datetime)
 
-        create_one_timer!(starting_datetime, hours: 4, conditions: {aliada: aliada, zone: zone} )
-        create_one_timer!(starting_datetime + 4.hours, hours: 4, conditions: {aliada: aliada_2, zone: zone} )
+        create_one_timer!(starting_datetime, hours: 4, conditions: {aliada: aliada, zones: [zone]} )
+        create_one_timer!(starting_datetime + 4.hours, hours: 4, conditions: {aliada: aliada_2, zones: [zone]} )
 
         @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours)
 
@@ -99,8 +99,8 @@ describe 'AvailabilityForCalendar' do
       before do
         Timecop.freeze(starting_datetime)
 
-        create_recurrent!(starting_datetime,           hours: 6, periodicity: 7, conditions: {aliada: aliada, zone: zone} )
-        create_recurrent!(starting_datetime + 4.hours, hours: 5, periodicity: 7, conditions: {aliada: aliada_2, zone: zone} )
+        create_recurrent!(starting_datetime,           hours: 6, periodicity: 7, conditions: {aliada: aliada, zones: [zone]} )
+        create_recurrent!(starting_datetime + 4.hours, hours: 5, periodicity: 7, conditions: {aliada: aliada_2, zones: [zone]} )
 
         @finder = AvailabilityForCalendar.new(3, zone, starting_datetime, recurrent: true, periodicity: 7)
       end
@@ -167,7 +167,7 @@ describe 'AvailabilityForCalendar' do
       end
 
       it 'finds the summed availability of all aliadas even if they have the same availabilites' do
-        create_recurrent!(starting_datetime + 4.hours, hours: 5, periodicity: 7, conditions: {aliada: aliada_3, zone: zone} )
+        create_recurrent!(starting_datetime + 4.hours, hours: 5, periodicity: 7, conditions: {aliada: aliada_3, zones: [zone]} )
 
         aliadas_availability = AvailabilityForCalendar.new(4, zone, starting_datetime, recurrent: true, periodicity: 7).find
 
@@ -195,8 +195,8 @@ describe 'AvailabilityForCalendar' do
       before do
         Timecop.freeze(starting_datetime)
 
-        create_one_timer!(starting_datetime, hours: 4, conditions: {aliada: aliada, zone: zone} )
-        create_one_timer!(starting_datetime, hours: 4, conditions: {aliada: aliada_2, zone: zone} )
+        create_one_timer!(starting_datetime, hours: 4, conditions: {aliada: aliada, zones: [zone]} )
+        create_one_timer!(starting_datetime, hours: 4, conditions: {aliada: aliada_2, zones: [zone]} )
 
         @finder = AvailabilityForCalendar.new(3, zone, starting_datetime, aliada_id: aliada)
       end
@@ -220,9 +220,9 @@ describe 'AvailabilityForCalendar' do
 
       before do
         Timecop.freeze(starting_datetime)
-        booked_intervals = create_recurrent!(starting_datetime, hours: 4, periodicity: 7, conditions: {aliada: aliada, zone: zone, service: service, status: 'booked'} )
+        booked_intervals = create_recurrent!(starting_datetime, hours: 4, periodicity: 7, conditions: {aliada: aliada, zones: [zone], service: service, status: 'booked'} )
 
-        available_intervals = create_recurrent!(starting_datetime + 1.day, hours: 4, periodicity: 7, conditions: {aliada: aliada, zone: zone, status: 'available'} )
+        available_intervals = create_recurrent!(starting_datetime + 1.day, hours: 4, periodicity: 7, conditions: {aliada: aliada, zones: [zone], status: 'available'} )
         @available_schedules = available_intervals.inject([]){ |schedules, interval| schedules + interval.schedules }
         @booked_schedules = booked_intervals.inject([]){ |schedules, interval| schedules + interval.schedules }
       end
@@ -247,7 +247,7 @@ describe 'AvailabilityForCalendar' do
     describe 'calculates the availability taking in account business hours ' do
       context 'for one time services' do
         it 'takes into account for the availability the start of aliada day' do
-          create_one_timer!(starting_datetime, hours: 4, conditions: {aliada: aliada, zone: zone} )
+          create_one_timer!(starting_datetime, hours: 4, conditions: {aliada: aliada, zones: [zone]} )
 
           availability = AvailabilityForCalendar.find_availability(3, zone, starting_datetime, recurrent: false)
 
@@ -261,7 +261,7 @@ describe 'AvailabilityForCalendar' do
         end
 
         it 'takes into account for the availability the end of aliada day' do
-          create_one_timer!(starting_datetime + 10.hours, hours: 4, conditions: {aliada: aliada, zone: zone} )
+          create_one_timer!(starting_datetime + 10.hours, hours: 4, conditions: {aliada: aliada, zones: [zone]} )
 
           availability = AvailabilityForCalendar.find_availability(3, zone, starting_datetime, recurrent: false)
 
@@ -275,7 +275,7 @@ describe 'AvailabilityForCalendar' do
         end
 
         it 'takes into account for the availability the end and the start of aliada day' do
-          create_one_timer!(starting_datetime + 3.hours, hours: 4, conditions: {aliada: aliada, zone: zone} )
+          create_one_timer!(starting_datetime + 3.hours, hours: 4, conditions: {aliada: aliada, zones: [zone]} )
 
           availability = AvailabilityForCalendar.find_availability(4, zone, starting_datetime, recurrent: false)
 

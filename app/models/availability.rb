@@ -72,13 +72,13 @@ class Availability
   end
 
   # format expected by jquery.calendario
-  def for_calendario(timezone)
+  def for_calendario(timezone, zone)
     # A hash with an array as default value for new keys
     # to get unique datetimes
     dates_times = Hash.new{ |h,k| h[k] = [] }
 
     schedules_intervals.map do |schedule_interval|
-      datetime = schedule_interval.beginning_of_service_interval
+      datetime = schedule_interval.beginning_of_service_interval zone
 
       date = datetime.in_time_zone(timezone).strftime('%Y-%m-%d')
       time = datetime.in_time_zone(timezone).strftime('%H:%M')
