@@ -68,7 +68,12 @@ class UserMailer < ApplicationMailer
       '-service_friendly_total_hours-' =>["#{hours} hrs con #{minutes} minutos"],
       '-service_amount_to_bill' => [service.price],
       '-service_subtotal-' => [service.amount_to_bill],
-      '-aliada_full_name-' => [service.aliada.full_name]},
+      '-aliada_full_name-' => [service.aliada.full_name],
+      '-service_score_1-' => ["#{score_service_url(service.id)}?value=1"],
+      '-service_score_2-' => ["#{score_service_url(service.id)}?value=2"],
+      '-service_score_3-' => ["#{score_service_url(service.id)}?value=3"],
+      '-service_score_4-' => ["#{score_service_url(service.id)}?value=4"],
+      '-service_score_5-' => ["#{score_service_url(service.id)}?value=5"]},
     template_id: template_id
     
   end
