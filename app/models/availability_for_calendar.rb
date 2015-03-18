@@ -6,8 +6,8 @@ class AvailabilityForCalendar
 
   def initialize(service_hours, zone, available_after, recurrent: false, periodicity: nil, aliada_id: nil, service: nil)
     @requested_service_hours = service_hours
-    @minimum_service_hours = @requested_service_hours + 1 # This extra hour can be the for the hours_after_service or hours_before_service
-    @maximum_service_hours = @requested_service_hours + 2 
+    @minimum_service_hours = @requested_service_hours + 1 # we can have a service with 1 hour padding
+    @maximum_service_hours = @requested_service_hours + 2 # or two
     @zone = zone
     @available_after = available_after
     @recurrent = recurrent
@@ -51,6 +51,7 @@ class AvailabilityForCalendar
                                          aliada_id: aliada_id,
                                          service: service)
     availability = finder.find
+    # binding.pry
     availability
   end
      
@@ -157,27 +158,38 @@ class AvailabilityForCalendar
       @aliadas_availability.delete(interval_key)
     end
 
+    # Because we are building as many as posible we might end up
+    # with intevals that are a subset of the next and we
+    # want the largest possible
+    def clear_redundant
+      @aliadas_availability.remove_redundant 
+    end
+
     def clear_not_large_enough_availabilities zone
       return unless @aliadas_availability.present? 
 
       @aliadas_availability.delete_if do |availability_key, aliada_availability|
-        delete = true
-        aliada_availability.each do |interval|
-          if interval.size == @requested_service_hours
 
-            delete = !(interval.in_first_working_hour_of_the_day?(zone) && interval.in_last_working_hour_of_the_day?(zone) )
-          elsif interval.size == @minimum_service_hours
+        aliada_availability.delete_if do |interval|
 
-            delete = !(interval.in_first_working_hour_of_the_day?(zone) || interval.in_last_working_hour_of_the_day?(zone) )
-          elsif interval.size == @maximum_service_hours
+          if interval.size == @maximum_service_hours
+            keep = true
+          else
+            free_continuous_hours_in_front = interval.free_continuous_hours_in_front(@zone)
 
-            delete = false
+            if interval.size == @requested_service_hours
+
+              keep = free_continuous_hours_in_front == 2
+            elsif interval.size == @minimum_service_hours
+
+              keep = free_continuous_hours_in_front >= 1
+            end
           end
 
-          @report.push({message: 'Cleared an inadecuate size availability', objects: interval }) if delete
+          !keep
         end
 
-        delete
+        aliada_availability.empty?
       end
     end
 

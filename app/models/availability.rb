@@ -20,6 +20,10 @@ class Availability
     @store[availability_key].push(new_interval)
   end
 
+  def last_interval
+    @store.values.last.last
+  end
+
   def ensure_schedule_interval!(continuous_schedule, aliada_id: nil)
     if continuous_schedule.class == ScheduleInterval
       return continuous_schedule
@@ -78,7 +82,7 @@ class Availability
     dates_times = Hash.new{ |h,k| h[k] = [] }
 
     schedules_intervals.map do |schedule_interval|
-      datetime = schedule_interval.beginning_of_service_interval zone
+      datetime = schedule_interval.beginning_of_interval
 
       date = datetime.in_time_zone(timezone).strftime('%Y-%m-%d')
       time = datetime.in_time_zone(timezone).strftime('%H:%M')

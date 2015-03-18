@@ -24,9 +24,12 @@ class Schedule < ActiveRecord::Base
   scope :booked, -> {  where(status: 'booked') }
   scope :in_zone, -> (zone) { joins(:zones).where("schedules_zones.zone_id = ?", zone.id) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
-  scope :after_datetime, ->(starting_datetime) { where("datetime >= ?", starting_datetime) }
+  scope :in_or_after_datetime, ->(starting_datetime) { where("datetime >= ?", starting_datetime) }
+  scope :after_datetime, ->(datetime) { where("datetime > ?", datetime) }
+  scope :for_aliada_id, ->(aliada_id) { where("schedules.aliada_id = ?", aliada_id) }
+  scope :in_or_before_datetime, ->(datetime) { where("datetime <= ?", datetime) }
   scope :ordered_by_aliada_datetime, -> { order(:aliada_id, :datetime) }
-  scope :available_for_booking, ->(zone, starting_datetime) { available.in_zone(zone).after_datetime(starting_datetime).ordered_by_aliada_datetime }
+  scope :available_for_booking, ->(zone, starting_datetime) { available.in_zone(zone).in_or_after_datetime(starting_datetime).ordered_by_aliada_datetime }
 
   scope :previous_aliada_schedule, ->(zone, current_schedule, aliada) { 
     in_zone(zone)

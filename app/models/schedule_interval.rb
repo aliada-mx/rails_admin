@@ -16,43 +16,20 @@ class ScheduleInterval
     @aliada_id = aliada_id
   end
 
-  def in_first_working_hour_of_the_day? zone
-    # If right at the beginning_of_aliadas_day
-    return true if @schedules.first.datetime.hour == Setting.beginning_of_aliadas_day
+  # For service hours padding purposes
+  def free_continuous_hours_in_front(zone)
+    start = @schedules.last.datetime
+    ending = @schedules.last.datetime + 2.hours
 
-    # Or already calculated
-    return @in_first_working_hour_of_the_day if !@in_first_working_hour_of_the_day.nil?
+    schedules = Schedule.in_zone(zone).after_datetime(start).in_or_before_datetime(ending).for_aliada_id(@aliada_id)
 
-    calculate_previous_schedule zone
-     
-    # Cache to avoid doing double queries
-    @in_first_working_hour_of_the_day = @previous_schedule.nil? or !@previous_schedule.available?
-    return @in_first_working_hour_of_the_day
-  end
-
-  def calculate_previous_schedule zone
-    # If the previous schedule does not exists we definitely are at the first hour
-    first_schedule = @schedules.first
-    aliada = first_schedule.aliada
-
-    @previous_schedule ||= Schedule.previous_aliada_schedule(zone, first_schedule, aliada).first
-  end
-
-  def in_last_working_hour_of_the_day? zone
-    # If right at the end_of_aliadas_day
-    return true if @schedules.last.datetime.hour == Setting.end_of_aliadas_day - 1
-
-    return @in_last_working_hour_of_the_day if !@in_last_working_hour_of_the_day.nil?
-
-    # If the next schedule does not exists we definitely are at the last hour
-    last_schedule = @schedules.last
-    aliada = last_schedule.aliada
-
-    next_schedule = Schedule.next_aliada_schedule(zone, last_schedule, aliada).first
-
-    # Cache to avoid doing double queries
-    @in_last_working_hour_of_the_day = next_schedule.nil? 
-    return @in_last_working_hour_of_the_day
+    if schedules.empty?
+      2
+    elsif schedules.size == 1
+      schedules.first.available? ? 2 : 0
+    else
+      ( schedules.select{ |s| s.available? } ).size
+    end
   end
 
   def beginning_of_interval
@@ -150,19 +127,6 @@ class ScheduleInterval
     continues
   end
 
-  # Following the business rules we determine what would be the first datetime for a service
-  def beginning_of_service_interval zone
-    calculate_previous_schedule zone
-
-    if @previous_schedule.nil?
-      return beginning_of_interval
-    elsif @previous_schedule.available?
-      return beginning_of_interval
-    elsif !@previous_schedule.available?
-      return @schedules.second.datetime
-    end
-  end
-   
   # Following the business rules we determine what would be the first datetime for a service
   def end_of_interval_for_service
     ending_of_interval
