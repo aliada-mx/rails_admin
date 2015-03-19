@@ -32,8 +32,9 @@ class Service < ActiveRecord::Base
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
-
   scope :on_day, -> (datetime) { where('datetime >= ?', datetime.beginning_of_day).where('datetime <= ?', datetime.end_of_day) } 
+  scope :not_canceled, -> { where('services.status != ?', 'canceled') }
+
   # Validations
   validate :datetime_is_hour_o_clock
   validate :datetime_within_working_hours
@@ -51,7 +52,7 @@ class Service < ActiveRecord::Base
     transition 'created' => 'aliada_missing', :on => :mark_as_missing
     transition 'created' => 'paid', :on => :pay
     transition ['created', 'aliada_assigned', 'in-progress'] => 'finished', :on => :finish
-    transition ['created', 'aliada_assigned' ] => 'cancelled', :on => :cancel
+    transition ['created', 'aliada_assigned' ] => 'canceled', :on => :cancel
 
     after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
 
@@ -66,6 +67,10 @@ class Service < ActiveRecord::Base
         recurrence.aliada = aliada if service.recurrent?
         recurrence.save!
       end
+    end
+
+    before_transition on: :cancel do |service, transition|
+      service.cancel_schedules!
     end
   end
 
@@ -119,15 +124,19 @@ class Service < ActiveRecord::Base
     ActiveSupport::TimeZone[self.timezone].parse("#{params[:date]} #{params[:time]}")
   end
 
-  def ensure_recurrence!
+  def ensure_updated_recurrence!
     return unless recurrent?
 
+    recurrence_attributes = {user_id: user_id,
+                             periodicity: service_type.periodicity,
+                             total_hours: total_hours,
+                             hour: beginning_datetime.hour,
+                             weekday: datetime.weekday }
+
     if self.recurrence.blank?
-      self.recurrence = Recurrence.create!(user_id: user_id,
-                                           periodicity: service_type.periodicity,
-                                           total_hours: total_hours,
-                                           hour: beginning_datetime.hour,
-                                           weekday: datetime.weekday)
+      self.recurrence = Recurrence.create!(recurrence_attributes)
+    else
+      self.recurrence.update_attributes!(recurrence_attributes)
     end
   end
 
@@ -190,6 +199,10 @@ class Service < ActiveRecord::Base
     end
   end
 
+  def cancel_schedules!
+    self.schedules.in_the_future.map(&:enable_booked!)
+  end
+
   def self.create_new!(service_params, user)
     ActiveRecord::Base.transaction do
       service_params[:datetime] = Service.parse_date_time(service_params)
@@ -200,7 +213,7 @@ class Service < ActiveRecord::Base
       service.address = address
       service.user = user
       service.set_hours_before_after_service
-      service.ensure_recurrence!
+      service.ensure_updated_recurrence!
 
       service.save!
 
@@ -222,7 +235,7 @@ class Service < ActiveRecord::Base
       service.address = address
       service.user = user
       service.set_hours_before_after_service
-      service.ensure_recurrence!
+      service.ensure_updated_recurrence!
 
       service.save!
 
@@ -245,7 +258,7 @@ class Service < ActiveRecord::Base
 
       set_hours_before_after_service
       ensure_not_downgrading!
-      ensure_recurrence!
+      ensure_updated_recurrence!
 
       reschedule! if needs_rescheduling?
       save!
@@ -290,6 +303,15 @@ class Service < ActiveRecord::Base
 
     # We might have not used some or all those schedules the service has so enable them
     aliada_availability.enable_unused_schedules(service_schedules)
+  end
+
+  def update_recurrence!
+    if self.recurrence
+      self.recurrence.update_attributes!(periodicity: service_type.periodicity,
+                                         total_hours: total_hours,
+                                         hour: beginning_datetime.hour,
+                                         weekday: datetime.weekday)
+    end
   end
 
   def one_time_schedule_intervals
