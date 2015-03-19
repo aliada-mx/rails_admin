@@ -20,8 +20,8 @@ describe 'AvailabilityForCalendar' do
 
         create_one_timer!(starting_datetime, hours: 4, conditions: {aliada: aliada, zones: [zone]} )
         create_one_timer!(starting_datetime + 4.hours, hours: 4, conditions: {aliada: aliada_2, zones: [zone]} )
-        Schedule.create(datetime: starting_datetime + 4.hours, aliada: aliada, zones: [zone], status: 'booked') #limit
-        Schedule.create(datetime: starting_datetime + 8.hours, aliada: aliada_2, zones: [zone], status: 'booked') #limit
+        Schedule.create(datetime: starting_datetime + 5.hours, aliada: aliada, zones: [zone], status: 'booked') #limit
+        Schedule.create(datetime: starting_datetime + 9.hours, aliada: aliada_2, zones: [zone], status: 'booked') #limit
 
         @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours)
 
@@ -44,17 +44,16 @@ describe 'AvailabilityForCalendar' do
         aliada_1_availability = aliadas_availability.for_aliada(aliada)
         aliada_2_availability = aliadas_availability.for_aliada(aliada_2)
 
-        binding.pry
         expect(aliadas_availability.size).to be 2
         expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
-        expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 3.hours
+        expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 2.hours
         expect(aliada_1_availability.schedules_intervals.first.schedules.first.aliada_id).to be aliada.id
-        expect(aliada_1_availability.schedules_intervals.first.size).to be 4
+        expect(aliada_1_availability.schedules_intervals.first.size).to be 3
 
         expect(aliada_2_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime + 4.hour
-        expect(aliada_2_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 7.hours
+        expect(aliada_2_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 6.hours
         expect(aliada_2_availability.schedules_intervals.first.schedules.first.aliada_id).to be aliada_2.id
-        expect(aliada_2_availability.schedules_intervals.first.size).to be 4
+        expect(aliada_2_availability.schedules_intervals.first.size).to be 3
       end
 
       it 'it doesnt find availability if there is a missing hour' do
@@ -66,10 +65,9 @@ describe 'AvailabilityForCalendar' do
 
         aliada_2_availability = aliadas_availability.for_aliada(aliada_2)
         
-          binding.pry
         expect(aliada_2_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime + 4.hours
         expect(aliada_2_availability.schedules_intervals.first.schedules.first.aliada_id).to be aliada_2.id
-        expect(aliada_2_availability.schedules_intervals.first.size).to be 4
+        expect(aliada_2_availability.schedules_intervals.first.size).to be 3
       end
 
       it 'it finds availability when at least one aliada has it for a specific hour' do
@@ -81,11 +79,10 @@ describe 'AvailabilityForCalendar' do
         aliada_1_availability = aliadas_availability.for_aliada(aliada)
 
         expect(aliadas_availability.size).to be 1
-          binding.pry
         expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
-        expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 3.hours
+        expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 2.hours
         expect(aliada_1_availability.schedules_intervals.first.schedules.first.aliada_id).to be aliada.id
-        expect(aliada_1_availability.schedules_intervals.first.size).to be 4
+        expect(aliada_1_availability.schedules_intervals.first.size).to be 3
       end
 
       it 'doesnt find an available datetime when are requested more hours than the available schedules' do
@@ -104,10 +101,10 @@ describe 'AvailabilityForCalendar' do
       before do
         Timecop.freeze(starting_datetime)
 
-        create_recurrent!(starting_datetime,           hours: 6, periodicity: 7, conditions: {aliada: aliada, zones: [zone]} )
+        create_recurrent!(starting_datetime,           hours: 5, periodicity: 7, conditions: {aliada: aliada, zones: [zone]} )
         create_recurrent!(starting_datetime + 4.hours, hours: 5, periodicity: 7, conditions: {aliada: aliada_2, zones: [zone]} )
-        Schedule.create(datetime: starting_datetime + 6.hours, aliada: aliada, zones: [zone], status: 'booked') #limit
-        Schedule.create(datetime: starting_datetime + 9.hours, aliada: aliada_2, zones: [zone], status: 'booked') #limit
+        Schedule.create(datetime: starting_datetime + 7.hours, aliada: aliada, zones: [zone], status: 'booked') #limit
+        Schedule.create(datetime: starting_datetime + 10.hours, aliada: aliada_2, zones: [zone], status: 'booked') #limit
 
         @finder = AvailabilityForCalendar.new(3, zone, starting_datetime, recurrent: true, periodicity: 7)
       end
@@ -125,9 +122,8 @@ describe 'AvailabilityForCalendar' do
       it 'returns a list of schedule intervals with aliadas ids' do
         aliadas_availability = @finder.find
 
-          binding.pry
-        expect(aliadas_availability.size).to be 5
-        expect(aliadas_availability.schedules_intervals.size).to be 25
+        expect(aliadas_availability.size).to be 6
+        expect(aliadas_availability.schedules_intervals.size).to be 30
 
         aliada_1_availability = aliadas_availability.for_aliada(aliada)
         aliada_2_availability = aliadas_availability.for_aliada(aliada_2)
@@ -137,15 +133,14 @@ describe 'AvailabilityForCalendar' do
         expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
         
         expect(aliada_2_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime + 4.hour
-        expect(aliada_2_availability.schedules_intervals.size).to be 10
+        expect(aliada_2_availability.schedules_intervals.size).to be 15
       end
 
       it 'doesnt find availability when the available schedules have holes in the continuity' do
-        Schedule.where(datetime: starting_datetime + 4.hours + 7.days, aliada_id: aliada_2).destroy_all
+        Schedule.where(datetime: starting_datetime + 4.hours + 7.days, aliada_id: aliada_2).map(&:book)
         finder = AvailabilityForCalendar.new(3, zone, starting_datetime, recurrent: true, periodicity: 7)
         aliadas_availability = finder.find
         
-          binding.pry
         expect(aliadas_availability.size).to be 3
 
         expect(aliadas_availability.schedules_intervals.all? { |interval| interval.aliada_id == aliada.id }).to be true
@@ -163,14 +158,10 @@ describe 'AvailabilityForCalendar' do
         Schedule.where(aliada: aliada_2).order(:datetime).last.book!
         Schedule.where(aliada: aliada_2).order(:datetime).first.book!
 
-        last_aliada_schedule = Schedule.where(aliada: aliada).order(:datetime).last
-        last_aliada_schedule.book!
-
         finder = AvailabilityForCalendar.new(3, zone, starting_datetime, recurrent: true, periodicity: 7)
         aliadas_availability = finder.find
         
-          binding.pry
-        expect(aliadas_availability.size).to be 2
+        expect(aliadas_availability.size).to be 3
 
         expect(aliadas_availability.schedules_intervals.all? { |interval| interval.aliada_id == aliada.id }).to be true
         expect(aliadas_availability.schedules_intervals.any? { |interval| interval.aliada_id == aliada_2.id }).to be false
@@ -178,11 +169,10 @@ describe 'AvailabilityForCalendar' do
 
       it 'finds the summed availability of all aliadas even if they have the same availabilites' do
         create_recurrent!(starting_datetime + 4.hours, hours: 5, periodicity: 7, conditions: {aliada: aliada_3, zones: [zone]} )
-        Schedule.create(datetime: starting_datetime + 9.hours, aliada: aliada_3, zones: [zone], status: 'booked') #limit
+        Schedule.create(datetime: starting_datetime + 10.hours, aliada: aliada_3, zones: [zone], status: 'booked') #limit
 
         aliadas_availability = AvailabilityForCalendar.new(4, zone, starting_datetime, recurrent: true, periodicity: 7).find
 
-          binding.pry
         expect(aliadas_availability.size).to be 4
         expect(aliadas_availability.schedules_intervals.size).to be 20
 
@@ -209,8 +199,6 @@ describe 'AvailabilityForCalendar' do
 
         create_one_timer!(starting_datetime, hours: 4, conditions: {aliada: aliada, zones: [zone]} )
         create_one_timer!(starting_datetime, hours: 4, conditions: {aliada: aliada_2, zones: [zone]} )
-        Schedule.create(datetime: starting_datetime + 4.hours, aliada: aliada, zones: [zone], status: 'booked') #limit
-        Schedule.create(datetime: starting_datetime + 4.hours, aliada: aliada_2, zones: [zone], status: 'booked') #limit
 
         @finder = AvailabilityForCalendar.new(3, zone, starting_datetime, aliada_id: aliada)
       end
@@ -221,7 +209,7 @@ describe 'AvailabilityForCalendar' do
       it 'returns only the aliada´s availability' do
         aliadas_availability = @finder.find
 
-        expect(aliadas_availability.size).to be 1
+        expect(aliadas_availability.size).to be 2
 
         expect(aliadas_availability.schedules_intervals.all? { |interval| interval.aliada_id == aliada.id }).to be true
         expect(aliadas_availability.schedules_intervals.any? { |interval| interval.aliada_id == aliada_2.id }).to be false
@@ -262,13 +250,13 @@ describe 'AvailabilityForCalendar' do
       context 'for one time services' do
         it 'takes into account for the availability the start of aliada day' do
           create_one_timer!(starting_datetime, hours: 4, conditions: {aliada: aliada, zones: [zone]} )
-          Schedule.create(datetime: starting_datetime + 4.hours, aliada: aliada, zones: [zone], status: 'booked') #limit
 
-          availability = AvailabilityForCalendar.find_availability(3, zone, starting_datetime, recurrent: false)
+          finder = AvailabilityForCalendar.new(3, zone, starting_datetime, recurrent: false)
+          availability = finder.find
 
           aliada_1_availability = availability.for_aliada(aliada)
 
-          expect(aliada_1_availability.schedules_intervals.size).to be 1
+          expect(aliada_1_availability.schedules_intervals.size).to be 2
 
           expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
           expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 2.hours
@@ -277,18 +265,16 @@ describe 'AvailabilityForCalendar' do
 
         it 'takes into account for the availability the end of aliada day' do
           create_one_timer!(starting_datetime + 10.hours, hours: 4, conditions: {aliada: aliada, zones: [zone]} )
-          Schedule.create(datetime: starting_datetime + 10.hours, aliada: aliada, zones: [zone], status: 'booked') #limit
 
           availability = AvailabilityForCalendar.find_availability(3, zone, starting_datetime, recurrent: false)
 
           aliada_1_availability = availability.for_aliada(aliada)
 
-          binding.pry
-          expect(aliada_1_availability.schedules_intervals.size).to be 1
+          expect(aliada_1_availability.schedules_intervals.size).to be 2
 
           expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime + 10.hours
-          expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 13.hours
-          expect(aliada_1_availability.schedules_intervals.first.size).to be 4
+          expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 12.hours
+          expect(aliada_1_availability.schedules_intervals.first.size).to be 3
         end
 
         it 'takes into account for the availability the end and the start of aliada day' do

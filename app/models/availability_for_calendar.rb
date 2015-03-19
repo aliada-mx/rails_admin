@@ -51,7 +51,6 @@ class AvailabilityForCalendar
                                          aliada_id: aliada_id,
                                          service: service)
     availability = finder.find
-    # binding.pry
     availability
   end
      
@@ -180,9 +179,12 @@ class AvailabilityForCalendar
             if interval.size == @requested_service_hours
 
               keep = free_continuous_hours_in_front == 2
+
+              @report.push({message: "The interval size is #{interval.size} the requested_service_hours are #{@requested_service_hours} keep? #{keep} because free_continuous_hours_in_front #{free_continuous_hours_in_front}", objects: [interval]}) unless keep
             elsif interval.size == @minimum_service_hours
 
               keep = free_continuous_hours_in_front >= 1
+              @report.push({message: "The interval size is #{interval.size} the minimum_service_hours are #{@minimum_service_hours} keep? #{keep} because free_continuous_hours_in_front #{free_continuous_hours_in_front}", objects: [interval]}) unless keep
             end
           end
 
