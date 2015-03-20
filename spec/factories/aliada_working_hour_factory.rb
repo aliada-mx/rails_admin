@@ -1,12 +1,10 @@
 FactoryGirl.define do
-  factory :recurrence, class: Recurrence do
+  factory :aliada_working_hour, class: AliadaWorkingHour do
     weekday 'monday'
     hour 7
     periodicity 7
     total_hours 3
-    owner 'user'
+    owner 'aliada'
     association :aliada, factory: :aliada
-    association :user, factory: :user
-
   end
 end

@@ -9,7 +9,7 @@
     = render partial: 'services/edit/step_2_success', locals: {edit_service_form: edit_service_form}
 
   %aside
-    = render partial: 'services/edit/summary', locals: {initial_service_form: edit_service_form}
+    = render partial: 'services/edit/summary', locals: {edit_service_form: edit_service_form}
 
 = append :javascript do
   = javascript_include_tag 'services/edit'
