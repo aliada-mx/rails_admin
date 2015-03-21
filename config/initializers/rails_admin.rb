@@ -1,6 +1,8 @@
 # Register actions
 RailsAdmin::Config::Actions.register(:create_aliada_working_hours, RailsAdmin::Config::Actions::CreateAliadaWorkingHours)
 
+RailsAdmin::Config::Fields::Types::register(:show_aliada_calendar, RailsAdmin::Config::Actions::ShowAliadaCalendar)
+
 RailsAdmin.config do |config|
   # By default rails admin does not support Inet fields so we force it
   class RailsAdmin::Config::Fields::Types::Inet < RailsAdmin::Config::Fields::Base
@@ -24,6 +26,12 @@ RailsAdmin.config do |config|
     delete
     
     create_aliada_working_hours do
+      visible do
+        bindings[:abstract_model].model.to_s == 'Aliada'
+      end
+    end
+    
+    show_aliada_calendar do
       visible do
         bindings[:abstract_model].model.to_s == 'Aliada'
       end

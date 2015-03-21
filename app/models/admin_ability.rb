@@ -9,6 +9,7 @@ class AdminAbility
         can :manage, :all
 
         can :create_aliada_working_hours
+        can :show_aliada_calendar
       end
     end
   end
