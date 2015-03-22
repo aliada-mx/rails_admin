@@ -4,10 +4,6 @@
 
 .service-card-wrapper
 
-  &:last-child
-    .service-card
-      margin-bottom: 0
-
   &.new-service-card
     display: table
     height: 100%
@@ -16,6 +12,24 @@
     
     .service-card
       height: 100%
+
+  &.empty
+    min-height: 400px
+    .service-card
+      box-shadow: none !important
+      border: 3px dashed $pink
+      display: table
+      color: $pink
+      text-align: center
+      width: 100%
+      +rem(margin-bottom, 4rem)
+
+      a
+        display: table-cell
+        vertical-align: middle
+        font-weight: 600
+        +rem(font-size, $medium-font)
+        color: $pink
 
 .service-card
   +box-shadow($medium-gray 0px 0px 4px)
@@ -39,20 +53,6 @@
         a
           +action-button($green)
 
-  &.empty
-    box-shadow: none !important
-    border: 3px dashed $pink
-    display: table
-    color: $pink
-    text-align: center
-    width: 100%
-
-    a
-      display: table-cell
-      vertical-align: middle
-      font-weight: 600
-      +rem(font-size, $medium-font)
-      color: $pink
 
   .body
     background: white

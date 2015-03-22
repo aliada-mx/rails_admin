@@ -3,9 +3,8 @@
 $(function(){
     // Adjust the height of the new service card
     // TODO solve on CSS
-    var $new_service_card = $('.new-service-card')
-    var card_height = $new_service_card.prev().children('.service-card').outerHeight(false);
+    var $new_service_card_wrapper = $('.service-card-wrapper.empty')
+    var card_height = $new_service_card_wrapper.prev().children('.service-card').outerHeight(false);
     
-    $new_service_card.css('height', card_height);
-
+    $new_service_card_wrapper.find('.service-card').css('height', card_height);
 })

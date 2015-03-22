@@ -32,8 +32,9 @@ class Service < ActiveRecord::Base
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
-
   scope :on_day, -> (datetime) { where('datetime >= ?', datetime.beginning_of_day).where('datetime <= ?', datetime.end_of_day) } 
+  scope :not_canceled, -> { where('services.status != ?', 'canceled') }
+
   # Validations
   validate :datetime_is_hour_o_clock
   validate :datetime_within_working_hours
@@ -51,7 +52,7 @@ class Service < ActiveRecord::Base
     transition 'created' => 'aliada_missing', :on => :mark_as_missing
     transition 'created' => 'paid', :on => :pay
     transition ['created', 'aliada_assigned', 'in-progress'] => 'finished', :on => :finish
-    transition ['created', 'aliada_assigned' ] => 'cancelled', :on => :cancel
+    transition ['created', 'aliada_assigned' ] => 'canceled', :on => :cancel
 
     after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
 
@@ -66,6 +67,10 @@ class Service < ActiveRecord::Base
         recurrence.aliada = aliada if service.recurrent?
         recurrence.save!
       end
+    end
+
+    before_transition on: :cancel do |service, transition|
+      service.cancel_schedules!
     end
   end
 
@@ -111,23 +116,26 @@ class Service < ActiveRecord::Base
   end
 
   def set_hours_before_after_service
-    self.hours_before_service = Setting.beginning_of_aliadas_day == datetime.try(:hour) ? 0 : Setting.hours_before_service
-    self.hours_after_service = Setting.end_of_aliadas_day == datetime.try(:hour) ? 0 : Setting.hours_after_service
+    self.hours_after_service = Setting.padding_hours_between_services
   end
 
   def self.parse_date_time(params)
     ActiveSupport::TimeZone[self.timezone].parse("#{params[:date]} #{params[:time]}")
   end
 
-  def ensure_recurrence!
+  def ensure_updated_recurrence!
     return unless recurrent?
 
+    recurrence_attributes = {user_id: user_id,
+                             periodicity: service_type.periodicity,
+                             total_hours: total_hours,
+                             hour: datetime.hour,
+                             weekday: datetime.weekday }
+
     if self.recurrence.blank?
-      self.recurrence = Recurrence.create!(user_id: user_id,
-                                           periodicity: service_type.periodicity,
-                                           total_hours: total_hours,
-                                           hour: beginning_datetime.hour,
-                                           weekday: datetime.weekday)
+      self.recurrence = Recurrence.create!(recurrence_attributes)
+    else
+      self.recurrence.update_attributes!(recurrence_attributes)
     end
   end
 
@@ -146,27 +154,23 @@ class Service < ActiveRecord::Base
   end
 
   def total_hours
-    hours_before_service + estimated_hours + hours_after_service
+    estimated_hours + hours_after_service
   end
 
   # Starting the next recurrence day how many days we'll provide service until the horizon
-  def days_count_to_end_of_recurrency(starting_after_datetime)
+  def wdays_count_to_end_of_recurrency(starting_after_datetime)
     wdays_until_horizon(datetime.wday, starting_from: next_day_of_recurrence(starting_after_datetime))
   end
 
   def ending_datetime
-    beginning_datetime + total_hours.hours
-  end
-
-  # The datetime that effectively starts consuming an aliada's real time
-  def beginning_datetime
-    datetime - hours_before_service.hours
+    datetime + total_hours.hours
   end
 
   def book_aliada(aliada_id: nil)
     available_after = starting_datetime_to_book_services
 
-    aliadas_availability = AvailabilityForService.find_aliadas_availability(self, available_after, aliada_id: aliada_id)
+    finder = AvailabilityForService.new(self, available_after, aliada_id: aliada_id)
+    aliadas_availability = finder.find
 
     raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
 
@@ -190,6 +194,10 @@ class Service < ActiveRecord::Base
     end
   end
 
+  def cancel_schedules!
+    self.schedules.in_the_future.map(&:enable_booked!)
+  end
+
   def self.create_new!(service_params, user)
     ActiveRecord::Base.transaction do
       service_params[:datetime] = Service.parse_date_time(service_params)
@@ -200,7 +208,7 @@ class Service < ActiveRecord::Base
       service.address = address
       service.user = user
       service.set_hours_before_after_service
-      service.ensure_recurrence!
+      service.ensure_updated_recurrence!
 
       service.save!
 
@@ -222,7 +230,7 @@ class Service < ActiveRecord::Base
       service.address = address
       service.user = user
       service.set_hours_before_after_service
-      service.ensure_recurrence!
+      service.ensure_updated_recurrence!
 
       service.save!
 
@@ -245,7 +253,7 @@ class Service < ActiveRecord::Base
 
       set_hours_before_after_service
       ensure_not_downgrading!
-      ensure_recurrence!
+      ensure_updated_recurrence!
 
       reschedule! if needs_rescheduling?
       save!
@@ -272,70 +280,29 @@ class Service < ActiveRecord::Base
   end
 
   def reschedule!
-    available_after = starting_datetime_to_book_services
+    aliada_availability = book_aliada(aliada_id: self.aliada_id)
 
-    finder = AvailabilityForService.new(self, available_after, aliada_id: self.aliada_id)
-
-    service_schedules = self.schedules.after_datetime(available_after)
-    # The user might have used his/her own schedules
-    finder.inject_availability(service_schedules)
-
-    aliadas_availability = finder.find
-
-    raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
-
-    aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
-
-    aliada_availability.book(self)
-
-    # We might have not used some or all those schedules the service has so enable them
-    aliada_availability.enable_unused_schedules(service_schedules)
+    # We might have not used some or all those schedules the service had, so enable them back
+    aliada_availability.enable_unused_schedules
   end
 
-  def one_time_schedule_intervals
-    ScheduleInterval.build_from_range(beginning_datetime, ending_datetime)
-  end
-   
   def next_day_of_recurrence(starting_after_datetime)
-    next_day = starting_after_datetime.change(hour: self.beginning_datetime.hour)
-    day = self.datetime
+    next_day = starting_after_datetime.change(hour: self.datetime.hour)
+    target_day = self.datetime
 
-    while next_day.wday != day.wday
+    while next_day.wday != target_day.wday
       next_day += 1.day
     end
 
     next_day
   end
 
-  def recurrent_schedule_intervals(starting_after_datetime)
-    recurrence_days = self.days_count_to_end_of_recurrency(starting_after_datetime)
-    starting_datetime = next_day_of_recurrence(starting_after_datetime)
-    schedules_intervals = []
-
-    recurrence_days.times do |i|
-      ending_datetime = starting_datetime + total_hours.hours
-
-      schedules_intervals.push(ScheduleInterval.build_from_range(starting_datetime, ending_datetime)) if starting_datetime < horizon
-
-      starting_datetime += periodicity.day
-    end
-    schedules_intervals
-  end
-
   # To build schedules we must know where do we start
   # because services are booked at an specific range
-  def requested_schedules(starting_after_datetime)
-    requested_intervals(starting_after_datetime).inject([]) { |schedules, interval| interval.schedules + schedules }.sort.reverse
+  def requested_schedules
+    ScheduleInterval.build_from_range(datetime, ending_datetime, elements_for_key: estimated_hours, conditions:{ aliada_id: aliada_id })
   end
-
-  def requested_intervals(starting_after_datetime)
-    if service_type.recurrent?
-      recurrent_schedule_intervals(starting_after_datetime)
-    else
-      [one_time_schedule_intervals]
-    end
-  end
-
+   
   # Validations
   def service_type_exists
     message = 'El tipo de servicio elegido no existe'

@@ -18,10 +18,10 @@ feature 'AliadasAvailabilityController' do
   before do
     create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada, zones: [zone]})
     create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada_2, zones: [zone]})
+
     Timecop.freeze(starting_datetime)
 
-    booked_interval = create_one_timer!(starting_datetime + 2.day, hours: 5, conditions: {aliada: aliada, zones: [zone], service: service, status: 'booked'} )
-    @booked_schedules = booked_interval.schedules
+    @available_date = (starting_datetime + 1.day).strftime('%Y-%m-%d')
   end
 
   after do
@@ -33,29 +33,38 @@ feature 'AliadasAvailabilityController' do
       it 'returns a json with dates times included' do
 
         with_rack_test_driver do
-          page.driver.submit :post, aliadas_availability_path, {hours: 3, service_type_id: one_time.id, postal_code_number: postal_code.number}
+          page.driver.submit :post, aliadas_availability_path, {hours: 4, service_type_id: one_time.id, postal_code_number: postal_code.number}
         end
         
         response = JSON.parse(page.body)
-        available_date = (starting_datetime + 1.day).strftime('%Y-%m-%d')
-        expect(response['dates_times'].has_key?(available_date)).to eql true
-        expect(response['dates_times'][available_date]).to eql [{"value" => "07:00","friendly_time" => " 7:00 am", "friendly_datetime"=>"viernes 02 de enero,  7:00 am"}]
+        expect(response['dates_times'].has_key?(@available_date)).to eql true
+        expect(response['dates_times'][@available_date]).to eql [{"value" => "07:00","friendly_time" => " 7:00 am", "friendly_datetime"=>"viernes 02 de enero,  7:00 am"}]
+      end
+
+      it 'returns a json without dates times if theres not availabilty' do
+        with_rack_test_driver do
+          page.driver.submit :post, aliadas_availability_path, {hours: 5, service_type_id: one_time.id, postal_code_number: postal_code.number}
+        end
+        
+        response = JSON.parse(page.body)
+        expect(response['dates_times']).to be_empty
       end
 
       it 'returns a json with dates times including the passed service availability' do
+        create_one_timer!(starting_datetime + 1.day + 4.hour, hours: 1, conditions: {aliada: aliada, 
+                                                                                     zones: [zone],
+                                                                                     service: service,
+                                                                                     status: 'booked'} )
         login_as(user)
 
         with_rack_test_driver do
-          page.driver.submit :post, aliadas_availability_path, {hours: 3, service_type_id: one_time.id, postal_code_number: postal_code.number, service_id: service.id}
+          page.driver.submit :post, aliadas_availability_path, {hours: 5, service_type_id: one_time.id, postal_code_number: postal_code.number, service_id: service.id}
         end
         
         response = JSON.parse(page.body)
-        available_date = (starting_datetime + 1.day).strftime('%Y-%m-%d')
-        service_available_date = (starting_datetime + 2.day).strftime('%Y-%m-%d')
 
-        expect(response['dates_times'].has_key?(available_date)).to eql true
-        expect(response['dates_times'][available_date]).to eql [{"value" => "07:00","friendly_time" => " 7:00 am", "friendly_datetime"=>"viernes 02 de enero,  7:00 am"}]
-        expect(response['dates_times'][service_available_date]).to eql [{"value"=>"07:00", "friendly_time"=>" 7:00 am", "friendly_datetime"=>"sábado 03 de enero,  7:00 am"}]
+        expect(response['dates_times'].has_key?(@available_date)).to eql true
+        expect(response['dates_times'][@available_date]).to eql [{"value" => "07:00","friendly_time" => " 7:00 am", "friendly_datetime"=>"viernes 02 de enero,  7:00 am"}]
       end
     end
   end
