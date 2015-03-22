@@ -1,6 +1,7 @@
 class ScheduleInterval
   #Represents a contiguous block of schedules 
   include ActiveModel::Validations
+  extend Forwardable
 
   validate :schedules_presence
   validate :schedules_continuity
@@ -8,12 +9,15 @@ class ScheduleInterval
   attr_accessor :schedules, :aliada_id, :skip_validations
   attr_reader :previous_schedule
 
-  def initialize(schedules, skip_validations: false, aliada_id: nil)
+  def_delegators :@schedules, :first, :[]
+
+  def initialize(schedules, skip_validations: false, aliada_id: nil, elements_for_key: 0)
     # Because the users of this class might reuse the passed array we must ensure
     # we get our own duplicate
     @schedules = schedules.dup
     @skip_validations = skip_validations
     @aliada_id = aliada_id
+    @elements_for_key = elements_for_key
   end
 
   # For service hours padding purposes
@@ -36,6 +40,15 @@ class ScheduleInterval
     @schedules.first.datetime
   end
 
+  def key
+    # This key will asume we have the same interval if the first requested_service_hours are the same
+    # so larger intervals overrides smaller
+    wday_hour_aliada_id = @schedules[0..@elements_for_key-1].reduce('') do |string, schedule|
+      string += "#{schedule.datetime}-#{schedule.aliada_id}-"
+    end
+    Digest::MD5.hexdigest(wday_hour_aliada_id)
+  end
+
   def ending_of_interval
     @schedules.last.datetime
   end
@@ -48,8 +61,23 @@ class ScheduleInterval
     size == 0
   end
 
-  def include?(other_schedule)
-    @schedules.any? { |schedule| schedule.datetime == other_schedule.datetime }
+  def include_schedule?(other_schedule)
+    @schedules.any? do |schedule| 
+      schedule.id == other_schedule.id
+    end
+  end
+
+  def include_datetime?(other_schedule)
+    @schedules.any? do |schedule| 
+      schedule.datetime == other_schedule.datetime
+    end
+  end
+
+  def include_recurrent?(other_schedule)
+    @schedules.any? do |schedule| 
+      schedule.datetime.wday == other_schedule.datetime.wday &&
+      schedule.datetime.hour == other_schedule.datetime.hour
+    end
   end
 
   # Returns the time difference between the beginning two schedule intervals
@@ -79,11 +107,15 @@ class ScheduleInterval
     end
   end
 
+  def padding_count
+    @schedules.select { |s| s.padding? }.count
+  end
+
   def wday
     @schedules.first.datetime.wday
   end
 
-  def self.build_from_range(starting_datetime, ending_datetime, from_existing: false, conditions: {})
+  def self.build_from_range(starting_datetime, ending_datetime, from_existing: false, conditions: {}, elements_for_key: 0)
     schedules = []
 
     Time.iterate_in_hour_steps(starting_datetime, ending_datetime).each do |datetime|
@@ -102,7 +134,11 @@ class ScheduleInterval
       schedules.push(schedule)
     end
 
-    new(schedules)
+    if conditions.has_key? :aliada_id
+      new(schedules, elements_for_key: elements_for_key, aliada_id: conditions[:aliada_id])
+    else
+      new(schedules, elements_for_key: elements_for_key)
+    end
   end
 
   # True if consecutives datetimes are separated by 1 hour

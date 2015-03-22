@@ -5,7 +5,7 @@ module TestingSupport
     def create_one_timer!(starting_datetime, hours: hours, conditions: {}, persist: true)
       ending_datetime = starting_datetime + hours.hour
 
-      interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime, conditions: conditions)
+      interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime, conditions: conditions, elements_for_key: hours)
       if persist
         interval.persist!
       end
@@ -19,7 +19,7 @@ module TestingSupport
       recurrence_days.times do |i|
         ending_datetime = starting_datetime + hours.hour
 
-        interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime, conditions: conditions)
+        interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime, conditions: conditions, elements_for_key: hours)
         if persist
           interval.persist!
         end

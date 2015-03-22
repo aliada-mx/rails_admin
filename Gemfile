@@ -85,10 +85,6 @@ gem 'cancancan'
 #
 gem 'smtpapi'
 
-
-# 
-
-
 group :development, :test do
   gem 'guard-rspec', require: false
   # Call 'pry' anywhere in the code to stop execution and get a debugger console
@@ -164,3 +160,4 @@ group :production, :staging, :development do
   # Quiet down the partials rendering
   gem "lograge"
 end
+
