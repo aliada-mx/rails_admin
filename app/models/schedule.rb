@@ -3,7 +3,7 @@ class Schedule < ActiveRecord::Base
     ['available','Disponible'],
     ['booked','Reservado para un servicio'],
     ['busy','Ocupada'],
-    ['on-transit','En movimiento'],
+    ['padding','Horas de colchon entre servicios'],
   ]
 
   # Validations
@@ -22,11 +22,15 @@ class Schedule < ActiveRecord::Base
   scope :available, -> { where(status: 'available') }
   scope :busy, -> { where(status: 'busy') }
   scope :booked, -> {  where(status: 'booked') }
+  scope :padding, -> {  where(status: 'padding') }
   scope :in_zone, -> (zone) { joins(:zones).where("schedules_zones.zone_id = ?", zone.id) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
-  scope :after_datetime, ->(starting_datetime) { where("datetime >= ?", starting_datetime) }
+  scope :in_or_after_datetime, ->(starting_datetime) { where("datetime >= ?", starting_datetime) }
+  scope :after_datetime, ->(datetime) { where("datetime > ?", datetime) }
+  scope :for_aliada_id, ->(aliada_id) { where("schedules.aliada_id = ?", aliada_id) }
+  scope :in_or_before_datetime, ->(datetime) { where("datetime <= ?", datetime) }
   scope :ordered_by_aliada_datetime, -> { order(:aliada_id, :datetime) }
-  scope :available_for_booking, ->(zone, starting_datetime) { available.in_zone(zone).after_datetime(starting_datetime).ordered_by_aliada_datetime }
+  scope :for_booking, ->(zone, starting_datetime) { in_zone(zone).in_or_after_datetime(starting_datetime).ordered_by_aliada_datetime }
 
   scope :previous_aliada_schedule, ->(zone, current_schedule, aliada) { 
     in_zone(zone)
@@ -49,15 +53,20 @@ class Schedule < ActiveRecord::Base
     transition ['booked', 'busy'] => 'available', on: :enable
     transition 'booked' => 'available', on: :enable_booked
     transition ['available', 'booked'] => 'busy', on: :get_busy
-    transition 'booked' => 'on-transit', on: :transiting
+    transition ['booked', 'available'] => 'padding', on: :as_padding
 
-    after_transition on: :enable_booked do |schedule, transition|
+    after_transition on: [:enable_booked, :enable] do |schedule, transition|
+      schedule.user_id = nil
       schedule.service_id = nil
+      schedule.recurrence_id = nil
       schedule.save!
     end
   end
 
   after_initialize :set_default_values
+
+  attr_accessor :index # for availability finders to track they schedule position on the main loop
+  attr_accessor :original_status # for availability finders because they asume the state is available we keep a record of the original state
 
   def schedule_within_working_hours
     message = 'No podemos registrar una hora de servicio que empieza o termina fuera del horario de trabajo'
@@ -78,9 +87,9 @@ class Schedule < ActiveRecord::Base
     navigation_icon 'icon-calendar'
 
     configure :datetime do
-      pretty_value do
-        value.in_time_zone('Mexico City')
-      end
+      # pretty_value do
+      #   value.in_time_zone('Mexico City')
+      # end
     end
   end
 

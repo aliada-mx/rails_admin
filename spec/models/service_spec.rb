@@ -45,18 +45,19 @@ feature 'Service' do
 
   describe '#book_aliada' do
     it 'allows it to mark one time service schedules´ as booked', recurrent: false do
-      available_schedules = Schedule.available_for_booking(zone, starting_datetime_to_book_services)
+      available_schedules = Schedule.for_booking(zone, starting_datetime_to_book_services)
       expect(available_schedules.count).to be 4
       expect(Schedule.booked.count).to be 0
 
       service.book_aliada
 
-      expect(Schedule.booked.count).to be 4
-      expect(Schedule.available_for_booking(zone, starting_datetime_to_book_services).count).to be 0
+      expect(Schedule.padding.count).to be 1
+      expect(Schedule.booked.count).to be 3
+      expect(Schedule.for_booking(zone, starting_datetime_to_book_services).available.count).to be 0
     end
 
     it 'allows it to mark recurrent service schedules´ as booked', recurrent: true do
-      available_schedules = Schedule.available_for_booking(zone, starting_datetime_to_book_services)
+      available_schedules = Schedule.for_booking(zone, starting_datetime_to_book_services).available
       expect(available_schedules.count).to be 20
       expect(Schedule.booked.count).to be 0
 
@@ -65,7 +66,8 @@ feature 'Service' do
 
       service.book_aliada
 
-      expect(Schedule.booked.count).to be 20 
+      expect(Schedule.booked.count).to be 15
+      expect(Schedule.padding.count).to be 5
       expect(available_schedules.count).to be 0
     end
   end
@@ -108,59 +110,29 @@ feature 'Service' do
     end
   end
 
-  describe '#days_count_to_end_of_recurrency' do
+  describe '#wdays_count_to_end_of_recurrency' do
     it 'returns 4 for the number of fridays on january 2015' do
       expect(starting_datetime).to eql Time.zone.parse('01 Jan 2015 13:00:00')
       expect(Setting.time_horizon_days).to be 30
-      expect(service.days_count_to_end_of_recurrency(starting_datetime)).to be 5
+      expect(service.wdays_count_to_end_of_recurrency(starting_datetime)).to be 5
     end
   end
 
   describe '#requested_schedules' do
-    before :each do
-      Timecop.freeze(starting_datetime)
+    before do
+      @schedule_interval = service.requested_schedules
     end
 
-    after do
-      Timecop.return
+    it 'should have valid schedule intervals starting datetimes' do
+      expect(@schedule_interval.beginning_of_interval).to eql starting_datetime + 1.day
     end
 
-    context 'recurrent service' do
-      before do
-        service.service_type = recurrent_service
-        @schedule_intervals = service.requested_intervals(starting_datetime)
-      end
-
-      it 'should have valid schedule intervals starting datetimes' do
-        expect(@schedule_intervals.first.beginning_of_interval.hour).to eql (starting_datetime + 1.day).hour
-      end
-
-      it 'should have valid schedule intervals ending datetimes' do
-        expect(@schedule_intervals.last.ending_of_interval).to eql (starting_datetime + Setting.time_horizon_days.days - 1.day + 3.hours)
-      end
-
-      it 'should have a correct number of schedule intervals' do
-        expect(@schedule_intervals.size).to eql 5
-      end
+    it 'should have valid schedule intervals ending datetimes' do
+      expect(@schedule_interval.ending_of_interval).to eql starting_datetime + 1.day + 4.hours
     end
 
-    context 'one time service' do
-      before do
-        service.service_type = one_time_service
-        @schedule_intervals = service.requested_intervals(starting_datetime)
-      end
-
-      it 'should have valid schedule intervals starting datetimes' do
-        expect(@schedule_intervals.first.beginning_of_interval.hour).to eql (starting_datetime + 1.day).hour
-      end
-
-      it 'should have valid schedule intervals ending datetimes' do
-        expect(@schedule_intervals.first.ending_of_interval).to eql (starting_datetime + 3.hours + 1.day)
-      end
-
-      it 'should have a correct number of schedule intervals' do
-        expect(@schedule_intervals.size).to eql 1
-      end
+    it 'should have a correct number of schedule intervals' do
+      expect(@schedule_interval.size).to eql 5
     end
   end
 

@@ -104,8 +104,9 @@ feature 'ServiceController' do
         service = Service.first
         expect(service).to be_present
         expect(service.service_type_id).to eql one_time_service.id
-        expect(Schedule.available.count).to be 21
-        expect(Schedule.booked.count).to be 4
+        expect(Schedule.available.count).to be 20
+        expect(Schedule.booked.count).to be 3
+        expect(Schedule.padding.count).to be 2
       end
 
       it 'creates a new recurrent service' do
@@ -126,8 +127,8 @@ feature 'ServiceController' do
         
         expect(service.aliada).to be_present
         expect(recurrence.owner).to eql 'user'
-        expect(recurrence.hour).to eql service.beginning_datetime.hour
-        expect(recurrence.weekday).to eql service.beginning_datetime.weekday
+        expect(recurrence.hour).to eql service.datetime.hour
+        expect(recurrence.weekday).to eql service.datetime.weekday
         expect(recurrence.aliada).to eql aliada
         expect(recurrence.user).to eql user
 
@@ -137,8 +138,9 @@ feature 'ServiceController' do
         expect_to_have_a_complete_service(service)
 
         expect(service.service_type_id).to eql recurrent_service.id
-        expect(Schedule.available.count).to be 5
-        expect(Schedule.booked.count).to be 20
+        expect(Schedule.available.count).to be 0
+        expect(Schedule.booked.count).to be 15
+        expect(Schedule.padding.count).to be 10
       end
 
       it 'logs in the new user' do
@@ -288,13 +290,13 @@ feature 'ServiceController' do
         context 'recurrent services' do
           before do
             booked_intervals = create_recurrent!(starting_datetime, 
-                                                 hours: 5,
+                                                 hours: 6,
                                                  periodicity: recurrent_service.periodicity ,
                                                  conditions: {zones: [zone],
                                                               aliada: aliada,
                                                               service: user_service,
                                                               status: 'booked'})
-            available_schedules_intervals = create_recurrent!(starting_datetime + 5.hours, 
+            available_schedules_intervals = create_recurrent!(starting_datetime + 6.hours, 
                                                               hours: 1,
                                                               periodicity: recurrent_service.periodicity ,
                                                               conditions: {zones: [zone], aliada: aliada})
@@ -307,19 +309,10 @@ feature 'ServiceController' do
 
             @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
             Capybara.ignore_hidden_elements = false
-
-            expect(user_service.schedules.count).to eql 25
-            expect(Schedule.available.count).to eql 5
-            expect(user_service.schedules.map(&:datetime).sort).to eql @booked_schedules_datetimes.sort
-            expect(user_service.estimated_hours).to eql 4
           end
 
           after do
             Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
-          end
-
-          it 'doesnt let you downgrade from recurent to one time' do
-
           end
 
           it 'doesnt reschedule the service when datetime, estimated or hours change' do
@@ -349,7 +342,8 @@ feature 'ServiceController' do
 
           it 'reschedules the service when the estimated hours change' do
             expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
-            select_by_value(5.0, from:'service_estimated_hours')
+
+            select_by_value(5.0, from: 'service_estimated_hours')
             fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
             fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
 
@@ -362,13 +356,17 @@ feature 'ServiceController' do
             service = Service.find(response['service_id'])
 
             expect(service.estimated_hours).to eql 5
-            expect(service.schedules.count).to eql 29
+            expect(service.schedules.count).to eql 34
+            expect(service.schedules.padding.count).to eql 8
 
             expect(@schedules_datetimes_to_book - service.schedules.map(&:datetime)).to be_empty 
+            expect(Schedule.available.count).to eql 1
           end
 
           it 'makes available schedules previously booked but not used anymore by the service' do
             expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
+            expect(Schedule.available.count).to eql 5
+
             select_by_value(3.0, from: 'service_estimated_hours')
             fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
             fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
@@ -382,15 +380,18 @@ feature 'ServiceController' do
             service = Service.find(response['service_id'])
 
             expect(service.estimated_hours).to eql 3
-            expect(service.schedules.count).to eql 21 # enabled 4 schedules
+            expect(service.schedules.count).to eql 26 # enabled 4 schedules
+            expect(service.schedules.padding.count).to eql 8
             expect(Schedule.available.count).to eql 9
           end
 
           it 'changes the recurrence attributes' do
             expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
-            expect(user_service.recurrence.total_hours).to eql 5
+            expect(user_service.recurrence.reload.total_hours).to eql 6
 
             select_by_value(5.0, from: 'service_estimated_hours')
+            fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
+            fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
 
             click_button 'Guardar cambios'
 
@@ -400,7 +401,7 @@ feature 'ServiceController' do
 
             service = Service.find(response['service_id'])
 
-            expect(service.recurrence.total_hours).to eql 6
+            expect(service.recurrence.total_hours).to eql 7
           end
         end
       end
@@ -433,8 +434,6 @@ feature 'ServiceController' do
         end
       end
     end
-
-
 
     describe '#new' do
       let(:new_service_path) { new_service_users_path(user) }
@@ -495,8 +494,8 @@ feature 'ServiceController' do
 
           expect_to_have_a_complete_service(service)
           expect(recurrence.owner).to eql 'user'
-          expect(recurrence.hour).to eql service.beginning_datetime.hour
-          expect(recurrence.weekday).to eql service.beginning_datetime.weekday
+          expect(recurrence.hour).to eql service.datetime.hour
+          expect(recurrence.weekday).to eql service.datetime.weekday
           expect(recurrence.aliada).to eql aliada
           expect(recurrence.user).to eql user
         end

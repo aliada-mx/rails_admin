@@ -21,10 +21,10 @@
         .action-button-container
           - if user_signed_in?
             = link_to new_service_users_path(@user), {class: ' action-button size-extra-large'} do
-              Programa nueva visita
+              Solicita tu primer aliada
           - else
             = link_to initial_service_path, {class: ' action-button size-extra-large'} do
-              Pide tu primer visita
+              Pide otra aliada
 
 
 %section.media-section-wrapper
