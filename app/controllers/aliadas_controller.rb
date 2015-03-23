@@ -20,7 +20,6 @@ class AliadasController < ApplicationController
    
     @aliada = Aliada.find_by(authentication_token: params[:token])
     
-    
     if @aliada 
       #must implement today or tomorrow after 6pm, etc...
       now = Time.zone.now

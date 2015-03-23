@@ -51,7 +51,7 @@ class Schedule < ActiveRecord::Base
   state_machine :status, :initial => 'available' do
     transition ['available', 'busy'] => 'booked', on: :book
     transition ['booked', 'busy'] => 'available', on: :enable
-    transition 'booked' => 'available', on: :enable_booked
+    transition ['booked', 'padding'] => 'available', on: :enable_booked
     transition ['available', 'booked'] => 'busy', on: :get_busy
     transition ['booked', 'available'] => 'padding', on: :as_padding
 

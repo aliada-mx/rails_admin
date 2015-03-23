@@ -110,7 +110,7 @@ feature 'AliadasController' do
     it 'shows unfinished services and lets us charge them' do
       aliada = create(:aliada)
       client = create(:user, phone: '54545454', first_name: 'Juan', last_name:'Perez Tellez')
-      VCR.use_cassette('conekta_charge', match_requests_on: [:conekta_preauthorization]) do
+      VCR.use_cassette('conekta_charge', match_requests_on: [:conekta_charge]) do
         client.create_payment_provider_choice(conekta_card)
         address1 = create(:address, city: 'Cuauhtemoc',
                           street: 'Tabasco', number: '232', 

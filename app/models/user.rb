@@ -63,32 +63,29 @@ class User < ActiveRecord::Base
   def charge_service!(service_id)
     service_to_charge = Service.find_by(id: service_id, user_id: self.id, status: 'finished')
     
-    
-   
     if service_to_charge
-      begin
-        amount = service_to_charge.amount_to_bill
-        product = OpenStruct.new({price: amount,
-                                   description: 'Servicio aliada',
-                                   id: service_id})
-        
-        default_payment_provider.charge!(product, self)
-       
-        
-        ### Exception handler for when a user's payment method throws an exception
-        ### TODO: think about how to handle this for many payment providers
-      rescue Conekta::Error => err
-        service_to_charge.create_service_charge_failed_ticket(self, amount, err)
-       
-      end
+      amount = service_to_charge.amount_to_bill
+      product = OpenStruct.new({price: amount,
+                               description: 'Servicio aliada',
+                               id: service_id})
+      
+      ### TODO: handle this for multiple payment providers
+      charge!(product, service_to_charge)
     else
-      Ticket.create_warning(relevant_object_id: self.id,
-                            relevant_object_type: 'User',
+      Ticket.create_warning(relevant_object: self,
                             message: "Se intento cobrar servicio de cliente: #{self.id} pero no ha concluido o no existe")
     end  
   end
   
-  
+  def charge!(product, object)
+    begin
+      default_payment_provider.charge!(product, self)
+    rescue Conekta::Error => err
+      Raygun.track_exception(err)
+
+      object.create_charge_failed_ticket(self, product.price, err)
+    end
+  end
   
   def create_payment_provider_choice(payment_provider)
     # Switch the default

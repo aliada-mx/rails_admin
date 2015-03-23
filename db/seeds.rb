@@ -54,11 +54,11 @@ zone = FactoryGirl.create(:zone)
 puts '11800 postal code'
 FactoryGirl.create(:postal_code, :zoned, zone: zone, number: '11800')
 
-puts 'schedules for a week'
 
 # Paste the contents of this function
 def create_from_copypaste
   Schedule.destroy_all
+  puts 'schedules for a week'
   starting_datetime = Time.zone.now.change(hour: 13) # 7 am Mexico City Time
   aliada = Aliada.first
   zone = Zone.find_by_postal_code_number('11800')

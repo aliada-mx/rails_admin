@@ -4,6 +4,16 @@ module Presenters
       Service::STATUSES
     end
 
+    def tz_aware_datetime
+      if datetime
+        _datetime = datetime.in_time_zone(timezone)
+        if _datetime.dst?
+          _datetime -= 1.hour
+        end
+        _datetime
+      end
+    end
+
     def user_link
       host = Setting.host
       url = RailsAdmin::Engine.routes.url_helpers.edit_url(user.class, user, host: host)
@@ -13,21 +23,33 @@ module Presenters
     end
 
     def friendly_datetime
-      I18n.l(datetime.in_time_zone(timezone), format: :future) if datetime
+      if self.datetime
+        I18n.l(tz_aware_datetime, format: :future)
+      end
     end
 
     def friendly_time
-      I18n.l(datetime.in_time_zone(timezone), format: :friendly_time) if datetime
+      if datetime
+        I18n.l(tz_aware_datetime, format: :friendly_time)
+      end
     end
 
     def day
-      datetime.in_time_zone(timezone).strftime('%d') if datetime
+      if datetime
+        tz_aware_datetime.strftime('%e')
+      end
+    end
+
+    def month
+      if datetime
+        tz_aware_datetime.strftime('%l')
+      end
     end
 
     attr_writer :date
     def date
       if datetime.present?
-        datetime.in_time_zone(timezone).strftime('%Y-%m-%d')
+        tz_aware_datetime.strftime('%Y-%m-%d')
       else
         @date
       end
@@ -36,7 +58,7 @@ module Presenters
     attr_writer :time
    def time
       if datetime.present?
-        datetime.in_time_zone(timezone).strftime('%H:%M') 
+        tz_aware_datetime.strftime('%H:%M') 
       else
         @time
       end
@@ -49,7 +71,7 @@ module Presenters
     def estimated_hours_with_extras
       (estimated_hours || 0) + extras_hours
     end
-
+    
     def extras_hours
       extras.inject(0){ |hours,extra| hours += extra.hours || 0 }
     end

@@ -30,9 +30,10 @@
   .foot
     %span.hours{data: {bind: 'text_: "{{ hours }} horas:"'}}
     %span.cash{data: {bind: 'text_: "${{ price }}"'}}
-  .promotional-code{data: {bind: 'visible: current_step() == 5'}}
-    %a
-      APLICAR
-    = text_field_tag 'promo-code', nil, placeholder: 'código promocional'
+  -# TODO promotional codes
+    .promotional-code{data: {bind: 'visible: current_step() == 5'}}
+      %a
+        APLICAR
+      = text_field_tag 'promo-code', nil, placeholder: 'código promocional'
 
 = initial_service_form.submit 'Confirmar visita', id: 'next_button', class: 'action-button-pink size-extra-large', data: {bind: 'value: next_button_text, css: { disabled: !is_valid_step() }  '}

@@ -18,11 +18,12 @@
   aliada.user.postal_code_number = #{@user.postal_code_number};
   aliada.service.aliada_id = #{@service.aliada_id};
   aliada.service.id = #{@service.id};
-  aliada.service.date = '#{@service.date}'
-  aliada.service.time = '#{@service.time}'
-  aliada.service.day = '#{@service.datetime.strftime('%d')}'
+  aliada.service.date = '#{@service.date}';
+  aliada.service.time = '#{@service.time}';
+  aliada.service.day = #{@service.day};
+  aliada.service.month = #{@service.month};
   aliada.service.estimated_hours = #{@service.estimated_hours};
   aliada.service.estimated_hours_without_extras = #{@service.estimated_hours_without_extras};
   aliada.service.bathrooms = #{@service.bathrooms};
   aliada.service.bedrooms = #{@service.bedrooms};
-  aliada.service.friendly_datetime = '#{@service.friendly_datetime}'
+  aliada.service.friendly_datetime = '#{@service.friendly_datetime}';

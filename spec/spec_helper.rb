@@ -20,12 +20,10 @@ VCR.configure do |config|
   config.cassette_library_dir = "spec/fixtures/vcr_cassettes"
   config.hook_into :webmock # or :fakeweb
 
-  config.register_request_matcher :conekta_preauthorization do |real_request, recorded_request|
-    preauth_regex = /^https:\/\/.*:@api.conekta.io\/charges\?amount=\d+&card=.*&currency=MXN&description=.*&reference_id=\d+/
+  config.register_request_matcher :conekta_charge do |real_request, recorded_request|
+    charge_regex = /^https:\/\/.*:@api.conekta.io\/charges\?amount=\d+&card=.*&currency=MXN&description=.*&reference_id=\d+/
 
-    
-
-    real_request.uri == recorded_request.uri || (preauth_regex.match(real_request.uri) && preauth_regex.match(recorded_request.uri))
+    real_request.uri == recorded_request.uri || (charge_regex.match(real_request.uri) && charge_regex.match(recorded_request.uri))
   end
 end
 

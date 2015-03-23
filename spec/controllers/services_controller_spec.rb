@@ -175,7 +175,7 @@ feature 'ServiceController' do
 
         fill_hidden_input 'conekta_temporary_token', with: 'tok_test_visa_4242'
 
-        VCR.use_cassette('initial_service_conekta_card', match_requests_on: [:method, :conekta_preauthorization]) do
+        VCR.use_cassette('initial_service_conekta_card', match_requests_on: [:method, :conekta_charge]) do
           click_button 'Confirmar visita'
         end
 
@@ -289,6 +289,9 @@ feature 'ServiceController' do
 
         context 'recurrent services' do
           before do
+            @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
+            Capybara.ignore_hidden_elements = false
+
             booked_intervals = create_recurrent!(starting_datetime, 
                                                  hours: 6,
                                                  periodicity: recurrent_service.periodicity ,
@@ -296,6 +299,7 @@ feature 'ServiceController' do
                                                               aliada: aliada,
                                                               service: user_service,
                                                               status: 'booked'})
+
             available_schedules_intervals = create_recurrent!(starting_datetime + 6.hours, 
                                                               hours: 1,
                                                               periodicity: recurrent_service.periodicity ,
@@ -306,9 +310,6 @@ feature 'ServiceController' do
             @schedules_datetimes_to_book = ( @available_schedules_datetimes - @booked_schedules_datetimes ).select { |s| s > next_day_of_service }
 
             visit edit_service_users_path(user_id: user.id, service_id: user_service.id)
-
-            @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
-            Capybara.ignore_hidden_elements = false
           end
 
           after do
@@ -407,13 +408,14 @@ feature 'ServiceController' do
       end
 
       describe '#cancel' do
-        before do
+        before :each do
           @future_service_interval = create_one_timer!( starting_datetime, hours: 3, conditions: { zones: [zone], aliada: aliada, service: user_service, status: 'booked' } )
           @previous_service_interval = create_one_timer!( starting_datetime - 1.day, hours: 3, conditions: { zones: [zone], aliada: aliada, service: user_service, status: 'booked' } )
 
           allow_any_instance_of(User).to receive(:aliadas).and_return([aliada])
           allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
           allow_any_instance_of(User).to receive(:postal_code_number).and_return(11800)
+          allow_any_instance_of(User).to receive(:charge!).and_return(true)
 
           edit_service_path = edit_service_users_path(user_id: user.id, service_id: user_service.id)
 
@@ -428,9 +430,21 @@ feature 'ServiceController' do
 
           click_button 'Cancelar'
           
+          expect(user_service.reload).to be_canceled
           expect(user_service.schedules.reload.booked.sort).to eql ( @previous_service_interval.schedules.sort )
           expect(@future_service_interval.schedules.all?{ |schedule| schedule.reload.available? }).to eql true
           expect(@previous_service_interval.schedules.all?{ |schedule| schedule.reload.booked? }).to eql true
+        end
+
+        it 'charges a fee if the cancelation happens > 24 hours before' do
+          expect_any_instance_of(Service).to receive(:charge_cancelation_fee!)
+          expect(Payment.count).to be 0
+
+          Timecop.travel(starting_datetime - 23.hours)
+
+          click_button 'Cancelar'
+
+          expect(user_service.reload).to be_canceled
         end
       end
     end

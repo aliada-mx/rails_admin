@@ -29,6 +29,7 @@ defaults: &defaults
   minimum_hours_service: 3
   cost_per_hour: 65
   booking_for_tomorrow_limit: 23 # After this hour you cant book a service for tomorrow, in UTC or 5 pm in Mexico City Time
+  too_late_cancelation_fee: 100 # in pesos
 
   sendgrid_templates_ids: 
     welcome: 'c25504da-8cb2-49be-a4c4-16ca4de53b41' 

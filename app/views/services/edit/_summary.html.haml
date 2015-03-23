@@ -4,6 +4,12 @@
 
   %ul.summary
 
+    %li{data: {bind: 'css: {checked: is_datetime_done, unchecked: !is_datetime_done()}'}}
+      %span{data: {bind: 'text_: "{{ service_type_display_name }}: {{ friendly_datetime }}"'}}
+      = link_to '#choose-date', class: 'small-letters' do
+        %icon.pencil.small
+        editar
+
     %li.checked
       - if @user.default_address
         %span #{@user.default_address.name}
@@ -26,20 +32,14 @@
           %icon.pencil.small
           editar
 
-    %li{data: {bind: 'css: {checked: is_datetime_done, unchecked: !is_datetime_done()}'}}
-      %span{data: {bind: 'text_: "{{ service_type_display_name }}: {{ friendly_datetime }}"'}}
-      = link_to '#choose-date', class: 'small-letters' do
-        %icon.pencil.small
-        editar
-
-
   .foot
     %span.hours{data: {bind: 'text_: "{{ hours }} horas:"'}}
     %span.cash{data: {bind: 'text_: "${{ price }}"'}}
-  .promotional-code
-    %a
-      APLICAR
-    = text_field_tag 'promo-code', nil, placeholder: 'código promocional'
+  -# TODO promotional codes
+    .promotional-code
+      %a
+        APLICAR
+      = text_field_tag 'promo-code', nil, placeholder: 'código promocional'
 
 = submit_tag 'Guardar cambios', id: 'update_button', name: 'update_button', class: 'action-button-pink size-extra-large', data: {bind: 'css: { disabled: !is_datetime_done() }'}, onclick: 'this.form.submitted = this.name'
 
