@@ -120,7 +120,11 @@ class Service < ActiveRecord::Base
   end
 
   def self.parse_date_time(params)
-    ActiveSupport::TimeZone[self.timezone].parse("#{params[:date]} #{params[:time]}")
+    datetime = ActiveSupport::TimeZone[self.timezone].parse("#{params[:date]} #{params[:time]}")
+    if datetime.dst?
+      datetime += 1.hour
+    end
+    datetime
   end
 
   def ensure_updated_recurrence!
@@ -170,13 +174,21 @@ class Service < ActiveRecord::Base
     available_after = starting_datetime_to_book_services
 
     finder = AvailabilityForService.new(self, available_after, aliada_id: aliada_id)
+
     aliadas_availability = finder.find
 
     raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
 
     aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
+    binding.pry
 
     aliada_availability.book(self)
+  end
+
+
+  def in_less_than_24_hours
+    in_24_hours = Time.zone.now + 24.hours
+    datetime < in_24_hours
   end
   
   #calculates the price to be charged for a service
