@@ -90,6 +90,8 @@ aliada.services.edit.initialize_calendar_times = function() {
     on_day_click: on_calendar_day_click
   });
 
+  _calendar = calendar;
+
   // Call local update_calendar on demand
   $(document).on('update-calendar', function() {
     update_calendar()
@@ -98,10 +100,21 @@ aliada.services.edit.initialize_calendar_times = function() {
 
   // Update calendar on page load
   update_calendar().then(function(calendar) {
+    calendar.gotoNextMonth();
+    updateMonthYear();
     calendar.chooseDay(aliada.service.day);
 
     aliada.ko.time(aliada.service.time);
     aliada.ko.date(aliada.service.date);
     aliada.ko.friendly_datetime(aliada.service.friendly_datetime);
   });
+
+  function updateMonthYear() {
+    var $month = $('#month').html(calendar.getMonthName()),
+        $year = $('#year').html(calendar.getYear());
+
+    $month.html(calendar.getMonthName());
+    $year.html(calendar.getYear());
+  };
 };
+_calendar = null

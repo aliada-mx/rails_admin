@@ -17,7 +17,7 @@ module Mixins
     def load_schedules
       # Pull the schedules from db
       @schedules = Schedule.for_booking(@zone, @available_after)
-      if @aliada_id.present?
+      if @aliada_id.present? && !@aliada_id.zero?
         @schedules = @schedules.where(aliada_id: @aliada_id)
       end
       # Eval the query to avoid multiple queries later on thanks to lazy evaluation
@@ -215,7 +215,6 @@ module Mixins
         end
 
         @aliadas_availability.previous_service_schedules = @previous_service_schedules
-        # binding.pry
       end
     end
 

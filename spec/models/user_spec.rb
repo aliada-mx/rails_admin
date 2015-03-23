@@ -76,8 +76,7 @@ describe 'User' do
       service.save
       
 
-      VCR.use_cassette('conekta_user_charge', match_requests_on:[:conekta_preauthorization]) do
-        
+      VCR.use_cassette('conekta_user_charge', match_requests_on:[:conekta_charge]) do
         user.charge_service!(service.id)
       end
       expect(Payment.all.count).to eql 1

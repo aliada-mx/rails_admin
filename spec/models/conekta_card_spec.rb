@@ -45,7 +45,7 @@ describe 'ConektaCard' do
       expect(ConektaCard.first).to eql card
 
       # TODO use regex matchers because the request wont match if the id of the generated card changes
-      VCR.use_cassette('new_card', match_requests_on: [:conekta_preauthorization]) do
+      VCR.use_cassette('new_card', match_requests_on: [:conekta_charge]) do
         ConektaCard.create_for_user!(user, token)
       end
 

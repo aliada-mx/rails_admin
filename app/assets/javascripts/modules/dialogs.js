@@ -85,7 +85,7 @@ aliada.dialogs.succesfull_service_changes = function(next_path) {
   var update_success_template = _.template($('#update_service_success_template').html());
 
   vex.open({
-    content: update_success_template,
+    content: update_success_template({}),
     showCloseButton: true,
     escapeButtonCloses: true,
     overlayClosesOnClick: true,
@@ -106,11 +106,13 @@ aliada.dialogs.succesfull_service_changes = function(next_path) {
 };
 
 aliada.dialogs.confirm_service_cancel = function() {
-  return new Promise(function(resolve,reject){
+  var cancel_one_time_service_template = _.template($('#cancel_one_time_service_template').html());
+
+  return new Promise(function(resolve, reject) {
     vex.dialog.confirm({
-      message: '¿Estás seguro que deseas cancelar tu servicio?',
-      callback: function(value){
-        if(value == true){
+      message: cancel_one_time_service_template({}),
+      callback: function(value) {
+        if (value == true) {
           resolve(value);
         }
       },
@@ -124,5 +126,5 @@ aliada.dialogs.confirm_service_cancel = function() {
         })
       ],
     });
-    })
+  })
 };

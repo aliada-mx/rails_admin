@@ -27,6 +27,7 @@ class ApplicationController < ActionController::Base
   
   def initialize_js_variables
     @conekta_public_key = Rails.application.secrets.conekta_public_key.html_safe
+    @too_late_cancelation_fee = Setting.too_late_cancelation_fee
   end
 
   private

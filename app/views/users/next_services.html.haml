@@ -24,8 +24,8 @@
               Modificar servicio
 
           .numbers
-            %span.hours #{ service.estimated_hours_with_extras } horas
-            %span.cash #{ service.cost } 
+            %span.hours #{ number_to_human service.estimated_hours_with_extras } horas
+            %span.cash $#{ service.cost } 
 
   - else
     .service-card-wrapper.col-lg-6
@@ -46,7 +46,7 @@
               Modificar servicio
 
           .numbers
-            %span.hours #{ humanize_hours service.estimated_hours_with_extras }
+            %span.hours #{ number_to_human humanize_hours service.estimated_hours_with_extras }
             %span.cash $#{ service.cost }
 
   - if services_count == index + 1

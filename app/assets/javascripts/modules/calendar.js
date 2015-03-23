@@ -52,7 +52,7 @@ aliada.calendar.get_dates_times = function(availability_options){
       }
     }).fail(function(response){
 
-      reject(response);
+      reject(response.responseText);
 
     })
   })

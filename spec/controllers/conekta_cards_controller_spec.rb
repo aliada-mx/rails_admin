@@ -19,7 +19,7 @@ feature 'ConektaCardsController' do
 
       # TODO use regex matchers because the request wont match if the id of the generated card changes
       # and the cassette has the ids hardcoded in the request URI
-      VCR.use_cassette('new_card', match_requests_on: [:conekta_preauthorization]) do
+      VCR.use_cassette('new_card', match_requests_on: [:conekta_charge]) do
         click_button 'Guardar Tarjeta'
       end
 

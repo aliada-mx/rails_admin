@@ -71,6 +71,10 @@ class Service < ActiveRecord::Base
 
     before_transition on: :cancel do |service, transition|
       service.cancel_schedules!
+
+      if service.in_less_than_24_hours
+        service.charge_cancelation_fee!
+      end
     end
   end
 
@@ -99,7 +103,7 @@ class Service < ActiveRecord::Base
     timezone_offset_seconds / 3600
   end
 
-  def create_service_charge_failed_ticket(user, amount,error)
+  def create_charge_failed_ticket(user, amount, error)
     Ticket.create_error(relevant_object_id: self.id,
                         relevant_object_type: 'Service',
                         message: "No se pudo realizar cargo de #{amount} a la tarjeta de #{user.first_name} #{user.last_name}. #{error.message_to_purchaser}")
@@ -180,15 +184,19 @@ class Service < ActiveRecord::Base
     raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
 
     aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
-    binding.pry
 
     aliada_availability.book(self)
   end
 
 
   def in_less_than_24_hours
-    in_24_hours = Time.zone.now + 24.hours
-    datetime < in_24_hours
+    if datetime
+      in_24_hours = Time.zone.now + 24.hours
+
+      datetime < in_24_hours
+    else
+      false
+    end
   end
   
   #calculates the price to be charged for a service
@@ -208,6 +216,15 @@ class Service < ActiveRecord::Base
 
   def cancel_schedules!
     self.schedules.in_the_future.map(&:enable_booked!)
+  end
+
+  def charge_cancelation_fee!
+    amount = Setting.too_late_cancelation_fee * 100
+
+    cancelation_fee = OpenStruct.new({price: amount,
+                                      description: "Cancelación tardía del servicio del #{friendly_datetime} en aliada.mx",
+                                      id: self.id})
+    user.charge!(cancelation_fee, self) 
   end
 
   def self.create_new!(service_params, user)

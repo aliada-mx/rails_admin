@@ -92,6 +92,19 @@ feature 'AliadasAvailabilityController' do
   end
 
   describe '#find_availability' do
+    before do
+      create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada, zones: [zone]})
+      create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada_2, zones: [zone]})
+
+      Timecop.freeze(starting_datetime)
+
+      @available_date = (starting_datetime + 1.day).strftime('%Y-%m-%d')
+    end
+
+    after do
+      Timecop.return
+    end
+
     it 'filters by passed aliada id' do
       @controller = AliadasAvailabilityController.new
       availability = @controller.send(:find_availability, 3,  zone, starting_datetime, aliada.id, one_time)

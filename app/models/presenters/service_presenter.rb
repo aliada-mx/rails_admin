@@ -10,6 +10,7 @@ module Presenters
         if _datetime.dst?
           _datetime -= 1.hour
         end
+        _datetime
       end
     end
 
