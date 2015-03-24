@@ -12,6 +12,7 @@ class Service < ActiveRecord::Base
     ['Pagado', 'paid'],
     ['Cancelado', 'canceled'],
   ]
+
   validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
   # accessors for forms
   attr_accessor :postal_code, :payment_method_id, :conekta_temporary_token, :timezone
@@ -323,6 +324,8 @@ class Service < ActiveRecord::Base
         next if self.id == service.id
         service.cancel!
       end
+      recurrence.deactivate!
+      recurrence.save!
     end
 
     if in_less_than_24_hours
