@@ -1,17 +1,18 @@
 class Schedule < ActiveRecord::Base
   STATUSES = [
-    ['available','Disponible'],
-    ['booked','Reservado para un servicio'],
-    ['busy','Ocupada'],
-    ['padding','Horas de colchon entre servicios'],
+    ['Disponible','available'],
+    ['Reservado para un servicio', 'booked'],
+    ['Ocupada','busy'],
+    ['Hora de colchon entre servicios', 'padding'],
   ]
 
   # Validations
   validates_presence_of [:datetime, :status, :aliada_id]
-  validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[0] } }
+  validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
   validate :schedule_within_working_hours
 
   # Associations
+  belongs_to :user
   belongs_to :aliada 
   belongs_to :service
   belongs_to :recurrence
@@ -23,6 +24,7 @@ class Schedule < ActiveRecord::Base
   scope :busy, -> { where(status: 'busy') }
   scope :booked, -> {  where(status: 'booked') }
   scope :padding, -> {  where(status: 'padding') }
+  scope :booked_or_padding, -> {  where(status: ['booked', 'padding' ]) }
   scope :in_zone, -> (zone) { joins(:zones).where("schedules_zones.zone_id = ?", zone.id) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
   scope :in_or_after_datetime, ->(starting_datetime) { where("datetime >= ?", starting_datetime) }
@@ -81,15 +83,25 @@ class Schedule < ActiveRecord::Base
     errors.add(:datetime, message) unless found
   end
 
+  def status_enum
+    STATUSES
+  end
+
   rails_admin do
     label_plural 'horas de servicio'
     navigation_label 'Operación'
     navigation_icon 'icon-calendar'
 
     configure :datetime do
-      # pretty_value do
-      #   value.in_time_zone('Mexico City')
-      # end
+      pretty_value do
+        I18n.l(value.in_time_zone('Mexico City'), format: :future)
+      end
+      sort_reverse false
+    end
+
+    list do
+      sort_by :datetime
+      include_fields :datetime, :status, :user, :service, :recurrence, :created_at
     end
   end
 

@@ -1,5 +1,7 @@
 module Presenters
   module ServicePresenter
+    include ActionView::Helpers::NumberHelper
+
     def status_enum
       Service::STATUSES
     end
@@ -23,15 +25,15 @@ module Presenters
     end
 
     def friendly_datetime
-      if self.datetime
-        I18n.l(tz_aware_datetime, format: :future)
-      end
+      I18n.l(tz_aware_datetime, format: :future) if datetime
     end
 
     def friendly_time
-      if datetime
-        I18n.l(tz_aware_datetime, format: :friendly_time)
-      end
+      I18n.l(tz_aware_datetime, format: :friendly_time) if datetime
+    end
+
+    def friendly_date
+      I18n.l(tz_aware_datetime, format: :friendly_date) if datetime
     end
 
     def day
@@ -40,9 +42,15 @@ module Presenters
       end
     end
 
-    def month
+    def month_number
       if datetime
-        tz_aware_datetime.strftime('%l')
+        number_to_human tz_aware_datetime.strftime('%m')
+      end
+    end
+
+    def month_number
+      if datetime
+        number_to_human tz_aware_datetime.strftime('%m')
       end
     end
 
@@ -56,7 +64,7 @@ module Presenters
     end
 
     attr_writer :time
-   def time
+    def time
       if datetime.present?
         tz_aware_datetime.strftime('%H:%M') 
       else
@@ -64,16 +72,30 @@ module Presenters
       end
     end
 
-    def estimated_hours_without_extras
-      (estimated_hours || 0) - extras_hours
+    def instructions_summary(truncate)
+      instructions_fields = [:entrance_instructions,
+        :special_instructions, 
+        :cleaning_supplies_instructions, 
+        :garbage_instructions,
+        :attention_instructions,
+        :equipment_instructions,
+        :forbidden_instructions, ] 
+
+      summary_values = instructions_fields.inject([]) do |values, field_name|
+        value = self.send(field_name)
+        values.push value if value.present?
+        values
+      end
+
+      if summary_values.any? { |value| value.present? }
+        summary_values.join(', ')[0..truncate]+"..."
+      else
+        'No has dejado instrucciones'
+      end
     end
 
-    def estimated_hours_with_extras
-      (estimated_hours || 0) + extras_hours
-    end
-    
-    def extras_hours
-      extras.inject(0){ |hours,extra| hours += extra.hours || 0 }
+    def weekday_in_spanish
+      tz_aware_datetime.dia_semana
     end
   end
 end

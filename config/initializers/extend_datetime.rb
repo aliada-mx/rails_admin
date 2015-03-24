@@ -28,6 +28,9 @@ module WeekdayPatch
     end
   end
 
+  def dia_semana
+    self.class.weekdays.select{ |day| day[1] == wday }.first.third
+  end
 
   def weekday
     self.class.weekdays.select{ |day| day[1] == wday }.first.first

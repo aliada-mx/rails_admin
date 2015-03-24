@@ -2,7 +2,7 @@ aliada.services.edit.bind_form_submission = function($form) {
   function update_service($form) {
     return new Promise(function(resolve, reject) {
       data = {}
-      data[$form[0].submitted] = true // The clicked button is stored at the original DOM form
+      data[clicked_button] = true // The clicked button is stored at the original DOM form
       $form.ajaxSubmit({
         data: data,
         success: function(response) {
@@ -34,13 +34,25 @@ aliada.services.edit.bind_form_submission = function($form) {
     smooth_scroll('#success-title');
   }
 
+  $('#update_button, #cancel_button').on('click',function(e){
+    e.preventDefault();
+    clicked_button = this.name;
+    $(this.form).submit();
+  })
+
+  var clicked_button = null;
+
   $form.on('submit', function(e) {
     e.preventDefault();
 
-    if(this.submitted == 'cancel_button'){
+    if(clicked_button == 'cancel_button'){
       aliada.dialogs.confirm_service_cancel().then(submit)
-    }else if(this.submitted == 'update_button'){
-      submit();
+    }else if(clicked_button == 'update_button'){
+      if(aliada.service.is_recurrent){
+        aliada.dialogs.confirm_recurrent_service_change().then(submit)
+      }else{
+        submit();
+      }
     }
 
     function submit(){

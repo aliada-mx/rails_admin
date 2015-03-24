@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150321011611) do
+ActiveRecord::Schema.define(version: 20150324063340) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -276,6 +276,7 @@ ActiveRecord::Schema.define(version: 20150321011611) do
     t.boolean  "entrance_instructions"
     t.time     "aliada_reported_begin_time"
     t.time     "aliada_reported_end_time"
+    t.boolean  "cancelation_fee_charged"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
