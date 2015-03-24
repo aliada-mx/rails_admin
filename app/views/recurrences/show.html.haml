@@ -1,0 +1,23 @@
+= append(:body_class){ ' recurrences-show ' }
+= append(:back_button_action){ ' back ' }
+
+- canceled_class = @master_service.canceled? ? 'disabled' : ''
+
+.recurrence-header{class: canceled_class}
+  .head
+    .badge
+      Recurrente
+      =image_tag("recurrence.png", {:title => 'Servicio recurrente'})
+    .title
+      Todos los #{ensure_plural(@master_service.weekday_in_spanish) }
+    .small-letters
+      a partir del #{@master_service.friendly_date }
+
+    .action-link
+      =link_to("Modifcar todas las visitas próximas", edit_service_users_path(user_id: @user.id, service_id: @master_service.id), {})
+
+
+.cards{class: canceled_class}
+  - @services.each_with_index do |service,index|
+    = render partial: 'common/service_card', locals: { service: service }
+

@@ -39,7 +39,8 @@ class Ability
               false
             # Editing a service
             elsif params.include? :service_id
-              Service.find(params[:service_id]).user_id == current_user.id
+              service = Service.find(params[:service_id])
+              service.user_id == current_user.id && !service.canceled?
             # Adding a new service
             elsif params.include?(:user_id)
               current_user.id == params[:user_id].to_i

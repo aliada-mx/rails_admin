@@ -43,13 +43,13 @@ feature 'Service' do
     create_recurrent!(starting_datetime + 1.day, hours: 4, periodicity: 7, conditions: {aliada: aliada, zones: [zone]})
   end
 
-  describe '#book_aliada' do
+  describe '#book_an_aliada' do
     it 'allows it to mark one time service schedules´ as booked', recurrent: false do
       available_schedules = Schedule.for_booking(zone, starting_datetime_to_book_services)
       expect(available_schedules.count).to be 4
       expect(Schedule.booked.count).to be 0
 
-      service.book_aliada
+      service.book_an_aliada
 
       expect(Schedule.padding.count).to be 1
       expect(Schedule.booked.count).to be 3
@@ -64,7 +64,7 @@ feature 'Service' do
       service.service_type = recurrent_service
       service.save!
 
-      service.book_aliada
+      service.book_an_aliada
 
       expect(Schedule.booked.count).to be 15
       expect(Schedule.padding.count).to be 5
@@ -107,14 +107,6 @@ feature 'Service' do
       expect(service).to be_invalid
       expect(service.errors.messages).to have_key :datetime
       expect(service.errors.messages[:datetime].first).to include 'Los servicios solo pueden crearse en horas en punto'
-    end
-  end
-
-  describe '#wdays_count_to_end_of_recurrency' do
-    it 'returns 4 for the number of fridays on january 2015' do
-      expect(starting_datetime).to eql Time.zone.parse('01 Jan 2015 13:00:00')
-      expect(Setting.time_horizon_days).to be 30
-      expect(service.wdays_count_to_end_of_recurrency(starting_datetime)).to be 5
     end
   end
 

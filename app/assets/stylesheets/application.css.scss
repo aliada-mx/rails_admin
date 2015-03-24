@@ -1,10 +1,10 @@
-@import 'common/base';
+//= require common/_base
 
 // Controllers
-@import 'static_pages';
-@import 'services';
-@import 'recurrences';
-@import 'users';
+//= require _static_pages
+//= require _services
+//= require _recurrences
+//= require _users
 
 //Icomoon Fonts
-@import "common/icomoon";
+@import 'common/icomoon'

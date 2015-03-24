@@ -80,10 +80,12 @@ h1
   color: $green
   font-weight: 800
   +rem(font-size, $extra-large-font)
+  +rem(line-height, $extra-large-font)
 
 h4
   font-weight: 600
   +rem(font-size, $medium-font)
+  +rem(line-height, $medium-font)
 
 .clearfix:after 
   visibility: hidden
@@ -137,6 +139,7 @@ footer
   +rem(font-size, 1.4rem)
   height: $footer-height
   position: relative
+  margin-top: 30px
 
   .bottom-nav
     ul
