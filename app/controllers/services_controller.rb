@@ -5,15 +5,35 @@ class ServicesController < ApplicationController
 
   before_filter :set_user
 
+  rescue_from ActiveRecord::RecordInvalid do |invalid|
+
+    Raygun.track_exception(invalid)
+    render json: { status: :error, code: :invalid, message: invalid.message }
+  end
+
+  rescue_from Conekta::Error do |exception|
+
+    Raygun.track_exception(exception)
+    render json: { status: :error, code: :conekta_error, message: exception.message_to_purchaser}
+  end
+
+  rescue_from AliadaExceptions::AvailabilityNotFound do |exception|
+
+    Raygun.track_exception(exception)
+    render json: { status: :error, code: :availability_not_found, message: 'Lo sentimos no encontramos disponibilidad :('}
+  end
+
+  rescue_from AliadaExceptions::ServiceDowgradeImpossible do |exception|
+
+    Raygun.track_exception(exception)
+    render json: { status: :error, code: :downgrade_impossible, message: 'Lo sentimos no podemos cambiar a ese tipo de servicio :('}
+  end
+
   include ServiceHelper
 
   def initial
     if user_signed_in? 
-      if current_user.admin?
-        @user = current_user
-      else
-        redirect_to new_service_users_path(current_user)
-      end
+      redirect_to new_service_users_path(current_user)
     end
 
     @incomplete_service = IncompleteService.create!
@@ -22,38 +42,43 @@ class ServicesController < ApplicationController
                            address: Address.new)
   end
 
-  def new
-  end
-
-  def update
-    service = @user.services.find(params[:service_id])
-    service.update_attributes!(service_params.except(:user, :address))
-
-    next_services_path = next_services_users_path(user_id: @user.id, service_id: service.id)
-
-    return render json: { status: :success, next_path: next_services_path }
-  end
-
-  def edit
-    @service = @user.services.find(params[:service_id])
-  end
-
   def create_initial
-    begin
-      service = Service.create_initial!(service_params)
-    rescue ActiveRecord::RecordInvalid => invalid
-      Raygun.track_exception(invalid)
-      return render json: { status: :error, code: :invalid, message: invalid.message }
-    rescue Conekta::Error => exception
-      Raygun.track_exception(exception)
-      return render json: { status: :error, code: :conekta_error, message: [exception.message_to_purchaser]}
-    end
+    service = Service.create_initial!(service_params)
 
     IncompleteService.mark_as_complete(incomplete_service_params,service)
 
     force_sign_in_user(service.user)
 
     return render json: { status: :success, service_id: service.id, user_id: service.user.id }
+  end
+
+  def new
+    @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
+  end
+
+  def create_new
+    service = Service.create_new!(service_params, @user)
+
+    return render json: { status: :success, service_id: service.id }
+  end
+
+  def edit
+    @service = @user.services.find(params[:service_id])
+    @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
+  end
+
+  def update
+    service = @user.services.find(params[:service_id])
+
+    if params[:update_button]
+      service.update_existing!(service_params)
+    elsif params[:cancel_button]
+      service.cancel!
+    end
+      
+    next_services_path = next_services_users_path(user_id: @user.id, service_id: service.id)
+
+    return render json: { status: :success, next_path: next_services_path, service_id: service.id }
   end
 
   def incomplete_service
@@ -92,6 +117,10 @@ class ServicesController < ApplicationController
   end
 
   private
+  def handle_exceptions(&block)
+
+  end
+
   def save_incomplete_service
     @incomplete_service = IncompleteService.find(params[:incomplete_service][:id])
     @incomplete_service.update_attributes!(incomplete_service_params)

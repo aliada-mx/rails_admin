@@ -17,7 +17,7 @@ class AliadaChooser
     first
   end
 
-  def self.find_aliada_availability(aliadas_availability, service)
+  def self.choose_availability(aliadas_availability, service)
     AliadaChooser.new(aliadas_availability, service).choose!
   end
 

@@ -3,7 +3,19 @@
 @import "compass/css3/opacity"
 
 
-fieldset.checkboxes
+.extras-toggle-button
+  cursor: pointer
+  text-decoration: underline
+  &:hover
+    color: $green
+  &:before
+    content: '-'
+  &.toggled
+    &:before
+      content: '+'
+
+#extras
+  height: 100%
   .check-box-container
     display: inline-block
     width: 140px
@@ -35,6 +47,7 @@ fieldset.checkboxes
         width: 100%
         h4
           font-weight: 600
+          +rem(font-size, 1.4rem)
         .small-letters
           +rem(font-size, $small-font)
 

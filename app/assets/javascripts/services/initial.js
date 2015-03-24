@@ -3,7 +3,7 @@
 //= require jquery.calendario
 //= require modules/calendar
 //= require modules/dialogs
-//= require jquery.autogrow-textarea
+//= require jquery.hc-sticky.min
 //
 //= require services/initial/_step_1_duration
 //= require services/initial/_step_2_personal_info
@@ -115,8 +115,6 @@ $(document).ready(function() {
           break;
       }
         
-      
-
       // Next if we are not on the last step
       var next_step = current_step === 5 ? current_step : current_step + 1;
 
@@ -138,5 +136,6 @@ $(document).ready(function() {
   // When a user begins to type the validation error is gone
   aliada.services.initial.$form.find('input').on('click', function(){
     $(this).removeClass('error');
-  })
+  });
+  
 });

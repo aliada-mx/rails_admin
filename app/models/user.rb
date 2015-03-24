@@ -63,34 +63,28 @@ class User < ActiveRecord::Base
   def charge_service!(service_id)
     service_to_charge = Service.find_by(id: service_id, user_id: self.id, status: 'finished')
     
-    
-   
     if service_to_charge
-      begin
-        amount = service_to_charge.amount_to_bill
-        product = OpenStruct.new({price: amount,
-                                   description: 'Servicio aliada',
-                                   id: service_id})
-        
-        default_payment_provider.charge!(product, self)
-       
-        
-        ### Exception handler for when a user's payment method throws an exception
-        ### TODO: think about how to handle this for many payment providers
-      rescue Conekta::Error => err
-        create_service_charge_failed_ticket(service_id, amount, err)
-      end
+      amount = service_to_charge.amount_to_bill
+      product = OpenStruct.new({price: amount,
+                               description: 'Servicio aliada',
+                               id: service_id})
+      
+      ### TODO: handle this for multiple payment providers
+      charge!(product, service_to_charge)
     else
-      Ticket.create_warning(relevant_object_id: self.id,
-                            relevant_object_type: 'User',
+      Ticket.create_warning(relevant_object: self,
                             message: "Se intento cobrar servicio de cliente: #{self.id} pero no ha concluido o no existe")
     end  
   end
   
-  def create_service_charge_failed_ticket(service_id, amount,error)
-    Ticket.create_error(relevant_object_id: service_id,
-                        relevant_object_type: 'Service',
-                        message: "No se pudo realizar cargo de #{amount} a la tarjeta de #{self.first_name} #{self.last_name}. #{error.message_to_purchaser}")
+  def charge!(product, object)
+    begin
+      default_payment_provider.charge!(product, self)
+    rescue Conekta::Error => err
+      Raygun.track_exception(err)
+
+      object.create_charge_failed_ticket(self, product.price, err)
+    end
   end
   
   def create_payment_provider_choice(payment_provider)
@@ -114,7 +108,7 @@ class User < ActiveRecord::Base
   end
 
   def aliadas
-    services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }
+    services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }.uniq
   end
 
   def set_default_role
@@ -138,7 +132,11 @@ class User < ActiveRecord::Base
   end
 
   def send_welcome_email
-    UserMailer.welcome_email(self).deliver!
+    UserMailer.welcome(self).deliver!
+  end
+
+  def send_confirmation_email(service)
+    UserMailer.service_confirmation(self, service).deliver!
   end
 
   rails_admin do

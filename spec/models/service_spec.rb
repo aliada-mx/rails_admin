@@ -33,39 +33,41 @@ feature 'Service' do
   end
 
   before(:each, recurrent: false) do
-    # Tomorrow because we never book for the same day, and - 1 hour to account the aliada traveling time
-    create_one_timer!(starting_datetime + 1.day - 1.hour, hours: 4, conditions: {aliada: aliada, zone: zone}, timezone: timezone )
+    # Tomorrow because we never book for the same day
+    create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada, zones: [zone]})
   end
 
   # Create the needed schedules
   before(:each, recurrent: true) do
-    # Tomorrow because we never book for the same day, and - 1 hour to account the aliada traveling time
-    create_recurrent!(starting_datetime + 1.day - 1.hour, hours: 4, periodicity: 7, conditions: {aliada: aliada, zone: zone}, timezone: timezone)
+    # Tomorrow because we never book for the same day
+    create_recurrent!(starting_datetime + 1.day, hours: 4, periodicity: 7, conditions: {aliada: aliada, zones: [zone]})
   end
 
-  describe '#book_aliada!' do
+  describe '#book_aliada' do
     it 'allows it to mark one time service schedules´ as booked', recurrent: false do
-      available_schedules = Schedule.available_for_booking(zone, starting_datetime_to_book_services(timezone))
+      available_schedules = Schedule.for_booking(zone, starting_datetime_to_book_services)
       expect(available_schedules.count).to be 4
       expect(Schedule.booked.count).to be 0
 
-      service.book_aliada!
+      service.book_aliada
 
-      expect(Schedule.booked.count).to be 4
-      expect(Schedule.available_for_booking(zone, starting_datetime_to_book_services(timezone)).count).to be 0
+      expect(Schedule.padding.count).to be 1
+      expect(Schedule.booked.count).to be 3
+      expect(Schedule.for_booking(zone, starting_datetime_to_book_services).available.count).to be 0
     end
 
     it 'allows it to mark recurrent service schedules´ as booked', recurrent: true do
-      available_schedules = Schedule.available_for_booking(zone, starting_datetime_to_book_services(timezone))
+      available_schedules = Schedule.for_booking(zone, starting_datetime_to_book_services).available
       expect(available_schedules.count).to be 20
       expect(Schedule.booked.count).to be 0
 
       service.service_type = recurrent_service
       service.save!
 
-      service.book_aliada!
+      service.book_aliada
 
-      expect(Schedule.booked.count).to be 20 
+      expect(Schedule.booked.count).to be 15
+      expect(Schedule.padding.count).to be 5
       expect(available_schedules.count).to be 0
     end
   end
@@ -108,11 +110,29 @@ feature 'Service' do
     end
   end
 
-  describe '#days_count_to_end_of_recurrency' do
-    it 'returns 4 for the number of thursdays on january 2015 without counting the first' do
+  describe '#wdays_count_to_end_of_recurrency' do
+    it 'returns 4 for the number of fridays on january 2015' do
       expect(starting_datetime).to eql Time.zone.parse('01 Jan 2015 13:00:00')
       expect(Setting.time_horizon_days).to be 30
-      expect(service.days_count_to_end_of_recurrency).to be 4
+      expect(service.wdays_count_to_end_of_recurrency(starting_datetime)).to be 5
+    end
+  end
+
+  describe '#requested_schedules' do
+    before do
+      @schedule_interval = service.requested_schedules
+    end
+
+    it 'should have valid schedule intervals starting datetimes' do
+      expect(@schedule_interval.beginning_of_interval).to eql starting_datetime + 1.day
+    end
+
+    it 'should have valid schedule intervals ending datetimes' do
+      expect(@schedule_interval.ending_of_interval).to eql starting_datetime + 1.day + 4.hours
+    end
+
+    it 'should have a correct number of schedule intervals' do
+      expect(@schedule_interval.size).to eql 5
     end
   end
 

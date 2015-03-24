@@ -44,6 +44,7 @@ gem 'aws-sdk', '~> 1.5.7'
 gem 'bootstrap-sass'
 # Sass framework
 gem 'compass-rails'
+gem 'chronic'
  
 # EXCEPTIONS
 #
@@ -67,9 +68,6 @@ gem 'nestive'
 gem 'devise'
 gem 'simple_token_authentication', '~> 1.0'
 
-# Time parsing for humans
-gem 'chronic'
-
 # PAYMENT SYSTEMS
 gem 'conekta'
 
@@ -86,10 +84,6 @@ gem 'cancancan'
 # MAILING
 #
 gem 'smtpapi'
-
-
-# 
-
 
 group :development, :test do
   gem 'guard-rspec', require: false
@@ -157,9 +151,13 @@ group :test do
 end
 
 group :production, :staging do
-  # Logging
-  gem "lograge"
   # Heroku support
   gem 'rails_12factor'
+end
+
+
+group :production, :staging, :development do
+  # Quiet down the partials rendering
+  gem "lograge"
 end
 

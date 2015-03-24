@@ -1,4 +1,4 @@
-= select_tag 'hours_space_room_selector', options_from_collection_for_select(Setting.hours_space_room.to_a, :hours, :text), class: 'selectpicker'
+= form.select :estimated_hours, options_from_collection_for_select(Setting.hours_space_room.to_a, :hours, :text, @service.estimated_hours_without_extras), class: 'selectpicker'
 
 %a.small-letters.bathroom-bedrooms-toggle-button
   ¿No sabes los metros cuadrados?
@@ -8,7 +8,7 @@
 = append :javascript do
   = javascript_include_tag 'jquery.selectBoxIt'
   :javascript
-    $(".selectpicker").selectBoxIt({
+    $("#service_estimated_hours").selectBoxIt({
       // Trigger events on original dom element
       aggressiveChange: true,
       autoWidth: false

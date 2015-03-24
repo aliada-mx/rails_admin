@@ -12,6 +12,10 @@ class ConektaCard < ActiveRecord::Base
     user.create_payment_provider_choice(conekta_card).provider
   end
 
+  def friendly_name
+    "Tarjeta #{brand} con terminación #{last4}"
+  end
+
   def create_customer(user, temporary_token)
     customer = Conekta::Customer.create({
       name: user.name,

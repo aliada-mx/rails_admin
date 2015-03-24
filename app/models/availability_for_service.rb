@@ -1,41 +1,46 @@
 class AvailabilityForService
   include Mixins::AvailabilityFindersMixin
   include AliadaSupport::DatetimeSupport
+  attr_reader :report
 
   def initialize(service, available_after, aliada_id: nil)
     @service = service
+    @zone = service.zone
+    @available_after = available_after
+    @is_recurrent = service.recurrent?
+    @aliada_id = aliada_id
 
-    @requested_schedule_intervals = service.to_schedule_intervals
-    # Pull the schedules from db
-    @available_schedules = Schedule.available_for_booking(service.zone, available_after)
-    if aliada_id.present?
-      @available_schedules = @available_schedules.where(aliada_id: aliada_id)
-    end
-    # Eval the query to avoid multiple queries later on thanks to lazy evaluation
-    @available_schedules.to_a
+    @requested_service_hours = service.estimated_hours
+    @minimum_service_hours = @requested_service_hours + Setting.padding_hours_between_services - 1 # we can have a service with 1 hour padding
+    @maximum_service_hours = @requested_service_hours + Setting.padding_hours_between_services # or two
 
-    # An object to track our availability
-    if @recurrent = @service.recurrent?
-      recurrency_days = @service.periodicity
-      @recurrency_seconds = recurrency_days.days
-      @minimum_availaibilites = wdays_until_horizon(@requested_schedule_intervals.first.wday, starting_from: available_after)
-    end
+    @requested_schedules = @service.requested_schedules # Non persisted schedules
+    @first_requested_schedule = @requested_schedules.first
 
-    @aliadas_availability = Availability.new
-
-    # save time consecutive schedules 
-    # until the desired size is reached
-    @continuous_schedules = []
-     
     # skip aliadas we detected cannot fulfill the service
     # User banned aliadas
     @aliadas_to_skip =  @service.user.banned_aliadas.map(&:id)
+    
+    # Recurrence
+    if @is_recurrent
+      @recurrency_seconds = service.periodicity.days
+      @minimum_availaibilites = service.wdays_count_to_end_of_recurrency(@available_after)
+    end
+
+    initialize_trackers
+
+    load_schedules
+
+    enable_service_schedules
   end
 
+
   def self.find_aliadas_availability(service, available_after, aliada_id: nil)
-    AvailabilityForService.new(service, available_after, aliada_id: aliada_id).find
+    finder = AvailabilityForService.new(service, available_after, aliada_id: aliada_id)
+    availability = finder.find
+    availability
   end
-     
+
   # It will try to bind as many aliada_availabilities that matches the requested hours
   # on the same week day per aliada
   #
@@ -43,15 +48,15 @@ class AvailabilityForService
   def find
     return @aliadas_availability if invalid?
 
-    @previous_aliada_id = @available_schedules.first.aliada_id
-
-    @available_schedules.each do |schedule|
+    @schedules.each_with_index do |schedule,index|
       @current_schedule = schedule
-      @current_aliada_id = @current_schedule.aliada_id
+      @current_aliada_id = schedule.aliada_id
+      @current_index = index
+      @current_schedule.index = index
 
       next if skip_aliada?
 
-      if should_add_current_schedule? 
+      if is_available? && is_continuous? && time_matches?
         add_continuous_schedules
 
         store! if enough_continuous_schedules?
@@ -59,103 +64,111 @@ class AvailabilityForService
         restart_continues_schedules
       end
 
-      track_aliadas_changing
     end
-    
+
+    clear_incomplete_availabilites
     clear_not_enough_availabilities
+    restore_service_schedules_original_state
+    mark_padding_hours
+
+    @report.push({message: 'Not found any availability'}) if @aliadas_availability.empty?
     @aliadas_availability
   end
 
   private
 
     def store!
-      if @recurrent 
-        if broken_continous_intervals?
-          # If we dont have a perfect recurrence we have nothing
-          remove_aliada_availability!
-          skip_aliada!
-          track_aliadas_changing
-          return false
-        else
-          add_availability
-        end
-      elsif allow_to_add_one_timer?
-        add_availability
+      if @is_recurrent && broken_continous_intervals?
+        # If we dont have a perfect recurrence we have nothing
+        remove_aliada_availability!
+        skip_aliada!
+        return false
       end
 
-      restart_continues_schedules
+      add_next_schedules_availability
+
+      if @continuous_schedules.size > @maximum_service_hours
+        restart_continues_schedules
+      end
     end
 
     def restart_continues_schedules
       @continuous_schedules = []
       # The schedule that just blew up our continuous_schedules might start another so
-      # lets start by adding it
-      add_continuous_schedules
+      # lets start by adding it only if matches
+      add_continuous_schedules if is_available? && time_matches?
     end
 
     def invalid?
-      @available_schedules.blank? || @requested_schedule_intervals.empty? || @available_schedules.size < @requested_schedule_intervals.size
-    end
+      invalid = @schedules.blank? || @requested_schedules.empty? || @schedules.size < @requested_service_hours
 
-    # Do we have a pair of continues schedules?
-    # belonging to the same aliada_id?
-    # and within our wanted interval range?
-    # on the same week day?
-    def should_add_current_schedule?
-      continuous_schedules? && same_aliada? && time_matches?
-    end
+      @report.push('Invalid, impossible to proceed') if invalid
 
-    def add_availability
-      @aliadas_availability.add(@current_aliada_id, @continuous_schedules, @current_aliada_id)
+      invalid
     end
 
     def time_matches?
-      # Inside hour range
-      @requested_schedule_intervals.any? do |schedule_interval|
-        break if schedule_interval.beginning_of_interval > @current_schedule.datetime
-
-        schedule_interval.include?(@current_schedule)
+      if @is_recurrent
+        value = @requested_schedules.include_recurrent?(@current_schedule)
+      else
+        value = @requested_schedules.include_datetime?(@current_schedule)
       end
-    end
 
-    def broken_continous_intervals?
-      previous_interval = @aliadas_availability[@current_aliada_id].last
+      @report.push({message: 'Found 1 broken schedule continuity', objects: [@current_schedule] }) unless value
 
-      # The first time there is no previous
-      return false if previous_interval.blank?
-
-      current_interval = ScheduleInterval.new(@continuous_schedules)
-
-      !continuous_schedule_intervals?(previous_interval, current_interval)
-    end
-
-    def enough_continuous_schedules?
-      @continuous_schedules.size == @service.total_hours
-    end
-
-    def allow_to_add_one_timer?
-      @aliadas_availability[@current_aliada_id].size.zero?
+      value 
     end
 
     def remove_aliada_availability!
-      @aliadas_availability.delete(@current_aliada_id)
-    end
-     
-    # 1 hour away from each other
-    def continuous_schedules?
-      last_continuous = @continuous_schedules.last
+      interval_key = wday_hour(@continuous_schedules)
 
-      # If we are starting a continuity
-      return true if last_continuous.blank?
-
-      last_continuous.datetime + 1.hour == @current_schedule.datetime
+      @aliadas_availability[@current_aliada_id].delete(interval_key)
     end
 
-    def clear_not_enough_availabilities
-      if @aliadas_availability.present? && @minimum_availaibilites.present? 
-        @aliadas_availability.delete_if do |aliada_id, aliada_availability| 
-          aliada_availability.size < @minimum_availaibilites
+    def add_continuous_schedules
+      @continuous_schedules.push(@current_schedule)
+    end
+
+    # To track if our schedules are padding
+    def mark_padding_hours
+      return if @aliadas_availability.blank?
+
+      @aliadas_availability.each do |aliada_id, wday_hour_intervals|
+        wday_hour_intervals.each do |wday_hour, intervals_hash|
+          intervals_hash.each do |interval_key, interval|
+            if interval.size > @requested_service_hours
+              padding = interval.size - @requested_service_hours
+
+              interval[padding * -1..-1].map(&:as_padding)
+            end
+          end
         end
+      end
+    end
+
+    # Remove the availability without the first requested hour
+    def clear_incomplete_availabilites
+      return if @aliadas_availability.blank?
+
+      @aliadas_availability.delete_if do |aliada_id, wday_hour_intervals|
+        wday_hour_intervals.delete_if do |wday_hour, intervals_hash|
+          delete = true
+          intervals_hash.each do |interval_key, interval|
+            next if !delete
+
+            if @is_recurrent 
+              delete = !interval.include_recurrent?(@first_requested_schedule)
+            else
+              delete = !interval.include_datetime?(@first_requested_schedule)
+            end
+          end
+
+          @report.push({message: "Clearing interval without the first requested schedule", objects: [intervals_hash]}) if delete
+
+          delete
+        end
+
+        wday_hour_intervals.blank?
       end
     end
 end

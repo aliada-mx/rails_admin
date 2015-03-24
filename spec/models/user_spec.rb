@@ -7,8 +7,8 @@ describe 'User' do
                          aliada: aliada,
                          user: user,
                          datetime: starting_datetime,
-                         aliada_reported_begin_time: Time.now,
-                         aliada_reported_end_time: Time.now + 3.hours) }
+                         aliada_reported_begin_time: Time.zone.now,
+                         aliada_reported_end_time: Time.zone.now + 3.hours) }
   let!(:other_service){ create(:service, 
                                aliada: other_aliada,
                                user: user,
@@ -67,17 +67,16 @@ describe 'User' do
       service.price= 65
       service.status = 'finished'
       service.user_id = user.id
-      service.aliada_reported_begin_time = Time.now
+      service.aliada_reported_begin_time = Time.zone.now
       
-      service.aliada_reported_end_time = Time.now + 3.hours
+      service.aliada_reported_end_time = Time.zone.now + 3.hours
       service.datetime = starting_datetime
       service.estimated_hours = 3
       
       service.save
       
 
-      VCR.use_cassette('conekta_user_charge', match_requests_on:[:conekta_preauthorization]) do
-        
+      VCR.use_cassette('conekta_user_charge', match_requests_on:[:conekta_charge]) do
         user.charge_service!(service.id)
       end
       expect(Payment.all.count).to eql 1

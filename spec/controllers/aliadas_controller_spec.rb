@@ -18,12 +18,10 @@ feature 'AliadasController' do
                          estimated_hours: 3
                          ) }
   before do
-    # Capybara.current_driver = :webkit  
     Timecop.freeze(starting_datetime)
   end
 
   after do
-    # Capybara.use_default_driver       
     Timecop.return
   end
   
@@ -55,15 +53,14 @@ feature 'AliadasController' do
                         references_longitude: 20.451,
                         map_zoom: 2,
                         longitude: 20.45) 
-      Servicio1 = create(:service, aliada_id: aliada.id, address_id: address1.id,
+      servicio1 = create(:service, aliada_id: aliada.id, address_id: address1.id,
                          bathrooms: 2,
                          bedrooms: 3,
                          user_id: client.id, datetime: (DateTime.now+1)
                          )
-      Servicio2 = create(:service, aliada_id: aliada.id, address_id: address2.id,
+      servicio2 = create(:service, aliada_id: aliada.id, address_id: address2.id,
                          user_id: client.id, datetime: DateTime.now)
       visit  ('aliadas/servicios/'+ aliada.authentication_token)
-      #save_and_open_page
       page.has_content?('Tus servicios')
     end
     
@@ -94,17 +91,16 @@ feature 'AliadasController' do
                         map_zoom: 16, 
                         latitude: 19.54,
                         longitude: -99.45) 
-      Servicio1 = create(:service, aliada_id: aliada.id, address_id: address1.id,
+      servicio1 = create(:service, aliada_id: aliada.id, address_id: address1.id,
                          bathrooms: 2,
                          bedrooms: 3,
                          user_id: client.id, datetime: (DateTime.now+1.day)
                          )
-      Servicio2 = create(:service, aliada_id: aliada.id, address_id: address2.id,
+      servicio2 = create(:service, aliada_id: aliada.id, address_id: address2.id,
                          user_id: client.id, datetime: DateTime.now)
       
       Timecop.freeze(Date.today + 1) do
         visit  ('aliadas/servicios/'+ aliada.authentication_token)
-        #  save_and_open_page
         expect(page).to   have_content 'Roma Norte'
       end
       
@@ -114,7 +110,7 @@ feature 'AliadasController' do
     it 'shows unfinished services and lets us charge them' do
       aliada = create(:aliada)
       client = create(:user, phone: '54545454', first_name: 'Juan', last_name:'Perez Tellez')
-      VCR.use_cassette('conekta_charge', match_requests_on: [:conekta_preauthorization]) do
+      VCR.use_cassette('conekta_charge', match_requests_on: [:conekta_charge]) do
         client.create_payment_provider_choice(conekta_card)
         address1 = create(:address, city: 'Cuauhtemoc',
                           street: 'Tabasco', number: '232', 
@@ -136,23 +132,20 @@ feature 'AliadasController' do
                           references_longitude: 20.451,
                           map_zoom: 2,
                           longitude: 20.45) 
-        Servicio1 = create(:service, aliada_id: aliada.id, address_id: address1.id,
+        servicio1 = create(:service, aliada_id: aliada.id, address_id: address1.id,
                            bathrooms: 2,
                            bedrooms: 3,
                            status: 'aliada_assigned',
                            service_type: one_time_service,
                            user_id: client.id, 
                            datetime: (DateTime.now-1))
-        Servicio2 = create(:service, aliada_id: aliada.id+1, address_id: address2.id,
+        servicio2 = create(:service, aliada_id: aliada.id+1, address_id: address2.id,
                            user_id: client.id, status: 'aliada_assigned', datetime: DateTime.now-1)
         visit  ('aliadas/servicios/'+ aliada.authentication_token)
 
-        #   save_and_open_page
         page.has_content?('Tus servicios')
-       #  save_and_open_page
         
         click_on('Pagar')
-       # save_and_open_page
         expect(Payment.all.count).to be 1
       end
     end

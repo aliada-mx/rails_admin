@@ -4,6 +4,7 @@ include AliadaSupport::DatetimeSupport
   has_many :aliada_zones
   has_many :zones, through: :aliada_zones
 
+  has_many :aliada_working_hours
   has_many :schedules, foreign_key: :aliada_id
   has_many :scores, foreign_key: :aliada_id
   has_many :services, foreign_key: :aliada_id
@@ -16,7 +17,7 @@ include AliadaSupport::DatetimeSupport
 
   # TODO optimize to get all aliadas even those without services but the ones with services 
   # must have services.datetime >= Time.zone.now.beginning_of_day
-  scope :for_booking, ->(aliadas_ids) { where(id: aliadas_ids).eager_load(:services) }
+  scope :for_booking, ->(aliadas_ids) { where(id: aliadas_ids).eager_load(:services).eager_load(:zones) }
 
   # We override the default_scope class method so the user default scope from
   # which we inherited does not override ours
@@ -61,6 +62,10 @@ include AliadaSupport::DatetimeSupport
 
   def busy_services_hours
     businesshours_until_horizon - service_hours
+  end
+
+  def timezone
+    'Mexico City'
   end
 
   rails_admin do

@@ -6,5 +6,9 @@ module TestingSupport
       fill_in 'user_password', with: user.password
       click_button 'Entrar'
     end
+
+    def logout
+      visit(destroy_user_session_path)
+    end
   end
 end

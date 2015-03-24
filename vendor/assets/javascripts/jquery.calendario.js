@@ -77,10 +77,11 @@
               month : self.month + 1,
               monthname : self.options.displayMonthAbbr ? self.options.monthabbrs[ self.month ] : self.options.months[ self.month ],
               year : self.year,
-              weekday : idx + self.options.startIn,
-              weekdayname : self.options.weeks[ idx + self.options.startIn ]
+              wday : idx + self.options.startIn,
+              weekday : self.options.weeks[ idx + self.options.startIn ],
             };
             dateProp['strdate'] = (dateProp.year + '-' + (dateProp.month + 1 < 10 ? '0'+dateProp.month : dateProp.month )) + '-' + ( dateProp.day < 10 ? '0'+dateProp.day : dateProp.day );
+            dateProp['friendly_date'] = dateProp.weekday + ' ' + dateProp.day + ' de ' + dateProp.monthname
 
             var deserialized_data = $cell.find('.dayData').html()
             var data = JSON.parse(deserialized_data || '{}');
@@ -100,9 +101,9 @@
         rowClass;
 
         switch( this.rowTotal ) {
-        case 4 : rowClass = 'fc-four-rows'; break;
-        case 5 : rowClass = 'fc-five-rows'; break;
-        case 6 : rowClass = 'fc-six-rows'; break;
+          case 4 : rowClass = 'fc-four-rows'; break;
+          case 5 : rowClass = 'fc-five-rows'; break;
+          case 6 : rowClass = 'fc-six-rows'; break;
         }
 
         this.$cal = $( '<div class="fc-calendar ' + rowClass + '">' ).append( head, body );
@@ -238,7 +239,7 @@
         };
 
       },
-      _move : function( period, dir, callback ) {
+      _move : function( period, dir, callback, number ) {
 
         if( dir === 'previous' ) {
 
@@ -263,6 +264,14 @@
 
         }
 
+        else if( dir === 'number' ) {
+
+          if( period === 'month' ) {
+            this.month = number;
+          }
+          
+        }
+
         this._generateTemplate( callback );
 
       },
@@ -281,12 +290,15 @@
       // gets the cell's content div associated to a day of the current displayed month
       // day : 1 - [28||29||30||31]
       getCell : function( day ) {
+        var cell = [];
+        this.$cal.find('.fc-date').each(function(i, day_cell){
+          if (day_cell.innerHTML == day){
+            cell = $(day_cell).parent();
+            return;
+          }
+        })
 
-        var row = Math.floor( ( day + this.startingDay - this.options.startIn ) / 7 ),
-        pos = day + this.startingDay - this.options.startIn - ( row * 7 ) - 1;
-
-        return this.$cal.find( 'div.fc-body' ).children( 'div.fc-row' ).eq( row ).children( 'div' ).eq( pos ).children( 'div' );
-
+        return cell;
       },
       addData : function( caldata ) {
 
@@ -301,6 +313,13 @@
         this._generateTemplate();
 
       },
+      chooseDay : function( day ) {
+        var $cell = this.getCell(day);
+        if (!_.isEmpty($cell)){
+          $cell.trigger('click');
+        }
+      },
+
       // goes to today's month/year
       gotoNow : function( callback ) {
 

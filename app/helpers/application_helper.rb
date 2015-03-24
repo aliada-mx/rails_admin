@@ -10,4 +10,12 @@ module ApplicationHelper
     end
     humanized
   end
+
+  def controller_action_name
+    "#{params[:controller]}-#{params[:action]}".parameterize
+  end
+
+  def ensure_plural(word)
+    word[-1] == 's' ? word : word + 's'
+  end
 end

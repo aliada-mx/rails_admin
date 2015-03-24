@@ -1,0 +1,48 @@
+.summary-container
+  %h1
+    Resúmen
+
+  %ul.summary
+
+    %li{data: {bind: 'css: {checked: is_datetime_done, unchecked: !is_datetime_done()}'}}
+      %span{data: {bind: 'text_: "{{ service_type_display_name }}: {{ friendly_datetime }}"'}}
+      = link_to '#choose-date', class: 'small-letters' do
+        %icon.pencil.small
+        editar
+
+    %li.checked
+      - if @user.default_address
+        %span #{@user.default_address.name}
+      -# TODO let user edit address per service
+        = link_to edit_users_path(@user), class: 'small-letters', target: '_blank' do
+          %icon.pencil.small
+          editar
+
+    %li.checked
+      %span{data: {bind: 'text_: "Duración del servicio: {{ hours }} horas "'}} 
+      = link_to '#service_duration', class: 'small-letters' do
+        %icon.pencil.small
+        editar
+
+    - if @user.default_payment_provider
+      %li.checked
+        %span Tu pago se efectuará con: #{@user.payment_provider_name}
+      -# TODO let user edit address per service
+        = link_to edit_users_path(@user), class: 'small-letters', target: '_blank' do
+          %icon.pencil.small
+          editar
+
+  .foot
+    %span.hours{data: {bind: 'text_: "{{ hours }} horas:"'}}
+    %span.cash{data: {bind: 'text_: "${{ price }}"'}}
+  -# TODO promotional codes
+    .promotional-code
+      %a
+        APLICAR
+      = text_field_tag 'promo-code', nil, placeholder: 'código promocional'
+
+= submit_tag 'Guardar cambios', id: 'update_button', name: 'update_button', class: 'action-button-pink size-extra-large', data: {bind: 'css: { disabled: !is_datetime_done() }'}, onclick: 'this.form.submitted = this.name'
+
+= submit_tag 'Cancelar', id: 'cancel_button', name: 'cancel_button', class: 'action-button-transparent size-extra-large', onclick: 'this.form.submitted = this.name' 
+.aliada_seal
+  = image_tag 'sello-de-garantia.png'

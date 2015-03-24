@@ -33,6 +33,9 @@ aliada.geo_autocomplete = function(input, success){
             case 'sublocality_level_1':
               address.city = value;
               break;
+            case 'administrative_area_level_1':
+              address.state = value;
+              break;
             }
         });
 

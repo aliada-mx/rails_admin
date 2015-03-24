@@ -238,9 +238,10 @@ es:
         title: "Historial para %{model_label} '%{object_label}'"
         menu: "Historial"
         breadcrumb: "Historial"
-      tickets_list:
-        title: Lista de tickets
-        menu: últimos tickets
+      create_aliada_working_hours:
+        menu: "Horarios"
+        title: "Horarios"
+        breadcrumb: "Horarios"
     form:
       cancel: "Cancelar"
       basic_info: "Información básica"
