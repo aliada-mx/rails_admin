@@ -9,6 +9,7 @@ describe 'Schedule Filler' do
   let(:zone){ create(:zone) }
   let(:aliada){ create(:aliada) }
   let(:user){ create(:user) }
+  # TODO: update to many 1 hour recurrences
   let!(:aliada_recurrence) { create(:aliada_working_hour, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, aliada: aliada, total_hours: total_available_hours, owner: 'aliada') }
   
   # client's recurrence, built with aliada's recurrence
