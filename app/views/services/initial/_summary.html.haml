@@ -5,25 +5,27 @@
   %ul.summary
     %li{data: {bind: 'css: {checked: current_step() >= 1}'}}
       %span{data: {bind: 'text_: "{{ hours }} horas "'}} 
-      %a.small-letters{data: {bind: 'visible: are_fields_editable("hours"), click: function(){ aliada.ko.current_step(1) } '}} 
+      %ul{data: {bind: "foreach: {data: extra_items, as: 'item'}"}}
+        %li{data: {bind:'text: item'}}
+      %a.small-letters{data: {bind: 'visible: are_fields_editable("hours"), click: function(){ aliada.ko.current_step(1) } '}}
         %icon.pencil.small
         editar
 
     %li{data: {bind: 'css: {checked: is_address_done, unchecked: !is_address_done()}'}}
       %span{data: {bind: 'text: address'}}
-      %a.small-letters{data: {bind: 'visible: are_fields_editable("address"), click: function(){ aliada.ko.current_step(2) } '}} 
+      %a.small-letters{data: {bind: 'visible: are_fields_editable("address"), click: function(){ aliada.ko.current_step(2) } '}}
         %icon.pencil.small
         editar
 
     %li{data: {bind: 'css: {checked: is_name_email_phone_done, unchecked: !is_name_email_phone_done()}'}}
       %span{data: {bind: 'text: name_email_phone'}}
-      %a.small-letters{data: {bind: 'visible: are_fields_editable("name_email_phone"), click: function(){ aliada.ko.current_step(2) } '}} 
+      %a.small-letters{data: {bind: 'visible: are_fields_editable("name_email_phone"), click: function(){ aliada.ko.current_step(2) } '}}
         %icon.pencil.small
         editar
 
     %li{data: {bind: 'css: {checked: is_datetime_done, unchecked: !is_datetime_done()}'}}
       %span{data: {bind: 'text: friendly_datetime'}}
-      %a.small-letters{data: {bind: 'visible: are_fields_editable("datetime"), click: function(){ aliada.ko.current_step(3) } '}} 
+      %a.small-letters{data: {bind: 'visible: are_fields_editable("datetime"), click: function(){ aliada.ko.current_step(3) } '}}
         %icon.pencil.small
         editar
 
