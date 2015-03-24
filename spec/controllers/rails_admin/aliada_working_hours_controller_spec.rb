@@ -20,7 +20,7 @@ feature 'AliadaWorkingHourController' do
 
     before do
       init_hour = recurrence_service_datetime.hour
-      (init_hour..(init_hour + total_available_hours)).each do |i|
+      (init_hour..(init_hour + total_available_hours - 1)).each do |i|
         AliadaWorkingHour.create(weekday: recurrence_service_datetime.weekday, hour: i, aliada: aliada, total_hours: 1, owner: 'aliada', periodicity: 7)
       end
       login_as(admin)

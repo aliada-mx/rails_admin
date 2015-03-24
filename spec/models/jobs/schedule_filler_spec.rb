@@ -9,8 +9,6 @@ describe 'Schedule Filler' do
   let(:zone){ create(:zone) }
   let(:aliada){ create(:aliada) }
   let(:user){ create(:user) }
-  # TODO: update to many 1 hour recurrences
-  let!(:aliada_recurrence) { create(:aliada_working_hour, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, aliada: aliada, total_hours: total_available_hours, owner: 'aliada') }
   
   # client's recurrence, built with aliada's recurrence
   let!(:client_recurrence) { create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, aliada: aliada, user: user, total_hours: total_service_hours, owner: 'user') }
@@ -22,6 +20,10 @@ describe 'Schedule Filler' do
   before do
     first_service.update_attribute(:special_instructions, "modified service")
     Timecop.freeze(starting_datetime)
+    init_hour = recurrence_service_datetime.hour
+    (init_hour..(init_hour + total_available_hours - 1)).each do |i|
+      AliadaWorkingHour.create(weekday: recurrence_service_datetime.weekday, hour: i, aliada: aliada, total_hours: 1, owner: 'aliada', periodicity: 7)
+    end
   end
 
   after do
