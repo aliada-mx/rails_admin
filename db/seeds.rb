@@ -45,18 +45,20 @@ ServiceType.create(name: 'recurrent',
 puts 'Admin user'
 User.create!(first_name: 'Guillermo', last_name: 'Siliceo', email: 'guillermo.siliceo@gmail.com', role: 'admin', password: '12345678')
 
-puts 'Aliada'
-aliada = FactoryGirl.create(:aliada)
-
-puts 'Zone'
-zone = FactoryGirl.create(:zone)
-
-puts '11800 postal code'
-FactoryGirl.create(:postal_code, :zoned, zone: zone, number: '11800')
+FactoryGirl.create(:payment_method)
 
 
 # Paste the contents of this function
 def create_from_copypaste
+  puts 'Aliada'
+  aliada = FactoryGirl.create(:aliada)
+
+  puts 'Zone'
+  zone = FactoryGirl.create(:zone)
+
+  puts '11800 postal code'
+  FactoryGirl.create(:postal_code, :zoned, zone: zone, number: '11800')
+
   Schedule.destroy_all
   puts 'schedules for a week'
   starting_datetime = Time.zone.now.change(hour: 13) # 7 am Mexico City Time

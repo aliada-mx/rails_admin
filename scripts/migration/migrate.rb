@@ -9,6 +9,12 @@ connection = Mysql2::Client.new(
   database: ENV["MYSQL_DB"],
 )
 
+export MYSQL_HOST=aliadaweb.cvgrmul6eilx.us-west-2.rds.amazonaws.com
+export MYSQL_USER=root
+export MYSQL_PASS=F3nco389y8%nlp#
+export MYSQL_DB=aliadamx_db
+
+
 zones = {}
 aliadas = {}
 clientes = {}

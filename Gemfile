@@ -115,6 +115,9 @@ group :development, :test do
 
 end
 
+# Factories outside test group for usage on seeds
+gem 'factory_girl_rails'
+
 group :test do
   # For the lols run it $ rspec --format NyanCatWideFormatter
   gem "nyan-cat-formatter"
@@ -124,9 +127,6 @@ group :test do
 
   # Functional testing
   gem 'capybara'
-
-  # Factories
-  gem 'factory_girl_rails'
 
   # Testing coverage
   gem 'simplecov', :require => false
@@ -156,6 +156,9 @@ end
 group :production, :staging do
   # Heroku support
   gem 'rails_12factor'
+
+  # Performance monitoring
+  gem 'newrelic_rpm'
 end
 
 
