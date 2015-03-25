@@ -475,6 +475,23 @@ feature 'ServiceController' do
           expect(user_service.reload).to be_canceled
           expect(user_service.reload.cancelation_fee_charged).to be true
         end
+
+        it 'deactivates the recurrences and enables the schedules' do
+          recurrence = create(:recurrence)
+          service_1 = create(:service, recurrence: recurrence)
+          service_2 = create(:service, recurrence: recurrence)
+
+          user_service.recurrence = recurrence
+          user_service.save!
+
+          click_button 'Cancelar'
+
+          expect(user_service.reload).to be_canceled
+          expect(user_service.recurrence.reload).to be_inactive
+          expect(user_service.recurrence.services.all?(&:canceled?)).to be true
+          expect(service_1.reload).to be_canceled
+          expect(service_1.reload).to be_canceled
+        end
       end
     end
 

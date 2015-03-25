@@ -4,7 +4,8 @@
 .messages-container
   min-width: 300px
   max-width: 550px
-  +rem(margin, 2rem auto 0)
+  +rem(margin, 2rem auto)
+  background-color: white
 
 .message
   border: 2px solid
@@ -14,6 +15,7 @@
   +rem(font-size, 1.3rem)
   +rem(margin-bottom, 1rem)
   +rem(padding, 1rem)
+  cursor: pointer
 
   a
     display: inline-block
@@ -29,6 +31,14 @@
       vertical-align: middle
       +rem(font-size, 1rem)
 
+
+  &.message,
+    color: $green
+    border-color: $green
+
+    a
+      color: $green
+
   &.warning
     color: $yellow
     border-color: $yellow
@@ -36,12 +46,12 @@
     a
       color: $yellow
 
-  &.danger
-    color: $pink
-    border-color: $pink
+  &.alert
+    color: $error
+    border-color: $error
 
     a
-      color: $pink
+      color: $error
 
   &:last-child
     margin-bottom: 0

@@ -1,21 +1,13 @@
-.messages-container
-  - flash.each do |name, msg|
-    - if msg.class == Array
-      - msg.each do |message|
-        .message.danger
-          %span.icon-notice
-          = msg
-    - else
-      .message.danger
-        %span.icon-notice
-        = msg
+= render partial: 'common/messages'
 
+= append(:body_class){ ' login ' }
 
 .login-container.col-lg-12
-  .logo-container
-    =image_tag('logo-contrast.png', { :title => 'Aliada'})
   .login-form-wrapper
     .login-form-container
+      =link_to root_path, { class: 'logo-container' } do
+        =image_tag('logo-contrast.png', { :title => 'Aliada'})
+
       %h1 ¡Hola de nuevo!
       %p Entra a tu perfil, modifica tus visitas y programa nuevas.
       .login-form.form-control
@@ -31,3 +23,6 @@
 
           .actions
             = f.submit "Entrar", class: 'action-button-pink'
+
+= prepend :javascript do
+  = javascript_include_tag 'minimal'

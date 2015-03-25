@@ -2,15 +2,18 @@
 @import 'common/mixins'
 @import 'compass/css3/box-shadow'
 
+body.login
+  background-image: image-url('white-mosaic.png')
+
 .login-container
-  +rem(padding, 4rem)
+  margin-top: 10%
 
   .logo-container
     img
       display: block
       max-width: 150px
       width: 100%
-      +rem(margin, 4rem auto)
+      +rem(margin, 0 auto 4rem)
 
   .login-form-wrapper
     text-align: center
