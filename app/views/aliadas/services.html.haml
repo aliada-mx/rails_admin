@@ -3,29 +3,29 @@
   = area :javascript do
     = render partial: 'common/javascript_templates'
     = render partial: 'common/javascript_variables'
-  %h2 Servicios por terminar
-  %h1= @message
+  %h1 Poner horas
   - @unfinished_services.each do |service|
     %h5
       En: 
       #{service.address.street}
-      %h6= I18n.l service.tz_aware_datetime, format: "%A %e a las %k %P"
+      %h6= I18n.l service.tz_aware_datetime, format: "%A %e a las %I %P"
       = form_tag((finish_service_path)) do
         %input{:type=>"hidden", :value=>service.id, :name => :service}
         %div
-          Llegue?
+          ¿Llegue?
           %select{:name => :begin_time}
             - begin_hours_range(service).each do |h|
-              %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%k:%M %P"
-          Acabe?
+              %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%I:%M %P"
+          ¿Acabe?
           %select{:name => :end_time}
             - end_hours_range(service).each do |h|
-              %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%k:%M %P"
-          %input{  :type => "submit", :name => "Pay", :value => "Pagar" }
+              %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%I:%M %P"
+          %input{  :type => "submit", :name => "Pay", :value => "Guardar :)" }
       %br
       %br
+  %h1 Servicios proximos    
   - @upcoming_services.each do |service|
-    %h1=  I18n.l service.tz_aware_datetime, format: "%A %e a las %k %P"
+    %h1=  I18n.l service.tz_aware_datetime, format: "%A %e a las %I %P"
     %h4
       #{service.estimated_hours.floor} horas
       #{(60*(service.estimated_hours-service.estimated_hours.floor)).floor} minutos
@@ -53,7 +53,7 @@
     - if !service.confirmed 
       = form_tag((confirm_service_path)) do
         %input{:type=>"hidden", :value=>service.id, :name => :service}
-        %input{  :type => "submit", :name => "confirmation", :value => "Si voy" }
+        %input.action-button-pink{  :type => "submit", :name => "confirmation", :value => "Si voy" }
     %br
     %br
   
