@@ -153,6 +153,9 @@ end
 group :production, :staging do
   # Heroku support
   gem 'rails_12factor'
+
+  # Performance monitoring
+  gem 'newrelic_rpm'
 end
 
 
