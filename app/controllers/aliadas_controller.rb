@@ -1,5 +1,14 @@
 class AliadasController < ApplicationController
   
+  def confirm
+    @aliada = Aliada.find_by(authentication_token: params[:token])
+    @service_to_confirm = Service.find_by(id: params[:service], aliada_id: @aliada.id)
+    @service_to_confirm.confirmed = true;
+    @service_to_confirm.save!
+    
+    redirect_to :back
+  end
+  
   def finish
     
     @aliada = Aliada.find_by(authentication_token: params[:token])

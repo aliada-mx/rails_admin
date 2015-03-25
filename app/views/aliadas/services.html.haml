@@ -51,7 +51,7 @@
     %h5 Baños:  #{service.bathrooms}
     %h5 Cuartos:   #{service.bedrooms}
     - if !service.confirmed 
-      = form_tag((finish_service_path)) do
+      = form_tag((confirm_service_path)) do
         %input{:type=>"hidden", :value=>service.id, :name => :service}
         %input{  :type => "submit", :name => "confirmation", :value => "Si voy" }
     %br

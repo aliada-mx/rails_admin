@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150321011611) do
+ActiveRecord::Schema.define(version: 20150325000233) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -257,8 +257,8 @@ ActiveRecord::Schema.define(version: 20150321011611) do
     t.integer  "service_type_id"
     t.integer  "price"
     t.integer  "recurrence_id"
-    t.datetime "created_at",                                                          null: false
-    t.datetime "updated_at",                                                          null: false
+    t.datetime "created_at",                                                                          null: false
+    t.datetime "updated_at",                                                                          null: false
     t.decimal  "billed_hours",                               precision: 10, scale: 3
     t.decimal  "hours_after_service",                        precision: 10, scale: 3
     t.integer  "bathrooms"
@@ -276,6 +276,7 @@ ActiveRecord::Schema.define(version: 20150321011611) do
     t.time     "aliada_reported_begin_time"
     t.time     "aliada_reported_end_time"
     t.boolean  "entrance_instructions"
+    t.boolean  "confirmed",                                                           default: false
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
