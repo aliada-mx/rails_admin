@@ -94,10 +94,10 @@ feature 'AliadasController' do
       servicio1 = create(:service, aliada_id: aliada.id, address_id: address1.id,
                          bathrooms: 2,
                          bedrooms: 3,
-                         user_id: client.id, datetime: DateTime.parse('2015-09-04 19:00')
+                         user_id: client.id, datetime: ActiveSupport::TimeZone['Mexico City'].parse('2015-09-04 19:00').utc
                          )
       servicio2 = create(:service, aliada_id: aliada.id, address_id: address2.id,
-                         user_id: client.id, datetime: DateTime.parse('2015-09-03 19:00'))
+                         user_id: client.id, datetime: ActiveSupport::TimeZone['Mexico City'].parse('2015-09-03 19:00').utc)
       
       Timecop.freeze('2015-09-04') do
         visit  ('aliadas/servicios/'+ aliada.authentication_token)
