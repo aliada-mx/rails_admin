@@ -94,13 +94,14 @@ feature 'AliadasController' do
       servicio1 = create(:service, aliada_id: aliada.id, address_id: address1.id,
                          bathrooms: 2,
                          bedrooms: 3,
-                         user_id: client.id, datetime: (DateTime.now+1.day)
+                         user_id: client.id, datetime: DateTime.parse('2015-09-04 19:00')
                          )
       servicio2 = create(:service, aliada_id: aliada.id, address_id: address2.id,
-                         user_id: client.id, datetime: DateTime.now)
+                         user_id: client.id, datetime: DateTime.parse('2015-09-03 19:00'))
       
-      Timecop.freeze(Date.today + 1) do
+      Timecop.freeze('2015-09-04') do
         visit  ('aliadas/servicios/'+ aliada.authentication_token)
+        save_and_open_page
         expect(page).to   have_content 'Roma Norte'
       end
       
