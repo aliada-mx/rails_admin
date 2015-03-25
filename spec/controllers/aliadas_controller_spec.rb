@@ -145,7 +145,7 @@ feature 'AliadasController' do
 
         page.has_content?('Tus servicios')
         
-        click_on('Pagar')
+        click_on('Guardar :)')
         expect(Payment.all.count).to be 1
       end
     end
