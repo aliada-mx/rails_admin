@@ -331,6 +331,11 @@ GEM
       resque
       sass-rails
       twitter-bootstrap-rails
+    resque_spec (0.16.0)
+      resque (>= 1.19.0)
+      rspec-core (>= 3.0.0)
+      rspec-expectations (>= 3.0.0)
+      rspec-mocks (>= 3.0.0)
     rspec (3.0.0)
       rspec-core (~> 3.0.0)
       rspec-expectations (~> 3.0.0)
@@ -481,6 +486,7 @@ DEPENDENCIES
   resque
   resque-scheduler
   resque-web
+  resque_spec
   rspec-rails (~> 3.0.1)
   ruby-prof
   sass-rails (~> 5.0)

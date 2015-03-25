@@ -148,6 +148,9 @@ group :test do
 
   # Record requests to be replayed on tests
   gem 'vcr'
+
+  # test resque
+  gem 'resque_spec'
 end
 
 group :production, :staging do

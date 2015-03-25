@@ -57,26 +57,6 @@ class User < ActiveRecord::Base
     create_payment_provider_choice(payment_provider)
   end
   
-  # Given a service id, check whether status is finished,
-  # charge the default service provider and change status to finished
-  # 
-  def charge_service!(service_id)
-    service_to_charge = Service.find_by(id: service_id, user_id: self.id, status: 'finished')
-    
-    if service_to_charge
-      amount = service_to_charge.amount_to_bill
-      product = OpenStruct.new({price: amount,
-                               description: 'Servicio aliada',
-                               id: service_id})
-      
-      ### TODO: handle this for multiple payment providers
-      charge!(product, service_to_charge)
-    else
-      Ticket.create_warning(relevant_object: self,
-                            message: "Se intento cobrar servicio de cliente: #{self.id} pero no ha concluido o no existe")
-    end  
-  end
-  
   def charge!(product, object)
     begin
       default_payment_provider.charge!(product, self)
@@ -84,6 +64,7 @@ class User < ActiveRecord::Base
       Raygun.track_exception(err)
 
       object.create_charge_failed_ticket(self, product.price, err)
+      nil
     end
   end
   

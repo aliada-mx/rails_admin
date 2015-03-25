@@ -8,6 +8,7 @@ feature 'Service' do
   let!(:user) { create(:user) }
   let!(:aliada) { create(:aliada) }
   let!(:zone) { create(:zone) }
+  let!(:conekta_card){ create(:conekta_card) }
   let!(:recurrence){ create(:recurrence, 
                             weekday: ( starting_datetime + 1.day - 1.hour).weekday,
                             hour: ( starting_datetime + 1.day - 1.hour).hour,
@@ -148,6 +149,49 @@ feature 'Service' do
                          estimated_hours: 3
                          )
       expect(s.amount_to_bill).to be 0
+    end
+  end
+
+  describe '#charge_service!' do
+
+    it 'Creates a ticket on Conekta::Error' do
+      user.create_payment_provider_choice(conekta_card)
+      service.price= 65
+      service.status = 'finished'
+      service.user_id = user.id
+      service.aliada_reported_begin_time = Time.now
+     
+      service.aliada_reported_end_time = Time.now + 3.hours
+      service.datetime = starting_datetime
+      service.estimated_hours = 3
+      
+      service.save
+      conekta_card.token = nil
+      conekta_card.save
+      service.charge!
+      expect(Ticket.all.count).to eql 1
+     
+    end
+
+
+    it 'Charges the user using the default payment provider' do
+      user.create_payment_provider_choice(conekta_card)
+      service.price= 65
+      service.status = 'finished'
+      service.user_id = user.id
+      service.aliada_reported_begin_time = Time.zone.now
+      
+      service.aliada_reported_end_time = Time.zone.now + 3.hours
+      service.datetime = starting_datetime
+      service.estimated_hours = 3
+      
+      service.save
+      
+
+      VCR.use_cassette('conekta_user_charge', match_requests_on:[:conekta_charge]) do
+        service.charge!
+      end
+      expect(Payment.all.count).to eql 1
     end
   end
 end

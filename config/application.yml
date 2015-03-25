@@ -42,6 +42,7 @@ development:
 
 test:
   <<: *defaults
+  host: 'localhost:3000'
 
 production:
   host: 'aliada.mx'

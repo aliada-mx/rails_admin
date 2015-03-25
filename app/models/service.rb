@@ -55,7 +55,7 @@ class Service < ActiveRecord::Base
   state_machine :status, :initial => 'created' do
     transition 'created' => 'aliada_assigned', :on => :assign
     transition 'created' => 'aliada_missing', :on => :mark_as_missing
-    transition 'created' => 'paid', :on => :pay
+    transition 'finished' => 'paid', :on => :pay
     transition ['created', 'aliada_assigned', 'in-progress'] => 'finished', :on => :finish
     transition ['created', 'aliada_assigned' ] => 'canceled', :on => :cancel
 
@@ -222,7 +222,6 @@ class Service < ActiveRecord::Base
   
   #calculates the price to be charged for a service
   def amount_to_bill
-    
     hours = self.aliada_reported_end_time.hour - self.aliada_reported_begin_time.hour
     minutes = self.aliada_reported_end_time.min - self.aliada_reported_begin_time.min 
     amount = (hours*(self.service_type.price_per_hour))+(minutes * ((self.service_type.price_per_hour)/60.0))
@@ -239,6 +238,27 @@ class Service < ActiveRecord::Base
     self.schedules.in_the_future.map(&:enable_booked!)
   end
 
+  def charge!
+    return if paid?
+
+    amount = self.amount_to_bill
+    product = OpenStruct.new({price: amount,
+                              description: 'Servicio aliada',
+                              id: id})
+    
+    payment = user.charge!(product, self)
+
+    if payment && payment.paid?
+      pay!
+    end
+  end
+
+  def create_double_charge_ticket
+    Ticket.create_warning message: "Se intentó cobrar un servicio ya cobrado", 
+                          action_needed: "Deselecciona el servicio al cobrar",
+                          relevant_object: self
+  end
+
   def charge_cancelation_fee!
     return if self.cancelation_fee_charged
 
@@ -247,10 +267,13 @@ class Service < ActiveRecord::Base
     cancelation_fee = OpenStruct.new({price: amount,
                                       description: "Cancelación tardía del servicio del #{friendly_datetime} en aliada.mx",
                                       id: self.id})
-    user.charge!(cancelation_fee, self) 
 
-    self.cancelation_fee_charged = true
-    self.save!
+    payment = user.charge!(cancelation_fee , self)
+
+    if payment && payment.paid?
+      self.cancelation_fee_charged = true
+      self.save!
+    end
   end
 
   def self.create_new!(service_params, user)
@@ -438,6 +461,5 @@ class Service < ActiveRecord::Base
       field :aliada
       field :recurrence
     end
-
   end
 end

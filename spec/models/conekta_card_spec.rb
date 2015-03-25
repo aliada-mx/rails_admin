@@ -23,12 +23,12 @@ describe 'ConektaCard' do
       end
     end
 
-    it 'creates a charge' do
+    it 'charge_in_conekta' do
       VCR.use_cassette('conekta_charge') do
         card.token = token
         
         
-        conekta_charge = card.charge!(fake_product,user)
+        conekta_charge = card.charge_in_conekta!(fake_product,user)
         charge = eval(conekta_charge.inspect)
 
         expect(charge['amount']).to eql 30000
