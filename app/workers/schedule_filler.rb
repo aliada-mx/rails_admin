@@ -139,5 +139,4 @@ class ScheduleFiller
       end
     end
   end  
-
 end

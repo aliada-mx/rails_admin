@@ -197,10 +197,11 @@ es:
         title: "Detalles de %{model_label} '%{object_label}'"
         menu: "Mostrar"
         breadcrumb: "%{object_label}"
-      charge_order:
-        title: "Cobrar orden"
-        menu: "Cobrar orden"
-        link: "Cobrar orden"
+      charge_services:
+        title: "Cobrar servicio"
+        menu: "Cobrar servicios"
+        link: "Cobrar servicio"
+        bulk_link: "Cobrar servicios"
       show_in_app:
         menu: "Mostrar en la app"
       new:
@@ -245,6 +246,10 @@ es:
         menu: "Horarios"
         title: "Horarios"
         breadcrumb: "Horarios"
+      charge_service:
+        menu: "Cobrar servicio"
+        title: "Cobrar servicio"
+        breadcrumb: "Cobrar servicio"
     form:
       cancel: "Cancelar"
       basic_info: "Información básica"

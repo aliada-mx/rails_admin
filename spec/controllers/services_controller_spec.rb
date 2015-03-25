@@ -441,7 +441,6 @@ feature 'ServiceController' do
           allow_any_instance_of(User).to receive(:aliadas).and_return([aliada])
           allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
           allow_any_instance_of(User).to receive(:postal_code_number).and_return(11800)
-          allow_any_instance_of(User).to receive(:charge!).and_return(true)
 
           edit_service_path = edit_service_users_path(user_id: user.id, service_id: user_service.id)
 
@@ -451,6 +450,8 @@ feature 'ServiceController' do
         end
 
         it 'enables the future schedules' do
+          allow_any_instance_of(User).to receive(:charge!).and_return(true)
+
           expect(user_service.schedules.booked.sort).to eql ( @future_service_interval.schedules + @previous_service_interval.schedules ).sort
           expect((@future_service_interval.schedules + @previous_service_interval.schedules).all?{ |schedule| schedule.booked? }).to eql true
 
@@ -464,6 +465,7 @@ feature 'ServiceController' do
 
         it 'charges a fee if the cancelation happens > 24 hours before' do
           expect_any_instance_of(Service).to receive(:charge_cancelation_fee!).and_call_original
+          expect_any_instance_of(ConektaCard).to receive(:charge!).and_return(Payment.new(status: 'paid'))
           expect(Payment.count).to be 0
 
           Timecop.travel(starting_datetime - 23.hours)
