@@ -101,7 +101,7 @@ feature 'AliadasController' do
       
       Timecop.freeze('2015-09-04') do
         visit  ('aliadas/servicios/'+ aliada.authentication_token)
-        save_and_open_page
+        #save_and_open_page
         expect(page).to   have_content 'Roma Norte'
       end
       
