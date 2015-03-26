@@ -4,13 +4,11 @@
     = render partial: 'common/javascript_templates'
     = render partial: 'common/javascript_variables'
   %h1 Poner horas
-  %h1= @message
   - @unfinished_services.each do |service|
     %h5
       En: 
       #{service.address.street}
       %h6= I18n.l service.tz_aware_datetime, format: "%A %e a las %I %P"
-      
       = form_tag((finish_service_path)) do
         %input{:type=>"hidden", :value=>service.id, :name => :service}
         %div
@@ -28,8 +26,6 @@
   %h1 Servicios proximos    
   - @upcoming_services.each do |service|
     %h1=  I18n.l service.tz_aware_datetime, format: "%A %e a las %I %P"
-    %h6= service.tz_aware_datetime
-    %h6= service.datetime
     %h4
       #{service.estimated_hours.floor} horas
       #{(60*(service.estimated_hours-service.estimated_hours.floor)).floor} minutos
