@@ -62,7 +62,7 @@ def create_from_copypaste
 
   Schedule.destroy_all
   puts 'schedules for a week'
-  starting_datetime = Time.zone.now.change(hour: 13) # 7 am Mexico City Time
+  starting_datetime = Time.zone.now.change(hour: 13) + 1.day # 7 am Mexico City Time
   aliada = Aliada.first
   zone = Zone.find_by_postal_code_number('11800')
 
@@ -70,6 +70,6 @@ def create_from_copypaste
   include TestingSupport::SchedulesHelper
 
   7.times do |i|
-    create_recurrent!(starting_datetime + i.day, hours: 6, periodicity: 7, conditions: {aliada: aliada, zones: [zone]})
+    create_recurrent!(starting_datetime + i.day, hours: 14, periodicity: 7, conditions: {aliada: aliada, zones: [zone]})
   end
 end

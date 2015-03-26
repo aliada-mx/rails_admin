@@ -62,7 +62,10 @@ module Mixins
             minimum_availabilities = wdays_until_horizon( intervals_hash.values.first.wday, starting_from: @available_after )
 
             value = intervals_hash.size < minimum_availabilities
-            @report.push({message: 'Cleared a too few availability', objects: [minimum_availabilities, intervals_hash] }) if value
+
+            if value
+              @report.push({message: 'Cleared a too few availability', objects: [minimum_availabilities, intervals_hash] })
+            end
 
             value
           end

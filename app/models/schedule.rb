@@ -1,4 +1,5 @@
 class Schedule < ActiveRecord::Base
+  include Mixins::RailsAdminModelsHelpers
   STATUSES = [
     ['Disponible','available'],
     ['Reservado para un servicio', 'booked'],
@@ -12,9 +13,9 @@ class Schedule < ActiveRecord::Base
   validate :schedule_within_working_hours
 
   # Associations
-  belongs_to :user
-  belongs_to :aliada 
-  belongs_to :service
+  belongs_to :user, inverse_of: :schedules, foreign_key: :user_id
+  belongs_to :aliada, inverse_of: :schedules, foreign_key: :aliada_id
+  belongs_to :service, inverse_of: :schedules
   belongs_to :recurrence
   has_and_belongs_to_many :zones
 
@@ -33,6 +34,10 @@ class Schedule < ActiveRecord::Base
   scope :in_or_before_datetime, ->(datetime) { where("datetime <= ?", datetime) }
   scope :ordered_by_aliada_datetime, -> { order(:aliada_id, :datetime) }
   scope :for_booking, ->(zone, starting_datetime) { in_zone(zone).in_or_after_datetime(starting_datetime).ordered_by_aliada_datetime }
+  # alias for rails admin
+  scope :disponible, -> { available }
+  scope :reservadas, -> { booked }
+  scope :todos, -> { }
 
   scope :previous_aliada_schedule, ->(zone, current_schedule, aliada) { 
     in_zone(zone)
@@ -87,6 +92,14 @@ class Schedule < ActiveRecord::Base
     STATUSES
   end
 
+  def user_link
+    rails_admin_edit_link(user)
+  end
+
+  def service_link
+    rails_admin_edit_link(service)
+  end
+
   rails_admin do
     label_plural 'horas de servicio'
     navigation_label 'Operación'
@@ -99,10 +112,36 @@ class Schedule < ActiveRecord::Base
       sort_reverse false
     end
 
+    configure :status do
+      queryable true
+      filterable true
+    end
+
     list do
       sort_by :datetime
-      include_fields :datetime, :aliada, :status, :user, :service, :recurrence, :created_at
+
+      field :datetime
+      field :status
+      field :user_link do
+        virtual?
+      end
+
+      field :aliada do
+        searchable [{users: :first_name }, {users: :last_name }, {users: :email}, {users: :phone}]
+        queryable true
+        filterable true
+      end
+
+      field :service_link do
+        virtual?
+      end
+
+      field :recurrence
+      field :created_at
+
+      scopes [:todos, :reservadas, :disponible]
     end
+
   end
 
   private

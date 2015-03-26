@@ -1,11 +1,9 @@
 class User < ActiveRecord::Base
-
   #Required to enable token authentication
   acts_as_token_authenticatable
 
   include Presenters::UserPresenter
   include UsersHelper
-
 
   ROLES = [
     ['client', 'Cliente'],
@@ -15,6 +13,7 @@ class User < ActiveRecord::Base
 
   has_many :services, inverse_of: :user, foreign_key: :user_id
   has_many :addresses
+  has_many :schedules, inverse_of: :user, foreign_key: :user_id
   has_and_belongs_to_many :banned_aliadas,
                           class_name: 'Aliada',
                           join_table: :banned_aliada_users,
@@ -86,7 +85,7 @@ class User < ActiveRecord::Base
   end
 
   def aliadas
-    services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }.uniq
+    services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }.uniq || []
   end
 
   def set_default_role

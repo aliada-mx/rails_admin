@@ -16,12 +16,13 @@ module Presenters
       end
     end
 
-    def user_link
-      host = Setting.host
-      url = RailsAdmin::Engine.routes.url_helpers.edit_url(user.class, user, host: host)
-      name = "(#{user.id}) #{ user.name }"
+    def name
+      name = "(#{id}) Servicio"
+      name += " #{address.name}" if address
+    end
 
-      ActionController::Base.helpers.link_to(name, url)
+    def user_link
+      rails_admin_edit_link(user)
     end
 
     def friendly_datetime
@@ -70,6 +71,10 @@ module Presenters
       else
         @time
       end
+    end
+
+   def extras_hours
+      extras.inject(0){ |hours,extra| hours += extra.hours || 0 }
     end
 
     def instructions_summary(truncate)

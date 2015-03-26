@@ -58,7 +58,7 @@ $(document).ready(function() {
   aliada.ko.bedrooms(aliada.service.bedrooms);
   aliada.ko.bedrooms(aliada.service.bathrooms);
   // Hours selector
-  var service_type_selector = $("#service_estimated_hours").data("selectBox-selectBoxIt");
+  var service_type_selector = $("#service_rooms_hours").data("selectBox-selectBoxIt");
   service_type_selector.selectOption(aliada.service.hours_without_extras);
 
   // Update calendar on service type change
