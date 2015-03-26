@@ -23,12 +23,12 @@ describe 'ConektaCard' do
       end
     end
 
-    it 'creates a charge' do
+    it 'charge_in_conekta' do
       VCR.use_cassette('conekta_charge') do
         card.token = token
         
         
-        conekta_charge = card.charge!(fake_product,user)
+        conekta_charge = card.charge_in_conekta!(fake_product,user)
         charge = eval(conekta_charge.inspect)
 
         expect(charge['amount']).to eql 30000
@@ -45,7 +45,7 @@ describe 'ConektaCard' do
       expect(ConektaCard.first).to eql card
 
       # TODO use regex matchers because the request wont match if the id of the generated card changes
-      VCR.use_cassette('new_card', match_requests_on: [:conekta_preauthorization]) do
+      VCR.use_cassette('new_card', match_requests_on: [:conekta_charge]) do
         ConektaCard.create_for_user!(user, token)
       end
 

@@ -19,8 +19,9 @@ es:
       invalid_token: 'Token de autentificación inválido.'
       timeout: 'Tu sesión ha expirado. Inicia sesión nuevamente.'
       inactive: 'Tu cuenta aun no ha sido activada.'
+      not_found_in_database: No encontramos un usuario con ese email.
     sessions:
-      permission_denied: No estás autorizados para acceder esta pagina
+      permission_denied: No estás autorizado para acceder esta pagina
       sign_in_required: Por favor inicia sesión antes de acceder a esta página
       signed_in: 'Iniciaste sesión correctamente.'
       signed_out: 'Cerraste sesión correctamente.'
@@ -55,4 +56,10 @@ es:
         subject: 'Instrucciones de cambio de contraseña'
       unlock_instructions:
         subject: 'Instrucciones de desbloqueo'
-
+  errors:
+    messages:
+      not_found: "No encontrado"
+      not_locked: "No estaba bloqueado"
+      not_saved:
+        one: "1 error prohibió guardar %{resource}:"
+        other: "%{count} errores prohibieron guardar %{resource}: "

@@ -58,7 +58,7 @@ $(document).ready(function() {
       case 4:
         return 'Confirmar visita'
       case 5:
-        return 'Guardar servicio'
+        return 'Ok'
     }
   });
 

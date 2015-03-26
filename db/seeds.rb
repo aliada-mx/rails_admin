@@ -45,28 +45,30 @@ ServiceType.create(name: 'recurrent',
 puts 'Admin user'
 User.create!(first_name: 'Guillermo', last_name: 'Siliceo', email: 'guillermo.siliceo@gmail.com', role: 'admin', password: '12345678')
 
-puts 'Aliada'
-aliada = FactoryGirl.create(:aliada)
+FactoryGirl.create(:payment_method)
 
-puts 'Zone'
-zone = FactoryGirl.create(:zone)
-
-puts '11800 postal code'
-FactoryGirl.create(:postal_code, :zoned, zone: zone, number: '11800')
-
-puts 'schedules for a week'
 
 # Paste the contents of this function
 def create_from_copypaste
+  puts 'Aliada'
+  aliada = FactoryGirl.create(:aliada)
+
+  puts 'Zone'
+  zone = FactoryGirl.create(:zone)
+
+  puts '11800 postal code'
+  FactoryGirl.create(:postal_code, :zoned, zone: zone, number: '11800')
+
   Schedule.destroy_all
+  puts 'schedules for a week'
   starting_datetime = Time.zone.now.change(hour: 13) # 7 am Mexico City Time
   aliada = Aliada.first
-  zone = Zone.first
+  zone = Zone.find_by_postal_code_number('11800')
 
   require_relative 'spec/support/schedules_helper'
   include TestingSupport::SchedulesHelper
 
-  6.times do |i|
-    create_recurrent!(starting_datetime + i.day, hours: 6, periodicity: 7, conditions: {aliada: aliada, zone: zone})
+  7.times do |i|
+    create_recurrent!(starting_datetime + i.day, hours: 6, periodicity: 7, conditions: {aliada: aliada, zones: [zone]})
   end
 end

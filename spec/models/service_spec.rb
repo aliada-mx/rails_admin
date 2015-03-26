@@ -8,6 +8,7 @@ feature 'Service' do
   let!(:user) { create(:user) }
   let!(:aliada) { create(:aliada) }
   let!(:zone) { create(:zone) }
+  let!(:conekta_card){ create(:conekta_card) }
   let!(:recurrence){ create(:recurrence, 
                             weekday: ( starting_datetime + 1.day - 1.hour).weekday,
                             hour: ( starting_datetime + 1.day - 1.hour).hour,
@@ -34,38 +35,40 @@ feature 'Service' do
 
   before(:each, recurrent: false) do
     # Tomorrow because we never book for the same day
-    create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada, zone: zone})
+    create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada, zones: [zone]})
   end
 
   # Create the needed schedules
   before(:each, recurrent: true) do
     # Tomorrow because we never book for the same day
-    create_recurrent!(starting_datetime + 1.day, hours: 4, periodicity: 7, conditions: {aliada: aliada, zone: zone})
+    create_recurrent!(starting_datetime + 1.day, hours: 4, periodicity: 7, conditions: {aliada: aliada, zones: [zone]})
   end
 
-  describe '#book_aliada' do
+  describe '#book_an_aliada' do
     it 'allows it to mark one time service schedules´ as booked', recurrent: false do
-      available_schedules = Schedule.available_for_booking(zone, starting_datetime_to_book_services)
+      available_schedules = Schedule.for_booking(zone, starting_datetime_to_book_services)
       expect(available_schedules.count).to be 4
       expect(Schedule.booked.count).to be 0
 
-      service.book_aliada
+      service.book_an_aliada
 
-      expect(Schedule.booked.count).to be 4
-      expect(Schedule.available_for_booking(zone, starting_datetime_to_book_services).count).to be 0
+      expect(Schedule.padding.count).to be 1
+      expect(Schedule.booked.count).to be 3
+      expect(Schedule.for_booking(zone, starting_datetime_to_book_services).available.count).to be 0
     end
 
     it 'allows it to mark recurrent service schedules´ as booked', recurrent: true do
-      available_schedules = Schedule.available_for_booking(zone, starting_datetime_to_book_services)
+      available_schedules = Schedule.for_booking(zone, starting_datetime_to_book_services).available
       expect(available_schedules.count).to be 20
       expect(Schedule.booked.count).to be 0
 
       service.service_type = recurrent_service
       service.save!
 
-      service.book_aliada
+      service.book_an_aliada
 
-      expect(Schedule.booked.count).to be 20 
+      expect(Schedule.booked.count).to be 15
+      expect(Schedule.padding.count).to be 5
       expect(available_schedules.count).to be 0
     end
   end
@@ -108,59 +111,21 @@ feature 'Service' do
     end
   end
 
-  describe '#days_count_to_end_of_recurrency' do
-    it 'returns 4 for the number of fridays on january 2015' do
-      expect(starting_datetime).to eql Time.zone.parse('01 Jan 2015 13:00:00')
-      expect(Setting.time_horizon_days).to be 30
-      expect(service.days_count_to_end_of_recurrency(starting_datetime)).to be 5
-    end
-  end
-
   describe '#requested_schedules' do
-    before :each do
-      Timecop.freeze(starting_datetime)
+    before do
+      @schedule_interval = service.requested_schedules
     end
 
-    after do
-      Timecop.return
+    it 'should have valid schedule intervals starting datetimes' do
+      expect(@schedule_interval.beginning_of_interval).to eql starting_datetime + 1.day
     end
 
-    context 'recurrent service' do
-      before do
-        service.service_type = recurrent_service
-        @schedule_intervals = service.requested_intervals(starting_datetime)
-      end
-
-      it 'should have valid schedule intervals starting datetimes' do
-        expect(@schedule_intervals.first.beginning_of_interval.hour).to eql (starting_datetime + 1.day).hour
-      end
-
-      it 'should have valid schedule intervals ending datetimes' do
-        expect(@schedule_intervals.last.ending_of_interval).to eql (starting_datetime + Setting.time_horizon_days.days - 1.day + 3.hours)
-      end
-
-      it 'should have a correct number of schedule intervals' do
-        expect(@schedule_intervals.size).to eql 5
-      end
+    it 'should have valid schedule intervals ending datetimes' do
+      expect(@schedule_interval.ending_of_interval).to eql starting_datetime + 1.day + 4.hours
     end
 
-    context 'one time service' do
-      before do
-        service.service_type = one_time_service
-        @schedule_intervals = service.requested_intervals(starting_datetime)
-      end
-
-      it 'should have valid schedule intervals starting datetimes' do
-        expect(@schedule_intervals.first.beginning_of_interval.hour).to eql (starting_datetime + 1.day).hour
-      end
-
-      it 'should have valid schedule intervals ending datetimes' do
-        expect(@schedule_intervals.first.ending_of_interval).to eql (starting_datetime + 3.hours + 1.day)
-      end
-
-      it 'should have a correct number of schedule intervals' do
-        expect(@schedule_intervals.size).to eql 1
-      end
+    it 'should have a correct number of schedule intervals' do
+      expect(@schedule_interval.size).to eql 5
     end
   end
 
@@ -184,6 +149,49 @@ feature 'Service' do
                          estimated_hours: 3
                          )
       expect(s.amount_to_bill).to be 0
+    end
+  end
+
+  describe '#charge_service!' do
+
+    it 'Creates a ticket on Conekta::Error' do
+      user.create_payment_provider_choice(conekta_card)
+      service.price= 65
+      service.status = 'finished'
+      service.user_id = user.id
+      service.aliada_reported_begin_time = Time.now
+     
+      service.aliada_reported_end_time = Time.now + 3.hours
+      service.datetime = starting_datetime
+      service.estimated_hours = 3
+      
+      service.save
+      conekta_card.token = nil
+      conekta_card.save
+      service.charge!
+      expect(Ticket.all.count).to eql 1
+     
+    end
+
+
+    it 'Charges the user using the default payment provider' do
+      user.create_payment_provider_choice(conekta_card)
+      service.price= 65
+      service.status = 'finished'
+      service.user_id = user.id
+      service.aliada_reported_begin_time = Time.zone.now
+      
+      service.aliada_reported_end_time = Time.zone.now + 3.hours
+      service.datetime = starting_datetime
+      service.estimated_hours = 3
+      
+      service.save
+      
+
+      VCR.use_cassette('conekta_user_charge', match_requests_on:[:conekta_charge]) do
+        service.charge!
+      end
+      expect(Payment.all.count).to eql 1
     end
   end
 end

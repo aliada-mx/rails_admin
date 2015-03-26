@@ -4,6 +4,12 @@
 
   %ul.summary
 
+    %li{data: {bind: 'css: {checked: is_datetime_done, unchecked: !is_datetime_done()}'}}
+      %span{data: {bind: 'text_: "{{ service_type_display_name }}: {{ friendly_datetime }}"'}}
+      = link_to '#choose-date', class: 'small-letters', data: {bind: 'click: function(){ current_step(1); return true; }'} do
+        %icon-pencil
+        editar
+
     %li.checked
       - if @user.default_address
         %span #{@user.default_address.name}
@@ -15,7 +21,7 @@
     %li.checked
       %span{data: {bind: 'text_: "Duración del servicio: {{ hours }} horas "'}} 
       = link_to '#service_duration', class: 'small-letters' do
-        %icon.pencil.small
+        %icon-pencil
         editar
 
     - if @user.default_payment_provider
@@ -26,22 +32,23 @@
           %icon.pencil.small
           editar
 
-    %li{data: {bind: 'css: {checked: is_datetime_done, unchecked: !is_datetime_done()}'}}
-      %span{data: {bind: 'text_: "{{ service_type_display_name }}: {{ friendly_datetime }}"'}}
-      = link_to '#choose-date', class: 'small-letters' do
-        %icon.pencil.small
+    %li.checked
+      %span Instrucciones: #{@service.instructions_summary(90)}
+      = link_to 'instructions', class: 'small-letters', data: {bind: 'click: function(){ current_step(2) }'} do
+        %icon-pencil
         editar
-
 
   .foot
     %span.hours{data: {bind: 'text_: "{{ hours }} horas:"'}}
     %span.cash{data: {bind: 'text_: "${{ price }}"'}}
-  .promotional-code
-    %a
-      APLICAR
-    = text_field_tag 'promo-code', nil, placeholder: 'código promocional'
+  -# TODO promotional codes
+    .promotional-code
+      %a
+        APLICAR
+      = text_field_tag 'promo-code', nil, placeholder: 'código promocional'
 
-= initial_service_form.submit 'Guardar cambios', id: 'next_button', class: 'action-button-pink size-extra-large', data: {bind: 'css: { disabled: !is_datetime_done() }  '}
+= submit_tag 'Guardar cambios', id: 'update_button', name: 'update_button', class: 'action-button-pink size-extra-large', data: {bind: 'css: { disabled: !is_datetime_done() }'}
 
+= submit_tag 'Cancelar', id: 'cancel_button', name: 'cancel_button', class: 'action-button-transparent size-extra-large'
 .aliada_seal
   = image_tag 'sello-de-garantia.png'

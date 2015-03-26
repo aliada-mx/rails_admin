@@ -4,6 +4,7 @@ include AliadaSupport::DatetimeSupport
   has_many :aliada_zones
   has_many :zones, through: :aliada_zones
 
+  has_many :aliada_working_hours
   has_many :schedules, foreign_key: :aliada_id
   has_many :scores, foreign_key: :aliada_id
   has_many :services, foreign_key: :aliada_id
@@ -61,6 +62,10 @@ include AliadaSupport::DatetimeSupport
 
   def busy_services_hours
     businesshours_until_horizon - service_hours
+  end
+
+  def timezone
+    'Mexico City'
   end
 
   rails_admin do

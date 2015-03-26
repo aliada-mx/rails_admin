@@ -44,7 +44,7 @@ class ConektaCard < ActiveRecord::Base
     update_from_api_card(card_attributes)
   end
 
-  def charge!(product, user)
+  def charge_in_conekta!(product, user)
     conekta_charge = Conekta::Charge.create({
       amount: (product.price * 100).floor,
       currency: 'MXN',
@@ -52,11 +52,17 @@ class ConektaCard < ActiveRecord::Base
       reference_id: product.id,
       card: self.token
     })
+
+    conekta_charge
+  end
+
+  def charge!(product, user)
+    conekta_charge = charge_in_conekta!(product, user)
    
     payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
     payment.pay!
     
-    return conekta_charge
+    payment
   end
 
   def payment_possible?(service)
@@ -74,8 +80,6 @@ class ConektaCard < ActiveRecord::Base
                                        description: "Pre-autorización de tarjeta #{id}",
                                        id: self.id})
     charge!(preauthorization, user)
-
-    
 
     self.preauthorized = true
     self.save!

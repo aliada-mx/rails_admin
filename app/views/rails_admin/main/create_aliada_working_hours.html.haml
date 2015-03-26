@@ -1,0 +1,67 @@
+.create_aliada_working_hours.col-lg-12
+  %div.table-responsive.working_hours_table
+    %table.table{id: @object.id, class: "aliada-working-hours"}
+      %thead
+        %tr
+          %th 
+          %th Lunes
+          %th Martes
+          %th Miércoles
+          %th Jueves
+          %th Viernes
+          %th Sábado
+          %th Domingo
+      %tbody
+      - wh = @object.aliada_working_hours
+      - (7..21).each do |i|
+        %tr 
+          %th
+            = i.hour.pretty_duration
+          %td
+            - sel = wh.select{|n| n.weekday == 'monday' && n.hour == i}
+            - if not sel.empty?
+              = check_box_tag :value, 1, (sel.first.status == "active"), class: (sel.first.status == "active" ? "active-recurrence" : "inactive-recurrence"), id: "monday_#{i}"
+            - else
+              = check_box_tag :value, 1, false, class: "new-recurrence", id: "monday_#{i}"
+          %td
+            - sel = wh.select{|n| n.weekday == 'tuesday' && n.hour == i}
+            - if not sel.empty?
+              = check_box_tag :value, 1, (sel.first.status == "active"), class: (sel.first.status == "active" ? "active-recurrence" : "inactive-recurrence"), id: "tuesday_#{i}"
+            - else
+              = check_box_tag :value, 1, false, class: "new-recurrence", id: "tuesday_#{i}"
+          %td
+            - sel = wh.select{|n| n.weekday == 'wednesday' && n.hour == i}
+            - if not sel.empty?
+              = check_box_tag :value, 1, (sel.first.status == "active"), class: (sel.first.status == "active" ? "active-recurrence" : "inactive-recurrence"), id: "wednesday_#{i}"
+            - else
+              = check_box_tag :value, 1, false, class: "new-recurrence", id: "wednesday_#{i}"
+          %td
+            - sel = wh.select{|n| n.weekday == 'thursday' && n.hour == i}
+            - if not sel.empty?
+              = check_box_tag :value, 1, (sel.first.status == "active"), class: (sel.first.status == "active" ? "active-recurrence" : "inactive-recurrence"), id: "thursday_#{i}"
+            - else
+              = check_box_tag :value, 1, false, class: "new-recurrence", id: "thursday_#{i}"
+          %td
+            - sel = wh.select{|n| n.weekday == 'friday' && n.hour == i}
+            - if not sel.empty?
+              = check_box_tag :value, 1, (sel.first.status == "active"), class: (sel.first.status == "active" ? "active-recurrence" : "inactive-recurrence"), id: "friday_#{i}"
+            - else
+              = check_box_tag :value, 1, false, class: "new-recurrence", id: "friday_#{i}"
+          %td
+            - sel = wh.select{|n| n.weekday == 'saturday' && n.hour == i}
+            - if not sel.empty?
+              = check_box_tag :value, 1, (sel.first.status == "active"), class: (sel.first.status == "active" ? "active-recurrence" : "inactive-recurrence"), id: "saturday_#{i}"
+            - else
+              = check_box_tag :value, 1, false, class: "new-recurrence", id: "saturday_#{i}"
+          %td
+            - sel = wh.select{|n| n.weekday == 'sunday' && n.hour == i}
+            - if not sel.empty?
+              = check_box_tag :value, 1, (sel.first.status == "active"), class: (sel.first.status == "active" ? "active-recurrence" : "inactive-recurrence"), id: "sunday_#{i}"
+            - else
+              = check_box_tag :value, 1, false, class: "new-recurrence", id: "sunday_#{i}"
+
+    %br
+    = button_tag "Actualizar", class: "centered", onclick: "saveRecurrences();" 
+  %br
+
+= javascript_include_tag 'rails_admin/actions/create_aliada_working_hours'

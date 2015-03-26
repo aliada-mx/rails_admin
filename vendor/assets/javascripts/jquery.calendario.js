@@ -239,7 +239,7 @@
         };
 
       },
-      _move : function( period, dir, callback ) {
+      _move : function( period, dir, callback, number ) {
 
         if( dir === 'previous' ) {
 
@@ -262,6 +262,14 @@
             this.year = ++this.year;
           }
 
+        }
+
+        else if( dir === 'number' ) {
+
+          if( period === 'month' ) {
+            this.month = number;
+          }
+          
         }
 
         this._generateTemplate( callback );
@@ -307,7 +315,9 @@
       },
       chooseDay : function( day ) {
         var $cell = this.getCell(day);
-        $cell.trigger('click');
+        if (!_.isEmpty($cell)){
+          $cell.trigger('click');
+        }
       },
 
       // goes to today's month/year

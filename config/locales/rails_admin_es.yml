@@ -1,6 +1,6 @@
 es:
   activerecord:
-    models:
+    models: &model_names
       address:  'direccion'
       user: 'usuario'
       aliada: 'aliada'
@@ -23,8 +23,10 @@ es:
       incomplete_service: 'registro inconcluso'
     attributes:
       common: &common_attributes
+        <<: *model_names
         created_at: 'Fecha de creación'
         updated_at: 'Fecha de última actualización'
+        datetime: 'Día y hora'
       address: &address_attributes
         user: usuario
         postal_code: código postal
@@ -103,6 +105,7 @@ es:
         zone: zona
         type: tipo
       schedule:
+        <<: *common_attributes
       score:
       service: &service_attributes
         datetime: fecha y hora del servicio
@@ -113,7 +116,6 @@ es:
         service_type: tipo de servicio
         recurrence: recurrencia
         billed_hours: horas cobradas
-        hours_before_service: horas antes del servicio
         hours_after_service: horas después del servicio
         bathrooms: baños
         bedrooms: recámaras
@@ -125,6 +127,7 @@ es:
         equipment_instructions: Usar un producto o equipo específico para limpiar
         forbidden_instructions: No limpiar /No tocar
         special_instructions: Otras instrucciones especiales
+        user_link: Usuario
       service_type:
       ticket:
         relevant_object: Servicio
@@ -194,10 +197,11 @@ es:
         title: "Detalles de %{model_label} '%{object_label}'"
         menu: "Mostrar"
         breadcrumb: "%{object_label}"
-      charge_order:
-        title: "Cobrar orden"
-        menu: "Cobrar orden"
-        link: "Cobrar orden"
+      charge_services:
+        title: "Cobrar servicio"
+        menu: "Cobrar servicios"
+        link: "Cobrar servicio"
+        bulk_link: "Cobrar servicios"
       show_in_app:
         menu: "Mostrar en la app"
       new:
@@ -238,9 +242,14 @@ es:
         title: "Historial para %{model_label} '%{object_label}'"
         menu: "Historial"
         breadcrumb: "Historial"
-      tickets_list:
-        title: Lista de tickets
-        menu: últimos tickets
+      create_aliada_working_hours:
+        menu: "Horarios"
+        title: "Horarios"
+        breadcrumb: "Horarios"
+      charge_service:
+        menu: "Cobrar servicio"
+        title: "Cobrar servicio"
+        breadcrumb: "Cobrar servicio"
     form:
       cancel: "Cancelar"
       basic_info: "Información básica"

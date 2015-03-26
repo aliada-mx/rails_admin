@@ -1,9 +1,9 @@
 defaults: &defaults
+  padding_hours_between_services: 2
   beginning_of_aliadas_day: 13 # Beginning of bussines day in UTC, or 7 am in Mexico City Time
   end_of_aliadas_day: 3 # End of business day, or 9 pm in Mexico City Time
   businessday_hours: 14 # Make sure to update this if you update the beginning_of_aliadas_day and end_of_aliadas_day
   show_tomorrow_services_cutoff: 1 # UTC hour 1 or Mexico City 7 after which the aliadas services list will show tomorrow's services 
-  hours_before_service: 1 # Minimal amount of time it takes an aliada to reach a service destination
   hours_after_service: 1 # Minimal amount of time after a service is done needed for each aliada
   time_horizon_days: 30 # How far in the future we build schedules and look for datetime data
   payment_providers: [
@@ -29,6 +29,7 @@ defaults: &defaults
   minimum_hours_service: 3
   cost_per_hour: 65
   booking_for_tomorrow_limit: 23 # After this hour you cant book a service for tomorrow, in UTC or 5 pm in Mexico City Time
+  too_late_cancelation_fee: 100 # in pesos
 
  
   sendgrid_templates_ids: 
@@ -53,6 +54,7 @@ development:
 
 test:
   <<: *defaults
+  host: 'localhost:3000'
 
 production:
   host: 'aliada.mx'

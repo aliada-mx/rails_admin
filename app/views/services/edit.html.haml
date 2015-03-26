@@ -1,15 +1,17 @@
+= append(:body_class){ ' edit_service ' }
+
+- service_type_name = @is_recurrent ? 'recurrent' : 'one-time'
+
 = append :navigation do
   = render partial: 'common/inner_navigation'
 
-= append(:body_class){ ' new_service ' }
-
-= form_for @service, url: edit_service_users_path(@user, @service) do |edit_service_form|
+= form_for @service, url: update_service_post_users_path(@user, @service), method: :post, html: { class: service_type_name, id: 'edit_service_form' } do |edit_service_form|
   %main
     = render partial: 'services/edit/step_1_duration_datetime', locals: {edit_service_form: edit_service_form}
     = render partial: 'services/edit/step_2_success', locals: {edit_service_form: edit_service_form}
 
   %aside
-    = render partial: 'services/edit/summary', locals: {initial_service_form: edit_service_form}
+    = render partial: 'services/edit/summary', locals: {edit_service_form: edit_service_form}
 
 = append :javascript do
   = javascript_include_tag 'services/edit'
@@ -18,11 +20,13 @@
   aliada.user.postal_code_number = #{@user.postal_code_number};
   aliada.service.aliada_id = #{@service.aliada_id};
   aliada.service.id = #{@service.id};
-  aliada.service.date = '#{@service.date}'
-  aliada.service.time = '#{@service.time}'
-  aliada.service.day = '#{@service.datetime.strftime('%d')}'
+  aliada.service.date = '#{@service.date}';
+  aliada.service.time = '#{@service.time}';
+  aliada.service.day = #{@service.day};
+  aliada.service.month = #{@service.month_number};
   aliada.service.estimated_hours = #{@service.estimated_hours};
   aliada.service.estimated_hours_without_extras = #{@service.estimated_hours_without_extras};
   aliada.service.bathrooms = #{@service.bathrooms};
   aliada.service.bedrooms = #{@service.bedrooms};
-  aliada.service.friendly_datetime = '#{@service.friendly_datetime}'
+  aliada.service.friendly_datetime = '#{@service.friendly_datetime}';
+  aliada.service.is_recurrent = #{@service.recurrent?};

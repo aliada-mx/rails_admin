@@ -10,15 +10,20 @@
     font-family: "Helvetica Neue", sans-serif
     font-size: 1.1em
     line-height: 1.5em
-    left: 35%
+    left: 33%
     margin: 0 auto
     max-width: 800px
     min-width: 300px
     padding: 2em
     position: fixed
     text-align: center
-    width: 30%
-    top: 40%
+    width: 35%
+    top: 33%
+    max-height: 400px
+
+    .dialog-content
+      overflow: auto
+      max-height: 300px
 
     &.email_already_exists
       width: 30%
@@ -77,17 +82,6 @@
       +pie-clearfix()
 
   .vex-dialog-button
-    +border-radius(0)
-    border: 0
-    float: right
-    margin: 0 0 0 .5em
-    font-family: inherit
-    text-transform: uppercase
-    letter-spacing: .1em
-    font-size: .8em
-    line-height: 1em
-    padding: .75em 2em
-
     &.vex-last
       margin-left: 0
 
@@ -100,13 +94,13 @@
       @media (max-width: 568px)
         +vex-animation(none)
 
-    &.vex-dialog-button-primary
-      background: $green
-      color: #fff
+    &.vex-dialog-ok-button
+      width: 85px
+      float: right
 
-    &.vex-dialog-button-secondary
-      background: #e0e0e0
-      color: #777
+    &.vex-dialog-cancel-button
+      width: 85px
+      float: right
 
 .vex-loading-spinner.vex-theme-plain
   height: 2.5em

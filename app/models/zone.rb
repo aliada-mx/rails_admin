@@ -1,6 +1,7 @@
 class Zone < ActiveRecord::Base
   has_many :aliada_zones
   has_many :aliadas, through: :aliada_zones
+  has_and_belongs_to_many :schedules
 
   has_many :postal_codes
 

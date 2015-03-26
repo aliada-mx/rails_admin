@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150311010529) do
+ActiveRecord::Schema.define(version: 20150324063340) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -202,7 +202,6 @@ ActiveRecord::Schema.define(version: 20150311010529) do
     t.string   "weekday"
     t.integer  "hour"
     t.integer  "total_hours"
-    t.integer  "zone_id"
     t.string   "owner"
   end
 
@@ -213,15 +212,20 @@ ActiveRecord::Schema.define(version: 20150311010529) do
     t.string   "status"
     t.datetime "datetime"
     t.integer  "service_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
     t.integer  "aliada_id"
-    t.integer  "zone_id"
+    t.integer  "recurrence_id"
   end
 
   add_index "schedules", ["datetime", "aliada_id"], name: "index_schedules_on_datetime_and_aliada_id", unique: true, using: :btree
   add_index "schedules", ["service_id"], name: "index_schedules_on_service_id", using: :btree
   add_index "schedules", ["user_id"], name: "index_schedules_on_user_id", using: :btree
+
+  create_table "schedules_zones", id: false, force: true do |t|
+    t.integer "schedule_id"
+    t.integer "zone_id"
+  end
 
   create_table "scores", force: true do |t|
     t.integer  "user_id"
@@ -255,7 +259,6 @@ ActiveRecord::Schema.define(version: 20150311010529) do
     t.datetime "created_at",                                              null: false
     t.datetime "updated_at",                                              null: false
     t.decimal  "billed_hours",                   precision: 10, scale: 3
-    t.decimal  "hours_before_service",           precision: 10, scale: 3
     t.decimal  "hours_after_service",            precision: 10, scale: 3
     t.integer  "bathrooms"
     t.integer  "bedrooms"
@@ -273,6 +276,7 @@ ActiveRecord::Schema.define(version: 20150311010529) do
     t.boolean  "entrance_instructions"
     t.time     "aliada_reported_begin_time"
     t.time     "aliada_reported_end_time"
+    t.boolean  "cancelation_fee_charged"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree

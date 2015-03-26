@@ -10,11 +10,15 @@ class UsersController < ApplicationController
   end
 
   def next_services
-    @services = @user.services.in_the_future.to_a
+    services = @user.services.not_canceled.in_the_future.to_a
+
+    @services = services.select do |service|
+      service.one_timer? && service.recurrence_id.nil? || service.recurrent?
+    end
   end
 
   def previous_services
-    @services = User.find(params[:user_id]).services.in_the_past
+    @services = User.find(params[:user_id]).services.in_the_past.not_canceled
   end
 
   private
