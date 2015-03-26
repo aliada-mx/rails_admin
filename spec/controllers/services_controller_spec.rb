@@ -15,7 +15,7 @@ feature 'ServiceController' do
                               number: '11800') }
   let!(:extra_1){ create(:extra, name: 'Lavanderia')}
   let!(:extra_2){ create(:extra, name: 'Limpieza de refri')}
-  let!(:conekta_card){ create(:payment_method)}
+  let!(:conekta_card_method){ create(:payment_method)}
     
   before do
     allow_any_instance_of(Service).to receive(:timezone).and_return('UTC')
@@ -93,7 +93,7 @@ feature 'ServiceController' do
       end
 
       it 'creates a new one time service' do
-        fill_initial_service_form(conekta_card, one_time_service, starting_datetime + 1.day, extra_1, zone)
+        fill_initial_service_form(conekta_card_method, one_time_service, starting_datetime + 1.day, extra_1, zone)
 
         click_button 'Confirmar visita'
 
@@ -110,7 +110,7 @@ feature 'ServiceController' do
       end
 
       it 'creates a new recurrent service' do
-        fill_initial_service_form(conekta_card, recurrent_service, starting_datetime + 1.day, extra_1, zone)
+        fill_initial_service_form(conekta_card_method, recurrent_service, starting_datetime + 1.day, extra_1, zone)
 
         click_button 'Confirmar visita'
 
@@ -143,8 +143,8 @@ feature 'ServiceController' do
         expect(Schedule.padding.count).to be 10
       end
 
-      it 'logs in the new user' do
-        fill_initial_service_form(conekta_card, one_time_service, starting_datetime + 1.day, extra_1, zone)
+      it 'logs in ithe new user' do
+        fill_initial_service_form(conekta_card_method, one_time_service, starting_datetime + 1.day, extra_1, zone)
 
         click_button 'Confirmar visita'
 
@@ -171,7 +171,7 @@ feature 'ServiceController' do
       end
 
       it 'creates a pre-acthorization payment when choosing conekta' do
-        fill_initial_service_form(conekta_card, one_time_service, starting_datetime + 1.day, extra_1, zone)
+        fill_initial_service_form(conekta_card_method, one_time_service, starting_datetime + 1.day, extra_1, zone)
 
         fill_hidden_input 'conekta_temporary_token', with: 'tok_test_visa_4242'
 
@@ -192,7 +192,7 @@ feature 'ServiceController' do
         expect(PaymentProviderChoice.count).to be 1
         expect(User.count).to be 1
 
-        expect(payment.provider).to eql conekta_card
+        expect(payment.provider.class).to eql ConektaCard
         expect(payment.user).to eql user
         expect(payment.amount).to eql 3
         expect(payment).to be_paid

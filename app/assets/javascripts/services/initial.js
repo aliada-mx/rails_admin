@@ -25,7 +25,11 @@ $(document).ready(function() {
   aliada.ko.is_valid_step = ko.computed(function(){
     // Register as a dependency
     // so it runs everytime a step changes
-    aliada.ko.current_step();
+    step = aliada.ko.current_step();
+
+    if(step == 4){
+      return ko.validatedObservable(aliada.ko).isValid() && aliada.ko.tos_accepted();
+    }
 
     // Validate the whole viewmodel
     return ko.validatedObservable(aliada.ko).isValid();
@@ -58,7 +62,7 @@ $(document).ready(function() {
       case 4:
         return 'Confirmar visita'
       case 5:
-        return 'Ok'
+        return 'Guardar instrucciones'
     }
   });
 

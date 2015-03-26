@@ -39,5 +39,11 @@ module Presenters
     def postal_code_number
       default_address.postal_code.number
     end
+
+    def error_messages
+      errors.messages.map do |field, message|
+        "#{message.first}"
+      end.join(',')
+    end
   end
 end

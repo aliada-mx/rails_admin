@@ -43,13 +43,12 @@ class ScheduleFiller
 
     # Create service with the most recently modified one for that recurrence
     # TODO: modify query with status for inactive recurrences
-    services = Service.where("recurrence_id = ?", user_recurrence.id).order("updated_at DESC")
-    if services.empty?
+    base_service = user_recurrence.base_service
+    unless base_service
       error = "Services have not been created for this user's recurrence"
       Rails.logger.fatal error
       raise error
     end
-    base_service = services.first
     base_service_attributes = base_service.shared_attributes
 
     service = base_service.dup

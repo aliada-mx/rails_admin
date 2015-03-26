@@ -1,8 +1,8 @@
-= render partial: 'common/messages'
 
 = append(:body_class){ ' login ' }
 
 .login-container.col-lg-12
+  = render partial: 'common/messages'
   .login-form-wrapper
     .login-form-container
       =link_to root_path, { class: 'logo-container' } do

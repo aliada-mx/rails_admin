@@ -101,7 +101,7 @@ class Schedule < ActiveRecord::Base
 
     list do
       sort_by :datetime
-      include_fields :datetime, :status, :user, :service, :recurrence, :created_at
+      include_fields :datetime, :aliada, :status, :user, :service, :recurrence, :created_at
     end
   end
 

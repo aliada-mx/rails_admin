@@ -83,7 +83,7 @@
   &.size-extra-large
     +rem(font-size, $large-font)
     font-weight: 800
-    padding: 25px
+    +rem(padding, 1rem 3rem)
     width: 100%
 
     .icon-button
@@ -91,7 +91,8 @@
 
   &.size-large
     +rem(font-size, 1.7rem)
-    padding: 10px 16px
+    +rem(padding, 1rem 2rem)
+    min-width: 238px
 
     .icon-button
       +rem(font-size, 1.2rem)
@@ -191,7 +192,6 @@
 @mixin sticky-footer
   .container
     main
-      padding-bottom: 0
       margin-bottom: 80px
 
   min-height: 100%

@@ -40,6 +40,7 @@ class ServicesController < ApplicationController
     @service = Service.new(user: User.new,
                            service_type: ServiceType.first,
                            address: Address.new)
+    @empty_conekta_card = OpenStruct.new({})
   end
 
   def create_initial
