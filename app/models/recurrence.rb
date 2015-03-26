@@ -34,7 +34,7 @@ class Recurrence < ActiveRecord::Base
     transition 'inactive' => 'active', :on => :activate
   end
 
-  def master_service
+  def base_service
     services.with_recurrence.ordered_by_created_at.first
   end
 

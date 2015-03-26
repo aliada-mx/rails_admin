@@ -1,6 +1,10 @@
 //= require modules/conekta
 
-aliada.services.initial.step_4_payment = function(ko){
+aliada.services.initial.step_4_payment = function(aliada, ko){
+    _(aliada.ko).extend({
+      tos_accepted: ko.observable(false),
+    });
+
   function create_service($form){
     return new Promise(function(resolve,reject){
       $form.ajaxSubmit({

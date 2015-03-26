@@ -33,16 +33,13 @@ class User < ActiveRecord::Base
   default_scope { where('users.role in (?)', ['client', 'admin']) }
 
   validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
-  
-
-
 
   validates_presence_of :password, if: :password_required?
   validates_confirmation_of :password, if: :password_required?
   validates_length_of :password, within: Devise.password_length, allow_blank: true
 
   def password_required?
-    !persisted? || !password.nil? || !password_confirmation.nil?
+    !persisted? || !password.blank? || !password_confirmation.blank?
   end
 
   def self.email_exists?(email)

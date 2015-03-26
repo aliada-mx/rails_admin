@@ -315,6 +315,7 @@ class Service < ActiveRecord::Base
       user.addresses << address
       user.create_first_payment_provider!(service_params[:payment_method_id])
       user.ensure_first_payment!(service_params)
+      user.save!
 
       service.book_an_aliada
 

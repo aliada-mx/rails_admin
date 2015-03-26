@@ -50,3 +50,9 @@ _.templateSettings = {
   escape:      /\{\{\{([\s\S]+?)\}\}\}/g,         // {{{ title }}}
 };
 
+// Flash messages
+$(function(){
+  $('.message').click(function(){
+    $(this).fadeOut();
+  })
+})

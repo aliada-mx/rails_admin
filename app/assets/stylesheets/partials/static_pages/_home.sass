@@ -1,11 +1,19 @@
 @import 'common/variables'
-@import 'common/variables'
 @import 'common/mixins'
+@import "compass/css3/text-shadow"
 
 body.home
   display: table
   height: 100%
   width: 100%
+
+  .header-container
+    .nav-container
+      ul.nav
+        li
+          a
+            +text-shadow($darkest_gray 0px 0px 4px)
+
 
   .steps-section-wrapper
     background-color: white
@@ -29,8 +37,6 @@ body.home
       width: 300px
       +rem(margin, 2rem auto 4rem)
       text-align: center
-      .action-button-pink
-        padding: 15px
 
   .feliciana-section-wrapper
     +rem(padding-top, 6rem)
@@ -56,9 +62,9 @@ body.home
             font-weight: 600
 
   .search-section-wrapper
-    background: url("temp-background.jpg") no-repeat center center
+    background: url("home-header-background.jpg") no-repeat center center
     background-size: cover
-    background-color: black
+    background-color: white
     box-sizing: border-box
     position: relative
     height: 750px
@@ -82,6 +88,7 @@ body.home
           font-weight: 600
           letter-spacing: -3px
           color: white
+          +text-shadow($darkest_gray 0px 0px 4px)
 
           .shine
             max-width: 15px
@@ -93,6 +100,7 @@ body.home
         .motto
           font-style: italic
           +rem(font-size, 2.5rem)
+          +text-shadow($darkest_gray 0px 0px 4px)
 
       .search-form-container
         +rem(margin, 0 0 4rem)
@@ -104,14 +112,11 @@ body.home
           +rem(margin, 0 0 1rem)
           +rem(font-size, 1.8rem)
           width: 100%
+          +text-shadow($darkest_gray 0px 0px 4px)
 
         .action-button-container
           width: 300px
           display: inline-block
-          .action-button
-            height: 55px
-            line-height: 0
-            +action-button($dark_pink)
 
   .media-section-wrapper
     background-color: $lightest-gray
@@ -132,6 +137,7 @@ body.home
   .payment-section-wrapper
     background-color: white
     +rem(padding, 5rem 0)
+    border-top: 1px solid $lightest_gray
 
     .call-to-action-wrapper
       +rem(margin, 2rem 0)
@@ -178,7 +184,7 @@ body.home
 
   .service-section-wrapper
     background-color: white
-    +rem(padding-bottom, 6rem)
+    +rem(padding-bottom, 3rem)
 
     .service-section-container
       text-align: center

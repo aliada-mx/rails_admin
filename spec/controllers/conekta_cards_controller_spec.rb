@@ -10,7 +10,8 @@ feature 'ConektaCardsController' do
                       conekta_customer_id: "cus_M3V9nERCq9qDLZdD1") } 
 
   context 'on the user profile' do
-    it 'lets the user add another card' do
+    # TODO enable when adding new cards feature is done
+    xit 'lets the user add another card' do
       expect(user.payment_provider_choices).to be_empty
       login_as(user)
 

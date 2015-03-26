@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150324063340) do
+ActiveRecord::Schema.define(version: 20150325180703) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -123,6 +123,7 @@ ActiveRecord::Schema.define(version: 20150324063340) do
     t.string   "icon_content_type"
     t.integer  "icon_file_size"
     t.datetime "icon_updated_at"
+    t.integer  "position"
   end
 
   create_table "incomplete_services", force: true do |t|
@@ -248,6 +249,7 @@ ActiveRecord::Schema.define(version: 20150324063340) do
     t.integer  "price_per_hour"
     t.string   "display_name"
     t.text     "benefits"
+    t.integer  "position"
   end
 
   create_table "services", force: true do |t|
