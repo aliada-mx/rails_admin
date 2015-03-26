@@ -3,53 +3,57 @@
   = area :javascript do
     = render partial: 'common/javascript_templates'
     = render partial: 'common/javascript_variables'
-  %h2 Servicios por terminar
+  %h1 Poner horas
   - @unfinished_services.each do |service|
     %h5
       En: 
       #{service.address.street}
-      %h6= I18n.l service.datetime, format: "%A %e a las %k %P"
+      %h6= I18n.l service.tz_aware_datetime, format: "%A %e a las %I %P"
       = form_tag((finish_service_path)) do
         %input{:type=>"hidden", :value=>service.id, :name => :service}
         %div
-          Llegue?
+          ¿Llegue?
           %select{:name => :begin_time}
             - begin_hours_range(service).each do |h|
-              %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%k:%M %P"
-          Acabe?
+              %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%I:%M %P"
+          ¿Acabe?
           %select{:name => :end_time}
             - end_hours_range(service).each do |h|
-              %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%k:%M %P"
-          %input{  :type => "submit", :name => "Pay", :value => "Pagar" }
+              %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%I:%M %P"
+          %input{  :type => "submit", :name => "Pay", :value => "Guardar :)" }
       %br
       %br
-  - @upcoming_services.each do |i|
-    %h1=  I18n.l i.datetime, format: "%A %e a las %k %P"
-
+  %h1 Servicios proximos    
+  - @upcoming_services.each do |service|
+    %h1=  I18n.l service.tz_aware_datetime, format: "%A %e a las %I %P"
     %h4
-      #{i.estimated_hours.floor} horas
-      #{(60*(i.estimated_hours-i.estimated_hours.floor)).floor} minutos
+      #{service.estimated_hours.floor} horas
+      #{(60*(service.estimated_hours-service.estimated_hours.floor)).floor} minutos
     %h3 
-      #{i.address.street} 
-      #{i.address.number}
+      #{service.address.street} 
+      #{service.address.number}
       interior:
-      #{i.address.interior_number}
+      #{service.address.interior_number}
     %h4
       %b Colonia: 
-      #{i.address.colony},
-      #{i.address.city}
-    %img{:src => "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{i.address.latitude},#{i.address.longitude}&zoom=#{i.address.map_zoom}&markers=#{i.address.latitude},#{i.address.longitude}&markers=color:blue%7Clabel:S%7C#{i.address.references_latitude},#{i.address.references_longitude}"}
-    %h5= i.address.references 
+      #{service.address.colony},
+      #{service.address.city}
+    %img{:src => "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{service.address.latitude},#{service.address.longitude}&zoom=#{service.address.map_zoom}&markers=#{service.address.latitude},#{service.address.longitude}&markers=color:blue%7Clabel:S%7C#{service.address.references_latitude},#{service.address.references_longitude}"}
+    %h5= service.address.references 
     %h3 
       %b Cliente:
-      #{i.user.first_name}
-      #{i.user.last_name}
+      #{service.user.first_name}
+      #{service.user.last_name}
     %h5 
       %b tel: 
-      #{i.user.phone}
-    %h5 Entre calles: #{i.address.between_streets}
-    %h5 Baños:  #{i.bathrooms}
-    %h5 Cuartos:   #{i.bedrooms}
+      #{service.user.phone}
+    %h5 Entre calles: #{service.address.between_streets}
+    %h5 Baños:  #{service.bathrooms}
+    %h5 Cuartos:   #{service.bedrooms}
+    - if !service.confirmed 
+      = form_tag((confirm_service_path)) do
+        %input{:type=>"hidden", :value=>service.id, :name => :service}
+        %input.action-button-pink{  :type => "submit", :name => "confirmation", :value => "Si voy" }
     %br
     %br
   
