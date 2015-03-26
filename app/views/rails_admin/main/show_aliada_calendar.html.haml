@@ -16,4 +16,4 @@
         %th= I18n.l Time.at(t), format: "%k:%M"
         - @days_of_week.each do |day|
           - services_to_show = services.select {|service| service_in_wday_and_hour?(service, day, t)}
-          %td= if services_to_show.first then services_to_show.first.address.street end
+          %td= if services_to_show.first then services_to_show.first.user.full_name end
