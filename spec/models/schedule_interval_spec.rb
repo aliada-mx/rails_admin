@@ -46,33 +46,52 @@ describe 'ScheduleInterval' do
     end
   end
 
-  describe '#include?' do
+  describe '#include_datetime?' do
+
     before :each do
-      @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime)
+      @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime, conditions: {aliada_id: 1})
     end
 
     it 'returns true if the interval includes the passed schedule' do
-      schedule = Schedule.new(datetime: starting_datetime + 1.hour)
+      schedule = Schedule.new(datetime: starting_datetime + 1.hour, aliada_id: 1)
 
-      expect(@schedule_interval.include? schedule).to be true
+      expect(@schedule_interval.include_datetime? schedule).to be true
+    end
+
+    it 'returns false if the passed schedule is in the next wday' do
+      schedule = Schedule.new(datetime: starting_datetime + 7.day, aliada_id: 1)
+
+      expect(@schedule_interval.include_datetime? schedule).to be false
+    end
+
+    it 'returns false if the passed schedule is in another wday' do
+      schedule = Schedule.new(datetime: starting_datetime + 1.day, aliada_id: 1)
+
+      expect(@schedule_interval.include_datetime? schedule).to be false
     end
   end
 
-  describe '#beginning_of_service_interval' do
-    let(:zone) { create(:zone) }
-    let(:aliada) { create(:aliada) }
-
-    it 'returns the first time if begins at the aliadas beginning_of_aliadas_day' do
-      @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime, conditions: {zones: [zone]})
-
-      expect(@schedule_interval.beginning_of_service_interval(zone) ).to eql starting_datetime
+  describe '#include_recurrent?' do
+    before :each do
+      @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, ending_datetime, conditions: {aliada_id: 1})
     end
 
-    it 'returns the second time if the previous schedule is taken' do
-      Schedule.create!(datetime: starting_datetime, zones: [zone], aliada: aliada, status: 'booked')
-      @schedule_interval = ScheduleInterval.build_from_range(starting_datetime + 1.hour, ending_datetime, conditions: {zones: [zone], aliada: aliada})
+    it 'returns true if the interval includes the passed schedule' do
+      schedule = Schedule.new(datetime: starting_datetime + 1.hour, aliada_id: 1)
 
-      expect(@schedule_interval.beginning_of_service_interval(zone) ).to eql starting_datetime + 2.hour
+      expect(@schedule_interval.include_recurrent? schedule).to be true
+    end
+
+    it 'returns true if the passed schedule is in the next wday' do
+      schedule = Schedule.new(datetime: starting_datetime + 7.day, aliada_id: 1)
+
+      expect(@schedule_interval.include_recurrent? schedule).to be true
+    end
+
+    it 'returns true if the passed schedule is in another wday' do
+      schedule = Schedule.new(datetime: starting_datetime + 1.day, aliada_id: 1)
+
+      expect(@schedule_interval.include_recurrent? schedule).to be false
     end
   end
 end

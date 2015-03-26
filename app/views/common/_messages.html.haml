@@ -1,0 +1,20 @@
+.messages-container
+  - flash.each do |name, msg|
+    - if msg.class == Array
+      - msg.each do |message|
+        .message{class: name}
+          %span.icon-notice
+          = msg
+    - else
+      .message{class: name}
+        %span.icon-notice
+        = msg
+
+
+= append :javascript do
+  :javascript
+    $(function(){
+      $('.message').click(function(){
+        $(this).fadeOut();
+      })
+    })

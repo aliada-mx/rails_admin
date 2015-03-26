@@ -6,13 +6,14 @@
 //
 //= require modules/calendar
 //= require modules/dialogs
+//= require jquery.autogrow-textarea
 //
 //= require services/edit/_duration
 //= require services/edit/_datetime_selection
 //= require services/edit/_form_submission
 $(document).ready(function() {
 
-  aliada.services.edit.$form = $('.edit_service');
+  aliada.services.edit.$form = $('#edit_service_form');
 
   // KNOCKOUT initialization
   aliada.ko = {
@@ -76,5 +77,12 @@ $(document).ready(function() {
 
     update_calendar();
   });
+
+
+aliada.ko.current_step.subscribe(function(step){
+  if (step == 2){
+    $('textarea').css('overflow', 'hidden').autogrow();
+  }
+});
 
 });

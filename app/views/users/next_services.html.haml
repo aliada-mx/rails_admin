@@ -2,52 +2,7 @@
 = append(:body_class){ ' next-services ' }
 
 - @services.each_with_index do |service,index|
-  - if service.recurrent?
-    .service-card-wrapper.col-lg-6
-      .service-card.recurrent
-        .head
-          .badge
-            Recurrente
-            =image_tag("recurrence.png", {:title => 'Servicio recurrente'})
-          .title
-            Todos los #{ensure_plural(service.weekday_in_spanish) }
-          .small-letters
-            = service.friendly_time
-
-        .body
-          = render partial: 'common/service_summary', locals: {service: service}
-
-        .foot
-          .actions
-            = link_to edit_service_users_path(user_id: @user.id, service_id: service.id), class: 'action-button size-large' do
-              %span.icon-pencil.icon-button
-              Modificar servicio
-
-          .numbers
-            %span.hours #{ service.estimated_hours_with_extras } horas
-            %span.cash #{ service.cost } 
-
-  - else
-    .service-card-wrapper.col-lg-6
-      .service-card.one-time
-        .head
-          .title
-            = I18n.l(service.datetime , format: :week_day).capitalize
-          .small-letters
-            = service.friendly_time
-
-        .body
-          = render partial: 'common/service_summary', locals: {service: service}
-
-        .foot
-          .actions
-            = link_to edit_service_users_path(user_id: @user.id, service_id: service.id), class: 'action-button size-large' do
-              %span.icon-pencil.icon-button
-              Modificar servicio
-
-          .numbers
-            %span.hours #{ humanize_hours service.estimated_hours_with_extras }
-            %span.cash $#{ service.cost }
+  = render partial: 'common/service_card', locals: { service: service }
 
   - if services_count == index + 1
     - if services_count % 2 == 0
@@ -69,5 +24,5 @@
         Programa una nueva visita
 
 
-= append :javascript do
+= prepend :javascript do
   = javascript_include_tag 'next_services'

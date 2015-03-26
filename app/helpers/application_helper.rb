@@ -18,4 +18,8 @@ module ApplicationHelper
   def ensure_plural(word)
     word[-1] == 's' ? word : word + 's'
   end
+
+  def ceil_and_strip_insignificat_zeros(number)
+    number.ceil.to_s.sub(/(\.)(\d*[1-9])?0+\z/, '\1\2').sub(/\.\z/, '')
+  end
 end

@@ -19,8 +19,8 @@ describe 'Schedule' do
 
   describe '#available_for_booking' do
     it 'should be listed as available' do
-      expect(Schedule.available_for_booking(zone, starting_datetime)).not_to be_empty
-      expect(Schedule.available_for_booking(zone, starting_datetime)).to include(schedule)
+      expect(Schedule.for_booking(zone, starting_datetime)).not_to be_empty
+      expect(Schedule.for_booking(zone, starting_datetime)).to include(schedule)
     end
   end
 

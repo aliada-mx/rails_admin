@@ -85,32 +85,27 @@ aliada.dialogs.succesfull_service_changes = function(next_path) {
   var update_success_template = _.template($('#update_service_success_template').html());
 
   vex.open({
-    content: update_success_template,
-    showCloseButton: true,
-    escapeButtonCloses: true,
-    overlayClosesOnClick: true,
+    content: update_success_template({}),
+    showCloseButton: false,
+    escapeButtonCloses: false,
+    overlayClosesOnClick: false,
     contentClassName: 'update_success_dialog',
     afterOpen: function() {
-      $('#try-another-email-button').click(function() {
-        var dialog = $(this).parents('.vex-content').data().vex;
-
-        vex.close(dialog.id);
-
-        $('#service_user_attributes_email').select();
-      });
+      window.setTimeout(function(){
+        redirect_to(next_path);
+      }, 3000);
     },
-    afterClose: function() {
-      redirect_to(next_path);
-    }
   });
 };
 
 aliada.dialogs.confirm_service_cancel = function() {
-  return new Promise(function(resolve,reject){
+  var cancel_one_time_service_template = _.template($('#cancel_one_time_service_template').html());
+
+  return new Promise(function(resolve, reject) {
     vex.dialog.confirm({
-      message: '¿Estás seguro que deseas cancelar tu servicio?',
-      callback: function(value){
-        if(value == true){
+      message: cancel_one_time_service_template({}),
+      callback: function(value) {
+        if (value == true) {
           resolve(value);
         }
       },
@@ -124,5 +119,29 @@ aliada.dialogs.confirm_service_cancel = function() {
         })
       ],
     });
-    })
+  })
 };
+
+aliada.dialogs.confirm_recurrent_service_change = function() {
+  var confirm_recurrent_service_change_template  = _.template($('#confirm_recurrent_service_change_template').html());
+
+  return new Promise(function(resolve, reject) {
+    vex.dialog.confirm({
+      message: confirm_recurrent_service_change_template  ({}),
+      callback: function(value) {
+        if (value == true) {
+          resolve(value);
+        }
+      },
+      buttons: [
+        $.extend({}, vex.dialog.buttons.YES, {
+          text: 'Si',
+          className: 'action-button-gray size-extra-small vex-dialog-ok-button'
+        }), $.extend({}, vex.dialog.buttons.NO, {
+          text: 'No',
+          className: 'action-button-pink size-extra-small vex-dialog-cancel-button',
+        })
+      ],
+    });
+  })
+}

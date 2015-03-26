@@ -23,7 +23,6 @@ class ScheduleFiller
         beggining_of_recurrence = today_in_the_future + aliada_recurrence.hour.hour
         ending_of_recurrence = today_in_the_future + aliada_recurrence.hour.hour + aliada_recurrence.total_hours.hour
 
-
         zones = aliada_recurrence.aliada.zones
         schedule_intervals = ScheduleInterval.build_from_range(beggining_of_recurrence, 
                                                              ending_of_recurrence,
@@ -50,8 +49,12 @@ class ScheduleFiller
       Rails.logger.fatal error
       raise error
     end
-    service = services.first.dup
-    service.update_attribute(:datetime, (today_in_the_future + user_recurrence.hour.hour))
+    base_service = services.first
+    base_service_attributes = base_service.shared_attributes
+
+    service = base_service.dup
+    service_datetime = today_in_the_future + user_recurrence.hour.hour
+    service.update_attributes(base_service_attributes.merge({datetime: service_datetime }) )
     service 
   end
 
@@ -136,5 +139,4 @@ class ScheduleFiller
       end
     end
   end  
-
 end

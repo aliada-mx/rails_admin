@@ -8,7 +8,7 @@ class AliadasController < ApplicationController
       @service_to_finish.aliada_reported_begin_time =  ActiveSupport::TimeZone["Mexico City"].parse(params[:begin_time])
       @service_to_finish.aliada_reported_end_time = ActiveSupport::TimeZone["Mexico City"].parse(params[:end_time])
       @service_to_finish.finish!
-      @service_to_finish.user.charge_service!(@service_to_finish.id)
+      @service_to_finish.charge!
 
       redirect_to :back
     else
@@ -19,7 +19,6 @@ class AliadasController < ApplicationController
   def services 
    
     @aliada = Aliada.find_by(authentication_token: params[:token])
-    
     
     if @aliada 
       #must implement today or tomorrow after 6pm, etc...
