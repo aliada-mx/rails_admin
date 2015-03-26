@@ -40,5 +40,6 @@ module AliadaSupport
 
       (businessday_hours * days_until_horizon).round
     end
+
   end
 end

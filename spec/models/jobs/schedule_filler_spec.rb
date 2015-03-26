@@ -1,8 +1,9 @@
 describe 'Schedule Filler' do
+  include SchedulesHelper 
 
   # Preconditions:
-  let(:starting_datetime){ Time.zone.parse('01 Jan 2015 00:00:00') }
-  let(:recurrence_service_datetime) { Time.zone.parse('04 Jan 2015 13:00:00') }
+  let(:starting_datetime){ Time.zone.parse('09 Apr 2015 00:00:00') }
+  let(:recurrence_service_datetime) { Time.zone.parse('12 Apr 2015 13:00:00') }
   total_available_hours = 8
   total_service_hours = 3
   # aliada recurrence
@@ -11,7 +12,7 @@ describe 'Schedule Filler' do
   let(:user){ create(:user) }
   
   # client's recurrence, built with aliada's recurrence
-  let!(:client_recurrence) { create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, aliada: aliada, user: user, total_hours: total_service_hours, owner: 'user') }
+  let!(:client_recurrence) { create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: 7, aliada: aliada, user: user, total_hours: total_service_hours, owner: 'user') }
 
   # services scheduled for client's schedule
   let!(:first_service){ create(:service, aliada: aliada, user: user, recurrence: client_recurrence, datetime: recurrence_service_datetime, special_instructions: "first service") }
@@ -20,8 +21,7 @@ describe 'Schedule Filler' do
   before do
     first_service.update_attribute(:special_instructions, "modified service")
     Timecop.freeze(starting_datetime)
-    init_hour = recurrence_service_datetime.hour
-    (init_hour..(init_hour + total_available_hours - 1)).each do |i|
+    (7..(7 + total_available_hours - 1)).each do |i|
       AliadaWorkingHour.create(weekday: recurrence_service_datetime.weekday, hour: i, aliada: aliada, total_hours: 1, owner: 'aliada', periodicity: 7)
     end
   end
@@ -44,7 +44,12 @@ describe 'Schedule Filler' do
       expect(Schedule.available.in_the_future.count).to be (total_available_hours - total_service_hours)
       expect(Schedule.booked.in_the_future.count).to be total_service_hours
       # Check the specific date of the future schedule
-      expect(Schedule.booked.in_the_future.first.datetime).to eql (starting_datetime + Setting.time_horizon_days.day + recurrence_service_datetime.hour.hour + 1.day) 
+      today_in_the_future = starting_datetime + Setting.time_horizon_days.days + 1.day
+
+      #Compensate for UTC 
+      recurrence_in_the_future = today_in_the_future.change(hour: client_recurrence.utc_hour(today_in_the_future))
+
+      expect(Schedule.booked.in_the_future.first.datetime).to eql recurrence_in_the_future
       # Check the service date created for the client's recurrence in the future
       expect(Service.last.datetime).not_to be first_service.datetime
       # Check that it has been created using the mst recent created service

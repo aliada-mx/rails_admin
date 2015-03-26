@@ -147,11 +147,15 @@ agenda_errors = 0
 connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
 
   tz = ActiveSupport::TimeZone.new 'Mexico City'
-  datetime = tz.parse("#{row["fecha"].to_s} #{row["hora"]}").to_datetime
+  time_obj = tz.parse("#{row["fecha"].to_s} #{row["hora"]}")
+
+  datetime = time_obj.to_datetime
 
   if datetime.minute != 0
-    datetime = datetime - 30.minute
+    datetime = (datetime + 30.minute).beginning_of_hour
   end
+
+  time_obj = datetime.utc
 
   #PREREQ for services
   if row["pagado"] == 1
@@ -159,7 +163,7 @@ connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
   elsif row["duracion"] 
     status_service = 'finished'
   else
-    status_service = 'created'
+    status_service = 'aliada_assigned'
   end
 
   if row["recurrencias_id"]
@@ -172,7 +176,7 @@ connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
 
     address = User.find(clientes[row["clientes_id"]]).addresses.first
 
-    service = Service.find_or_initialize_by(status: status_service, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], bedrooms: row["recamaras"], bathrooms: row["banos"], service_type_id: type_service.id, datetime: datetime, special_instructions: row["indicacion_instrucciones_esp"], entrance_instructions: (row["indicacion_entrada_aliada"] == "Cliente en casa"), cleaning_supplies_instructions: row["indicacion_donde_utensilios_limpieza"], garbage_instructions: row["indicacion_donde_basura"], attention_instructions: row["indicacion_especial_atencion"], equipment_instructions: row["indicacion_equipo_especial"], forbidden_instructions: row["indicacion_no_tocar"], hours_before_service: 1, hours_after_service: 1, address_id: address.id, zone_id: address.postal_code.zone.id) do |add|
+    service = Service.find_or_initialize_by(status: status_service, aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], bedrooms: row["recamaras"], bathrooms: row["banos"], service_type_id: type_service.id, datetime: time_obj, special_instructions: row["indicacion_instrucciones_esp"], entrance_instructions: (row["indicacion_entrada_aliada"] == "Cliente en casa"), cleaning_supplies_instructions: row["indicacion_donde_utensilios_limpieza"], garbage_instructions: row["indicacion_donde_basura"], attention_instructions: row["indicacion_especial_atencion"], equipment_instructions: row["indicacion_equipo_especial"], forbidden_instructions: row["indicacion_no_tocar"], hours_after_service: 2, address_id: address.id, zone_id: address.postal_code.zone.id) do |add|
       add.billed_hours = row["duracion"] ? row["duracion"] : 0
       add.estimated_hours = row["duracion_aprox"]
     end
@@ -197,7 +201,7 @@ connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
       ( 0..( service.estimated_hours - 1 ) ).each do |i|
         
         # si truena, sólo porque se sale de las horas de trabajo, no importa
-        schedule = Schedule.find_or_initialize_by(datetime: ( datetime + i.hour ), aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], status: 'booked', service_id: service.id)
+        schedule = Schedule.find_or_initialize_by(datetime: ( time_obj + i.hour ), aliada_id: aliadas[row["aliadas_id"]], user_id: clientes[row["clientes_id"]], status: 'booked', service_id: service.id)
 
         if schedule.new_record?
           begin
@@ -205,7 +209,7 @@ connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
             schedule.save
           rescue => e
             agenda_errors += 1
-            puts "AGENDA_ERROR ID #{row["id"]} ALIADA #{aliada.first_name} DATETIME #{datetime}"
+            puts "AGENDA_KEY_ERROR #{row["id"]} ALIADA #{aliada.first_name} DATETIME #{time_obj}"
             #puts "SCHEDULE #{row["id"]} #{schedule.errors.messages.to_yaml}" if not schedule.errors.messages.empty?
           end
         end
@@ -264,7 +268,7 @@ connection.query("SELECT * FROM recurrencias").each do |row|
         end
       end
 
-      puts "SAVED RECURRENCE ID #{recurrence.id}"
+      #puts "SAVED RECURRENCE ID #{recurrence.id}"
       #Actualizar schedules, por el numero de total_hours
                
       ( 0..( recurrence.total_hours - 1 ) ).each do |counter|
@@ -274,7 +278,7 @@ connection.query("SELECT * FROM recurrencias").each do |row|
         if aliada_working_hour.new_record? 
           aliada_working_hour.status = 'inactive'
           aliada_working_hour.save!
-          puts "INACTIVE ALIADA WORKING HOUR #{aliada_working_hour.id}"
+          #puts "INACTIVE ALIADA WORKING HOUR #{aliada_working_hour.id}"
         end
 
         if recurrence_with_schedule[row["id"]] 
@@ -283,9 +287,10 @@ connection.query("SELECT * FROM recurrencias").each do |row|
             schedule = Schedule.find(schedule_id)
 
             #puts "TO RECURRENCE #{row["id"]} SCHEDULE #{schedule.datetime.in_time_zone("Mexico City").hour} DATETIME ALIADA WORKING HOURS #{aliada_working_hour.hour}"
-            if schedule.datetime.in_time_zone("Mexico City").hour == aliada_working_hour.hour
+            
+            if schedule.datetime.hour == aliada_working_hour.utc_hour(schedule.datetime)
               schedule.update_attribute(:recurrence_id, aliada_working_hour.id)
-              puts "RECURRENCE #{row["id"]} WITH SCHEDULE ID #{schedule_id} ALIADAWORKINGHOUR ID #{aliada_working_hour.id}"
+              #puts "RECURRENCE #{row["id"]} WITH SCHEDULE ID #{schedule_id} ALIADAWORKINGHOUR ID #{aliada_working_hour.id}"
             end
 
           end

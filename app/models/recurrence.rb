@@ -50,6 +50,15 @@ class Recurrence < ActiveRecord::Base
     'Mexico City'
   end
 
+  def utc_hour(utc_date)
+    Chronic.time_class= ActiveSupport::TimeZone[self.timezone]
+    time_obj = Chronic.parse("#{utc_date.strftime('%F')} #{self.hour}")
+    if time_obj.dst?
+      time_obj += 1.hour
+    end
+    time_obj.utc.hour
+  end
+
   rails_admin do
     label_plural 'recurrencias'
     navigation_label 'Operación'
