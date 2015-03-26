@@ -40,6 +40,8 @@ Rails.application.routes.draw do
     patch 'servicio/:service_id', to: 'services#update', as: :update_service, service_id: /\d+/
     post 'servicio/:service_id', to: 'services#update', as: :update_service_post, service_id: /\d+/
 
+    get 'servicios/recurrentes/:recurrence_id', to: 'recurrences#show', as: :show_recurrence_services, recurrence_id: /\d+/
+
     post 'conekta_card/create', to: 'conekta_cards#create', as: :create_conekta_card
   end
 

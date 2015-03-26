@@ -1,4 +1,6 @@
 class Recurrence < ActiveRecord::Base
+  include AliadaSupport::DatetimeSupport
+
   OWNERS = [
     'aliada',
     'user'
@@ -8,8 +10,6 @@ class Recurrence < ActiveRecord::Base
     ['active', 'Activa'],
     ['inactive', 'Inactiva']
   ]
-
-  include AliadaSupport::DatetimeSupport
 
   validates_presence_of [:weekday, :hour]
   validates :weekday, inclusion: {in: Time.weekdays.map{ |days| days[0] } }
@@ -34,6 +34,10 @@ class Recurrence < ActiveRecord::Base
     transition 'inactive' => 'active', :on => :activate
   end
 
+  def master_service
+    services.with_recurrence.ordered_by_created_at.first
+  end
+
   def owner_enum
     OWNERS
   end
@@ -42,12 +46,23 @@ class Recurrence < ActiveRecord::Base
     Time.weekdays.select{ |day| day[0] == weekday }.first.second
   end
 
-  def weekday_in_spanish
-    Time.weekdays.select{ |day| day[0] == weekday }.first.third
-  end
-
   def timezone
     'Mexico City'
+  end
+
+  def next_day_of_recurrence(starting_after_datetime)
+    next_day = starting_after_datetime.change(hour: hour)
+
+    while next_day.wday != wday
+      next_day += 1.day
+    end
+
+    next_day
+  end
+
+  # Starting the next recurrence day how many days we'll provide service until the horizon
+  def wdays_count_to_end_of_recurrency(starting_after_datetime)
+    wdays_until_horizon(wday, starting_from: next_day_of_recurrence(starting_after_datetime))
   end
 
   rails_admin do

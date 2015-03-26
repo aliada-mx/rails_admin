@@ -80,10 +80,17 @@ h1
   color: $green
   font-weight: 800
   +rem(font-size, $extra-large-font)
+  +rem(line-height, $extra-large-font)
+
+h2
+  +rem(font-size, $extra-large-font)
+  color: $green
+  font-weight: 600
 
 h4
   font-weight: 600
   +rem(font-size, $medium-font)
+  +rem(line-height, $medium-font)
 
 .clearfix:after 
   visibility: hidden
@@ -132,6 +139,7 @@ p.medium
 
 footer
   background-color: $darkest-gray
+  background-image: image-url('black_mosaic.png')
   color: white
   +rem(padding, 4rem 0)
   +rem(font-size, 1.4rem)

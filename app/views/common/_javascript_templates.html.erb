@@ -107,7 +107,7 @@
 <script type="text/html" id="update_service_success_template">
     <div class="dialog-content">
         <h1>
-            exito
+            Cambio realizado exitosamente
         </h1>
         <p>
             hemos guardado los cambios exitosamente, recibirás un correo con un resumen de los mismos.
@@ -115,20 +115,41 @@
     </div>
 </script>
 
-<script type="text/html" id="cancel_one_time_service_template">
+<% if @service.present? && @service.service_type_id.present? && @service.datetime.present?  %>
+    <script type="text/html" id="cancel_one_time_service_template">
+        <div class="dialog-content">
+            <h1>
+            <% if @service.recurrent? %>
+                ¿Estás seguro que deseas cancelar todos los servicios de esta recurrencia?
+            <% else %>
+                ¿Estás seguro que deseas cancelar tu servicio?
+            <% end %>
+            </h1>
+            <p>
+            <% if @service.in_less_than_24_hours %>
+                Como faltan menos de 24 horas para el servicio. 
+                Te haremos un cobro de $<%= @too_late_cancelation_fee %> pesos.
+                <br></br>
+                Esto es para compensar a la Aliada que se quedará sin ese servicio.
+            <% else %>
+                <% if @service.recurrent? %>
+                    Al confirmar dejarás de recibir a tu Aliada los <%= ensure_plural(@service.weekday_in_spanish) %> a las <%= @service.friendly_time %>
+                <% else %>
+                    Al confirmar dejarás de recibir a tu Aliada el <%= ensure_plural(@service.weekday_in_spanish) %> a las <%= @service.friendly_time %>
+                <% end %>
+            <% end %>
+            </p>
+        </div>
+    </script>
+<% end %>
+
+<script type="text/html" id="confirm_recurrent_service_change_template">
     <div class="dialog-content">
         <h1>
-            ¿Estás seguro que deseas cancelar tu servicio?
+            ¿Estás seguro que deseas modificar tu servicio recurrente?
         </h1>
         <p>
-        <% if @service && @service.in_less_than_24_hours %>
-            Como faltan menos de 24 horas para el servicio. 
-            Te haremos un cobro de $<%= @too_late_cancelation_fee %> pesos.
-            <br></br>
-            Esto es para compensar a la Aliada que se quedará sin ese servicio.
-        <% else %>
-            Al confirmar aceptas que la Aliada puede tomar otros servicios.
-        <% end %>
+            Tus cambios aplicarán a todos los servicios futuros de esta recurrencia.
         </p>
     </div>
 </script>

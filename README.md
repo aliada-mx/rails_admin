@@ -48,3 +48,15 @@ The recommended way to run the app is in a contained gemset using rvm.
     ```
     rails server
     ```
+
+### Developing with workers
+
+1. Run redis
+  ```
+  redis-server /usr/local/etc/redis.conf
+  ```
+
+2. Run the resque worker
+  ```
+  bundle exec rake resque:work QUEUE=*
+  ```

@@ -277,6 +277,7 @@ ActiveRecord::Schema.define(version: 20150325000233) do
     t.time     "aliada_reported_end_time"
     t.boolean  "entrance_instructions"
     t.boolean  "confirmed",                                                           default: false
+    t.boolean  "cancelation_fee_charged"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree

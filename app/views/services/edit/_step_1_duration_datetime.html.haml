@@ -1,8 +1,16 @@
 %section.step_1_duration_datetime{data: {bind: 'visible: current_step() == 1'}}
-  %h1#service_duration
-    Modificar tu servicio
+  - if @is_recurrent
+    .badge
+      Recurrente
+      =image_tag("recurrence-contrast.png", {:title => 'Servicio recurrente'})
 
-  %h4
+  %h1#service_duration
+    - if @is_recurrent
+      Modificar los servicios
+    - else
+      Modificar tu servicio
+ 
+  %h4{class: @is_recurrent ? 'concealed' : ''}
     ¿Qué tipo de servicio necesitas?
   = render partial: 'common/service_type_buttons', locals: {form: edit_service_form, promotional: false, disable_one_time: @service.recurrent?}
 

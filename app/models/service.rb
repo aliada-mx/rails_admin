@@ -12,6 +12,7 @@ class Service < ActiveRecord::Base
     ['Pagado', 'paid'],
     ['Cancelado', 'canceled'],
   ]
+
   validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
   # accessors for forms
   attr_accessor :postal_code, :payment_method_id, :conekta_temporary_token, :timezone
@@ -32,8 +33,13 @@ class Service < ActiveRecord::Base
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
+  scope :not_ids, ->(ids) { where("services.id NOT IN ( ? )", ids) }
   scope :on_day, -> (datetime) { where('datetime >= ?', datetime.beginning_of_day).where('datetime <= ?', datetime.end_of_day) } 
+  scope :canceled, -> { where('services.status = ?', 'canceled') }
   scope :not_canceled, -> { where('services.status != ?', 'canceled') }
+  scope :ordered_by_created_at, -> { order(:created_at) }
+  scope :ordered_by_datetime, -> { order(:datetime) }
+  scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
 
   # Validations
   validate :datetime_is_hour_o_clock
@@ -50,7 +56,7 @@ class Service < ActiveRecord::Base
   state_machine :status, :initial => 'created' do
     transition 'created' => 'aliada_assigned', :on => :assign
     transition 'created' => 'aliada_missing', :on => :mark_as_missing
-    transition 'created' => 'paid', :on => :pay
+    transition 'finished' => 'paid', :on => :pay
     transition ['created', 'aliada_assigned', 'in-progress'] => 'finished', :on => :finish
     transition ['created', 'aliada_assigned' ] => 'canceled', :on => :cancel
 
@@ -70,11 +76,7 @@ class Service < ActiveRecord::Base
     end
 
     before_transition on: :cancel do |service, transition|
-      service.cancel_schedules!
-
-      if service.in_less_than_24_hours
-        service.charge_cancelation_fee!
-      end
+      service.enable_schedules!
     end
   end
 
@@ -82,7 +84,7 @@ class Service < ActiveRecord::Base
   delegate :recurrent?, to: :service_type
   delegate :one_timer?, to: :service_type
   delegate :periodicity, to: :service_type
-  delegate :weekday_in_spanish, to: :recurrence
+  delegate :wdays_count_to_end_of_recurrency, to: :recurrence
 
   def timezone
     'Mexico City'
@@ -110,8 +112,21 @@ class Service < ActiveRecord::Base
   end
   
   def cost
-    (estimated_hours_without_extras * service_type.price_per_hour).ceil
+    estimated_hours_with_extras * service_type.price_per_hour
   end
+
+  def extras_hours
+    extras.inject(0){ |hours,extra| hours += extra.hours || 0 }
+  end
+
+  def estimated_hours_without_extras
+    (estimated_hours || 0) - extras_hours
+  end
+
+  def estimated_hours_with_extras
+    (estimated_hours || 0) + extras_hours
+  end
+
 
   # Callbacks
   def set_defaults
@@ -165,16 +180,12 @@ class Service < ActiveRecord::Base
     estimated_hours + hours_after_service
   end
 
-  # Starting the next recurrence day how many days we'll provide service until the horizon
-  def wdays_count_to_end_of_recurrency(starting_after_datetime)
-    wdays_until_horizon(datetime.wday, starting_from: next_day_of_recurrence(starting_after_datetime))
-  end
 
   def ending_datetime
     datetime + total_hours.hours
   end
 
-  def book_aliada(aliada_id: nil)
+  def book_an_aliada(aliada_id: nil)
     available_after = starting_datetime_to_book_services
 
     finder = AvailabilityForService.new(self, available_after, aliada_id: aliada_id)
@@ -185,7 +196,18 @@ class Service < ActiveRecord::Base
 
     aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
 
-    aliada_availability.book(self)
+    aliada_availability.book_new(self)
+  end
+
+  # Among recurrent services
+  def shared_attributes
+    self.attributes.except('id',
+                           'datetime',
+                           'aliada_reported_being_time',
+                           'aliada_reported_end_time',
+                           'billed_hours',
+                           'created_at',
+                           'updated_at')
   end
 
 
@@ -201,7 +223,6 @@ class Service < ActiveRecord::Base
   
   #calculates the price to be charged for a service
   def amount_to_bill
-    
     hours = self.aliada_reported_end_time.hour - self.aliada_reported_begin_time.hour
     minutes = self.aliada_reported_end_time.min - self.aliada_reported_begin_time.min 
     amount = (hours*(self.service_type.price_per_hour))+(minutes * ((self.service_type.price_per_hour)/60.0))
@@ -214,17 +235,46 @@ class Service < ActiveRecord::Base
     end
   end
 
-  def cancel_schedules!
+  def enable_schedules!
     self.schedules.in_the_future.map(&:enable_booked!)
   end
 
+  def charge!
+    return if paid?
+
+    amount = self.amount_to_bill
+    product = OpenStruct.new({price: amount,
+                              description: 'Servicio aliada',
+                              id: id})
+    
+    payment = user.charge!(product, self)
+
+    if payment && payment.paid?
+      pay!
+    end
+  end
+
+  def create_double_charge_ticket
+    Ticket.create_warning message: "Se intentó cobrar un servicio ya cobrado", 
+                          action_needed: "Deselecciona el servicio al cobrar",
+                          relevant_object: self
+  end
+
   def charge_cancelation_fee!
+    return if self.cancelation_fee_charged
+
     amount = Setting.too_late_cancelation_fee * 100
 
     cancelation_fee = OpenStruct.new({price: amount,
                                       description: "Cancelación tardía del servicio del #{friendly_datetime} en aliada.mx",
                                       id: self.id})
-    user.charge!(cancelation_fee, self) 
+
+    payment = user.charge!(cancelation_fee , self)
+
+    if payment && payment.paid?
+      self.cancelation_fee_charged = true
+      self.save!
+    end
   end
 
   def self.create_new!(service_params, user)
@@ -236,12 +286,11 @@ class Service < ActiveRecord::Base
 
       service.address = address
       service.user = user
-      service.set_hours_before_after_service
       service.ensure_updated_recurrence!
 
       service.save!
 
-      service.book_aliada
+      service.book_an_aliada
 
       user.send_confirmation_email(service)
       return service
@@ -267,7 +316,7 @@ class Service < ActiveRecord::Base
       user.create_first_payment_provider!(service_params[:payment_method_id])
       user.ensure_first_payment!(service_params)
 
-      service.book_aliada
+      service.book_an_aliada
 
       user.send_welcome_email
       return service
@@ -286,6 +335,24 @@ class Service < ActiveRecord::Base
 
       reschedule! if needs_rescheduling?
       save!
+    end
+  end
+
+  # Cancel this service and all related through the recurrence
+  def cancel_all!
+    cancel!
+
+    if recurrent?
+      recurrence.services.in_the_future.each do |service|
+        next if self.id == service.id
+        service.cancel!
+      end
+      recurrence.deactivate!
+      recurrence.save!
+    end
+
+    if in_less_than_24_hours
+      charge_cancelation_fee!
     end
   end
 
@@ -309,21 +376,23 @@ class Service < ActiveRecord::Base
   end
 
   def reschedule!
-    aliada_availability = book_aliada(aliada_id: self.aliada_id)
+    previous_services = self.other_services.to_a
+    
+    ensure_updated_recurrence!
+
+    aliada_availability = book_an_aliada(aliada_id: self.aliada_id)
 
     # We might have not used some or all those schedules the service had, so enable them back
     aliada_availability.enable_unused_schedules
+
+    # Clear up other services
+    previous_services.map(&:cancel)
   end
 
-  def next_day_of_recurrence(starting_after_datetime)
-    next_day = starting_after_datetime.change(hour: self.datetime.hour)
-    target_day = self.datetime
-
-    while next_day.wday != target_day.wday
-      next_day += 1.day
-    end
-
-    next_day
+  def other_services
+    if recurrent?
+      recurrence.services.in_the_future.not_ids(self.id)
+    end 
   end
 
   # To build schedules we must know where do we start
@@ -358,6 +427,14 @@ class Service < ActiveRecord::Base
     errors.add(:datetime, message) unless found
   end
 
+  def related_services_ids
+    if recurrent? && recurrence.present?
+      recurrence.services.pluck(:id)
+    else
+      [ id ]
+    end
+  end
+
   rails_admin do
     label_plural 'servicios'
     navigation_label 'Operación'
@@ -385,7 +462,7 @@ class Service < ActiveRecord::Base
       end
       field :status
       field :aliada
+      field :recurrence
     end
-
   end
 end
