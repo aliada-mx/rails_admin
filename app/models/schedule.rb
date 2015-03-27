@@ -1,5 +1,7 @@
 class Schedule < ActiveRecord::Base
   include Mixins::RailsAdminModelsHelpers
+  include AliadaSupport::DatetimeSupport
+
   STATUSES = [
     ['Disponible','available'],
     ['Reservado para un servicio', 'booked'],
@@ -74,6 +76,10 @@ class Schedule < ActiveRecord::Base
 
   attr_accessor :index # for availability finders to track they schedule position on the main loop
   attr_accessor :original_status # for availability finders because they asume the state is available we keep a record of the original state
+
+  def timezone
+    'Mexico City'
+  end
 
   def schedule_within_working_hours
     message = 'No podemos registrar una hora de servicio que empieza o termina fuera del horario de trabajo'

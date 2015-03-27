@@ -153,8 +153,8 @@ class Service < ActiveRecord::Base
     recurrence_attributes = {user_id: user_id,
                              periodicity: service_type.periodicity,
                              total_hours: total_hours,
-                             hour: datetime.hour,
-                             weekday: datetime.weekday }
+                             hour: tz_aware_datetime.hour,
+                             weekday: tz_aware_datetime.weekday }
 
     if self.recurrence.blank?
       self.recurrence = Recurrence.create!(recurrence_attributes)

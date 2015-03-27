@@ -20,7 +20,7 @@ class Recurrence < ActiveRecord::Base
   belongs_to :user
   belongs_to :aliada
   belongs_to :zone
-  has_many :services
+  has_many :services, inverse_of: :recurrence 
   has_many :schedules
 
   # Scopes
@@ -46,17 +46,31 @@ class Recurrence < ActiveRecord::Base
     OWNERS
   end
 
+  def weekday_enum
+    Time.weekdays.map {|weekday_trio| [weekday_trio.third, weekday_trio.first]}
+  end
+
   def wday
     Time.weekdays.select{ |day| day[0] == weekday }.first.second
   end
 
   def weekday_in_spanish
-    Time.weekdays.select{ |day| day[0] == weekday }.first.third
+    # weekday_to_spanish(weekday)
+    'lol'
   end
 
   def timezone
     'Mexico City'
   end
+
+  def tz_aware_hour(utc_datetime)
+    utc_to_timezone(utc_datetime, self.timezone).hour
+  end
+
+  def tz_aware_hour(utc_datetime)
+    utc_to_timezone(utc_datetime, self.timezone).weekday
+  end
+
 
   def next_day_of_recurrence(starting_after_datetime)
     next_day = starting_after_datetime.change(hour: hour)
@@ -80,6 +94,18 @@ class Recurrence < ActiveRecord::Base
 
     configure :owner do
       visible false
+    end
+
+    configure :services do
+      associated_collection_scope do 
+        recurrence = bindings[:object]
+        if recurrence.services
+          Proc.new { |scope|
+            # scoping only the unused placeholders and our own placeholders
+            scope.where(recurrence_id: recurrence.id)
+          }
+        end
+      end
     end
   end
 end

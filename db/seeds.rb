@@ -51,6 +51,8 @@ FactoryGirl.create(:payment_method)
 
 # Paste the contents of this function
 def create_from_copypaste
+  Schedule.destroy_all
+
   puts 'Aliada'
   aliada = FactoryGirl.create(:aliada)
 
@@ -60,7 +62,6 @@ def create_from_copypaste
   puts '11800 postal code'
   FactoryGirl.create(:postal_code, :zoned, zone: zone, number: '11800')
 
-  Schedule.destroy_all
   puts 'schedules for a week'
   starting_datetime = Time.zone.now.change(hour: 13) + 1.day # 7 am Mexico City Time
   aliada = Aliada.first
