@@ -29,7 +29,15 @@ class Availability
       @store[aliada_id][wday_hour][new_interval.key] = {}
     end
 
-    @store[aliada_id][wday_hour][new_interval.key] = new_interval
+    # Only save the largest one
+    existing_interval = @store[aliada_id][wday_hour][new_interval.key]
+    if existing_interval.present? 
+      if existing_interval.size < new_interval.size
+        @store[aliada_id][wday_hour][new_interval.key] = new_interval
+      end
+    else
+      @store[aliada_id][wday_hour][new_interval.key] = new_interval
+    end
   end
 
   def schedules_intervals

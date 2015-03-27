@@ -335,7 +335,7 @@ describe 'AvailabilityForCalendar' do
 
           expect(aliada_1_availability.schedules_intervals.size).to be 1
           expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
-          expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 6.hours
+          expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 5.hours
         end
       end
     end

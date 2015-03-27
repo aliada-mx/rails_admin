@@ -55,6 +55,7 @@ class AvailabilityForService
       @current_schedule.index = index
 
       next if skip_aliada?
+      next if index_already_checked
 
       if is_available? && is_continuous? && time_matches?
         add_continuous_schedules
