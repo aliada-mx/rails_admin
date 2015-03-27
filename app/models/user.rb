@@ -122,11 +122,11 @@ class User < ActiveRecord::Base
   end
 
   def send_confirmation_email(service)
-    UserMailer.service_confirmation(self, service).deliver!
+    UserMailer.service_confirmation(service).deliver!
   end
 
   def send_service_confirmation_pwd(service)
-    UserMailer.service_confirmation_pwd(self, service).deliver!
+    UserMailer.service_confirmation_pwd(service).deliver!
   end
 
   def send_billing_receipt(service)
