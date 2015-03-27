@@ -11,6 +11,9 @@ class User < ActiveRecord::Base
     ['admin', 'Admin'],
   ]
 
+  has_many :credits
+  has_many :redeemed_credits, :foreign_key => "redeemer_id", :class_name => "Credit"
+  has_one :code
   has_many :services, inverse_of: :user, foreign_key: :user_id
   has_many :addresses
   has_many :schedules, inverse_of: :user, foreign_key: :user_id
@@ -32,10 +35,15 @@ class User < ActiveRecord::Base
   default_scope { where('users.role in (?)', ['client', 'admin']) }
 
   validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
-
   validates_presence_of :password, if: :password_required?
   validates_confirmation_of :password, if: :password_required?
   validates_length_of :password, within: Devise.password_length, allow_blank: true
+  
+  def create_promotional_code code_type
+    if self.role == "client"
+      Code.generate_unique_code self, code_type
+    end
+  end
 
   def password_required?
     !persisted? || !password.blank? || !password_confirmation.blank?
@@ -98,6 +106,13 @@ class User < ActiveRecord::Base
 
   def ensure_first_payment!(payment_method_options)
     default_payment_provider.ensure_first_payment!(self, payment_method_options)
+  end
+
+  def redeem_code code_name
+    code = Code.find_by(name: code_name)
+    if code
+      Credit.create(user_id: code.user_id, code_id: code.id, redeemer_id: self.id)
+    end
   end
 
   def admin?

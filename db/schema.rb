@@ -61,24 +61,17 @@ ActiveRecord::Schema.define(version: 20150326203109) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "code_users", force: true do |t|
-    t.integer  "user_id"
-    t.integer  "code_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "code_users", ["code_id"], name: "index_code_users_on_code_id", using: :btree
-  add_index "code_users", ["user_id"], name: "index_code_users_on_user_id", using: :btree
-
   create_table "codes", force: true do |t|
     t.integer  "user_id"
     t.integer  "code_type_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+    t.decimal  "amount",       precision: 8, scale: 4
+    t.string   "name"
   end
 
   add_index "codes", ["code_type_id"], name: "index_codes_on_code_type_id", using: :btree
+  add_index "codes", ["name"], name: "index_codes_on_name", unique: true, using: :btree
   add_index "codes", ["user_id"], name: "index_codes_on_user_id", using: :btree
 
   create_table "conekta_cards", force: true do |t|
@@ -94,6 +87,17 @@ ActiveRecord::Schema.define(version: 20150326203109) do
     t.string   "brand"
     t.string   "name"
   end
+
+  create_table "credits", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "code_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "redeemer_id"
+  end
+
+  add_index "credits", ["code_id"], name: "index_credits_on_code_id", using: :btree
+  add_index "credits", ["user_id"], name: "index_credits_on_user_id", using: :btree
 
   create_table "documents", force: true do |t|
     t.integer  "user_id"
@@ -307,23 +311,22 @@ ActiveRecord::Schema.define(version: 20150326203109) do
   create_table "users", force: true do |t|
     t.string   "role"
     t.string   "email"
-    t.datetime "created_at",                                                  null: false
-    t.datetime "updated_at",                                                  null: false
+    t.datetime "created_at",                                                   null: false
+    t.datetime "updated_at",                                                   null: false
     t.string   "phone"
-    t.string   "encrypted_password",                             default: "", null: false
+    t.string   "encrypted_password",                             default: "",  null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                                  default: 0,  null: false
-    t.datetime "current_sign_in_at"
+    t.integer  "sign_in_count",                                  default: 0,   null: false
     t.datetime "last_sign_in_at"
     t.inet     "current_sign_in_ip"
     t.inet     "last_sign_in_ip"
     t.string   "first_name"
     t.string   "last_name"
     t.string   "conekta_customer_id"
-    t.decimal  "credits",                precision: 7, scale: 2
     t.string   "authentication_token"
+    t.decimal  "balance",                precision: 7, scale: 2, default: 0.0
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", using: :btree
@@ -340,11 +343,11 @@ ActiveRecord::Schema.define(version: 20150326203109) do
   add_foreign_key "addresses", "postal_codes", name: "fk_rails_176653fe2c"
   add_foreign_key "addresses", "users", name: "fk_rails_adf64c847b"
 
-  add_foreign_key "code_users", "codes", name: "fk_rails_f59cb87f20"
-  add_foreign_key "code_users", "users", name: "fk_rails_a2fdb26281"
-
   add_foreign_key "codes", "code_types", name: "fk_rails_5766f8bb3a"
   add_foreign_key "codes", "users", name: "fk_rails_0cc1e79270"
+
+  add_foreign_key "credits", "codes", name: "fk_rails_f59cb87f20"
+  add_foreign_key "credits", "users", name: "fk_rails_a2fdb26281"
 
   add_foreign_key "documents", "users", name: "fk_rails_8492e5f484"
 

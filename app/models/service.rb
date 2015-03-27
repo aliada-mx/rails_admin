@@ -305,6 +305,7 @@ class Service < ActiveRecord::Base
       address = Address.create!(service_params[:address])
       user = User.create!(service_params[:user])
       service = Service.new(service_params.except!(:user, :address))
+      code_type = CodeType.find_by(name: "personal")
 
       service.address = address
       service.user = user
@@ -319,6 +320,9 @@ class Service < ActiveRecord::Base
       user.save!
 
       service.book_an_aliada
+
+      user.send_welcome_email
+      user.create_promotional_code code_type
 
       user.send_welcome_email
       return service

@@ -65,6 +65,7 @@ connection.query("SELECT * FROM aliadas_has_zonas").each do |row|
 end
 
 puts "MIGRANDO CLIENTES"
+code_type = CodeType.find_or_create_by(name: 'personal', value: 100)
 connection.query("SELECT * FROM clientes WHERE estatus = 'normal'").each do |row|
   
   first_name = ""
@@ -74,7 +75,7 @@ connection.query("SELECT * FROM clientes WHERE estatus = 'normal'").each do |row
     first_name = splitted_name[0] 
     last_name = splitted_name[1..splitted_name.length].join(" ") if splitted_name.length > 0
   end
-  cliente = User.find_or_initialize_by(first_name: first_name, last_name: last_name, email: row["email"].downcase, role: "client", phone: row["telefono"], created_at: row["created"], credits: row["saldo"] )
+  cliente = User.find_or_initialize_by(first_name: first_name, last_name: last_name, email: row["email"].downcase, role: "client", phone: row["telefono"], created_at: row["created"], balance: row["saldo"] )
 
   if cliente.new_record?
     cliente.save
