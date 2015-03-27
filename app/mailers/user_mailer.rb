@@ -2,7 +2,7 @@ class UserMailer < ApplicationMailer
   def welcome(user)
     template_id = Setting.sendgrid_templates_ids[:welcome]
 
-    sendgrid_template_mail to: 'alex@aliada.mx',
+    sendgrid_template_mail to: user.email,
                            substitutions: {'-full_name-' => [ user.first_name ], '-password-' => [ user.name ]},
                            template_id: template_id
   end
@@ -14,7 +14,7 @@ class UserMailer < ApplicationMailer
    # binding.pry
     service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada).first
    # binding.pry
-    sendgrid_template_mail to: 'alex@aliada.mx',
+    sendgrid_template_mail to: service.user.email,
     substitutions:
       {'-user_full_name-' => [ service.user.full_name  ],
       '-service_date-' => [(I18n.l service.datetime, format: '%A %d')],
@@ -32,7 +32,7 @@ class UserMailer < ApplicationMailer
     
     service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada).first
     
-    sendgrid_template_mail to: 'alex@aliada.mx',
+    sendgrid_template_mail to: service.user.email,
     substitutions:
       {'-user_full_name-' => [ service.user.full_name  ],
       '-service_date-' => [(I18n.l service.datetime, format: '%A %d')],
@@ -41,23 +41,25 @@ class UserMailer < ApplicationMailer
       '-service_type_name-' => [service.service_type.display_name],
       '-aliada_full_name-' => [ service.aliada.full_name],
       '-aliada_phone-' => [service.aliada.phone],
+      '-user_password-' => [service.user.password],
       '-service_cancelation_limit_hours-' => [ 24 ]},
     template_id: template_id
   end
 
-  ###todo implement billing hours
+ 
   def billing_receipt(user, service)
     template_id = Setting.sendgrid_templates_ids[:service_receipt]
-    service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada).first
+    service = Service.where(id: service.id).joins(:address).joins(:service_type).first
     
-    hours = service.aliada_reported_end_time.hour - service.aliada_reported_begin_time.hour
-    minutes = service.aliada_reported_end_time.min - service.aliada_reported_begin_time.min
-    total_time = hours + minutes/60.0
-    hours = hours.floor
-    minutes = ((total_time - hours)*60).floor
-   
 
-    sendgrid_template_mail to: 'alex@aliada.mx',
+
+    hours      = service.aliada_reported_end_time.hour - service.aliada_reported_begin_time.hour
+    minutes    = service.aliada_reported_end_time.min  - service.aliada_reported_begin_time.min
+    total_time = hours + minutes/60.0
+    hours      = hours.floor
+    minutes    = ((total_time - hours)*60).floor
+    
+    sendgrid_template_mail to: user.email,
     substitutions:
       {'-user_full_name-' => [ user.full_name  ],
       '-service_payment_last_4'=> [if service.payment_method then service.payment_method.last4 else "0000" end],
@@ -76,7 +78,6 @@ class UserMailer < ApplicationMailer
       '-service_score_4-' => ["#{score_service_url(service.id)}?value=4"],
       '-service_score_5-' => ["#{score_service_url(service.id)}?value=5"]},
     template_id: template_id
-    
   end
   
   def payment_problem(user, payment_method)
@@ -91,7 +92,7 @@ class UserMailer < ApplicationMailer
 
   def user_address_changed(user,new_address, prev_address)
     template_id = Setting.sendgrid_templates_ids[:change_client_address]
-    sendgrid_template_mail to: 'alex@aliada.mx',
+    sendgrid_template_mail to: user.email,
     substitutions:
       {'-user_full_name-' => [ user.full_name],
       '-current_address-' => [new_address.full_address],

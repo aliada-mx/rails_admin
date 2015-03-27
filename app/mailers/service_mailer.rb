@@ -5,7 +5,7 @@ include  ActionView::Helpers::DateHelper
     template_id = Setting.sendgrid_templates_ids[:aliada_changed]
      service = Service.where(id: service.id).joins(:user).joins(:service_type).first
     
-    sendgrid_template_mail to: 'alex@aliada.mx',
+    sendgrid_template_mail to: service.user.email,
     substitutions:
       {'-user_full_name-' => [ service.user.full_name  ],
       '-weekday-' => [(I18n.l service.tz_aware_datetime, format: '%A %d')],
@@ -20,7 +20,7 @@ include  ActionView::Helpers::DateHelper
     template_id = Setting.sendgrid_templates_ids[:hour_changed]
      service = Service.where(id: service.id).joins(:user).joins(:service_type).first
     
-    sendgrid_template_mail to: 'alex@aliada.mx',
+    sendgrid_template_mail to: service.user.email,
     substitutions:
       {'-user_full_name-' => [ service.user.full_name  ],
       '-service_friendly_datetime-' => [(I18n.l service.tz_aware_datetime, format: '%A %d')],
@@ -38,7 +38,7 @@ include  ActionView::Helpers::DateHelper
     
     service = Service.where(id: service.id).joins(:user).joins(:address).joins(:service_type).first
     
-    sendgrid_template_mail to: 'alex@aliada.mx',
+    sendgrid_template_mail to: service.user.email,
     substitutions:
       {'-user_full_name-' => [service.user.full_name],
       '-service_friendly_datetime-' => [(I18n.l service.tz_aware_datetime, format: '%A %d')],
@@ -55,7 +55,7 @@ include  ActionView::Helpers::DateHelper
     template_id = Setting.sendgrid_templates_ids[:change_service_address]
     
     service = Service.where(id: service.id).joins(:user).joins(:service_type).first
-    sendgrid_template_mail to: 'alex@aliada.mx',
+    sendgrid_template_mail to: service.user.email,
     substitutions:
       {'-user_full_name-' => [ service.user.full_name  ],
       '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A %d')],
@@ -72,7 +72,7 @@ include  ActionView::Helpers::DateHelper
     template_id = Setting.sendgrid_templates_ids[:timely_cancelation]
     service = Service.where(id: service.id).joins(:user).joins(:address).joins(:service_type).first
     
-    sendgrid_template_mail to: 'alex@aliada.mx',
+    sendgrid_template_mail to: service.user.email,
     substitutions:
       {'-user_full_name-' => [service.user.full_name],
       '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A %d')],
@@ -86,7 +86,7 @@ include  ActionView::Helpers::DateHelper
     template_id = Setting.sendgrid_templates_ids[:reminder]
     service = Service.where(id: service.id).joins(:user).joins(:address).joins(:service_type).first
     
-    sendgrid_template_mail to: 'alex@aliada.mx',
+    sendgrid_template_mail to: service.user.email,
     substitutions:
       {'-user_full_name-' => [service.user.full_name],
       '-aliada_full_name-'=> [service.aliada.full_name],
