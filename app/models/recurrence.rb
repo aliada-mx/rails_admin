@@ -34,6 +34,10 @@ class Recurrence < ActiveRecord::Base
     transition 'inactive' => 'active', :on => :activate
   end
 
+  def name
+    "#{weekday_in_spanish} a las #{hour}"
+  end
+
   def base_service
     services.with_recurrence.ordered_by_created_at.first
   end
@@ -44,6 +48,10 @@ class Recurrence < ActiveRecord::Base
 
   def wday
     Time.weekdays.select{ |day| day[0] == weekday }.first.second
+  end
+
+  def weekday_in_spanish
+    Time.weekdays.select{ |day| day[0] == weekday }.first.third
   end
 
   def timezone

@@ -18,6 +18,12 @@ class AvailabilityForCalendar
 
     @recurrency_seconds = @periodicity.days if @is_recurrent
 
+    if @service.present?
+      @aliadas_to_skip =  @service.user.banned_aliadas.map(&:id)
+    else
+      @aliadas_to_skip =  []
+    end
+
     initialize_trackers
 
     load_schedules
@@ -48,6 +54,8 @@ class AvailabilityForCalendar
       @current_aliada_id = schedule.aliada_id
       @current_index = index
       @current_schedule.index = index
+
+      next if skip_aliada?
 
       if is_available? && is_continuous? 
         add_continuous_schedules

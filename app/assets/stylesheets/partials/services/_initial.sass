@@ -9,6 +9,11 @@
 @import 'partials/services/step_5_success'
 
 body.initial_service
+  > .container
+    min-height: 1050px
+
+  +sticky-footer
+
   main
     margin-bottom: $footer-height / 2
 
@@ -28,4 +33,3 @@ body.initial_service
       +rem(font-size, 1.4rem)
       +rem(margin-top, 2rem)
 
-  +sticky-footer

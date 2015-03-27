@@ -2,9 +2,11 @@
 @import 'common/mixins'
 @import 'compass/css3/box-shadow'
 
+body.password_recovery,
 body.login
   background-image: image-url('white-mosaic.png')
 
+.password_recovery,
 .login-container
   margin-top: 10%
 
@@ -15,9 +17,11 @@ body.login
       width: 100%
       +rem(margin, 0 auto 4rem)
 
+  .password_recovery-form-wrapper,
   .login-form-wrapper
     text-align: center
 
+    .password_recovery-container,
     .login-form-container
       background-color: white
       display: inline-block
@@ -30,6 +34,7 @@ body.login
       h1
         margin-bottom: 20px
 
+      .password_recovery_form,
       .login-form
         min-width: 330px
         max-width: 350px

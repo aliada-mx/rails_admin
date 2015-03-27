@@ -62,7 +62,10 @@ module Mixins
             minimum_availabilities = wdays_until_horizon( intervals_hash.values.first.wday, starting_from: @available_after )
 
             value = intervals_hash.size < minimum_availabilities
-            @report.push({message: 'Cleared a too few availability', objects: [minimum_availabilities, intervals_hash] }) if value
+
+            if value
+              @report.push({message: 'Cleared a too few availability', objects: [minimum_availabilities, intervals_hash] })
+            end
 
             value
           end
@@ -73,14 +76,26 @@ module Mixins
     end
 
     def free_schedules_count_after_current(current_index)
-      schedules_count_after_current(current_index).select { |s| s.nil? || s.available? }.count
+      next_two_schedules(current_index).select { |s| s.nil? || s.available? }.count
     end
 
     def available_schedules_count_after_current(current_index)
-      schedules_count_after_current(current_index).select { |s| s.try(:available?) }.count
+      next_two_schedules(current_index).select { |s| s.try(:available?) }.count
     end
 
-    def schedules_count_after_current(current_index)
+    def unavailable_schedules_count_after_current(current_index)
+      next_two_schedules(current_index).select { |s| s.try(:booked?) || s.try(:busy?) }.count
+    end
+
+    def next_four_schedules(current_index)
+      next_two_schedules(current_index) + next_two_schedules(current_index + 2)
+    end
+
+    def last_two_out_of_four_available?(current_index)
+
+    end
+
+    def next_two_schedules(current_index)
       next_schedule = schedule_at_index(current_index + 1)
       next_next_schedule = schedule_at_index(current_index + 2)
 
@@ -95,25 +110,6 @@ module Mixins
       @schedules[start..ending]
     end
 
-    def last_continuous_schedule_index
-      i = @current_index
-      current_schedule = @current_schedule
-      next_schedule = schedule_at_index(i + 1)
-
-      while current_schedule.present? &&
-            next_schedule.present? && 
-            current_schedule.available? &&
-            next_schedule.available? &&
-            free_schedules_count_after_current(i) == 2 && 
-            continuous_schedules_same_aliada?(current_schedule, next_schedule)
-        i += 1
-        current_schedule = schedule_at_index(i)
-        next_schedule = schedule_at_index(i+1)
-      end
-
-      i
-    end
-
     # Do we have a pair of continues schedules?
     # belonging to the same aliada_id?
     def is_continuous?
@@ -122,48 +118,94 @@ module Mixins
       continuous_schedules_same_aliada?(last_continuous, @current_schedule)
     end
 
+    def find_continuity_ending(from_index)
+      i = from_index
+      current_schedule = schedule_at_index(i)
+      next_schedule = schedule_at_index(i + 1)
+
+      available_schedules = 0
+      while current_schedule.present? &&
+            next_schedule.present? && 
+            current_schedule.available? &&
+            next_schedule.available? &&
+            continuous_schedules_same_aliada?(current_schedule, next_schedule)
+
+        available_schedules += 1
+
+        i += 1
+        current_schedule = schedule_at_index(i)
+        next_schedule = schedule_at_index(i+1)
+      end
+
+      OpenStruct.new({index: i, 
+                     schedule: current_schedule,
+                     type_of_ending: type_of_ending(i),
+                     available_after: available_schedules})
+    end
+
+    def type_of_ending(index)
+      current_schedule = schedule_at_index(index)
+      next_schedule = schedule_at_index(index+1)
+
+      if next_schedule.nil? || !continuous_schedules_same_aliada?(current_schedule, next_schedule)
+        'end_of_aliada_day'
+      elsif !next_schedule.available?
+        'because_of_next_service'
+      end
+    end
+
     def add_next_schedules_availability
       # At this point there's a @continuous_schedules of @minimum_service_hours size
       # and we will build all the available intervals in front of it, shrinking and growing the
       # availability as needed while cycling on the schedules
       #
 
-      # The index of the last continuous schedule 
-      availability_limit = last_continuous_schedule_index
+      
       # Our starting point
       first_schedule_index = @continuous_schedules.first.index
       @report.push({message: "At #{@current_schedule.datetime} there are #{free_schedules_count_after_current(@current_index)} available schedules in front"})
 
-      i = 0
+      i = @current_index
       while true
-        # For this iteration the index of the last possible
-        last_schedule_index = first_schedule_index + @maximum_service_hours
-        minimum_schedule_index = first_schedule_index + @requested_service_hours - 1
+        # The index of the last continuous schedule 
+        ending = find_continuity_ending(i)
 
-        # Shrink to fit the available space
-        if last_schedule_index > availability_limit
-          to_shrink = availability_limit - last_schedule_index
-          last_schedule_index += to_shrink
-        else
-          to_shrink = 0
-          last_schedule_index -= 1
+        if ending.type_of_ending == 'because_of_next_service'
+          @last_schedule_index = first_schedule_index + @maximum_service_hours
+
+        elsif ending.type_of_ending == 'end_of_aliada_day'
+          if ending.available_after >= 2
+
+            @last_schedule_index = first_schedule_index + @maximum_service_hours
+          elsif ending.available_after == 1
+
+            @last_schedule_index = first_schedule_index + @minimum_service_hours
+          elsif ending.available_after == 0
+
+            @last_schedule_index = first_schedule_index + @requested_service_hours 
+          end
         end
+        @last_schedule_index -=1 # we summed a number that's not zero indexed
 
-        if minimum_schedule_index <= last_schedule_index
-          padding = last_schedule_index - minimum_schedule_index
-        end
+        break if !ending.schedule.available?
+        break if @last_schedule_index > ending.index
 
-        schedules_for_availabilty = schedules_between(first_schedule_index, last_schedule_index)
+        schedules_for_availabilty = schedules_between(first_schedule_index, @last_schedule_index)
 
         add_availability(schedules_for_availabilty)
-
-        # When our interval can't be smaller, quit
+         
         break if schedules_for_availabilty.size == @requested_service_hours
 
         first_schedule_index += 1
         i += 1
       end
 
+    end
+
+    def index_already_checked
+      if @last_schedule_index.present?
+        @last_schedule_index > @current_index
+      end
     end
 
     def add_availability(schedules)

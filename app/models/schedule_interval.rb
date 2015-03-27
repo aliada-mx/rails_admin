@@ -111,6 +111,10 @@ class ScheduleInterval
     @schedules.first.datetime.wday
   end
 
+  def add(other_schedule_interval)
+    @schedules += other_schedule_interval.schedules
+  end
+
   def self.build_from_range(starting_datetime, ending_datetime, from_existing: false, conditions: {}, elements_for_key: 0)
     schedules = []
 

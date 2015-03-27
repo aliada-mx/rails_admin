@@ -2,6 +2,7 @@
 class Service < ActiveRecord::Base
   include Presenters::ServicePresenter
   include AliadaSupport::DatetimeSupport
+  include Mixins::RailsAdminModelsHelpers
 
   STATUSES = [
     ['Creado','created'],
@@ -263,7 +264,7 @@ class Service < ActiveRecord::Base
   def charge_cancelation_fee!
     return if self.cancelation_fee_charged
 
-    amount = Setting.too_late_cancelation_fee * 100
+    amount = Setting.too_late_cancelation_fee
 
     cancelation_fee = OpenStruct.new({price: amount,
                                       description: "Cancelación tardía del servicio del #{friendly_datetime} en aliada.mx",
@@ -341,19 +342,21 @@ class Service < ActiveRecord::Base
 
   # Cancel this service and all related through the recurrence
   def cancel_all!
-    cancel!
+    ActiveRecord::Base.transaction do
+      cancel!
 
-    if recurrent?
-      recurrence.services.in_the_future.each do |service|
-        next if self.id == service.id
-        service.cancel!
+      if recurrent?
+        recurrence.services.in_the_future.each do |service|
+          next if self.id == service.id
+          service.cancel!
+        end
+        recurrence.deactivate!
+        recurrence.save!
       end
-      recurrence.deactivate!
-      recurrence.save!
-    end
 
-    if in_less_than_24_hours
-      charge_cancelation_fee!
+      if in_less_than_24_hours
+        charge_cancelation_fee!
+      end
     end
   end
 
@@ -462,7 +465,11 @@ class Service < ActiveRecord::Base
         end
       end
       field :status
-      field :aliada
+      field :aliada do
+        searchable [{users: :first_name }, {users: :last_name }, {users: :email}, {users: :phone}]
+        queryable true
+        filterable true
+      end
       field :recurrence
     end
   end

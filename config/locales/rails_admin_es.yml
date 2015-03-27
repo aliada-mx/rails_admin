@@ -27,6 +27,8 @@ es:
         created_at: 'Fecha de creación'
         updated_at: 'Fecha de última actualización'
         datetime: 'Día y hora'
+        user_link: 'Usuario'
+        service_link: 'Servicio'
       address: &address_attributes
         user: usuario
         postal_code: código postal
@@ -92,6 +94,7 @@ es:
       postal_code:
         <<: *common_attributes
       recurrence:
+        <<: *common_attributes
         user: usuario
         periodicity: periodicidad
         weekday: día de la semana

@@ -19,7 +19,7 @@ aliada.services.new.duration = function(aliada, ko) {
   });
 
   // Hours selector
-  $('#service_estimated_hours').on('change', function() {
+  $('#service_rooms_hours').on('change', function() {
     var $selected = $(this).find(':selected');
     var hours = $selected.val();
     aliada.ko.forced_hours(parseFloat(hours));

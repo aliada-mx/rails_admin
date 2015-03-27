@@ -3,6 +3,7 @@ include AliadaSupport::DatetimeSupport
 
   has_many :aliada_zones
   has_many :zones, through: :aliada_zones
+  has_many :documents, inverse_of: :aliada, foreign_key: :user_id
 
   has_many :aliada_working_hours
   has_many :schedules, foreign_key: :aliada_id
@@ -94,7 +95,11 @@ include AliadaSupport::DatetimeSupport
     list do
       field :name
       field :phone
-      field :next_service
+      field :next_service do
+        pretty_value do
+          value.id
+        end
+      end
     end
 
     edit do
@@ -102,6 +107,7 @@ include AliadaSupport::DatetimeSupport
       field :first_name
       field :last_name
       field :phone
+      field :documents
       group :login do
         active false
         field :password
