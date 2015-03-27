@@ -225,6 +225,11 @@ class Service < ActiveRecord::Base
   def amount_to_bill
     hours = self.aliada_reported_end_time.hour - self.aliada_reported_begin_time.hour
     minutes = self.aliada_reported_end_time.min - self.aliada_reported_begin_time.min 
+    if hours < 3
+    then
+      hours = 3
+      minutes = 0
+    end
     amount = (hours*(self.service_type.price_per_hour))+(minutes * ((self.service_type.price_per_hour)/60.0))
     
    

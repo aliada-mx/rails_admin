@@ -60,14 +60,15 @@ class UserMailer < ApplicationMailer
     sendgrid_template_mail to: 'alex@aliada.mx',
     substitutions:
       {'-user_full_name-' => [ user.full_name  ],
+      '-service_payment_last_4'=> [if service.payment_method then service.payment_method.last4 else "0000" end],
       '-service_date-' => [(I18n.l service.datetime, format: '%A')],
       '-service_time-' => [(I18n.l service.datetime, format: '%I %p')] ,
       '-service_address-' => [service.address.full_address],
       '-aliada_reported_begin_time-' =>[(I18n.l service.aliada_reported_begin_time, format: '%H:%M %p')],
       '-aliada_reported_end_time-' =>[(I18n.l service.aliada_reported_end_time, format: '%H:%M %p')],
-      '-service_friendly_total_hours-' =>["#{hours} hrs con #{minutes} minutos"],
-      '-service_amount_to_bill' => [service.price],
-      '-service_subtotal-' => [service.amount_to_bill],
+      '-service_friendly_total_hours-' =>[if hours < 3 then "3 hrs." else "#{hours} hrs con #{minutes} minutos" end],
+      '-service_amount_to_bill-' => ["$#{service.service_type.price_per_hour}"],
+      '-service_subtotal-' => ["$#{service.amount_to_bill}"],
       '-aliada_full_name-' => [service.aliada.full_name],
       '-service_score_1-' => ["#{score_service_url(service.id)}?value=1"],
       '-service_score_2-' => ["#{score_service_url(service.id)}?value=2"],
@@ -92,7 +93,7 @@ class UserMailer < ApplicationMailer
     template_id = Setting.sendgrid_templates_ids[:change_client_address]
     sendgrid_template_mail to: 'alex@aliada.mx',
     substitutions:
-      {'-user_full_name-' => [ user.full_address],
+      {'-user_full_name-' => [ user.full_name],
       '-current_address-' => [new_address.full_address],
       '-previous_address-' => [prev_address.full_address]},
     
