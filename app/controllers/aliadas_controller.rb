@@ -25,7 +25,7 @@ class AliadasController < ApplicationController
     if @aliada 
       #must implement today or tomorrow after 6pm, etc...
       now = ActiveSupport::TimeZone["Mexico City"].now
-      date_to_show = if now.hour < Setting.show_tomorrow_services_cutoff
+      date_to_show = if now.hour < 19
                        ActiveSupport::TimeZone["Mexico City"].today 
                      else
                        ActiveSupport::TimeZone["Mexico City"].today + 1.day
@@ -34,7 +34,7 @@ class AliadasController < ApplicationController
       @unfinished_services = Service.joins(:user).where(aliada_id: @aliada.id, status: 'aliada_assigned').where("datetime <= ?", now.utc)
       @upcoming_services = Service.joins(:address).where(aliada_id: @aliada.id, :datetime => date_to_show.beginning_of_day..date_to_show.end_of_day).not_canceled.joins(:user) 
       
-      @message = "Token correct"
+      @message = "Token correct #{now}"
     else
       render text: 'Ruta invalida, ponte  en contacto con aliada' + params[:token]
     end

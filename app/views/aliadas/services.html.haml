@@ -4,6 +4,7 @@
     = render partial: 'common/javascript_templates'
     = render partial: 'common/javascript_variables'
   %h2 Servicios por terminar
+  %h2= @message
   - @unfinished_services.each do |service|
     %h5
       En: 
