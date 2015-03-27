@@ -40,6 +40,7 @@ class ServicesController < ApplicationController
     @service = Service.new(user: User.new,
                            service_type: ServiceType.first,
                            address: Address.new)
+    @empty_conekta_card = OpenStruct.new({})
   end
 
   def create_initial
@@ -146,6 +147,7 @@ class ServicesController < ApplicationController
                                       :bedrooms,
                                       {extra_ids: []},
                                       :estimated_hours,
+                                      :room_hours,
                                       :special_instructions,
                                       :service_type_id,
                                       :date,

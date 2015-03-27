@@ -29,7 +29,7 @@ aliada.services.new.bind_form_submission = function($form){
       return;
     }
 
-    // Change the form so we can update the service from the same form
+    // Change the form action(url) so we can update the service from the same form
     aliada.services.new.form_action = Routes.update_service_users_path({user_id: aliada.user.id,
                                                                         service_id: response.service_id})
 

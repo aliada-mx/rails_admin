@@ -16,6 +16,20 @@ class ConektaCard < ActiveRecord::Base
     "Tarjeta #{brand} con terminación #{last4}"
   end
 
+  def placeholder_for_form
+    values = {}
+
+    values.merge!({ exp_month: exp_month }) if exp_month.present?
+
+    values.merge!({ exp_year: "20#{ exp_year }" }) if exp_year.present?
+
+    values.merge!({ name: name }) if name.present?
+
+    values.merge!({ last_4: "XXXX XXXX XXXX #{ last4 }" }) if last4.present?
+
+    OpenStruct.new(values)
+  end
+
   def create_customer(user, temporary_token)
     customer = Conekta::Customer.create({
       name: user.name,

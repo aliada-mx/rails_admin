@@ -383,6 +383,18 @@ describe 'AvailabilityForService' do
 
           expect(padding_schedules.size).to be 2
         end
+
+        it 'find availability with 2 padding hours in front' do
+          Schedule.ordered_by_aliada_datetime.where(aliada: aliada_2).first.book!
+
+          availability = AvailabilityForService.find_aliadas_availability(@service, starting_datetime)
+
+          aliada_1_availability = availability.for_aliada(aliada)
+
+          expect(aliada_1_availability.schedules_intervals.size).to be 1
+          expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
+          expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 4.hours
+        end
       end
     end
   end

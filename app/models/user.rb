@@ -1,11 +1,9 @@
 class User < ActiveRecord::Base
-
   #Required to enable token authentication
   acts_as_token_authenticatable
 
   include Presenters::UserPresenter
   include UsersHelper
-
 
   ROLES = [
     ['client', 'Cliente'],
@@ -15,6 +13,7 @@ class User < ActiveRecord::Base
 
   has_many :services, inverse_of: :user, foreign_key: :user_id
   has_many :addresses
+  has_many :schedules, inverse_of: :user, foreign_key: :user_id
   has_and_belongs_to_many :banned_aliadas,
                           class_name: 'Aliada',
                           join_table: :banned_aliada_users,
@@ -33,16 +32,13 @@ class User < ActiveRecord::Base
   default_scope { where('users.role in (?)', ['client', 'admin']) }
 
   validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
-  
-
-
 
   validates_presence_of :password, if: :password_required?
   validates_confirmation_of :password, if: :password_required?
   validates_length_of :password, within: Devise.password_length, allow_blank: true
 
   def password_required?
-    !persisted? || !password.nil? || !password_confirmation.nil?
+    !persisted? || !password.blank? || !password_confirmation.blank?
   end
 
   def self.email_exists?(email)
@@ -89,7 +85,7 @@ class User < ActiveRecord::Base
   end
 
   def aliadas
-    services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }.uniq
+    services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }.uniq || []
   end
   
   def full_name

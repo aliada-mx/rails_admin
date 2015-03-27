@@ -42,7 +42,7 @@ html
   height: 100%
 
 body
-  background-color: $lightest_gray !important
+  background-color: $lightest_gray
 
 a, input
   outline: 0 !important
@@ -58,6 +58,15 @@ a
 
 .right
   float: right
+
+.half
+  width: 49.8%
+
+.two-thirds
+  width: 65.8%
+
+.third
+  width: 32.8%
 
 b
   font-weight: 800
@@ -154,6 +163,9 @@ footer
       li
         a
           color: white
+        &.iconized
+          position: relative
+          left: -23px
 
   .call-us
 
@@ -202,6 +214,10 @@ footer
     position: absolute
     top: 15px
 
+
+iframe
+  display: none
+  
 
 .wrapper
   max-width: 960px

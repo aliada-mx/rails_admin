@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150325000233) do
+ActiveRecord::Schema.define(version: 20150326203109) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -123,6 +123,7 @@ ActiveRecord::Schema.define(version: 20150325000233) do
     t.string   "icon_content_type"
     t.integer  "icon_file_size"
     t.datetime "icon_updated_at"
+    t.integer  "position"
   end
 
   create_table "incomplete_services", force: true do |t|
@@ -248,6 +249,7 @@ ActiveRecord::Schema.define(version: 20150325000233) do
     t.integer  "price_per_hour"
     t.string   "display_name",   limit: nil
     t.text     "benefits"
+    t.integer  "position"
   end
 
   create_table "services", force: true do |t|
@@ -278,6 +280,7 @@ ActiveRecord::Schema.define(version: 20150325000233) do
     t.boolean  "entrance_instructions"
     t.boolean  "confirmed",                                                           default: false
     t.boolean  "cancelation_fee_charged"
+    t.decimal  "rooms_hours",                                precision: 10, scale: 3
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree

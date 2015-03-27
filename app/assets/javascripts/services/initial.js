@@ -25,7 +25,11 @@ $(document).ready(function() {
   aliada.ko.is_valid_step = ko.computed(function(){
     // Register as a dependency
     // so it runs everytime a step changes
-    aliada.ko.current_step();
+    step = aliada.ko.current_step();
+
+    if(step == 4){
+      return ko.validatedObservable(aliada.ko).isValid() && aliada.ko.tos_accepted();
+    }
 
     // Validate the whole viewmodel
     return ko.validatedObservable(aliada.ko).isValid();
@@ -58,7 +62,7 @@ $(document).ready(function() {
       case 4:
         return 'Confirmar visita'
       case 5:
-        return 'Ok'
+        return 'Guardar instrucciones'
     }
   });
 
@@ -93,16 +97,22 @@ $(document).ready(function() {
       e.preventDefault();
       var current_step = aliada.ko.current_step();
 
-      // Invalid steps provide feedback
-      if(!aliada.ko.is_valid_step()){
-        if(current_step === 2){
-          // Trigger validation to provide feedback
-          _.each(aliada.step_2_required_fields, function(element){
-            aliada.ko[element].valueHasMutated();
-          });
-        }
-        return;
-      };
+      // Only invalid user info stops the process on step 2
+      switch(current_step){
+        case 2:
+          if(!aliada.ko.is_valid_step()){
+            // Trigger ko validation to provide feedback of erronous fields
+            _.each(aliada.step_2_required_fields, function(element){
+              aliada.ko[element].valueHasMutated();
+            });
+            return;
+          };
+        case 3:
+          if(!aliada.ko.is_valid_step()){
+            return;
+          };
+          
+      }
 
       switch(current_step ){
         case 4:
@@ -139,3 +149,4 @@ $(document).ready(function() {
   });
   
 });
+

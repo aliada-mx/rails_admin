@@ -4,7 +4,6 @@ es:
       address:  'direccion'
       user: 'usuario'
       aliada: 'aliada'
-      service_type: 'tipos de servicio'
       conekta_card: 'tarjeta de conekta'
       document: 'archivo'
       extras: 'extra de servicio'
@@ -24,9 +23,14 @@ es:
     attributes:
       common: &common_attributes
         <<: *model_names
+        name: nombre
         created_at: 'Fecha de creación'
         updated_at: 'Fecha de última actualización'
         datetime: 'Día y hora'
+        user_link: 'Usuario'
+        service_link: 'Servicio'
+        services: 'servicios'
+        schedules: 'horas de servicio'
       address: &address_attributes
         user: usuario
         postal_code: código postal
@@ -64,8 +68,9 @@ es:
         banned_users: usuarios que la banearon
         zones: zonas de trabajo
         scores: calificaciones
-      event:
       service_type:
+        periodicity: periodicidad
+        price_per_hour: precio por hora
       conekta_card:
         last4: últimos 4 dígitos
         exp_month: mes de expiración
@@ -87,8 +92,11 @@ es:
         amount: monto
         user: usuario
       payment_method:
+        <<: *common_attributes
       postal_code:
+        <<: *common_attributes
       recurrence:
+        <<: *common_attributes
         user: usuario
         periodicity: periodicidad
         weekday: día de la semana

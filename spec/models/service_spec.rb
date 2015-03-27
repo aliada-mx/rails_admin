@@ -173,7 +173,6 @@ feature 'Service' do
      
     end
 
-
     it 'Charges the user using the default payment provider' do
       user.create_payment_provider_choice(conekta_card)
       service.price= 65
@@ -192,6 +191,18 @@ feature 'Service' do
         service.charge!
       end
       expect(Payment.all.count).to eql 1
+    end
+  end
+
+  describe '#ensure_updated_recurrence!' do
+    it 'saves the recurrence hour and weekday with the service timezone' do
+      allow_any_instance_of(Service).to receive(:timezone).and_return('Mexico City')
+
+      service.service_type = recurrent_service
+      service.ensure_updated_recurrence!
+
+      expect(service.recurrence.hour).to be 7
+      expect(service.recurrence.weekday).to eql 'friday'
     end
   end
 end

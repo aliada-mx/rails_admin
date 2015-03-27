@@ -1,5 +1,6 @@
 @import 'common/mixins'
 @import 'common/variables'
+@import 'compass/css3/box-shadow'
 
 @import 'partials/services/step_1_duration'
 @import 'partials/services/step_2_personal_info'
@@ -8,6 +9,11 @@
 @import 'partials/services/step_5_success'
 
 body.initial_service
+  > .container
+    min-height: 1050px
+
+  +sticky-footer
+
   main
     margin-bottom: $footer-height / 2
 
@@ -18,18 +24,12 @@ body.initial_service
         margin-top: 0
       > h4
         font-weight: 700
+  aside
+    .action-button-pink 
+      +rem(padding, 2rem 3rem)
+    .tos-container
+      background-color: white
+      text-align: center
+      +rem(font-size, 1.4rem)
+      +rem(margin-top, 2rem)
 
-  // for sticky footer
-  min-height: 100%
-  position: relative
-  &:after
-    content: ''
-    display: block
-    height: 100px
-    min-height: 100%
-    position: relative
-
-  footer
-    position: absolute
-    bottom: 0
-    width: 100%

@@ -323,6 +323,21 @@ describe 'AvailabilityForCalendar' do
           expect(aliada_1_availability.schedules_intervals.map(&:size)).to eql [4,4,4,4,4]
         end
       end
+
+      context 'with a service booked in front' do
+        it 'find availability with 2 padding hours in front' do
+          create_one_timer!(starting_datetime, hours: 8, conditions: {aliada: aliada, zones: [zone]} )
+          Schedule.ordered_by_aliada_datetime.to_a[-2..-1].map(&:book!)
+
+          availability = AvailabilityForCalendar.find_availability(4, zone, starting_datetime, periodicity: 7)
+
+          aliada_1_availability = availability.for_aliada(aliada)
+
+          expect(aliada_1_availability.schedules_intervals.size).to be 1
+          expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
+          expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 5.hours
+        end
+      end
     end
   end
 end

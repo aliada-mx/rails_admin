@@ -21,7 +21,7 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
 
 
   aliada.ko.hours = ko.computed(function(){
-      var hours = 0
+      var hours = 1.5; // Starting with 1 room and 1 bathroom
       var extras_hours = aliada.ko.extras_hours();
       hours += extras_hours
 
@@ -40,7 +40,7 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
 
 
   // Hours selector
-  $('#service_estimated_hours').on('change', function(){
+  $('#service_rooms_hours').on('change', function(){
     var $selected = $(this).find(':selected');
     var hours = $selected.val();
     aliada.ko.forced_hours(parseFloat(hours));
