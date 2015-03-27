@@ -32,7 +32,7 @@
     %p
       Agrega o modifica tu método de pago
 
-  = render partial: 'common/conekta_form', locals: { card_default: @saved_card }
+  = render partial: 'common/conekta_form', locals: { card_default: @saved_card, read_only: true }
 
 .logout-container
   = link_to destroy_user_session_path, class: 'action-button-transparent size-large right' do
