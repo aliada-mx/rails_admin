@@ -9,14 +9,14 @@ class UserMailer < ApplicationMailer
   
 
   
-  def service_confirmation(user, service)
+  def service_confirmation(service)
     template_id = Setting.sendgrid_templates_ids[:service_confirmation]
    # binding.pry
     service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada).first
    # binding.pry
     sendgrid_template_mail to: 'alex@aliada.mx',
     substitutions:
-      {'-user_full_name-' => [ user.full_name  ],
+      {'-user_full_name-' => [ service.user.full_name  ],
       '-service_date-' => [(I18n.l service.datetime, format: '%A %d')],
       '-service_time-' => [(I18n.l service.datetime, format: '%I %p')] ,
       '-service_address-' => [service.address.full_address],
@@ -27,14 +27,14 @@ class UserMailer < ApplicationMailer
     template_id: template_id
   end
   
-  def service_confirmation_pwd(user, service)
+  def service_confirmation_pwd(service)
     template_id = Setting.sendgrid_templates_ids[:service_confirmation_password]
     
-    service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada)
+    service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada).first
     
     sendgrid_template_mail to: 'alex@aliada.mx',
     substitutions:
-      {'-user_full_name-' => [ user.full_name  ],
+      {'-user_full_name-' => [ service.user.full_name  ],
       '-service_date-' => [(I18n.l service.datetime, format: '%A %d')],
       '-service_time-' => [(I18n.l service.datetime, format: '%I %p')] ,
       '-service_address-' => [service.address.full_address],
@@ -50,7 +50,7 @@ class UserMailer < ApplicationMailer
     template_id = Setting.sendgrid_templates_ids[:service_receipt]
     service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada).first
     
-    hours = service.aliada_reported_end_time.hours - service.aliada_reported_begin_time.hour
+    hours = service.aliada_reported_end_time.hour - service.aliada_reported_begin_time.hour
     minutes = service.aliada_reported_end_time.min - service.aliada_reported_begin_time.min
     total_time = hours + minutes/60.0
     hours = hours.floor
