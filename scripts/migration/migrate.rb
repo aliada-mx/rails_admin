@@ -10,6 +10,7 @@ connection = Mysql2::Client.new(
 )
 
 AGENDA_FROM_DATE = "2015-03-01"
+
 zones = {}
 aliadas = {}
 clientes = {}

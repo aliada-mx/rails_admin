@@ -41,5 +41,16 @@ module AliadaSupport
       (businessday_hours * days_until_horizon).round
     end
 
+    def utc_to_timezone(utc_datetime, timezone)
+      time_obj = utc_datetime.in_time_zone(timezone)
+      if time_obj.dst?
+        time_obj += 1.hour
+      end
+      time_obj
+    end
+
+    def weekday_to_spanish(weekday)
+      Time.weekdays.select { |weekday_trio| weekday_trio.first == weekday }.first.third
+    end
   end
 end

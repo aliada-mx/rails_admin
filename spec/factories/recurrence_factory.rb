@@ -7,6 +7,5 @@ FactoryGirl.define do
     owner 'user'
     association :aliada, factory: :aliada
     association :user, factory: :user
-
   end
 end

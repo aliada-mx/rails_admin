@@ -15,7 +15,7 @@ feature 'ServiceController' do
                               number: '11800') }
   let!(:extra_1){ create(:extra, name: 'Lavanderia')}
   let!(:extra_2){ create(:extra, name: 'Limpieza de refri')}
-  let!(:conekta_card){ create(:payment_method)}
+  let!(:conekta_card_method){ create(:payment_method)}
     
   before do
     allow_any_instance_of(Service).to receive(:timezone).and_return('UTC')
@@ -93,7 +93,7 @@ feature 'ServiceController' do
       end
 
       it 'creates a new one time service' do
-        fill_initial_service_form(conekta_card, one_time_service, starting_datetime + 1.day, extra_1, zone)
+        fill_initial_service_form(conekta_card_method, one_time_service, starting_datetime + 1.day, extra_1, zone)
 
         click_button 'Confirmar visita'
 
@@ -110,7 +110,7 @@ feature 'ServiceController' do
       end
 
       it 'creates a new recurrent service' do
-        fill_initial_service_form(conekta_card, recurrent_service, starting_datetime + 1.day, extra_1, zone)
+        fill_initial_service_form(conekta_card_method, recurrent_service, starting_datetime + 1.day, extra_1, zone)
 
         click_button 'Confirmar visita'
 
@@ -143,8 +143,8 @@ feature 'ServiceController' do
         expect(Schedule.padding.count).to be 10
       end
 
-      it 'logs in the new user' do
-        fill_initial_service_form(conekta_card, one_time_service, starting_datetime + 1.day, extra_1, zone)
+      it 'logs in ithe new user' do
+        fill_initial_service_form(conekta_card_method, one_time_service, starting_datetime + 1.day, extra_1, zone)
 
         click_button 'Confirmar visita'
 
@@ -171,7 +171,7 @@ feature 'ServiceController' do
       end
 
       it 'creates a pre-acthorization payment when choosing conekta' do
-        fill_initial_service_form(conekta_card, one_time_service, starting_datetime + 1.day, extra_1, zone)
+        fill_initial_service_form(conekta_card_method, one_time_service, starting_datetime + 1.day, extra_1, zone)
 
         fill_hidden_input 'conekta_temporary_token', with: 'tok_test_visa_4242'
 
@@ -192,7 +192,7 @@ feature 'ServiceController' do
         expect(PaymentProviderChoice.count).to be 1
         expect(User.count).to be 1
 
-        expect(payment.provider).to eql conekta_card
+        expect(payment.provider.class).to eql ConektaCard
         expect(payment.user).to eql user
         expect(payment.amount).to eql 3
         expect(payment).to be_paid
@@ -233,13 +233,16 @@ feature 'ServiceController' do
     end
 
     describe '#edit' do
+      let!(:recurrence) { create(:recurrence) }
+
       let(:user_service){ create(:service, 
                             aliada: aliada,
                             user: user,
                             datetime: starting_datetime,
                             estimated_hours: 4,
                             zone: zone,
-                            service_type: recurrent_service) }
+                            service_type: recurrent_service,
+                            recurrence: recurrence) }
       let(:admin_service){ create(:service, 
                                   aliada: aliada,
                                   user: admin,
@@ -305,10 +308,6 @@ feature 'ServiceController' do
                                                               periodicity: recurrent_service.periodicity ,
                                                               conditions: {zones: [zone], aliada: aliada})
 
-            @booked_schedules_datetimes = intervals_array_to_schedules_datetimes(booked_intervals)
-            @available_schedules_datetimes = intervals_array_to_schedules_datetimes(available_schedules_intervals)
-            @schedules_datetimes_to_book = ( @available_schedules_datetimes - @booked_schedules_datetimes ).select { |s| s > next_day_of_service }
-
             visit edit_service_users_path(user_id: user.id, service_id: user_service.id)
           end
 
@@ -344,7 +343,7 @@ feature 'ServiceController' do
           it 'reschedules the service when the estimated hours change' do
             expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
 
-            select_by_value(5.0, from: 'service_estimated_hours')
+            fill_hidden_input 'service_estimated_hours', with: '5.0'
             fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
             fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
 
@@ -357,10 +356,8 @@ feature 'ServiceController' do
             service = Service.find(response['service_id'])
 
             expect(service.estimated_hours).to eql 5
-            expect(service.schedules.count).to eql 34
-            expect(service.schedules.padding.count).to eql 8
-
-            expect(@schedules_datetimes_to_book - service.schedules.map(&:datetime)).to be_empty 
+            expect(service.schedules.count).to eql 13
+            expect(service.schedules.padding.count).to eql 2
             expect(Schedule.available.count).to eql 1
           end
 
@@ -368,7 +365,7 @@ feature 'ServiceController' do
             expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
             expect(Schedule.available.count).to eql 5
 
-            select_by_value(3.0, from: 'service_estimated_hours')
+            fill_hidden_input 'service_estimated_hours', with: '3.0'
             fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
             fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
 
@@ -381,8 +378,8 @@ feature 'ServiceController' do
             service = Service.find(response['service_id'])
 
             expect(service.estimated_hours).to eql 3
-            expect(service.schedules.count).to eql 26 # enabled 4 schedules
-            expect(service.schedules.padding.count).to eql 8
+            expect(service.schedules.in_or_after_datetime(next_day_of_service).count).to eql 5 
+            expect(service.schedules.padding.count).to eql 2
             expect(Schedule.available.count).to eql 9
           end
 
@@ -390,7 +387,7 @@ feature 'ServiceController' do
             expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
             expect(user_service.recurrence.reload.total_hours).to eql 6
 
-            select_by_value(5.0, from: 'service_estimated_hours')
+            fill_hidden_input 'service_estimated_hours', with: '5.0'
             fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
             fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
 
@@ -404,6 +401,35 @@ feature 'ServiceController' do
 
             expect(service.recurrence.total_hours).to eql 7
           end
+
+          it 'cancels the previous services and creates new ones' do
+            recurrence = create(:recurrence)
+            service_1 = create(:service, recurrence: recurrence)
+            service_2 = create(:service, recurrence: recurrence)
+
+            user_service.recurrence = recurrence
+            user_service.save!
+
+            fill_hidden_input 'service_estimated_hours', with: '4.0'
+            fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
+            fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
+
+            click_button 'Guardar cambios'
+
+            response = JSON.parse(page.body)
+            expect(response['status']).to_not eql 'error'
+            expect(response['service_id']).to be_present
+            
+            service = Service.find(response['service_id'])
+
+            expect(service_1.reload).to be_canceled
+            expect(service_2.reload).to be_canceled
+            expect(service.recurrence.services.canceled).to include(service_1)
+            expect(service.recurrence.services.canceled).to include(service_2)
+            expect(service.recurrence.services.not_canceled).to include(service)
+            expect(service.recurrence.services.not_canceled.count).to be 4
+            expect(Schedule.booked_or_padding.all? {|s| s.service_id.present? }).to be true
+          end
         end
       end
 
@@ -415,7 +441,6 @@ feature 'ServiceController' do
           allow_any_instance_of(User).to receive(:aliadas).and_return([aliada])
           allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
           allow_any_instance_of(User).to receive(:postal_code_number).and_return(11800)
-          allow_any_instance_of(User).to receive(:charge!).and_return(true)
 
           edit_service_path = edit_service_users_path(user_id: user.id, service_id: user_service.id)
 
@@ -425,6 +450,8 @@ feature 'ServiceController' do
         end
 
         it 'enables the future schedules' do
+          allow_any_instance_of(User).to receive(:charge!).and_return(Payment.new(status: 'paid'))
+
           expect(user_service.schedules.booked.sort).to eql ( @future_service_interval.schedules + @previous_service_interval.schedules ).sort
           expect((@future_service_interval.schedules + @previous_service_interval.schedules).all?{ |schedule| schedule.booked? }).to eql true
 
@@ -437,7 +464,8 @@ feature 'ServiceController' do
         end
 
         it 'charges a fee if the cancelation happens > 24 hours before' do
-          expect_any_instance_of(Service).to receive(:charge_cancelation_fee!)
+          expect_any_instance_of(Service).to receive(:charge_cancelation_fee!).and_call_original
+          expect_any_instance_of(ConektaCard).to receive(:charge!).and_return(Payment.new(status: 'paid'))
           expect(Payment.count).to be 0
 
           Timecop.travel(starting_datetime - 23.hours)
@@ -445,6 +473,24 @@ feature 'ServiceController' do
           click_button 'Cancelar'
 
           expect(user_service.reload).to be_canceled
+          expect(user_service.reload.cancelation_fee_charged).to be true
+        end
+
+        it 'deactivates the recurrences and enables the schedules' do
+          recurrence = create(:recurrence)
+          service_1 = create(:service, recurrence: recurrence)
+          service_2 = create(:service, recurrence: recurrence)
+
+          user_service.recurrence = recurrence
+          user_service.save!
+
+          click_button 'Cancelar'
+
+          expect(user_service.reload).to be_canceled
+          expect(user_service.recurrence.reload).to be_inactive
+          expect(user_service.recurrence.services.all?(&:canceled?)).to be true
+          expect(service_1.reload).to be_canceled
+          expect(service_1.reload).to be_canceled
         end
       end
     end
@@ -459,10 +505,9 @@ feature 'ServiceController' do
         allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
         allow_any_instance_of(User).to receive(:postal_code_number).and_return(11800)
 
-        schedules_intervals = create_recurrent!(starting_datetime + 1.day, 
-                                                hours: 5,
-                                                periodicity: recurrent_service.periodicity ,
-                                                conditions: { zones: [zone], aliada: aliada } )  
+        create_recurrent!(starting_datetime + 1.day,hours: 5,
+                                                    periodicity: recurrent_service.periodicity ,
+                                                    conditions: { zones: [zone], aliada: aliada } )  
       end
 
       it 'let the user view the new service page' do

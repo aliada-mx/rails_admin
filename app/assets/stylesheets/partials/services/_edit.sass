@@ -1,0 +1,81 @@
+@import 'common/variables'
+@import 'common/mixins'
+
+body.edit_service
+  +sticky-footer
+  > .container
+    min-height: 1050px
+
+  main
+    .badge
+      color: $purple
+      position: absolute
+      +rem(right, 1rem)
+      +rem(top, -1rem)
+      +rem(font-size, $small-font)
+      img
+        width: 25px
+        height: 25px
+
+    position: relative
+    section
+      > *
+        margin: 20px 0
+      > h1
+        margin-top: 0
+      > h4
+        font-weight: 700
+      
+  form.recurrent
+    h1
+      color: $purple
+    .small-letters
+      color: $purple
+
+    // Extras selector
+    #extras .check-box-container input[type=checkbox]:checked + label
+      border-color: $purple
+      background-color: $purple
+
+    // Service type selector
+    fieldset.radio_buttons.large .radio-button-container.recurrent
+      background-color: $light_purple
+
+      .action-button-green .size-large
+        background-color: $purple
+        border-color: $purple
+
+      input[type=radio]:checked + span
+        background-color: $purple
+        border-color: $purple
+
+    // Dropdown arrows
+    .selectboxit-btn .selectboxit-default-arrow
+      border-top-color: $purple
+
+    .selectboxit-btn.selectboxit-open .selectboxit-default-arrow
+      border-bottom-color: $purple
+
+    // Calendar
+    .calendar-wrap
+      .header nav span:before
+        color: $purple
+
+      .fc-calendar 
+        .fc-head
+          background-color: $light_purple
+          color: $purple
+
+        .fc-row 
+          > div.fc-content
+            color: $purple
+
+          div.fc-selected-recurrences-below.fc-selected-day span.fc-date
+            background-color: $purple
+
+          div.fc-selected-recurrences-below span.fc-date
+            border-color: $purple
+
+  .container.two-columns
+    margin-bottom: 150px
+

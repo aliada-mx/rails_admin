@@ -2,12 +2,15 @@ class Extra < ActiveRecord::Base
   has_many :extra_services
   has_many :services, through: :extra_services
 
+  scope :ordered, -> { order(:position) }
+
   has_attached_file :icon
   validates_attachment_content_type :icon, content_type: ['image/jpg',
                                                           'image/jpeg',
                                                           'image/png',
                                                           'image/gif',
                                                           'image/svg+xml']
+
 
   rails_admin do
     label_plural 'extras'

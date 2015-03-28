@@ -1,10 +1,9 @@
 es:
   activerecord:
-    models:
+    models: &model_names
       address:  'direccion'
       user: 'usuario'
       aliada: 'aliada'
-      service_type: 'tipos de servicio'
       conekta_card: 'tarjeta de conekta'
       document: 'archivo'
       extras: 'extra de servicio'
@@ -23,8 +22,15 @@ es:
       incomplete_service: 'registro inconcluso'
     attributes:
       common: &common_attributes
+        <<: *model_names
+        name: nombre
         created_at: 'Fecha de creación'
         updated_at: 'Fecha de última actualización'
+        datetime: 'Día y hora'
+        user_link: 'Usuario'
+        service_link: 'Servicio'
+        services: 'servicios'
+        schedules: 'horas de servicio'
       address: &address_attributes
         user: usuario
         postal_code: código postal
@@ -62,8 +68,9 @@ es:
         banned_users: usuarios que la banearon
         zones: zonas de trabajo
         scores: calificaciones
-      event:
       service_type:
+        periodicity: periodicidad
+        price_per_hour: precio por hora
       conekta_card:
         last4: últimos 4 dígitos
         exp_month: mes de expiración
@@ -85,8 +92,11 @@ es:
         amount: monto
         user: usuario
       payment_method:
+        <<: *common_attributes
       postal_code:
+        <<: *common_attributes
       recurrence:
+        <<: *common_attributes
         user: usuario
         periodicity: periodicidad
         weekday: día de la semana
@@ -103,6 +113,7 @@ es:
         zone: zona
         type: tipo
       schedule:
+        <<: *common_attributes
       score:
       service: &service_attributes
         datetime: fecha y hora del servicio
@@ -113,7 +124,6 @@ es:
         service_type: tipo de servicio
         recurrence: recurrencia
         billed_hours: horas cobradas
-        hours_before_service: horas antes del servicio
         hours_after_service: horas después del servicio
         bathrooms: baños
         bedrooms: recámaras
@@ -125,6 +135,7 @@ es:
         equipment_instructions: Usar un producto o equipo específico para limpiar
         forbidden_instructions: No limpiar /No tocar
         special_instructions: Otras instrucciones especiales
+        user_link: Usuario
       service_type:
       ticket:
         relevant_object: Servicio
@@ -194,10 +205,11 @@ es:
         title: "Detalles de %{model_label} '%{object_label}'"
         menu: "Mostrar"
         breadcrumb: "%{object_label}"
-      charge_order:
-        title: "Cobrar orden"
-        menu: "Cobrar orden"
-        link: "Cobrar orden"
+      charge_services:
+        title: "Cobrar servicio"
+        menu: "Cobrar servicios"
+        link: "Cobrar servicio"
+        bulk_link: "Cobrar servicios"
       show_in_app:
         menu: "Mostrar en la app"
       new:
@@ -242,6 +254,10 @@ es:
         menu: "Horarios"
         title: "Horarios"
         breadcrumb: "Horarios"
+      charge_service:
+        menu: "Cobrar servicio"
+        title: "Cobrar servicio"
+        breadcrumb: "Cobrar servicio"
     form:
       cancel: "Cancelar"
       basic_info: "Información básica"

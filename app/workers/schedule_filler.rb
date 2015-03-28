@@ -49,8 +49,9 @@ class ScheduleFiller
   def self.create_service_in_clients_schedule today_in_the_future, user_recurrence 
 
     # Create service with the most recently modified one for that recurrence
-    services = Service.where("recurrence_id = ?", user_recurrence.id).order("updated_at DESC")
-    if services.empty?
+    # TODO: modify query with status for inactive recurrences
+    base_service = user_recurrence.base_service
+    unless base_service
       error = "Services have not been created for this user's recurrence"
       Rails.logger.fatal error
       raise error
@@ -59,8 +60,8 @@ class ScheduleFiller
     # Compensate UTC 
     beginning_of_user_recurrence = today_in_the_future.change(hour: user_recurrence.utc_hour(today_in_the_future))
 
-    service = services.first.dup
-    service.update_attribute(:datetime, beginning_of_user_recurrence)
+    base_service_attributes = base_service.shared_attributes
+    service = Service.create!(base_service_attributes.merge({datetime: beginning_of_user_recurrence }))
     service 
   end
 
@@ -217,6 +218,7 @@ class ScheduleFiller
         ScheduleInterval.new(schedules).book_schedules(aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, service_id: service.id)
       end
     end
+
   end
 
 end

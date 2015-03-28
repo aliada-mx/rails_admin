@@ -1,5 +1,6 @@
 %h4{class: collapsable ? 'extras-toggle-button' : ''}
-  Agrega tareas extras (extiende el tiempo de la visita)
+  %icon.icon-add-to-list
+  Agrega tareas extras (extiende la visita)
 
 %fieldset.checkboxes.extra_large#extras{class: collapsable ? 'collapsed' : ''}
   = form.collection_check_boxes(:extra_ids, Extra.all, :id, :name) do |builder|

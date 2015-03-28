@@ -1,11 +1,9 @@
 class User < ActiveRecord::Base
-
   #Required to enable token authentication
   acts_as_token_authenticatable
 
   include Presenters::UserPresenter
   include UsersHelper
-
 
   ROLES = [
     ['client', 'Cliente'],
@@ -15,6 +13,7 @@ class User < ActiveRecord::Base
 
   has_many :services, inverse_of: :user, foreign_key: :user_id
   has_many :addresses
+  has_many :schedules, inverse_of: :user, foreign_key: :user_id
   has_and_belongs_to_many :banned_aliadas,
                           class_name: 'Aliada',
                           join_table: :banned_aliada_users,
@@ -33,16 +32,13 @@ class User < ActiveRecord::Base
   default_scope { where('users.role in (?)', ['client', 'admin']) }
 
   validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
-  
-
-
 
   validates_presence_of :password, if: :password_required?
   validates_confirmation_of :password, if: :password_required?
   validates_length_of :password, within: Devise.password_length, allow_blank: true
 
   def password_required?
-    !persisted? || !password.nil? || !password_confirmation.nil?
+    !persisted? || !password.blank? || !password_confirmation.blank?
   end
 
   def self.email_exists?(email)
@@ -57,26 +53,6 @@ class User < ActiveRecord::Base
     create_payment_provider_choice(payment_provider)
   end
   
-  # Given a service id, check whether status is finished,
-  # charge the default service provider and change status to finished
-  # 
-  def charge_service!(service_id)
-    service_to_charge = Service.find_by(id: service_id, user_id: self.id, status: 'finished')
-    
-    if service_to_charge
-      amount = service_to_charge.amount_to_bill
-      product = OpenStruct.new({price: amount,
-                               description: 'Servicio aliada',
-                               id: service_id})
-      
-      ### TODO: handle this for multiple payment providers
-      charge!(product, service_to_charge)
-    else
-      Ticket.create_warning(relevant_object: self,
-                            message: "Se intento cobrar servicio de cliente: #{self.id} pero no ha concluido o no existe")
-    end  
-  end
-  
   def charge!(product, object)
     begin
       default_payment_provider.charge!(product, self)
@@ -84,6 +60,7 @@ class User < ActiveRecord::Base
       Raygun.track_exception(err)
 
       object.create_charge_failed_ticket(self, product.price, err)
+      nil
     end
   end
   
@@ -108,8 +85,13 @@ class User < ActiveRecord::Base
   end
 
   def aliadas
-    services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }.uniq
+    services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }.uniq || []
   end
+  
+  def full_name
+    return "#{self.first_name} #{self.last_name}"
+  end
+
 
   def set_default_role
     self.role ||= 'client' if self.respond_to? :role
@@ -136,7 +118,23 @@ class User < ActiveRecord::Base
   end
 
   def send_confirmation_email(service)
-    UserMailer.service_confirmation(self, service).deliver!
+    UserMailer.service_confirmation(service).deliver!
+  end
+
+  def send_service_confirmation_pwd(service)
+    UserMailer.service_confirmation_pwd(service).deliver!
+  end
+
+  def send_billing_receipt(service)
+    UserMailer.billing_receipt(self, service)
+  end
+  
+  def send_payment_problem_email(payment_method)
+    UserMailer.payment_problem(self, payment_method)
+  end
+  
+  def send_address_change_email(new_address, prev_address)
+    UserMailer.user_address_changed(self, new_address, prev_address)
   end
 
   rails_admin do

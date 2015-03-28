@@ -4,6 +4,8 @@ class ServiceType < ActiveRecord::Base
     ['one-time','Una sola vez'],
   ]
 
+  scope :ordered, -> { order(:position) }
+
   validates :name, inclusion: {in: NAMES.map{ |pairs| pairs[0] } }
 
   def self.recurrent

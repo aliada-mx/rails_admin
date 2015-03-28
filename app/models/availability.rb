@@ -29,7 +29,15 @@ class Availability
       @store[aliada_id][wday_hour][new_interval.key] = {}
     end
 
-    @store[aliada_id][wday_hour][new_interval.key] = new_interval
+    # Only save the largest one
+    existing_interval = @store[aliada_id][wday_hour][new_interval.key]
+    if existing_interval.present? 
+      if existing_interval.size < new_interval.size
+        @store[aliada_id][wday_hour][new_interval.key] = new_interval
+      end
+    else
+      @store[aliada_id][wday_hour][new_interval.key] = new_interval
+    end
   end
 
   def schedules_intervals
@@ -80,23 +88,34 @@ class Availability
     aliada_availability
   end
 
-  def book(service)
-    if schedules_intervals.present? && aliada.present?
-      last_interval = nil
-      schedules_intervals.each do |schedule_interval|
-        schedule_interval.book_schedules(aliada_id: aliada.id,
-                                         user_id: service.user_id,
-                                         service_id: service.id)
-        last_interval = schedule_interval
-      end
-      service.assign(aliada)
-    else
-      service.mark_as_missing
-    end
-    service.hours_after_service = last_interval.padding_count
-    service.ensure_updated_recurrence!
+  def book_new(service)
+    service_shared_attributes = service.shared_attributes
+    one_time_service_type = ServiceType.find_by!(name: 'one-time')
 
-    service.save!
+    schedules_intervals.each_with_index do |schedule_interval, i|
+      # First service is the master, will have its service type set to recurrent(or not)
+      # so later on we can use it to modify the others
+      if i == 0
+        _service = service 
+      else
+        _service = Service.new(service_shared_attributes.merge({ service_type: one_time_service_type }))
+      end
+
+      _service.datetime = schedule_interval.beginning_of_interval 
+
+      _service.hours_after_service = schedule_interval.padding_count
+
+      _service.assign(aliada)
+
+      _service.ensure_updated_recurrence!
+
+      _service.save!
+
+      schedule_interval.book_schedules(aliada_id: aliada.id,
+                                       user_id: _service.user_id,
+                                       service_id: _service.id,
+                                       recurrence_id: service.recurrence_id) # the recurrence_id can be nil for one-time services
+    end
 
     self
   end
@@ -109,6 +128,10 @@ class Availability
     unused.each do |schedule|
       schedule.enable_booked
     end
+  end
+
+  def clean_up_services(service)
+
   end
 
   def beginning

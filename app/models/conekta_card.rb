@@ -16,6 +16,20 @@ class ConektaCard < ActiveRecord::Base
     "Tarjeta #{brand} con terminación #{last4}"
   end
 
+  def placeholder_for_form
+    values = {}
+
+    values.merge!({ exp_month: exp_month }) if exp_month.present?
+
+    values.merge!({ exp_year: "20#{ exp_year }" }) if exp_year.present?
+
+    values.merge!({ name: name }) if name.present?
+
+    values.merge!({ last_4: "XXXX XXXX XXXX #{ last4 }" }) if last4.present?
+
+    OpenStruct.new(values)
+  end
+
   def create_customer(user, temporary_token)
     customer = Conekta::Customer.create({
       name: user.name,
@@ -44,7 +58,7 @@ class ConektaCard < ActiveRecord::Base
     update_from_api_card(card_attributes)
   end
 
-  def charge!(product, user)
+  def charge_in_conekta!(product, user)
     conekta_charge = Conekta::Charge.create({
       amount: (product.price * 100).floor,
       currency: 'MXN',
@@ -52,11 +66,17 @@ class ConektaCard < ActiveRecord::Base
       reference_id: product.id,
       card: self.token
     })
+
+    conekta_charge
+  end
+
+  def charge!(product, user)
+    conekta_charge = charge_in_conekta!(product, user)
    
     payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
     payment.pay!
     
-    return conekta_charge
+    payment
   end
 
   def payment_possible?(service)
@@ -74,8 +94,6 @@ class ConektaCard < ActiveRecord::Base
                                        description: "Pre-autorización de tarjeta #{id}",
                                        id: self.id})
     charge!(preauthorization, user)
-
-    
 
     self.preauthorized = true
     self.save!

@@ -26,6 +26,7 @@ describe 'AvailabilityForService' do
         @schedule_interval = ScheduleInterval.build_from_range(starting_datetime, starting_datetime + 5.hours)
 
         @service = double(requested_schedules: @schedule_interval,
+                          related_services_ids: [],
                           id: 1,
                           estimated_hours: 3,
                           total_hours: 5,
@@ -76,6 +77,7 @@ describe 'AvailabilityForService' do
       it 'doesnt find an available datetime when the requested hour happens before the available schedules' do
         before_availability_schedule_interval = ScheduleInterval.build_from_range(starting_datetime - 1.hour, ending_datetime)
         service = double(requested_schedules: before_availability_schedule_interval,
+                         related_services_ids: [],
                          id: 1,
                          estimated_hours: before_availability_schedule_interval.size,
                          user: @user,
@@ -91,6 +93,7 @@ describe 'AvailabilityForService' do
       it 'doesnt find an available datetime when the requested hour happens after the available schedules' do
         after_availability_schedule_interval = ScheduleInterval.build_from_range(starting_datetime + 7.hour, ending_datetime + 7.hour)
         service = double(requested_schedules: after_availability_schedule_interval,
+                         related_services_ids: [],
                          id: 1,
                          estimated_hours: after_availability_schedule_interval.size,
                          user: @user,
@@ -107,6 +110,7 @@ describe 'AvailabilityForService' do
         user = double(banned_aliadas: [aliada_2])
 
         service = double(requested_schedules: @schedule_interval,
+                         related_services_ids: [],
                          id: 1,
                          estimated_hours: @schedule_interval.size,
                          user: user,
@@ -140,6 +144,7 @@ describe 'AvailabilityForService' do
                     create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada: aliada_3, zones: [zone]} )
 
         @service = double(requested_schedules: intervals.first,
+                         related_services_ids: [],
                          id: 1,
                           estimated_hours: intervals.first.size,
                           user: @user,
@@ -215,6 +220,7 @@ describe 'AvailabilityForService' do
 
 
         service = double(requested_schedules: before_availability_schedule_interval.first,
+                         related_services_ids: [],
                          id: 1,
                          estimated_hours: before_availability_schedule_interval.size,
                          user: @user,
@@ -237,6 +243,7 @@ describe 'AvailabilityForService' do
                                                                  conditions: {aliada: aliada, zones: [zone]} )
 
         service = double(requested_schedules: after_availability_schedule_interval.first,
+                         related_services_ids: [],
                          id: 1,
                          estimated_hours: after_availability_schedule_interval.size,
                          user: @user,
@@ -261,6 +268,7 @@ describe 'AvailabilityForService' do
         Schedule.where(datetime: starting_datetime, aliada_id: aliada_3.id).last.update(status: 'booked')
 
         service = double(requested_schedules: availability_schedule_interval.first,
+                         related_services_ids: [],
                          id: 1,
                          estimated_hours: availability_schedule_interval.size,
                          user: @user,
@@ -299,6 +307,7 @@ describe 'AvailabilityForService' do
                    create_one_timer!(starting_datetime, hours: 5, conditions: {aliada: aliada_2, zones: [zone]} )
 
         @service = double(requested_schedules: interval,
+                         related_services_ids: [],
                          id: 1,
                           estimated_hours: 5,
                           user: @user,
@@ -373,6 +382,18 @@ describe 'AvailabilityForService' do
           padding_schedules = aliada_1_availability.schedules.select { |schedule| schedule.padding? }
 
           expect(padding_schedules.size).to be 2
+        end
+
+        it 'find availability with 2 padding hours in front' do
+          Schedule.ordered_by_aliada_datetime.where(aliada: aliada_2).first.book!
+
+          availability = AvailabilityForService.find_aliadas_availability(@service, starting_datetime)
+
+          aliada_1_availability = availability.for_aliada(aliada)
+
+          expect(aliada_1_availability.schedules_intervals.size).to be 1
+          expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
+          expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 4.hours
         end
       end
     end

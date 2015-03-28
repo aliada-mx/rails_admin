@@ -1,4 +1,43 @@
-%h1 Datos personales
+= append(:body_class){ ' edit-user ' }
+
+= form_for @user, url: users_path(@user), html: {method: "patch"} do |user_form|
+  %h1 Datos personales
+
+  %p
+    ¿Cambiaste de dirección, correo o teléfono?
+    %br
+      Modifica aquí tus datos personales
+  .personal-info
+    .fields.left.contact-info
+      .field-row
+        %icon.icon-user
+        = user_form.text_field :first_name, placeholder: 'Nombres(s)'
+        = user_form.text_field :email, placeholder: 'Correo electrónico'
+      .field-row
+        = user_form.text_field :last_name, placeholder: 'Apellido(s)'
+        = user_form.text_field :phone, placeholder: 'Teléfono (10 digitos)'
+    .fields.passwords
+      .field-row
+        Cambiar contraseña
+        = user_form.password_field :password, class: 'right', placeholder: 'nueva contraseña'
+      .field-row
+        = user_form.password_field :password_confirmation, class: 'right', placeholder: 'nueva contraseña'
+
+    .actions
+      = user_form.submit 'Guardar', class: 'action-button-pink size-large right'
+
+= form_tag create_conekta_card_users_path(@user), class: 'conekta-form' do
+  %h1 Método de pago
+  -#
+    %p
+      Agrega o modifica tu método de pago
+
+  = render partial: 'common/conekta_form', locals: { card_default: @saved_card, read_only: true }
+
+.logout-container
+  = link_to destroy_user_session_path, class: 'action-button-transparent size-large right' do
+    Cerrar sesion
 
 
-= render 'form'
+= append :javascript do
+  = javascript_include_tag 'user_edit'

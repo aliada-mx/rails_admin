@@ -6,4 +6,4 @@
 
   = render partial: 'common/payment_methods', locals: {form: initial_service_form}
 
-  = render partial: 'common/conekta_form'
+  = render partial: 'common/conekta_form', locals: { card_default: @empty_conekta_card, read_only: false }

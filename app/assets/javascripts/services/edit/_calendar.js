@@ -100,8 +100,10 @@ aliada.services.edit.initialize_calendar_times = function() {
 
   // Update calendar on page load
   update_calendar().then(function(calendar) {
-    calendar.gotoNextMonth();
-    updateMonthYear();
+    if ( aliada.service.month != calendar.getMonth()){
+      calendar.gotoNextMonth();
+      updateMonthYear();
+    }
     calendar.chooseDay(aliada.service.day);
 
     aliada.ko.time(aliada.service.time);

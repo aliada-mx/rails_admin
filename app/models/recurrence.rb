@@ -1,4 +1,6 @@
 class Recurrence < ActiveRecord::Base
+  include AliadaSupport::DatetimeSupport
+
   OWNERS = [
     'aliada',
     'user'
@@ -9,8 +11,6 @@ class Recurrence < ActiveRecord::Base
     ['inactive', 'Inactiva']
   ]
 
-  include AliadaSupport::DatetimeSupport
-
   validates_presence_of [:weekday, :hour]
   validates :weekday, inclusion: {in: Time.weekdays.map{ |days| days[0] } }
   validates :hour, inclusion: {in: [*0..23] } 
@@ -20,7 +20,7 @@ class Recurrence < ActiveRecord::Base
   belongs_to :user
   belongs_to :aliada
   belongs_to :zone
-  has_many :services
+  has_many :services, inverse_of: :recurrence 
   has_many :schedules
 
   # Scopes
@@ -34,8 +34,20 @@ class Recurrence < ActiveRecord::Base
     transition 'inactive' => 'active', :on => :activate
   end
 
+  def name
+    "#{weekday_in_spanish} a las #{hour}"
+  end
+
+  def base_service
+    services.with_recurrence.ordered_by_created_at.first
+  end
+
   def owner_enum
     OWNERS
+  end
+
+  def weekday_enum
+    Time.weekdays.map {|weekday_trio| [weekday_trio.third, weekday_trio.first]}
   end
 
   def wday
@@ -43,7 +55,8 @@ class Recurrence < ActiveRecord::Base
   end
 
   def weekday_in_spanish
-    Time.weekdays.select{ |day| day[0] == weekday }.first.third
+    # weekday_to_spanish(weekday)
+    'lol'
   end
 
   def timezone
@@ -59,6 +72,30 @@ class Recurrence < ActiveRecord::Base
     time_obj.utc.hour
   end
 
+  def tz_aware_hour(utc_datetime)
+    utc_to_timezone(utc_datetime, self.timezone).hour
+  end
+
+  def tz_aware_hour(utc_datetime)
+    utc_to_timezone(utc_datetime, self.timezone).weekday
+  end
+
+
+  def next_day_of_recurrence(starting_after_datetime)
+    next_day = starting_after_datetime.change(hour: hour)
+
+    while next_day.wday != wday
+      next_day += 1.day
+    end
+
+    next_day
+  end
+
+  # Starting the next recurrence day how many days we'll provide service until the horizon
+  def wdays_count_to_end_of_recurrency(starting_after_datetime)
+    wdays_until_horizon(wday, starting_from: next_day_of_recurrence(starting_after_datetime))
+  end
+
   rails_admin do
     label_plural 'recurrencias'
     navigation_label 'Operación'
@@ -66,6 +103,18 @@ class Recurrence < ActiveRecord::Base
 
     configure :owner do
       visible false
+    end
+
+    configure :services do
+      associated_collection_scope do 
+        recurrence = bindings[:object]
+        if recurrence.services
+          Proc.new { |scope|
+            # scoping only the unused placeholders and our own placeholders
+            scope.where(recurrence_id: recurrence.id)
+          }
+        end
+      end
     end
   end
 end

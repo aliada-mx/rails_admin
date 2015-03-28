@@ -1,7 +1,9 @@
 @import "compass/css3/border-radius"
 
 @mixin centered()
-  margin: 0 auto
+  margin-left: auto
+  margin-right: auto
+  text-align: center
   display: block
 
 @mixin soft-transition($time: 300ms, $property: all, $easing: cubic-bezier(0,.5,.5,1))
@@ -81,7 +83,7 @@
   &.size-extra-large
     +rem(font-size, $large-font)
     font-weight: 800
-    padding: 25px
+    +rem(padding, 1rem 3rem)
     width: 100%
 
     .icon-button
@@ -89,7 +91,8 @@
 
   &.size-large
     +rem(font-size, 1.7rem)
-    padding: 10px 16px
+    +rem(padding, 1rem 2rem)
+    min-width: 225px
 
     .icon-button
       +rem(font-size, 1.2rem)
@@ -189,7 +192,6 @@
 @mixin sticky-footer
   .container
     main
-      padding-bottom: 0
       margin-bottom: 80px
 
   min-height: 100%
@@ -197,7 +199,7 @@
   &:after
     content: ''
     display: block
-    height: 100px
+    height: 140px
     min-height: 100%
     position: relative
 

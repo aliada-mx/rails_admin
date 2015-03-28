@@ -6,109 +6,171 @@
   .white-navigation
     = render partial: "common/public_navigation"
 
-  %div.container
-    %div.row.search-container
-      %div.search-slogan-container.text-color-white.col-lg-12
+  .container
+    .row.search-container
+      .search-slogan-container.text-color-white.col-lg-12
         %h1.slogan
           Simplifica tu vida
           =image_tag("aliada-shine.png", :class => 'shine')
         %p.motto
           Limpiamos tu hogar
 
-      %div.search-form-container.col-lg-12
+      .search-form-container.col-lg-12
         %legend
           Pide una profesional de la limpieza en menos de un minuto desde $65/hr.
         .action-button-container
           - if user_signed_in?
-            = link_to new_service_users_path(@user), {class: ' action-button size-extra-large'} do
-              Solicita tu primer aliada
-          - else
-            = link_to initial_service_path, {class: ' action-button size-extra-large'} do
+            = link_to new_service_users_path(@user), {class: 'action-button-pink size-extra-large'} do
               Pide otra aliada
+          - else
+            = link_to initial_service_path, {class: 'action-button-pink size-extra-large'} do
+              Pide tu primer aliada
 
 
 %section.media-section-wrapper
-  %div.container
-    %div.row
-      %div.media-section-container.col-lg-12
-        %div.media-logo
-          =image_tag("media_logos/chilango-logo.png", :title => 'Chilango')
-        %div.media-logo
-          =image_tag("media_logos/reforma-logo.png", :title => 'Reforma')
-        %div.media-logo
+  .container
+    .row
+      .media-section-container.col-lg-12
+        %a.media-logo{href: 'http://mexico.cnn.com/tecnologia/2014/11/26/contrata-servicios-de-limpieza-del-hogar-con-un-solo-clic'}
           =image_tag("media_logos/cnnexpansion-logo.png", :title => 'Cnn Expansión')
-        %div.media-logo
-          =image_tag("media_logos/ibero-logo.png", :title => 'Ibero 90.9')
+        %a.media-logo{href: 'http://www.reforma.com/aplicacioneslibre/preacceso/articulo/default.aspx?id=393875&v=2&urlredirect=http://www.reforma.com/aplicaciones/articulo/default.aspx?id=393875&v=2'}
+          =image_tag("media_logos/reforma-logo.png", :title => 'Reforma')
+        %a.media-logo{href: 'http://www.chilango.com/general/nota/2014/11/19/aliadas-mx-le-quita-el-polvo-a-tu-casa'}
+          =image_tag("media_logos/chilango-logo.png", :title => 'Chilango')
+        %a.media-logo{href: 'http://www.mixcloud.com/Zigma090/zigma-opini%C3%B3n-p%C3%BAblica-25-de-noviembre-de-2014/'}
+          =image_tag("media_logos/ibero909-logo.png", :title => 'Ibero 90.9')
+
+%section.steps-section-wrapper
+  .container
+    .row
+      .steps-section-container.col-lg-12
+        %h3
+          Es muy sencillo
+        .col-lg-4.step
+          =image_tag("paso-1.png", :title => 'Recibe la misma aliada en las visitas recurrentes')
+          %p.why-description 
+            %h2
+              Pide
+            En menos de un minuto pide una Aliada. 
+            %br
+            Dinos dónde estás y a qué hora necesitas el servicio.
+
+        .col-lg-4.step
+          =image_tag("paso-2.png", :title => 'Recibe la misma aliada en las visitas recurrentes')
+          %p.why-description 
+            %h2
+              Recibe
+            Una Aliada llegará puntualmente a tu casa.
+            %br
+            Dejará todo limpio y reluciente
+
+
+        .col-lg-4.step
+          =image_tag("paso-3.png", :title => 'Recibe la misma aliada en las visitas recurrentes')
+          %p.why-description 
+            %h2
+              Relájate
+            El cobro se hará hasta que esté todo como a ti te gusta.
+              
+    .row
+      .call-to-action-wrapper
+        = link_to initial_service_path, {class: 'action-button-pink size-extra-large'} do
+          Pide una aliada
+
+
+%section.feliciana-section-wrapper
+  .container
+    .feliciana-section-container.col-lg6
+      .left
+        = image_tag("feliciana.png", :title => 'Feliciana, +10 años de experiencia limpiando hogares.')
+      .benefits.right
+        %h2
+          Nosotros garantizamos
+          %br
+          que la aliada siempre será:
+        %ul.summary
+          %li.checked Profesional y capacitada
+          %li.checked Investigada con referencias validadas
+          %li.checked Entrevistada en persona
+          %li.checked Capacitada bajo el proceso estricto de aliada
+          %li.checked Califacada de manera positiva por otros clientes
 
 
 %section.why-section-wrapper
-  %div.container
-    %div.row
-      %div.why-section-container.col-lg-12
+  .container
+    .row
+      .why-section-container.col-lg-12
         %h3.why-section-title ¿Por qué utilizar aliada?
-        %div.col-lg-4
+        .col-lg-4
           =image_tag("why-1.png", :title => 'Recibe la misma aliada en las visitas recurrentes')
           %p.why-description Recibe la misma aliada en las visitas recurrentes
-        %div.col-lg-4
+        .col-lg-4
           =image_tag("why-2.png", :title => 'Sin contratos ni cuotas de administración')
           %p.why-description Sin contratos ni cuotas de administración
-        %div.col-lg-4
+        .col-lg-4
           =image_tag("why-3.png", :title => 'El pago en línea es muy fácil, con los estándares más altos de seguridad')
           %p.why-description El pago en línea es muy fácil, con los estándares más altos de seguridad
 
-        %div.clearfix
+        .clearfix
 
-        %div.col-lg-4
+        .col-lg-4
           =image_tag("why-4.png", :title => 'Recibe la misma aliada en las visitas recurrentes')
           %p.why-description Solo paga las horas utilizadas
-        %div.col-lg-4
+        .col-lg-4
           =image_tag("why-5.png", :title => 'Recibe la misma aliada en las visitas recurrentes')
           %p.why-description Atención telefónica los 7 días de la semana
-        %div.col-lg-4
+        .col-lg-4
           =image_tag("why-6.png", :title => 'Recibe la misma aliada en las visitas recurrentes')
           %p.why-description Ayuda a que todas las aliadas mejore su calidad de vida
 
-
-%section.service-section-wrapper
-  %div.container
-    %div.row
-      %div.service-section-container.col-lg-12
-        %h2.service-section-title ¿Qué servicios ofrecen las aliadas?
-        %p.service-subtitle Las Aliadas son profesionales de la limpieza altamente capacitadas para solucionar todas las necesidades de tu hogar
-        %div.col-lg-3
-          =image_tag("service-1.png", :title => 'Sin contratos ni cuotas de administración')
-          %p.service-description Habitaciones y áreas comunes
-        %div.col-lg-3
-          =image_tag("service-2.png", :title => 'Sin contratos ni cuotas de administración')
-          %p.service-description Baños
-        %div.col-lg-3
-          =image_tag("service-3.png", :title => 'Sin contratos ni cuotas de administración')
-          %p.service-description Cocina
-        %div.col-lg-3
-          =image_tag("service-4.png", :title => 'Sin contratos ni cuotas de administración')
-          %p.service-description Lavado y planchado
-
-
 %section.warranty-section-wrapper
-  %div.container
-    %div.row
-      %div.warranty-section-container.col-lg-12
+  .container
+    .row
+      .warranty-section-container.col-lg-12
         =image_tag("warranty-logo.png", {:title => 'Garantía Aliada', :class => 'warranty-logo'})
         %p.warranty-description Tu hogar quedará impecable o te devolvemos tu dinero
 
 
+%section.service-section-wrapper
+  .container
+    .row
+      .service-section-container.col-lg-12
+        %h2.service-section-title ¿Qué servicios ofrecen las aliadas?
+        %p.service-subtitle Las Aliadas son profesionales de la limpieza altamente capacitadas para solucionar todas las necesidades de tu hogar
+        .col-lg-3
+          =image_tag("service-1.png", :title => 'Sin contratos ni cuotas de administración')
+          %p.service-description Habitaciones y áreas comunes
+        .col-lg-3
+          =image_tag("service-2.png", :title => 'Sin contratos ni cuotas de administración')
+          %p.service-description Baños
+        .col-lg-3
+          =image_tag("service-3.png", :title => 'Sin contratos ni cuotas de administración')
+          %p.service-description Cocina
+        .col-lg-3
+          =image_tag("service-4.png", :title => 'Sin contratos ni cuotas de administración')
+          %p.service-description Lavado y planchado
+
+
+
 %section.video-section-wrapper
-  %div.container
-    %div.row
-      %div.video-section-container.col-lg-12
+  .container
+    .row
+      .video-section-container.col-lg-12
 
 
 %section.payment-section-wrapper
-  %div.container
-    %div.row
-      %div.payment-description.col-lg-6
+  .container
+    .row.call-to-action-wrapper
+      .payment-description.col-lg-6
+        %p 
+          ¿Listo para programar tu visita?
+      .call-to-action-container
+        = link_to initial_service_path, {class: 'action-button-pink size-large'} do
+          Pide una aliada
+    .row
+      .payment-description.col-lg-6
         %p Paga en línea de forma segura. <br> Sin dinero en efectivo, sin problemas.
-      %div.payment-logos.col-lg-6
+      .payment-logos.col-lg-6
         =image_tag("payment-logos.png", {:title => 'Métodos de pago' })
 
 

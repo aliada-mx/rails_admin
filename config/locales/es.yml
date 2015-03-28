@@ -213,6 +213,7 @@ es:
       future: '%A %d de %B, %l:%S %P'
       week_day:  '%A %e'
       friendly_time: '%l:%S %P'
+      friendly_date:  '%A %d de %B'
       friendly: '%A %e de %B %Y'
     pm: pm
   conekta: 
@@ -222,3 +223,13 @@ es:
   address:
     validations:
       postal_code_failed: 'No se puede crear una dirección sin código postal o una fuera de la zona de cobertura de aliada'
+  
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            password:
+              blank: La contraseña no puede estar en blanco
+            password_confirmation:
+              confirmation: La contraseña de confirmación no coincide

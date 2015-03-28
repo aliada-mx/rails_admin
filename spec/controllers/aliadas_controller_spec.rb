@@ -94,14 +94,19 @@ feature 'AliadasController' do
       servicio1 = create(:service, aliada_id: aliada.id, address_id: address1.id,
                          bathrooms: 2,
                          bedrooms: 3,
-                         user_id: client.id, datetime: (DateTime.now+1.day)
+                         user_id: client.id, datetime: ActiveSupport::TimeZone['Mexico City'].parse('2015-09-04 17:00').utc
                          )
       servicio2 = create(:service, aliada_id: aliada.id, address_id: address2.id,
-                         user_id: client.id, datetime: DateTime.now)
+                         user_id: client.id, datetime: ActiveSupport::TimeZone['Mexico City'].parse('2015-09-03 17:00').utc)
       
-      Timecop.freeze(Date.today + 1) do
+      Timecop.freeze('2015-09-04 12:00') do
         visit  ('aliadas/servicios/'+ aliada.authentication_token)
         expect(page).to   have_content 'Roma Norte'
+        expect(page).to have_content 'Metro insurgentes'
+        expect(page).to have_content 'Tabasco'
+        expect(page).to have_content 'torre A 802'
+        expect(page).to have_content 'Cuauhtemoc'
+        expect(page).to have_content 'Juan'
       end
       
       
@@ -145,7 +150,7 @@ feature 'AliadasController' do
 
         page.has_content?('Tus servicios')
         
-        click_on('Pagar')
+        click_on('Guardar :)')
         expect(Payment.all.count).to be 1
       end
     end

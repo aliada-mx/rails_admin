@@ -42,7 +42,7 @@ html
   height: 100%
 
 body
-  background-color: $lightest_gray !important
+  background-color: $lightest_gray
 
 a, input
   outline: 0 !important
@@ -58,6 +58,15 @@ a
 
 .right
   float: right
+
+.half
+  width: 49.8%
+
+.two-thirds
+  width: 65.8%
+
+.third
+  width: 32.8%
 
 b
   font-weight: 800
@@ -80,10 +89,17 @@ h1
   color: $green
   font-weight: 800
   +rem(font-size, $extra-large-font)
+  +rem(line-height, $extra-large-font)
+
+h2
+  +rem(font-size, $extra-large-font)
+  color: $green
+  font-weight: 600
 
 h4
   font-weight: 600
   +rem(font-size, $medium-font)
+  +rem(line-height, $medium-font)
 
 .clearfix:after 
   visibility: hidden
@@ -132,6 +148,7 @@ p.medium
 
 footer
   background-color: $darkest-gray
+  background-image: image-url('black_mosaic.png')
   color: white
   +rem(padding, 4rem 0)
   +rem(font-size, 1.4rem)
@@ -146,6 +163,9 @@ footer
       li
         a
           color: white
+        &.iconized
+          position: relative
+          left: -23px
 
   .call-us
 
@@ -194,6 +214,10 @@ footer
     position: absolute
     top: 15px
 
+
+iframe
+  display: none
+  
 
 .wrapper
   max-width: 960px

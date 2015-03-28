@@ -40,6 +40,7 @@ class ServicesController < ApplicationController
     @service = Service.new(user: User.new,
                            service_type: ServiceType.first,
                            address: Address.new)
+    @empty_conekta_card = OpenStruct.new({})
   end
 
   def create_initial
@@ -65,6 +66,7 @@ class ServicesController < ApplicationController
   def edit
     @service = @user.services.find(params[:service_id])
     @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
+    @is_recurrent = @service.recurrent?
   end
 
   def update
@@ -73,7 +75,7 @@ class ServicesController < ApplicationController
     if params[:update_button]
       service.update_existing!(service_params)
     elsif params[:cancel_button]
-      service.cancel!
+      service.cancel_all!
     end
       
     next_services_path = next_services_users_path(user_id: @user.id, service_id: service.id)
@@ -145,6 +147,7 @@ class ServicesController < ApplicationController
                                       :bedrooms,
                                       {extra_ids: []},
                                       :estimated_hours,
+                                      :room_hours,
                                       :special_instructions,
                                       :service_type_id,
                                       :date,
