@@ -111,6 +111,22 @@ class ScheduleInterval
     @schedules.first.datetime.wday
   end
 
+  def self.create_from_range_if_not_exists(starting_datetime, ending_datetime, conditions: {})
+
+    Time.iterate_in_hour_steps(starting_datetime, ending_datetime).each do |datetime|
+      # If we reached the end...
+      break if ending_datetime.to_i == datetime
+
+      conditions.merge!({datetime: datetime})
+
+      schedule = Schedule.find_by(aliada_id: conditions[:aliada_id], datetime: conditions[:datetime])
+      if not schedule
+        schedule = Schedule.create(conditions)
+      end
+
+    end
+  end
+
   def add(other_schedule_interval)
     @schedules += other_schedule_interval.schedules
   end
