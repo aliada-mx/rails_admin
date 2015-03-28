@@ -19,7 +19,6 @@ describe 'Schedule Filler' do
   let!(:other_service){ create(:service, aliada: aliada, user: user, recurrence: client_recurrence, datetime: recurrence_service_datetime + 7.day, special_instructions: "last service") }
 
   before do
-    first_service.update_attribute(:special_instructions, "modified service")
     Timecop.freeze(starting_datetime)
     (7..(7 + total_available_hours - 1)).each do |i|
       AliadaWorkingHour.create(weekday: recurrence_service_datetime.weekday, hour: i, aliada: aliada, total_hours: 1, owner: 'aliada', periodicity: 7)
@@ -33,6 +32,7 @@ describe 'Schedule Filler' do
   context '#valid_filled_schedules' do
 
     before do
+      first_service.update_attribute(:special_instructions, "modified service")
       # Empty schedules before the job
       expect(Schedule.in_the_future.count).to be 0
       ScheduleFiller.perform
@@ -52,7 +52,7 @@ describe 'Schedule Filler' do
       expect(Schedule.booked.in_the_future.first.datetime).to eql recurrence_in_the_future
       # Check the service date created for the client's recurrence in the future
       expect(Service.last.datetime).not_to be first_service.datetime
-      # Check that it has been created using the mst recent created service
+      # Check that it has been created using the most recent created service
       expect(Service.last.special_instructions).to eql first_service.special_instructions
     end
  

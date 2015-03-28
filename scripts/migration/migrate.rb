@@ -9,6 +9,7 @@ connection = Mysql2::Client.new(
   database: ENV["MYSQL_DB"],
 )
 
+AGENDA_FROM_DATE = "2015-03-01"
 zones = {}
 aliadas = {}
 clientes = {}
@@ -109,7 +110,6 @@ connection.query("SELECT * FROM metodospagos ORDER BY created DESC").each do |ro
       conektaCard.save
       puts "CONEKTACARD #{row["id"]} #{conektaCard.errors.messages.to_yaml}" if not conektaCard.errors.messages.empty?
     end
-        
 
     if cliente.payment_provider_choices.empty? 
       paymentProviderChoice = PaymentProviderChoice.find_or_initialize_by(user_id: cliente.id, payment_provider_id: conektaCard.id, payment_provider_type: "ConektaCard", default: true)
@@ -117,8 +117,8 @@ connection.query("SELECT * FROM metodospagos ORDER BY created DESC").each do |ro
       paymentProviderChoice = PaymentProviderChoice.find_or_initialize_by(user_id: cliente.id, payment_provider_id: conektaCard.id, payment_provider_type: "ConektaCard", default: false)
     end
 
-    if conektaCard.new_record?
-      conektaCard.save
+    if paymentProviderChoice.new_record?
+      paymentProviderChoice.save
       puts "PAYMENTPROVIDERCHOICE #{row["id"]} #{conektaCard.errors.messages.to_yaml}" if not conektaCard.errors.messages.empty?
     end
 
@@ -126,25 +126,54 @@ connection.query("SELECT * FROM metodospagos ORDER BY created DESC").each do |ro
 
 end
 
-puts "MIGRANDO HORARIOS"
-connection.query("SELECT * FROM horarios").each do |row|
-  
-  if (aliadas[row["aliadas_id"]])
-    aliada = Aliada.find(aliadas[row["aliadas_id"]])
-    recurrence = AliadaWorkingHour.find_or_initialize_by(aliada_id: aliada.id, weekday: row["dia"].downcase, hour: row["hora"].hour, periodicity: 7, owner: 'aliada', total_hours: 1, user_id: nil)
+def dia_semana_to_weekday(dia_semana)
+  {'Lunes' => 'monday',
+   'Martes' => 'tuesday',
+   'Miércoles' => 'wednesday',
+   'Jueves' => 'thursday',
+   'Viernes' => 'friday',
+   'Sábado' => 'saturday',
+   'Domingo' => 'sunday'}[dia_semana]
+end
+ 
+def parse_horas_aliadas
+  Chronic.time_class= ActiveSupport::TimeZone['Mexico City']
+ 
+  cwd = Dir.pwd
+  relative_path = 'scripts/migration/horas-aliadas.csv'
+  absolute_path = File.join(cwd, relative_path)
+ 
+  data = CSV.read(absolute_path)
+ 
+  data[1..-1].each do |row|
+ 
+    weekday = dia_semana_to_weekday(row[1])
+ 
+    splitted_name = row[0].split
+    first_name = splitted_name[0] 
+    last_name = splitted_name[1..splitted_name.length].join(" ") if splitted_name.length > 0
 
+    aliadas = Aliada.where("first_name like '%#{first_name}%' AND last_name like '%#{last_name}%'")
+    if aliadas.empty? or aliadas.count > 1
+      binding.pry
+      raise "Aliada no encontrada o varias aliadas con los parámetros de búsqueda."
+    end
+    aliada = aliadas.first
+
+    recurrence = AliadaWorkingHour.find_or_initialize_by(aliada_id: aliada.id, weekday: weekday, hour: Chronic.parse(row[2]).hour, periodicity: 7, owner: 'aliada', total_hours: 1, user_id: nil)
     if recurrence.new_record?
       recurrence.save
       puts "ALIADAWORKINGHOUR #{row["id"]} #{recurrence.errors.messages.to_yaml}" if not recurrence.errors.messages.empty?
     end
-
   end
-  
 end
+
+puts "MIGRANDO HORARIOS DESDE CSV"
+parse_horas_aliadas
 
 puts "MIGRANDO AGENDA"
 agenda_errors = 0
-connection.query("SELECT * FROM agenda WHERE elim = 0").each do |row|
+connection.query("SELECT * FROM agenda WHERE elim = 0 AND fecha >= '#{AGENDA_FROM_DATE}'").each do |row|
 
   tz = ActiveSupport::TimeZone.new 'Mexico City'
   time_obj = tz.parse("#{row["fecha"].to_s} #{row["hora"]}")
@@ -254,7 +283,19 @@ connection.query("SELECT * FROM recurrencias").each do |row|
   begin
     if weekday
 
-      recurrence = Recurrence.find_or_initialize_by(periodicity: 7, owner: 'user', weekday: weekday, hour: row["hora"].hour, total_hours: row["duracion_aprox"].ceil + 2, user_id: clientes[row["clientes_id"]], aliada_id: aliadas[row["aliadas_id"]])
+      # Cambiar colchón de 2 horas a final del día
+      # 2 AM UTC - 20:00
+      total_time = row["hora"].hour + row["duracion_aprox"].ceil
+      total_hours = row["duracion_aprox"].ceil
+      if total_time < 19
+        total_hours += 2
+      elsif total_time < 20
+        total_hours += 1
+      else
+        next
+      end
+
+      recurrence = Recurrence.find_or_initialize_by(periodicity: 7, owner: 'user', weekday: weekday, hour: row["hora"].hour, total_hours: total_hours, user_id: clientes[row["clientes_id"]], aliada_id: aliadas[row["aliadas_id"]])
 
       if recurrence.new_record?
         recurrence.save
