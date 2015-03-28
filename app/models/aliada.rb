@@ -18,7 +18,7 @@ include AliadaSupport::DatetimeSupport
 
   # TODO optimize to get all aliadas even those without services but the ones with services 
   # must have services.datetime >= Time.zone.now.beginning_of_day
-  scope :for_booking, ->(aliadas_ids) { where(id: aliadas_ids).eager_load(:services).eager_load(:zones) }
+  scope :for_booking, ->(aliadas_ids) {where(id: aliadas_ids).eager_load(:services).eager_load(:zones)}
 
   # We override the default_scope class method so the user default scope from
   # which we inherited does not override ours
@@ -58,7 +58,7 @@ include AliadaSupport::DatetimeSupport
   # in the future
   def service_hours
     now = Time.zone.now
-    services.to_a.select{ |service| service.datetime >= now }.inject(0) { |sum, service| sum += service.total_hours }
+    services.to_a.select{|service| service.datetime >= now }.inject(0) { |sum, service| sum += service.total_hours}
   end
 
   def busy_services_hours
@@ -69,6 +69,11 @@ include AliadaSupport::DatetimeSupport
     'Mexico City'
   end
 
+  def current_week_services
+    today = ActiveSupport::TimeZone["Mexico City"].today
+    return Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week)
+  end
+  
   rails_admin do
     label_plural 'aliadas'
     navigation_label 'Personas'

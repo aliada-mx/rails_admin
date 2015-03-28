@@ -31,11 +31,23 @@ defaults: &defaults
   booking_for_tomorrow_limit: 23 # After this hour you cant book a service for tomorrow, in UTC or 5 pm in Mexico City Time
   too_late_cancelation_fee: 100 # in pesos
 
+ 
   sendgrid_templates_ids: 
-    welcome: 'c25504da-8cb2-49be-a4c4-16ca4de53b41' 
-    service_confirmation: 'c25504da-8cb2-49be-a4c4-16ca4de53b41' 
-
-
+    welcome: '371f2a77-45c5-4644-b3be-0639395a4ca3' 
+    service_confirmation_password: '5fcc2d0e-9ada-42c5-8c8d-b570694f49e5'
+    aliada_changed: 'ba8d08bb-ec8f-48ce-b1be-611fd592aef0'
+    hour_changed: 'e69adba7-9b10-4b9d-bae7-e9dfdb8433e9'
+    untimely_cancelation: 'f9bbeba4-aad4-41c2-b00d-ede6f71e9544'
+    reset_password: 'af7ae3d3-5d00-42c2-af08-844308e26db3'
+    service_receipt: '2a97de3e-b576-4449-8759-86ff399a99fc'
+    billing_issue: '932cc5f0-fb25-4136-ae8d-95f3f8866cdc'
+    change_client_address: '5137f774-5f17-4476-bf29-18d1afd5f3bd'
+    change_service_address: '16fa65bd-e292-4323-a8b8-041ce074ac43'
+    timely_cancelation: '87b19244-a4bb-4f9b-a7ba-35c8f28c1a9a'
+    reminder: 'cad1ca4c-6cc0-4725-a78c-9e42b167d1ab'
+    service_confirmation: 'c25504da-8cb2-49be-a4c4-16ca4de53b41'
+    test_email: '8ce0b5a8-8860-4c80-8f2d-1f6471bf0480'
+    
 development:
   <<: *defaults
   host: 'localhost:3000'
@@ -47,10 +59,8 @@ test:
 production:
   host: 'aliada.mx'
   <<: *defaults
-  sendgrid_templates_ids: 
-    welcome: 'c25504da-8cb2-49be-a4c4-16ca4de53b41' 
-    service_confirmation: 'c25504da-8cb2-49be-a4c4-16ca4de53b41' 
-
+  
+    
 staging:
   host: 'staging.aliada.mx'
   <<: *defaults

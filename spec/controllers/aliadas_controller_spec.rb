@@ -102,6 +102,11 @@ feature 'AliadasController' do
       Timecop.freeze('2015-09-04 12:00') do
         visit  ('aliadas/servicios/'+ aliada.authentication_token)
         expect(page).to   have_content 'Roma Norte'
+        expect(page).to have_content 'Metro insurgentes'
+        expect(page).to have_content 'Tabasco'
+        expect(page).to have_content 'torre A 802'
+        expect(page).to have_content 'Cuauhtemoc'
+        expect(page).to have_content 'Juan'
       end
       
       

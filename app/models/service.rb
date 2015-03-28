@@ -226,6 +226,11 @@ class Service < ActiveRecord::Base
   def amount_to_bill
     hours = self.aliada_reported_end_time.hour - self.aliada_reported_begin_time.hour
     minutes = self.aliada_reported_end_time.min - self.aliada_reported_begin_time.min 
+    if hours < 3 && hours > 0
+    then
+      hours = 3
+      minutes = 0
+    end
     amount = (hours*(self.service_type.price_per_hour))+(minutes * ((self.service_type.price_per_hour)/60.0))
     
    
@@ -430,6 +435,31 @@ class Service < ActiveRecord::Base
 
     errors.add(:datetime, message) unless found
   end
+  
+  def send_aliada_changed_email
+    ServiceMailer.aliada_changed(self).deliver!
+  end
+
+  def send_hour_changed_email
+    ServiceMailer.hour_changed(self).deliver!
+  end
+
+
+  def send_untimely_cancellation_email
+    ServiceMailer.untimely_cancelation(self).deliver!
+  end
+  
+  def send_address_changed_email(previous_address)
+    ServiceMailer.address_changed(self,previous_address).deliver!
+  end
+  
+  def send_timely_cancelation_email
+    ServiceMailer.timely_cancelation(self).deliver!
+  end
+  
+  def send_reminder_email
+    ServiceMailer.reminder(self).deliver!
+  end
 
   def related_services_ids
     if recurrent? && recurrence.present?
@@ -438,6 +468,7 @@ class Service < ActiveRecord::Base
       [ id ]
     end
   end
+
 
   rails_admin do
     label_plural 'servicios'

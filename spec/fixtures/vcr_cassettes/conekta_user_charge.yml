@@ -35,6 +35,7 @@ http_interactions:
       - Tue, 17 Mar 2015 17:48:39 GMT
       Etag:
       - '"dc8b77d3d65b606ae828728a25c6a1df"'
+
       Server:
       - nginx/1.1.19
       Status:

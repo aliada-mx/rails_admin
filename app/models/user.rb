@@ -87,6 +87,11 @@ class User < ActiveRecord::Base
   def aliadas
     services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }.uniq || []
   end
+  
+  def full_name
+    return "#{self.first_name} #{self.last_name}"
+  end
+
 
   def set_default_role
     self.role ||= 'client' if self.respond_to? :role
@@ -113,7 +118,23 @@ class User < ActiveRecord::Base
   end
 
   def send_confirmation_email(service)
-    UserMailer.service_confirmation(self, service).deliver!
+    UserMailer.service_confirmation(service).deliver!
+  end
+
+  def send_service_confirmation_pwd(service)
+    UserMailer.service_confirmation_pwd(service).deliver!
+  end
+
+  def send_billing_receipt(service)
+    UserMailer.billing_receipt(self, service)
+  end
+  
+  def send_payment_problem_email(payment_method)
+    UserMailer.payment_problem(self, payment_method)
+  end
+  
+  def send_address_change_email(new_address, prev_address)
+    UserMailer.user_address_changed(self, new_address, prev_address)
   end
 
   rails_admin do
