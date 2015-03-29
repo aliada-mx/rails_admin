@@ -1,9 +1,9 @@
 %footer
-  %div.container
-    %div.call-us.col-lg-6
+  .container
+    .call-us.col-lg-6
       %span.icon-telephone
       %p ¿Necesitas ayuda? Llámanos al (55) 4170 8032
-    %div.col-lg-3
+    .col-lg-3
       %nav.bottom-nav
         %ul
           -#
@@ -15,17 +15,20 @@
             =link_to("Términos y condiciones", :terms)
           %li
             =link_to("Política de privacidad", :privacy)
-          %li.iconized
-            %icon.icon-wordpress
-            =link_to("Blog", "https://aliadamx.wordpress.com/")
-          %li.iconized
-            %icon.icon-twitter
-            =link_to("Twitter", "https://twitter.com/aliadamx")
-          %li.iconized
-            %icon.icon-facebook
-            =link_to("Facebook", "https://facebook.com/aliadamx")
           -# TODO
             %li
               =link_to("Contacto", "/sign_in")
-    %div.col-lg-3
+    .col-lg-3
       %p 2015 Aliada. <br> Todos los derechos reservados.
+
+    .col-lg-12
+      %ul.social-links
+        %li.iconized
+          %icon.icon-wordpress
+          =link_to("Blog", "https://aliadamx.wordpress.com/")
+        %li.iconized
+          %icon.icon-twitter
+          =link_to("Twitter", "https://twitter.com/aliadamx")
+        %li.iconized
+          %icon.icon-facebook
+          =link_to("Facebook", "https://facebook.com/aliadamx")
