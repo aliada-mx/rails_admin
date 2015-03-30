@@ -1,5 +1,6 @@
 class Aliada < User
-include AliadaSupport::DatetimeSupport
+  include AliadaSupport::DatetimeSupport
+  include Mixins::RailsAdminModelsHelpers
 
   has_many :aliada_zones
   has_many :zones, through: :aliada_zones
@@ -28,6 +29,12 @@ include AliadaSupport::DatetimeSupport
 
   def next_service
     services.in_the_future.last
+  end
+
+  def next_service_link
+    if next_service
+      rails_admin_edit_link(next_service)
+    end
   end
   
   def previous_service(current_service) # On the same day
@@ -73,7 +80,7 @@ include AliadaSupport::DatetimeSupport
     today = ActiveSupport::TimeZone["Mexico City"].today
     return Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week)
   end
-  
+
   rails_admin do
     label_plural 'aliadas'
     navigation_label 'Personas'
@@ -100,11 +107,7 @@ include AliadaSupport::DatetimeSupport
     list do
       field :name
       field :phone
-      field :next_service do
-        pretty_value do
-          value.id
-        end
-      end
+      field :next_service_link
     end
 
     edit do
