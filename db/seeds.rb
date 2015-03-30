@@ -44,11 +44,11 @@ ServiceType.create(name: 'recurrent',
                    benefits: 'La misma Aliada en cada visita, Tu casa siempre limpia, El precio :)')
 
 puts 'Admin user'
-User.create!(first_name: 'Guillermo', last_name: 'Siliceo', email: 'guillermo.siliceo@gmail.com', role: 'admin', password: '12345678')
+# User.create!(first_name: 'Guillermo', last_name: 'Siliceo', email: 'guillermo.siliceo@gmail.com', role: 'admin', password: '12345678')
 
 FactoryGirl.create(:payment_method)
 
-FactoryGirl.create(:payment_method, name: 'Créditos', payment_provider_type: 'CreditsPayment')
+FactoryGirl.create(:payment_method, name: 'Créditos', payment_provider_type: 'User')
 
 
 # Paste the contents of this function
