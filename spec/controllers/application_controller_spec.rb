@@ -10,6 +10,7 @@ feature 'ApplicationController' do
                               :zoned, 
                               zone: zone,
                               number: '11800') }
+  let!(:code_type){ create(:code_type) }
 
   context 'when creating a service without a conekta token' do
 

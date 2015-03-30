@@ -6,6 +6,7 @@ FactoryGirl.define do
     first_name 'Test'
     last_name 'User'
     password '12345678'
+    
   end
 
   factory :admin, parent: :user do

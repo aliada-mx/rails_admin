@@ -16,6 +16,7 @@ feature 'ServiceController' do
   let!(:extra_1){ create(:extra, name: 'Lavanderia')}
   let!(:extra_2){ create(:extra, name: 'Limpieza de refri')}
   let!(:conekta_card_method){ create(:payment_method)}
+  let!(:code_type){ create(:code_type) }
     
   before do
     allow_any_instance_of(Service).to receive(:timezone).and_return('UTC')
@@ -60,6 +61,7 @@ feature 'ServiceController' do
       before :each do
         expect(User.where('role != ?', 'aliada').count).to be 0
         expect(Schedule.available.count).to be 25
+        expect(CodeType.where(name: 'personal').count).to be 1
 
         allow_any_instance_of(User).to receive(:create_payment_provider!).and_return(nil)
         allow_any_instance_of(User).to receive(:ensure_first_payment!).and_return(nil)
@@ -78,6 +80,7 @@ feature 'ServiceController' do
         service_aliada = service.aliada
 
         expect(service_aliada).to be_present
+        expect(user.code).to be_present
         expect(service).to be_present
         expect(service_aliada).to eql aliada
         expect(extras).to include extra_1

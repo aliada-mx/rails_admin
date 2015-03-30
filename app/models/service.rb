@@ -249,7 +249,7 @@ class Service < ActiveRecord::Base
     return if paid?
 
     amount = self.amount_to_bill
-    product = OpenStruct.new({price: amount,
+    product = OpenStruct.new({amount: amount,
                               description: 'Servicio aliada',
                               id: id})
     
@@ -271,7 +271,7 @@ class Service < ActiveRecord::Base
 
     amount = Setting.too_late_cancelation_fee
 
-    cancelation_fee = OpenStruct.new({price: amount,
+    cancelation_fee = OpenStruct.new({amount: amount,
                                       description: "Cancelación tardía del servicio del #{friendly_datetime} en aliada.mx",
                                       id: self.id})
 
@@ -310,6 +310,7 @@ class Service < ActiveRecord::Base
       address = Address.create!(service_params[:address])
       user = User.create!(service_params[:user])
       service = Service.new(service_params.except!(:user, :address))
+      code_type = CodeType.find_by(name: "personal")
 
       service.address = address
       service.user = user
@@ -320,10 +321,12 @@ class Service < ActiveRecord::Base
 
       user.addresses << address
       user.create_first_payment_provider!(service_params[:payment_method_id])
-      user.ensure_first_payment!(service_params)
+      user.ensure_first_payment!(service_params, service)
       user.save!
 
       service.book_an_aliada
+
+      user.create_promotional_code code_type
 
       user.send_welcome_email
       return service

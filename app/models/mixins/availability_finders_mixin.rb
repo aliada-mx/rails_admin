@@ -159,7 +159,6 @@ module Mixins
       # and we will build all the available intervals in front of it, shrinking and growing the
       # availability as needed while cycling on the schedules
       #
-
       
       # Our starting point
       first_schedule_index = @continuous_schedules.first.index
@@ -270,6 +269,10 @@ module Mixins
       @previous_service_schedules.each do |schedule|
         schedule.status = schedule.original_status if schedule.status == 'available' # we dont want to override our padding status setting
       end
+    end
+
+    def add_continuous_schedules
+      @continuous_schedules.push(@current_schedule)
     end
   end
 end
