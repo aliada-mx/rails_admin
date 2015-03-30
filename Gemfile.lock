@@ -153,6 +153,8 @@ GEM
     ffi (1.9.8)
     font-awesome-rails (4.3.0.0)
       railties (>= 3.2, < 5.0)
+    font_assets (0.1.11)
+      rack
     foreigner (1.7.2)
       activerecord (>= 3.0.0)
     formatador (0.2.5)
@@ -459,6 +461,7 @@ DEPENDENCIES
   devise
   erb2haml
   factory_girl_rails
+  font_assets
   foreigner
   guard-livereload
   guard-rspec

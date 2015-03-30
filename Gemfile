@@ -47,6 +47,8 @@ gem 'compass-rails'
 gem 'chronic'
 # Gzip compression
 gem 'heroku-deflater'
+# Serve fonts with correct headers
+gem 'font_assets'
  
 # EXCEPTIONS
 #
