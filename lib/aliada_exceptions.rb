@@ -4,4 +4,7 @@ module AliadaExceptions
 
   class ServiceDowgradeImpossible < StandardError
   end
+
+  class PaymentGatewayError < StandardError
+  end
 end

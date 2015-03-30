@@ -56,6 +56,7 @@ class AvailabilityForCalendar
       @current_schedule.index = index
 
       next if skip_aliada?
+      next if index_already_checked
 
       if is_available? && is_continuous? 
         add_continuous_schedules
@@ -115,8 +116,5 @@ class AvailabilityForCalendar
       @aliadas_availability[@current_aliada_id].delete(interval_key)
     end
 
-    def add_continuous_schedules
-      @continuous_schedules.push(@current_schedule)
-    end
 end
 

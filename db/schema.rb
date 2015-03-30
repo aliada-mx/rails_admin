@@ -19,22 +19,22 @@ ActiveRecord::Schema.define(version: 20150326203109) do
   create_table "addresses", force: true do |t|
     t.integer  "user_id"
     t.integer  "postal_code_id"
-    t.datetime "created_at",                                                null: false
-    t.datetime "updated_at",                                                null: false
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
     t.text     "street"
     t.string   "number"
     t.string   "interior_number"
     t.text     "between_streets"
     t.text     "colony"
-    t.string   "state",                limit: nil
-    t.float    "latitude"
-    t.float    "longitude"
-    t.string   "city",                 limit: nil
+    t.string   "state"
+    t.string   "city"
     t.text     "references"
+    t.decimal  "latitude",             precision: 10, scale: 7
+    t.decimal  "longitude",            precision: 10, scale: 7
     t.integer  "aliada_id"
     t.integer  "map_zoom"
-    t.decimal  "references_latitude",              precision: 10, scale: 7
-    t.decimal  "references_longitude",             precision: 10, scale: 7
+    t.decimal  "references_latitude",  precision: 10, scale: 7
+    t.decimal  "references_longitude", precision: 10, scale: 7
   end
 
   add_index "addresses", ["postal_code_id"], name: "index_addresses_on_postal_code_id", using: :btree
@@ -56,29 +56,22 @@ ActiveRecord::Schema.define(version: 20150326203109) do
 
   create_table "code_types", force: true do |t|
     t.integer  "value"
-    t.string   "name",       limit: nil
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-  end
-
-  create_table "code_users", force: true do |t|
-    t.integer  "user_id"
-    t.integer  "code_id"
+    t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  add_index "code_users", ["code_id"], name: "index_code_users_on_code_id", using: :btree
-  add_index "code_users", ["user_id"], name: "index_code_users_on_user_id", using: :btree
-
   create_table "codes", force: true do |t|
     t.integer  "user_id"
     t.integer  "code_type_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+    t.decimal  "amount",       precision: 8, scale: 4
+    t.string   "name"
   end
 
   add_index "codes", ["code_type_id"], name: "index_codes_on_code_type_id", using: :btree
+  add_index "codes", ["name"], name: "index_codes_on_name", unique: true, using: :btree
   add_index "codes", ["user_id"], name: "index_codes_on_user_id", using: :btree
 
   create_table "conekta_cards", force: true do |t|
@@ -95,14 +88,25 @@ ActiveRecord::Schema.define(version: 20150326203109) do
     t.string   "name"
   end
 
+  create_table "credits", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "code_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "redeemer_id"
+  end
+
+  add_index "credits", ["code_id"], name: "index_credits_on_code_id", using: :btree
+  add_index "credits", ["user_id"], name: "index_credits_on_user_id", using: :btree
+
   create_table "documents", force: true do |t|
     t.integer  "user_id"
-    t.string   "file_file_name",    limit: nil
-    t.string   "file_content_type", limit: nil
+    t.string   "file_file_name"
+    t.string   "file_content_type"
     t.integer  "file_file_size"
     t.datetime "file_updated_at"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
   end
 
   add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
@@ -115,10 +119,10 @@ ActiveRecord::Schema.define(version: 20150326203109) do
   end
 
   create_table "extras", force: true do |t|
-    t.string   "name",              limit: nil
-    t.decimal  "hours",                         precision: 10, scale: 3
-    t.datetime "created_at",                                             null: false
-    t.datetime "updated_at",                                             null: false
+    t.string   "name"
+    t.decimal  "hours",             precision: 10, scale: 3
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
     t.string   "icon_file_name"
     t.string   "icon_content_type"
     t.integer  "icon_file_size"
@@ -156,9 +160,9 @@ ActiveRecord::Schema.define(version: 20150326203109) do
   end
 
   create_table "payment_methods", force: true do |t|
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
-    t.string   "name",                  limit: nil
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+    t.string   "name"
     t.string   "payment_provider_type"
     t.boolean  "disabled"
   end
@@ -186,21 +190,21 @@ ActiveRecord::Schema.define(version: 20150326203109) do
   add_index "payments", ["user_id"], name: "index_payments_on_user_id", using: :btree
 
   create_table "postal_codes", force: true do |t|
-    t.string   "number",     limit: nil
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string   "name"
     t.integer  "zone_id"
   end
 
   create_table "recurrences", force: true do |t|
     t.integer  "user_id"
-    t.string   "status",      limit: nil
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.string   "status"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
     t.integer  "periodicity"
     t.integer  "aliada_id"
-    t.string   "weekday",     limit: nil
+    t.string   "weekday"
     t.integer  "hour"
     t.integer  "total_hours"
     t.string   "owner"
@@ -210,11 +214,11 @@ ActiveRecord::Schema.define(version: 20150326203109) do
 
   create_table "schedules", force: true do |t|
     t.integer  "user_id"
-    t.string   "status",        limit: nil
+    t.string   "status"
     t.datetime "datetime"
     t.integer  "service_id"
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
     t.integer  "aliada_id"
     t.integer  "recurrence_id"
   end
@@ -242,45 +246,45 @@ ActiveRecord::Schema.define(version: 20150326203109) do
   add_index "scores", ["user_id"], name: "index_scores_on_user_id", using: :btree
 
   create_table "service_types", force: true do |t|
-    t.string   "name",           limit: nil
+    t.string   "name"
     t.integer  "periodicity"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
     t.integer  "price_per_hour"
-    t.string   "display_name",   limit: nil
+    t.string   "display_name"
     t.text     "benefits"
     t.integer  "position"
   end
 
   create_table "services", force: true do |t|
-    t.integer  "zone_id"
     t.integer  "address_id"
     t.integer  "user_id"
     t.integer  "service_type_id"
     t.integer  "price"
     t.integer  "recurrence_id"
-    t.datetime "created_at",                                                                          null: false
-    t.datetime "updated_at",                                                                          null: false
-    t.decimal  "billed_hours",                               precision: 10, scale: 3
-    t.decimal  "hours_after_service",                        precision: 10, scale: 3
+    t.datetime "created_at",                                                              null: false
+    t.datetime "updated_at",                                                              null: false
+    t.decimal  "billed_hours",                   precision: 10, scale: 3
+    t.decimal  "hours_after_service",            precision: 10, scale: 3
     t.integer  "bathrooms"
     t.integer  "bedrooms"
     t.text     "special_instructions"
-    t.string   "status",                         limit: nil
+    t.string   "status"
     t.integer  "aliada_id"
     t.datetime "datetime"
-    t.decimal  "estimated_hours",                            precision: 10, scale: 3
+    t.decimal  "estimated_hours",                precision: 10, scale: 3
     t.text     "cleaning_supplies_instructions"
     t.text     "garbage_instructions"
     t.text     "attention_instructions"
     t.text     "equipment_instructions"
     t.text     "forbidden_instructions"
+    t.integer  "zone_id"
+    t.boolean  "entrance_instructions"
     t.time     "aliada_reported_begin_time"
     t.time     "aliada_reported_end_time"
-    t.boolean  "entrance_instructions"
-    t.boolean  "confirmed",                                                           default: false
     t.boolean  "cancelation_fee_charged"
-    t.decimal  "rooms_hours",                                precision: 10, scale: 3
+    t.boolean  "confirmed",                                               default: false
+    t.decimal  "rooms_hours",                    precision: 10, scale: 3
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
@@ -295,35 +299,35 @@ ActiveRecord::Schema.define(version: 20150326203109) do
   end
 
   create_table "tickets", force: true do |t|
-    t.string   "classification",       limit: nil
+    t.string   "classification"
     t.integer  "relevant_object_id"
-    t.string   "relevant_object_type", limit: nil
+    t.string   "relevant_object_type"
     t.text     "message"
-    t.string   "action_needed",        limit: nil
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.string   "action_needed"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
   create_table "users", force: true do |t|
-    t.string   "role",                   limit: nil
-    t.string   "email",                  limit: nil
-    t.datetime "created_at",                                                              null: false
-    t.datetime "updated_at",                                                              null: false
-    t.string   "phone",                  limit: nil
-    t.string   "encrypted_password",     limit: nil,                         default: "", null: false
-    t.string   "reset_password_token",   limit: nil
+    t.string   "role"
+    t.string   "email"
+    t.datetime "created_at",                                                   null: false
+    t.datetime "updated_at",                                                   null: false
+    t.string   "phone"
+    t.string   "encrypted_password",                             default: "",  null: false
+    t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                                              default: 0,  null: false
+    t.integer  "sign_in_count",                                  default: 0,   null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.inet     "current_sign_in_ip"
     t.inet     "last_sign_in_ip"
-    t.string   "first_name",             limit: nil
-    t.string   "last_name",              limit: nil
-    t.string   "authentication_token",   limit: nil
-    t.decimal  "credits",                            precision: 7, scale: 2
+    t.string   "first_name"
+    t.string   "last_name"
     t.string   "conekta_customer_id"
+    t.decimal  "balance",                precision: 7, scale: 2, default: 0.0
+    t.string   "authentication_token"
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", using: :btree
@@ -331,35 +335,35 @@ ActiveRecord::Schema.define(version: 20150326203109) do
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
   create_table "zones", force: true do |t|
-    t.string   "name",       limit: nil
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   Foreigner.load
-  add_foreign_key "addresses", "postal_codes", name: "fk_rails_3b968378af"
-  add_foreign_key "addresses", "users", name: "fk_rails_a782837e9d"
+  add_foreign_key "addresses", "postal_codes", name: "fk_rails_176653fe2c"
+  add_foreign_key "addresses", "users", name: "fk_rails_adf64c847b"
 
-  add_foreign_key "code_users", "codes", name: "fk_rails_d334bd32db"
-  add_foreign_key "code_users", "users", name: "fk_rails_640d8ad403"
+  add_foreign_key "codes", "code_types", name: "fk_rails_5766f8bb3a"
+  add_foreign_key "codes", "users", name: "fk_rails_0cc1e79270"
 
-  add_foreign_key "codes", "code_types", name: "fk_rails_0c2a23c77c"
-  add_foreign_key "codes", "users", name: "fk_rails_8bca1f8d02"
+  add_foreign_key "credits", "codes", name: "fk_rails_f59cb87f20"
+  add_foreign_key "credits", "users", name: "fk_rails_a2fdb26281"
 
-  add_foreign_key "documents", "users", name: "fk_rails_57bac53f26"
+  add_foreign_key "documents", "users", name: "fk_rails_8492e5f484"
 
-  add_foreign_key "recurrences", "users", name: "fk_rails_bceec69f09"
+  add_foreign_key "recurrences", "users", name: "fk_rails_6e1c955ffb"
 
-  add_foreign_key "schedules", "services", name: "fk_rails_e91fec361b"
-  add_foreign_key "schedules", "users", name: "fk_rails_4d5d3070ba"
+  add_foreign_key "schedules", "services", name: "fk_rails_c759b2308c"
+  add_foreign_key "schedules", "users", name: "fk_rails_46c762044c"
 
   add_foreign_key "scores", "services", name: "scores_service_id_fk"
-  add_foreign_key "scores", "users", name: "fk_rails_e93f40ca5b"
+  add_foreign_key "scores", "users", name: "fk_rails_a7985791f0"
 
-  add_foreign_key "services", "addresses", name: "fk_rails_3a3488bbe3"
-  add_foreign_key "services", "recurrences", name: "fk_rails_21aee434ae"
-  add_foreign_key "services", "service_types", name: "fk_rails_af1c273673"
-  add_foreign_key "services", "users", name: "fk_rails_d48dde2778"
-  add_foreign_key "services", "zones", name: "fk_rails_1fd6d13d7c"
+  add_foreign_key "services", "addresses", name: "fk_rails_da43fb23af"
+  add_foreign_key "services", "recurrences", name: "fk_rails_b54eadb930"
+  add_foreign_key "services", "service_types", name: "fk_rails_b3316839df"
+  add_foreign_key "services", "users", name: "fk_rails_098372802b"
+  add_foreign_key "services", "zones", name: "fk_rails_6a9baffb04"
 
 end

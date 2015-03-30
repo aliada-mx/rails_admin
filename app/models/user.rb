@@ -11,6 +11,9 @@ class User < ActiveRecord::Base
     ['admin', 'Admin'],
   ]
 
+  has_many :credits
+  has_many :redeemed_credits, :foreign_key => "redeemer_id", :class_name => "Credit"
+  has_one :code
   has_many :services, inverse_of: :user, foreign_key: :user_id
   has_many :addresses
   has_many :schedules, inverse_of: :user, foreign_key: :user_id
@@ -32,10 +35,19 @@ class User < ActiveRecord::Base
   default_scope { where('users.role in (?)', ['client', 'admin']) }
 
   validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
-
   validates_presence_of :password, if: :password_required?
   validates_confirmation_of :password, if: :password_required?
   validates_length_of :password, within: Devise.password_length, allow_blank: true
+
+  after_initialize do
+    self.balance ||= 0 if self.respond_to? :balance
+  end
+  
+  def create_promotional_code code_type
+    if self.role == "client"
+      Code.generate_unique_code self, code_type
+    end
+  end
 
   def password_required?
     !persisted? || !password.blank? || !password_confirmation.blank?
@@ -52,18 +64,30 @@ class User < ActiveRecord::Base
 
     create_payment_provider_choice(payment_provider)
   end
-  
-  def charge!(product, object)
-    begin
-      default_payment_provider.charge!(product, self)
-    rescue Conekta::Error => err
-      Raygun.track_exception(err)
 
-      object.create_charge_failed_ticket(self, product.price, err)
-      nil
-    end
+  def charge_balance(amount)
+    credits_charger = CreditsCharger.new(amount, self)
+    credits_charger.charge!
   end
-  
+
+  def register_debt(debt)
+    self.balance -= debt
+    self.save!
+  end
+
+  def charge!(product, service)
+    credits_payment = charge_balance(product.amount)
+
+    product.amount = credits_payment.left_to_charge
+
+    payment = default_payment_provider.charge!(product, self, service)
+
+    if payment.nil?
+      register_debt(credits_payment.left_to_charge)
+    end
+    payment
+  end
+
   def create_payment_provider_choice(payment_provider)
     # Switch the default
     PaymentProviderChoice.where(user: self).update_all default: false
@@ -101,8 +125,15 @@ class User < ActiveRecord::Base
     self.password ||= generate_random_pronouncable_password if self.respond_to? :password
   end
 
-  def ensure_first_payment!(payment_method_options)
-    default_payment_provider.ensure_first_payment!(self, payment_method_options)
+  def ensure_first_payment!(payment_method_options, service)
+    default_payment_provider.ensure_first_payment!(self, payment_method_options, service)
+  end
+
+  def redeem_code code_name
+    code = Code.find_by(name: code_name)
+    if code
+      Credit.create(user_id: code.user_id, code_id: code.id, redeemer_id: self.id)
+    end
   end
 
   def admin?
