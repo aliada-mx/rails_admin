@@ -71,7 +71,7 @@ connection.query("SELECT * FROM clientes WHERE estatus = 'normal'").each do |row
     first_name = splitted_name[0] 
     last_name = splitted_name[1..splitted_name.length].join(" ") if splitted_name.length > 0
   end
-  cliente = User.find_or_initialize_by(first_name: first_name, last_name: last_name, email: row["email"].downcase, role: "client", phone: row["telefono"], created_at: row["created"], balance: row["saldo"] )
+  cliente = User.find_or_initialize_by(first_name: first_name, last_name: last_name, email: row["email"].downcase, role: "client", phone: row["telefono"], created_at: row["created"], balance: row["saldo"], md5_password: row['password'] )
 
   if cliente.new_record?
     cliente.save
@@ -178,7 +178,7 @@ agenda_errors = 0
 connection.query("SELECT * FROM agenda WHERE elim = 0 AND fecha >= '#{AGENDA_FROM_DATE}'").each do |row|
 
   tz = ActiveSupport::TimeZone.new 'Mexico City'
-  time_obj = tz.parse("#{row["fecha"].to_s} #{row["hora"]}")
+  time_obj = tz.parse("#{row['fecha'].to_s} #{row['hora']}")
 
   datetime = time_obj.to_datetime
 
@@ -240,7 +240,7 @@ connection.query("SELECT * FROM agenda WHERE elim = 0 AND fecha >= '#{AGENDA_FRO
             schedule.save
           rescue => e
             agenda_errors += 1
-            puts "AGENDA_KEY_ERROR #{row["id"]} ALIADA #{aliada.first_name} DATETIME #{time_obj}"
+            puts "AGENDA_KEY_ERROR #{row["id"]} ALIADA #{aliada.first_name} FECHA #{row['fecha'].to_s} #{row['hora']}"
             #puts "SCHEDULE #{row["id"]} #{schedule.errors.messages.to_yaml}" if not schedule.errors.messages.empty?
           end
         end
