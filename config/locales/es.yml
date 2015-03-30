@@ -210,7 +210,7 @@ es:
       default: ! '%A, %d de %B de %Y %H:%M:%S %z'
       long: ! '%d de %B de %Y %H:%M'
       short: ! '%d de %b %H:%M'
-      future: '%A %d de %B, %l:%S %P'
+      future: '%d de %B %Y, %l:%S %P'
       week_day:  '%A %e'
       friendly_time: '%l:%S %P'
       friendly_date:  '%A %d de %B'
