@@ -30,25 +30,29 @@ Extra.create!(name: 'Limpiar el horno', hours: 0.5)
 Extra.create!(name: 'Limpieza profunda', hours: 2)
 
 puts 'one-time and recurrent service types'
-ServiceType.create(name: 'one-time',
-                   display_name: 'Sólo una vez',
-                   price_per_hour: 105,
-                   position: 1,
-                   benefits: 'Prueba el servicio, Alta disponibilidad de las aliadas')
+one_time = ServiceType.find_by(name: 'one-time')
+one_time.update_attributes({ display_name: 'Sólo una vez',
+                             price_per_hour: 105,
+                             position: 1,
+                             benefits: 'Prueba el servicio, Alta disponibilidad de las aliadas' })
 
-ServiceType.create(name: 'recurrent',
+recurrent = ServiceType.find_by(name: 'recurrent')
+recurrent.update_attributes({
                    position: 0,
                    display_name: 'Cada Semana',
                    periodicity: 7,
-                   price_per_hour: 79,
-                   benefits: 'La misma Aliada en cada visita, Tu casa siempre limpia, El precio :)')
+                   price_per_hour: 65,
+                   benefits: 'La misma Aliada en cada visita, Tu casa siempre limpia, El precio :)' })
 
 puts 'Admin user'
-User.create!(first_name: 'Guillermo', last_name: 'Siliceo', email: 'guillermo.siliceo@gmail.com', role: 'admin', password: '12345678')
+admins = User.where('email ILIKE ?', '%aliada.mx%')
+admins.each do |admin|
+  admin.role = 'admin'
+end
 
 FactoryGirl.create(:payment_method)
 
-FactoryGirl.create(:payment_method, name: 'Créditos', payment_provider_type: 'CreditsPayment')
+FactoryGirl.create(:payment_method, name: 'Créditos', payment_provider_type: 'User')
 
 
 # Paste the contents of this function

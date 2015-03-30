@@ -1,6 +1,7 @@
 class Schedule < ActiveRecord::Base
   include Mixins::RailsAdminModelsHelpers
   include AliadaSupport::DatetimeSupport
+  include Presenters::SchedulePresenter
 
   STATUSES = [
     ['Disponible','available'],
@@ -113,7 +114,8 @@ class Schedule < ActiveRecord::Base
 
     configure :datetime do
       pretty_value do
-        I18n.l(value.in_time_zone('Mexico City'), format: :future)
+        object = bindings[:object]
+        I18n.l(object.tz_aware_datetime, format: :future)
       end
       sort_reverse false
     end

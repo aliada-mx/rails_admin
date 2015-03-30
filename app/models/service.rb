@@ -41,6 +41,10 @@ class Service < ActiveRecord::Base
   scope :ordered_by_created_at, -> { order(:created_at) }
   scope :ordered_by_datetime, -> { order(:datetime) }
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
+  # Rails admin tabs
+  scope :todos, -> { }
+  scope :confirmados, -> { where('services.confirmed IS TRUE') }
+  scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
 
   # Validations
   validate :datetime_is_hour_o_clock
@@ -505,6 +509,8 @@ class Service < ActiveRecord::Base
         filterable true
       end
       field :recurrence
+
+      scopes [:todos, :confirmados, :sin_confirmar]
     end
   end
 end
