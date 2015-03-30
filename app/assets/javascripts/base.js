@@ -25,7 +25,7 @@
 vex.defaultOptions.className = 'vex-theme-plain';
 
 // Catch exceptions with raygun
-// Raygun.init(raygun_api_key).attach();
+Raygun.init(raygun_api_key).attach();
 
 // Config blockUI
 _.extend($.blockUI.defaults.css,{
