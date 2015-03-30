@@ -15,15 +15,12 @@ defaults: &defaults
   # Careful while editing the text here as it determines looks on the frontend
   hours_space_room: [
     { hours: 3.0,   text: '<b>3h</b>     ~55m²    (1 cuarto)'},
-    { hours: 3.5, text: '<b>3.5h</b>  ~65m²   (1 cuarto)'},
-    { hours: 4.0,   text: '<b>4h</b>     ~75m²    (2 cuartos)'},
-    { hours: 4.5, text: '<b>4.5h</b>  ~90m²   (2-3 cuartos)'},
-    { hours: 5.0,   text: '<b>5h</b>     ~105m²   (3 cuartos)'},
-    { hours: 5.5, text: '<b>5.5h</b>  ~120m²  (3 cuartos)'},
-    { hours: 6.0,   text: '<b>6h</b>     ~135m²   (+3 cuartos)'},
-    { hours: 6.5, text: '<b>6.5h</b>  ~150m²  (+3 cuartos)'},
-    { hours: 7.0,   text: '<b>7h</b>     ~165m²   (+3 cuartos)'},
-    { hours: 8.0,   text: '<b>8h</b>     ~180m²  (+3 cuartos)'}  
+    { hours: 3.0,   text: '<b>3h</b>     ~75m²    (2 cuartos)'},
+    { hours: 3.5, text: '<b>3.5h</b>  ~90m²   (2-3 cuartos)'},
+    { hours: 4.0, text: '<b>4h</b>  ~120m²  (3 cuartos)'},
+    { hours: 5.0, text: '<b>5h</b>  ~150m²  (+3 cuartos)'},
+    { hours: 5.5,   text: '<b>5.5h</b>     ~165m²   (+3 cuartos)'},
+    { hours: 6.0,   text: '<b>6h</b>     ~+180m²  (+3 cuartos)'}  
   ]
   bedrooms_multiplier: 1 # to get hours
   bathrooms_multiplier: 0.5 # to get hours
