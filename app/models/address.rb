@@ -9,6 +9,10 @@ class Address < ActiveRecord::Base
   validate :postal_code_or_number
 
   before_validation :ensure_postal_code!
+  
+  def full_address
+    return "#{self.street} #{self.number} int. #{self.interior_number}, Col. #{self.colony}, #{self.city}"
+  end
 
   def postal_code_or_number
     message = I18n.t('address.validations.postal_code_failed')
