@@ -45,6 +45,8 @@ gem 'bootstrap-sass'
 # Sass framework
 gem 'compass-rails'
 gem 'chronic'
+# Gzip compression
+gem 'heroku-deflater'
  
 # EXCEPTIONS
 #
