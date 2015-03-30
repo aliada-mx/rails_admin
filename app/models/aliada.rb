@@ -105,8 +105,14 @@ class Aliada < User
     end
 
     list do
-      field :name
-      field :phone
+      field :name do
+        queryable true
+        filterable true
+      end
+      field :phone do
+        queryable true
+        filterable true
+      end
       field :next_service_link
     end
 
