@@ -2,3 +2,8 @@ fill_schedule_table:
   cron: "0 0 * * *"
   class: "ScheduleFiller"
   description: "Makes sure the schedule structure is always available 30 days from today."
+
+send_reminder_emails:
+	cron: "0 18 * * *"
+	class: "ReminderSender"
+	description: "Sends service reminder emails daily"
