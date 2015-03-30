@@ -2,6 +2,7 @@ describe 'ConektaCard' do
   include TestingSupport::SharedExpectations::ConektaCardExpectations
 
   let!(:card){ create(:conekta_card) } 
+  let!(:service){ create(:service) }
   let!(:user){ create(:user, 
                       phone: '123456',
                       first_name: 'Test',
@@ -9,7 +10,7 @@ describe 'ConektaCard' do
                       email: 'user-39@aliada.mx',
                       conekta_customer_id: "cus_M3V9nERCq9qDLZdD1") } 
   let(:token){ 'tok_test_visa_4242' }
-  let(:fake_product){ double(price: 300,
+  let(:fake_product){ double(amount: 300,
                              description: 'fake test product',
                              id: 1)}
 
@@ -46,7 +47,7 @@ describe 'ConektaCard' do
 
       # TODO use regex matchers because the request wont match if the id of the generated card changes
       VCR.use_cassette('new_card', match_requests_on: [:conekta_charge]) do
-        ConektaCard.create_for_user!(user, token)
+        ConektaCard.create_for_user!(user, token, service)
       end
 
       new_conekta_card = ConektaCard.second

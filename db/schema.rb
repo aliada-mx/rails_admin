@@ -319,14 +319,15 @@ ActiveRecord::Schema.define(version: 20150326203109) do
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
     t.integer  "sign_in_count",                                  default: 0,   null: false
+    t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.inet     "current_sign_in_ip"
     t.inet     "last_sign_in_ip"
     t.string   "first_name"
     t.string   "last_name"
     t.string   "conekta_customer_id"
-    t.string   "authentication_token"
     t.decimal  "balance",                precision: 7, scale: 2, default: 0.0
+    t.string   "authentication_token"
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", using: :btree

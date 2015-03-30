@@ -38,6 +38,10 @@ class User < ActiveRecord::Base
   validates_presence_of :password, if: :password_required?
   validates_confirmation_of :password, if: :password_required?
   validates_length_of :password, within: Devise.password_length, allow_blank: true
+
+  after_initialize do
+    self.balance ||= 0 if self.respond_to? :balance
+  end
   
   def create_promotional_code code_type
     if self.role == "client"
@@ -60,18 +64,30 @@ class User < ActiveRecord::Base
 
     create_payment_provider_choice(payment_provider)
   end
-  
-  def charge!(product, object)
-    begin
-      default_payment_provider.charge!(product, self)
-    rescue Conekta::Error => err
-      Raygun.track_exception(err)
 
-      object.create_charge_failed_ticket(self, product.price, err)
-      nil
-    end
+  def charge_balance(amount)
+    credits_charger = CreditsCharger.new(amount, self)
+    credits_charger.charge!
   end
-  
+
+  def register_debt(debt)
+    self.balance -= debt
+    self.save!
+  end
+
+  def charge!(product, service)
+    credits_payment = charge_balance(product.amount)
+
+    product.amount = credits_payment.left_to_charge
+
+    payment = default_payment_provider.charge!(product, self, service)
+
+    if payment.nil?
+      register_debt(credits_payment.left_to_charge)
+    end
+    payment
+  end
+
   def create_payment_provider_choice(payment_provider)
     # Switch the default
     PaymentProviderChoice.where(user: self).update_all default: false
@@ -104,8 +120,8 @@ class User < ActiveRecord::Base
     self.password ||= generate_random_pronouncable_password if self.respond_to? :password
   end
 
-  def ensure_first_payment!(payment_method_options)
-    default_payment_provider.ensure_first_payment!(self, payment_method_options)
+  def ensure_first_payment!(payment_method_options, service)
+    default_payment_provider.ensure_first_payment!(self, payment_method_options, service)
   end
 
   def redeem_code code_name

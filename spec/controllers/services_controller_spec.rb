@@ -15,14 +15,8 @@ feature 'ServiceController' do
                               number: '11800') }
   let!(:extra_1){ create(:extra, name: 'Lavanderia')}
   let!(:extra_2){ create(:extra, name: 'Limpieza de refri')}
-<<<<<<< HEAD
   let!(:conekta_card_method){ create(:payment_method)}
-||||||| merged common ancestors
-  let!(:conekta_card){ create(:payment_method)}
-=======
-  let!(:conekta_card){ create(:payment_method)}
   let!(:code_type){ create(:code_type) }
->>>>>>> github/feature/promotional-codes
     
   before do
     allow_any_instance_of(Service).to receive(:timezone).and_return('UTC')
@@ -85,12 +79,8 @@ feature 'ServiceController' do
         extras = service.extras
         service_aliada = service.aliada
 
-<<<<<<< HEAD
         expect(service_aliada).to be_present
-||||||| merged common ancestors
-=======
         expect(user.code).to be_present
->>>>>>> github/feature/promotional-codes
         expect(service).to be_present
         expect(service_aliada).to eql aliada
         expect(extras).to include extra_1

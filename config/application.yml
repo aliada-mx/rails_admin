@@ -8,6 +8,7 @@ defaults: &defaults
   time_horizon_days: 30 # How far in the future we build schedules and look for datetime data
   payment_providers: [
     ['Tarjeta con Conekta', 'ConektaCard'], 
+    ['Pago con créditos', 'User'], 
     ['Método de pago de prueba', 'TestPaymentMethod'], 
   ]
   #

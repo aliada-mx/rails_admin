@@ -48,6 +48,8 @@ User.create!(first_name: 'Guillermo', last_name: 'Siliceo', email: 'guillermo.si
 
 FactoryGirl.create(:payment_method)
 
+FactoryGirl.create(:payment_method, name: 'Créditos', payment_provider_type: 'CreditsPayment')
+
 
 # Paste the contents of this function
 def create_from_copypaste

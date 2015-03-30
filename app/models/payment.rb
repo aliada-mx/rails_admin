@@ -21,6 +21,13 @@ class Payment < ActiveRecord::Base
                     api_raw_response: charge_hash.to_json)
   end
 
+  def self.create_from_credit_payment(amount, user)
+    Payment.create!(amount: amount, 
+                    user: user,
+                    payment_provider_type: 'User',
+                    payment_provider_id: user.id)
+  end
+
   def provider
     payment_provider
   end

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 class ConektaCard < ActiveRecord::Base
-  def self.create_for_user!(user, temporary_token)
+  def self.create_for_user!(user, temporary_token, service)
     conekta_customer = Conekta::Customer.find(user.conekta_customer_id)
 
     api_card = conekta_customer.create_card(:token => temporary_token)
 
     conekta_card = ConektaCard.create!
     conekta_card.update_from_api_card(eval(api_card.inspect))
-    conekta_card.preauthorize!(user)
+    conekta_card.preauthorize!(user, service)
 
     user.create_payment_provider_choice(conekta_card).provider
   end
@@ -60,7 +60,7 @@ class ConektaCard < ActiveRecord::Base
 
   def charge_in_conekta!(product, user)
     conekta_charge = Conekta::Charge.create({
-      amount: (product.price * 100).floor,
+      amount: (product.amount * 100).floor,
       currency: 'MXN',
       description: product.description,
       reference_id: product.id,
@@ -70,30 +70,37 @@ class ConektaCard < ActiveRecord::Base
     conekta_charge
   end
 
-  def charge!(product, user)
-    conekta_charge = charge_in_conekta!(product, user)
-   
-    payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
-    payment.pay!
-    
-    payment
+  def charge!(product, user, service)
+    begin
+      conekta_charge = charge_in_conekta!(product, user)
+     
+      payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
+      payment.pay!
+      
+      payment
+    rescue Conekta::Error => exception
+      Raygun.track_exception(exception)
+
+      service.create_charge_failed_ticket(user, product.price, exception)
+      nil
+    end
   end
 
   def payment_possible?(service)
     preauthorized?
   end
 
-  def ensure_first_payment!(user, payment_method_options)
+  def ensure_first_payment!(user, payment_method_options, service)
     temporary_token = payment_method_options[:conekta_temporary_token]
     create_customer(user, temporary_token)
-    preauthorize!(user)
+    preauthorize!(user, service)
   end
 
-  def preauthorize!(user)
-    preauthorization = OpenStruct.new({price: 3,
+  def preauthorize!(user, service)
+    preauthorization = OpenStruct.new({amount: 3,
                                        description: "Pre-autorización de tarjeta #{id}",
                                        id: self.id})
-    charge!(preauthorization, user)
+    charge!(preauthorization, user, service)
 
     self.preauthorized = true
     self.save!

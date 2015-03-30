@@ -126,10 +126,6 @@ class AvailabilityForService
       @aliadas_availability[@current_aliada_id].delete(interval_key)
     end
 
-    def add_continuous_schedules
-      @continuous_schedules.push(@current_schedule)
-    end
-
     # To track if our schedules are padding
     def mark_padding_hours
       return if @aliadas_availability.blank?
