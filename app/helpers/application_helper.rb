@@ -22,4 +22,8 @@ module ApplicationHelper
   def ceil_and_strip_insignificat_zeros(number)
     number.ceil.to_s.sub(/(\.)(\d*[1-9])?0+\z/, '\1\2').sub(/\.\z/, '')
   end
+
+  def in_admin_controller?
+    params[:controller] == 'rails_admin/main'
+  end
 end

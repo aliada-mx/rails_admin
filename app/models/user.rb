@@ -180,6 +180,8 @@ class User < ActiveRecord::Base
       field :first_name
       field :last_name
       field :phone
+
+      field :services
       group :login_info do
         active false
         field :password do

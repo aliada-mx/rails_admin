@@ -8,5 +8,11 @@ class PostalCode < ActiveRecord::Base
     navigation_label 'Contenidos'
     navigation_icon 'icon-envelope'
     weight -3
+
+    list do
+      field :number
+      field :name
+      field :zone
+    end
   end
 end

@@ -155,7 +155,9 @@ es:
         service: Servicio 
         postal_code_number: Código postal
         postal_code_not_found: No existía el código postal
-      zones:
+      zone:
+        <<: *common_attributes
+        postal_codes: 'Códigos postales'
       users:
         <<: *common_attributes
         <<: *user_attributes
@@ -264,6 +266,11 @@ es:
         menu: "Cobrar servicio"
         title: "Cobrar servicio"
         breadcrumb: "Cobrar servicio"
+      show_aliada_calendar:
+        menu: "Semana de la aliada"
+        title: "Semana de la aliada"
+        breadcrumb: "Semana de la aliada"
+        bulk_link: "Semana de la aliada"
     form:
       cancel: "Cancelar"
       basic_info: "Información básica"

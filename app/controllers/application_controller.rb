@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include AliadaSupport::RedirectAfterLogin
+  include ApplicationHelper
 
   before_filter :initialize_js_variables
   before_filter :set_default_user

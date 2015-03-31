@@ -19,8 +19,9 @@ class Zone < ActiveRecord::Base
     navigation_icon 'icon-globe'
     weight -4
 
-    list do
-      field :number
+    edit do
+      field :name
+      field :postal_codes
     end
   end
 end
