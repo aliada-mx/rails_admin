@@ -44,7 +44,7 @@ aliada.geo_autocomplete = function(input, success){
 
         address['latitude'] = place.geometry.location.lat();
         address['longitude'] = place.geometry.location.lng();
-        success(address)
+        success(address);
       }
     });
 }
