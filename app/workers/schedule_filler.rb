@@ -17,6 +17,7 @@ class ScheduleFiller
 
         insert_clients_schedule today_in_the_future
       rescue Exception => e
+        Rails.logger.fatal e 
         Raygun.track_exception(e)
         raise e
       end
@@ -91,22 +92,19 @@ class ScheduleFiller
           raise error
         elsif (schedules.count < user_recurrence.total_hours)
           error = "Aliada's schedules count #{schedules.count} didn't match number of user recurrence total hours #{user_recurrence.total_hours}"
-          Rails.logger.info error
-          schedules = []
-          
+          Rails.logger.fatal error
+          raise error
+
+          #schedules = []
           #CREATE SCHEDULES
-          ( 0..( user_recurrence.total_hours - 1 ) ).each do |i|
-            if not Schedule.find_by(datetime: beginning_datetime + i.hours, aliada_id: user_recurrence.aliada_id)
-              begin
-              schedule = Schedule.find_or_initialize_by(datetime: beginning_datetime + i.hours, aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, status: 'available', recurrence_id: user_recurrence.id)
-              schedule.save!
-              puts "CREATED SCHEDULE #{schedule.id}"
-              schedules << schedule
-              rescue Exception => e
-                Raygun.track_exception(e)
-              end
-            end 
-          end
+          #( 0..( user_recurrence.total_hours - 1 ) ).each do |i|
+          #  if not Schedule.find_by(datetime: beginning_datetime + i.hours, aliada_id: user_recurrence.aliada_id)
+          #    schedule = Schedule.find_or_initialize_by(datetime: beginning_datetime + i.hours, aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, status: 'available', recurrence_id: user_recurrence.id)
+          #    schedule.save!
+          #    puts "CREATED SCHEDULE #{schedule.id}"
+          #    schedules << schedule
+          #  end 
+          #end
 
         end
         
@@ -134,6 +132,7 @@ class ScheduleFiller
 
         insert_clients_schedule_no_validation today_in_the_future
       rescue Exception => e
+        Rails.logger.fatal e
         Raygun.track_exception(e)
         raise e
       end
@@ -156,16 +155,12 @@ class ScheduleFiller
               beginning_of_recurrence = datetime.change(hour: awh.utc_hour(datetime))
               ending_of_recurrence = beginning_of_recurrence + awh.total_hours.hours
 
-              begin 
               ScheduleInterval.create_from_range_if_not_exists(beginning_of_recurrence, 
                                                              ending_of_recurrence,
                                                              conditions: {aliada_id: aliada.id, 
                                                                           recurrence_id: awh.id,
                                                                           zones: aliada.zones, 
                                                                           service_id: nil})
-              rescue Exception => e
-                Raygun.track_exception(e)
-              end
             end
       
           end
@@ -190,7 +185,6 @@ class ScheduleFiller
 
           if not Schedule.find_by(datetime: beginning_of_recurrence + i.hours, aliada_id: aliada_recurrence.aliada_id)
 
-            begin
             schedule_intervals = ScheduleInterval.build_from_range(beginning_of_recurrence + i.hours, 
                                                              beginning_of_recurrence + i.hours + 1.hours,
                                                              from_existing: false,
@@ -199,9 +193,6 @@ class ScheduleFiller
                                                                           zones: zones, 
                                                                           service_id: nil})
             schedule_intervals.persist!
-            rescue Exception => e
-              Raygun.track_exception(e)
-            end
 
           end
 
@@ -230,14 +221,11 @@ class ScheduleFiller
           #CREATE SCHEDULES
           ( 0..( user_recurrence.total_hours - 1 ) ).each do |i|
             if not Schedule.find_by(datetime: beginning_datetime + i.hours, aliada_id: user_recurrence.aliada_id)
-              begin
+
               schedule = Schedule.find_or_initialize_by(datetime: beginning_datetime + i.hours, aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, status: 'available', recurrence_id: user_recurrence.id)
               schedule.save!
               puts "CREATED SCHEDULE #{schedule.id}"
               schedules << schedule
-              rescue Exception => e
-                Raygun.track_exception(e)
-              end
             end 
           end
         end
