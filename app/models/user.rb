@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
   acts_as_token_authenticatable
 
   include Presenters::UserPresenter
+  include Mixins::RailsAdminModelsHelpers
   include UsersHelper
 
   ROLES = [
@@ -171,24 +172,8 @@ class User < ActiveRecord::Base
   rails_admin do
     navigation_label 'Personas'
     navigation_icon 'icon-user'
-    exclude_fields :payment_provider_choices
     label_plural 'usuarios'
 
-    list do
-      configure :name do
-        virtual?
-      end
-
-      configure :default_address do
-        virtual?
-      end
-
-      configure :next_service do
-        virtual?
-      end
-
-      include_fields :name, :email, :default_address, :next_service
-    end
 
     edit do
       field :role
@@ -209,6 +194,37 @@ class User < ActiveRecord::Base
         field :remember_created_at
         field :reset_password_sent_at
       end
+
+      exclude_fields :payment_provider_choices
+    end
+
+    list do
+      field :first_name do
+        queryable true
+        filterable true
+      end
+      field :last_name do
+        queryable true
+        filterable true
+      end
+      field :email do
+        queryable true
+        filterable true
+      end
+      field :role
+      field :phone do
+        queryable true
+        filterable true
+      end
+
+      field :default_address_link do
+        virtual?
+      end
+
+      field :next_service_link do
+        virtual?
+      end
+      field :created_at
     end
   end
 end

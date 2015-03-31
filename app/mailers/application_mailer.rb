@@ -18,6 +18,6 @@ class ApplicationMailer < ActionMailer::Base
 
     headers['X-SMTPAPI'] = header.to_json
 
-    mail to: to
+    mail to: [ to ] + Setting.admin_emails
   end
 end

@@ -55,8 +55,7 @@ class Recurrence < ActiveRecord::Base
   end
 
   def weekday_in_spanish
-    # weekday_to_spanish(weekday)
-    'lol'
+    weekday_to_spanish(weekday)
   end
 
   def timezone

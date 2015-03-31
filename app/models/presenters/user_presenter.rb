@@ -10,6 +10,14 @@ module Presenters
       addresses.first
     end
 
+    def default_address_link
+      rails_admin_edit_link( default_address ) if default_address
+    end
+
+    def next_service_link
+      rails_admin_edit_link( next_service ) if next_service
+    end
+
     def name
       return "#{first_name} #{last_name}" if first_name.present? || last_name.present?
       email
