@@ -24,9 +24,12 @@ class UsersController < ApplicationController
   end
 
   def next_services
-    services = @user.services.not_canceled.in_the_future.to_a
+    one_time_service_type = ServiceType.one_time
 
-    @services = services.select do |service|
+    recurrent_services = @user.services.not_canceled.with_recurrence.to_a
+    one_time = @user.services.not_canceled.in_the_future.to_a
+
+    @services = ( recurrent_services + one_time ).select do |service|
       service.one_timer? && service.recurrence_id.nil? || service.recurrent?
     end
   end

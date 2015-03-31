@@ -11,7 +11,7 @@ module WeekdayPatch
         ['monday', 1, 'Lunes'],
         ['tuesday', 2, 'Martes'],
         ['wednesday', 3, 'Miércoles'],
-        ['thursday', 4, 'Juéves'],
+        ['thursday', 4, 'Jueves'],
         ['friday', 5, 'Viernes'],
         ['saturday', 6, 'Sábado'],
       ]
