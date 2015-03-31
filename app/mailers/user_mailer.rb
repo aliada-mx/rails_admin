@@ -3,7 +3,7 @@ class UserMailer < ApplicationMailer
     template_id = Setting.sendgrid_templates_ids[:welcome]
 
     sendgrid_template_mail to: user.email,
-                           substitutions: {'-full_name-' => [ user.first_name ], '-password-' => [ user.name ]},
+                           substitutions: {'-full_name-' => [ user.first_name ], '-password-' => [user.password]},
                            template_id: template_id
   end
   
