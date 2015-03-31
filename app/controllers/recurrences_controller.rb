@@ -1,6 +1,12 @@
 class RecurrencesController < ApplicationController
   layout 'one_column', only: :show
 
+  before_filter :set_user
+
+  def set_user
+    @user = User.find(params[:user_id])
+  end
+
   def show
     @recurrence = Recurrence.find(params[:recurrence_id])
     @base_service = @recurrence.base_service

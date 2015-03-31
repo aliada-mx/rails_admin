@@ -510,6 +510,8 @@ class Service < ActiveRecord::Base
       end
       field :recurrence
 
+      field :created_at
+
       scopes [:todos, :confirmados, :sin_confirmar]
     end
   end

@@ -271,6 +271,11 @@ es:
         title: "Semana de la aliada"
         breadcrumb: "Semana de la aliada"
         bulk_link: "Semana de la aliada"
+      address_map:
+        menu: "Mapa"
+        title: "Mapa"
+        breadcrumb: "Mapa"
+        bulk_link: "Mapa"
     form:
       cancel: "Cancelar"
       basic_info: "Información básica"
