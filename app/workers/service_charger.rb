@@ -1,4 +1,4 @@
-gclass ServiceCharger 
+class ServiceCharger 
   
   def self.queue
     :charges
