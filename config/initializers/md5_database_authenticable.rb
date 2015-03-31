@@ -12,7 +12,7 @@ module Devise
       def authenticate!
         user = User.find_by_email(params[:user][:email])
         
-        if user.md5_password == Digest::MD5.hexdigest(params[:user][:password])
+        if user && params[:user][:password].present? && user.md5_password == Digest::MD5.hexdigest(params[:user][:password])
           user.password = params[:user][:password]
           user.md5_password = nil
           user.save!
@@ -24,4 +24,3 @@ module Devise
 end
 
 Warden::Strategies.add(:md5_database_authenticatable, Devise::Strategies::Md5DatabaseAuthenticatable)
-

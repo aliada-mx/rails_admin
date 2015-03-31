@@ -27,8 +27,11 @@ aliada.geo_autocomplete = function(input, success){
               break;
             case 'locality':
               address.colony = value;
+              break;
             case 'postal_code':
-              address.postal_code_number = value;
+              if( isNumber(value)){
+                address.postal_code_number = value;
+              }
               break;
             case 'sublocality_level_1':
               address.city = value;
@@ -41,7 +44,7 @@ aliada.geo_autocomplete = function(input, success){
 
         address['latitude'] = place.geometry.location.lat();
         address['longitude'] = place.geometry.location.lng();
-        success(address)
+        success(address);
       }
     });
 }

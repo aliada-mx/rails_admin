@@ -44,6 +44,7 @@ defaults: &defaults
     reminder: 'cad1ca4c-6cc0-4725-a78c-9e42b167d1ab'
     service_confirmation: 'c25504da-8cb2-49be-a4c4-16ca4de53b41'
     test_email: '8ce0b5a8-8860-4c80-8f2d-1f6471bf0480'
+  admin_emails: ['ana@aliada.mx']
     
 development:
   <<: *defaults

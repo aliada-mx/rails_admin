@@ -83,3 +83,6 @@ function update_calendar(){
   $.event.trigger({type: 'update-calendar'});
 }
 
+function isNumber(obj) {
+  return toString.call(obj) == '[object Number]';
+}

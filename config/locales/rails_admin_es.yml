@@ -63,6 +63,8 @@ es:
         last_sign_in_ip: ip de su último login
         remember_created_at: cuando pidió contraseña nueva
         reset_password_sent_at: cuando enviamos contraseña nueva
+        default_address_link: 'Dirección por default'
+        next_service_link: 'Siguiente servicio'
       aliada:
         <<: *user_attributes
         banned_users: usuarios que la banearon
@@ -154,6 +156,9 @@ es:
         postal_code_number: Código postal
         postal_code_not_found: No existía el código postal
       zones:
+      users:
+        <<: *common_attributes
+        <<: *user_attributes
   admin:
     home:
       name: Inicio

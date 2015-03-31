@@ -16,7 +16,7 @@ class AliadasAvailabilityController < ApplicationController
     service_type = ServiceType.find(params[:service_type_id])
 
     zone = Zone.find_by_postal_code_number(params[:postal_code_number])
-    return render nothing: true if zone.nil?
+    return render json: { status: :success, dates_times: [] } if zone.nil?
 
     available_after = starting_datetime_to_book_services
 
