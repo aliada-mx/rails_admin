@@ -10,8 +10,7 @@ feature 'Charge many services in the admin' do
                 bulk_action: 'charge_services',
                 model_name: 'service',
                 bulk_ids: services_ids,
-                '_method' => 'get'
-              )}
+                '_method' => 'get')}
 
   before do
     ResqueSpec.reset!

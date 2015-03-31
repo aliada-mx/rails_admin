@@ -38,7 +38,7 @@ feature 'AliadasAvailabilityController' do
         
         response = JSON.parse(page.body)
         expect(response['dates_times'].has_key?(@available_date)).to eql true
-        expect(response['dates_times'][@available_date]).to eql [{"value" => "07:00","friendly_time" => " 7:00 am", "friendly_datetime"=>"viernes 02 de enero,  7:00 am"}]
+        expect(response['dates_times'][@available_date]).to eql [{"value" => "07:00","friendly_time" => " 7:00 am", "friendly_datetime"=>"02 de enero 2015,  7:00 am"}]
       end
 
       it 'returns a json without dates times if theres not availabilty' do
@@ -64,7 +64,7 @@ feature 'AliadasAvailabilityController' do
         response = JSON.parse(page.body)
 
         expect(response['dates_times'].has_key?(@available_date)).to eql true
-        expect(response['dates_times'][@available_date]).to eql [{"value" => "07:00","friendly_time" => " 7:00 am", "friendly_datetime"=>"viernes 02 de enero,  7:00 am"}]
+        expect(response['dates_times'][@available_date]).to eql [{"value" => "07:00","friendly_time" => " 7:00 am", "friendly_datetime"=>"02 de enero 2015,  7:00 am"}]
       end
     end
 
@@ -86,7 +86,7 @@ feature 'AliadasAvailabilityController' do
 
         response = JSON.parse(page.body)
 
-        expect(response['dates_times']["2015-04-05"]).to eql [{"value"=>"07:00", "friendly_time"=>" 7:00 am", "friendly_datetime"=>"domingo 05 de abril,  7:00 am"}]
+        expect(response['dates_times']["2015-04-05"]).to eql [{"value"=>"07:00", "friendly_time"=>" 7:00 am", "friendly_datetime"=>"05 de abril 2015,  7:00 am"}]
       end
     end
   end
