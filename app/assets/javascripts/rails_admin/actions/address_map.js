@@ -1,4 +1,4 @@
-//= require modules/geo-complete.js
+//= require modules/geo-autocomplete.js
 //
 
 $(function() {
