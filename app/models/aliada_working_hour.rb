@@ -58,7 +58,8 @@ class AliadaWorkingHour < Recurrence
   end
 
   rails_admin do
-    label_plural 'horarios de aliadas'
+    visible false
+    label_plural 'Horas de trabajo disponibles'
     parent Aliada
     navigation_icon 'icon-time'
   end

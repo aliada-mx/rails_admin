@@ -17,7 +17,7 @@ module Presenters
     end
 
     def name
-      name = "(#{id}) Servicio"
+      name = ""
       name += " #{address.name}" if address
     end
 

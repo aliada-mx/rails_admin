@@ -20,7 +20,7 @@
       = initial_service_form.fields_for :address do |address_form|
         .field-row
           %icon.icon-home
-          = address_form.text_field :street, placeholder: 'Calle', class: 'full-width', data: {bind: 'textInput: street'}
+          = address_form.text_field :street, placeholder: 'Calle y número exterior', class: 'full-width', data: {bind: 'textInput: street'}
         .field-row
           %icon.icon-hash
           = address_form.text_field :number, placeholder: 'Número Exterior', class: 'two-thirds-width', data: {bind: 'textInput: number'}
@@ -41,6 +41,6 @@
 
   %h4
     Si el PIN verde no indica la dirección, por favor arrástralo hasta la dirección correcta
-  %p
+  %p.map-instructions
     Con este mapa la aliada llegará a la dirección por favor verifica que está correcto.
   = render 'common/map'

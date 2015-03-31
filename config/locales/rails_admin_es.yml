@@ -68,6 +68,7 @@ es:
         banned_users: usuarios que la banearon
         zones: zonas de trabajo
         scores: calificaciones
+        next_service_link: 'Siguiente servicio'
       service_type:
         periodicity: periodicidad
         price_per_hour: precio por hora
