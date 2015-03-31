@@ -10,10 +10,17 @@ class ScheduleFiller
 
   def self.fill_schedule
     today_in_the_future = Time.zone.now.beginning_of_day + Setting.time_horizon_days.days + 1.day
+    
+    ActiveRecord::Base.transaction do
+      begin
+        fill_aliadas_availability today_in_the_future
 
-    fill_aliadas_availability today_in_the_future
-
-    insert_clients_schedule today_in_the_future
+        insert_clients_schedule today_in_the_future
+      rescue Exception => e
+        Raygun.track_exception(e)
+        raise e
+      end
+    end
   end
 
   # aliada's recurrences, to build the whole availability
@@ -48,7 +55,6 @@ class ScheduleFiller
   # creates service inside aliada's schedule, based on the client's recurrence
   def self.create_service_in_clients_schedule today_in_the_future, user_recurrence 
 
-    # Create service with the most recently modified one for that recurrence
     # TODO: modify query with status for inactive recurrences
     base_service = user_recurrence.base_service
     unless base_service
@@ -79,14 +85,29 @@ class ScheduleFiller
         ending_datetime = beginning_datetime + user_recurrence.total_hours.hours
 
         schedules = Schedule.where("aliada_id = ? AND datetime >= ? AND datetime < ?", user_recurrence.aliada_id, beginning_datetime, ending_datetime )
-        if schedules.empty?
+        if schedules.empty? 
           error = "Aliada's future schedule was not found. Probably, the client's recurrence was not built considering the aliada's recurrence."
           Rails.logger.fatal error
           raise error
         elsif (schedules.count < user_recurrence.total_hours)
-          error = "Aliada's schedules didn't match number of user recurrence total hours"
-          Rails.logger.fatal error
-          raise error
+          error = "Aliada's schedules count #{schedules.count} didn't match number of user recurrence total hours #{user_recurrence.total_hours}"
+          Rails.logger.info error
+          schedules = []
+          
+          #CREATE SCHEDULES
+          ( 0..( user_recurrence.total_hours - 1 ) ).each do |i|
+            if not Schedule.find_by(datetime: beginning_datetime + i.hours, aliada_id: user_recurrence.aliada_id)
+              begin
+              schedule = Schedule.find_or_initialize_by(datetime: beginning_datetime + i.hours, aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, status: 'available', recurrence_id: user_recurrence.id)
+              schedule.save!
+              puts "CREATED SCHEDULE #{schedule.id}"
+              schedules << schedule
+              rescue Exception => e
+                Raygun.track_exception(e)
+              end
+            end 
+          end
+
         end
         
         # Assign the client to the aliada's schedule
@@ -101,15 +122,22 @@ class ScheduleFiller
   #
   
   def self.fill_schedule_after_migration
-    
-    # Create schedules based on the Aliada Working Hours
-    create_schedules_for_aliadas 
 
     today_in_the_future = Time.zone.now.beginning_of_day + Setting.time_horizon_days.days + 1.day 
 
-    fill_aliadas_availability_no_validation today_in_the_future
+    ActiveRecord::Base.transaction do
+      begin
+        # Create schedules based on the Aliada Working Hours
+        create_schedules_for_aliadas 
 
-    insert_clients_schedule_no_validation today_in_the_future
+        fill_aliadas_availability_no_validation today_in_the_future
+
+        insert_clients_schedule_no_validation today_in_the_future
+      rescue Exception => e
+        Raygun.track_exception(e)
+        raise e
+      end
+    end
 
   end
 
@@ -136,7 +164,7 @@ class ScheduleFiller
                                                                           zones: aliada.zones, 
                                                                           service_id: nil})
               rescue Exception => e
-                binding.pry
+                Raygun.track_exception(e)
               end
             end
       
@@ -172,7 +200,7 @@ class ScheduleFiller
                                                                           service_id: nil})
             schedule_intervals.persist!
             rescue Exception => e
-              binding.pry
+              Raygun.track_exception(e)
             end
 
           end
@@ -208,7 +236,7 @@ class ScheduleFiller
               puts "CREATED SCHEDULE #{schedule.id}"
               schedules << schedule
               rescue Exception => e
-                binding.pry
+                Raygun.track_exception(e)
               end
             end 
           end
