@@ -53,7 +53,7 @@ class AliadaWorkingHour < Recurrence
           schedule.update_attribute(:recurrence_id, self.id)
         end
       end
-      starting_datetime += self.periodicity.day
+      starting_datetime += self.periodicity.days
     end
 
   end
