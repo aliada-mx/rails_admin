@@ -43,12 +43,7 @@ class Service < ActiveRecord::Base
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
   # Rails admin tabs
   scope :del_dia, -> { on_day(Time.zone.now + 1.day).not_canceled }
-  scope :todos, -> do 
-    find_by_sql all.joins(:user).to_sql.gsub(
-      'INNER JOIN "users" ON "users"."id" = "services"."user_id" AND (users.role in (\'client\',\'admin\'))',
-      'INNER JOIN "users" ON "users"."id" = "services"."user_id" OR "users"."id" = "services"."aliada_id" AND (users.role in (\'client\',\'admin\', \'aliada\'))',
-    ) 
-  end
+  scope :todos, -> {}
 
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
