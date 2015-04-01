@@ -34,6 +34,10 @@ class Recurrence < ActiveRecord::Base
     transition 'inactive' => 'active', :on => :activate
   end
 
+  def status_enum
+    STATUSES
+  end
+
   def name
     "#{weekday_in_spanish} a las #{hour}"
   end
@@ -114,6 +118,17 @@ class Recurrence < ActiveRecord::Base
           }
         end
       end
+    end
+
+    list do
+      field :user do 
+        searchable [{users: :first_name }, {users: :last_name }, {users: :email}, {users: :phone}]
+        queryable true
+        filterable true
+      end
+      field :aliada
+      field :name
+      field :total_hours
     end
   end
 end

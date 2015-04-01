@@ -16,7 +16,7 @@ log = function(message,object){
 
 
 function report_error(e){
-    Raygun.send(e, ko.toJSON(aliada.ko));
+    Raygun.send(e, {ko: ko.toJSON(aliada.ko) });
 }
 
 // Block the user browser interaction

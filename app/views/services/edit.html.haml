@@ -17,7 +17,7 @@
   = javascript_include_tag 'services/edit'
 
 = append :extra_javascript_variables do
-  aliada.user.postal_code_number = #{@user.postal_code_number};
+  aliada.user.postal_code_number = "#{@user.postal_code_number}";
   aliada.service.aliada_id = #{@service.aliada_id};
   aliada.service.id = #{@service.id};
   aliada.service.date = '#{@service.date}';

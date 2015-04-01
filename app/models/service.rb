@@ -42,6 +42,7 @@ class Service < ActiveRecord::Base
   scope :ordered_by_datetime, -> { order(:datetime) }
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
   # Rails admin tabs
+  scope :del_dia, -> { on_day(Time.zone.now + 1.day).not_canceled }
   scope :todos, -> { }
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
@@ -500,6 +501,7 @@ class Service < ActiveRecord::Base
         end
       end
       field :status
+
       field :aliada do
         searchable [{users: :first_name }, {users: :last_name }, {users: :email}, {users: :phone}]
         queryable true
@@ -507,7 +509,11 @@ class Service < ActiveRecord::Base
       end
       field :recurrence
 
-      scopes [:todos, :confirmados, :sin_confirmar]
+      field :created_at
+
+      field :address
+
+      scopes [:del_dia, :todos, :confirmados, :sin_confirmar]
     end
   end
 end

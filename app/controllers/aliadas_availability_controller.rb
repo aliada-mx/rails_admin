@@ -16,7 +16,10 @@ class AliadasAvailabilityController < ApplicationController
     service_type = ServiceType.find(params[:service_type_id])
 
     zone = Zone.find_by_postal_code_number(params[:postal_code_number])
-    return render json: { status: :success, dates_times: [] } if zone.nil?
+    if zone.nil?
+      Raygun.track_exception("No se encontró disponiblidad con parametros")
+      return render json: { status: :success, dates_times: [] }
+    end
 
     available_after = starting_datetime_to_book_services
 

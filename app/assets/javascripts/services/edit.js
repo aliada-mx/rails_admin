@@ -79,10 +79,10 @@ $(document).ready(function() {
   });
 
 
-aliada.ko.current_step.subscribe(function(step){
-  if (step == 2){
-    $('textarea').css('overflow', 'hidden').autogrow();
-  }
-});
+  aliada.ko.current_step.subscribe(function(step) {
+    if (step == 2) {
+      $('textarea').css('overflow', 'hidden').autogrow();
+    }
+  });
 
 });
