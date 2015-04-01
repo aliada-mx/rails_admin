@@ -53,7 +53,7 @@ class Service < ActiveRecord::Base
   validate :datetime_is_hour_o_clock
   validate :datetime_within_working_hours
   validate :service_type_exists
-  validates_presence_of :address, :user, :estimated_hours, :datetime, :service_type
+  validates_presence_of :address, :user, :estimated_hours, :service_type, :datetime
 
   # Callbacks
   after_initialize :set_defaults
@@ -496,13 +496,6 @@ class Service < ActiveRecord::Base
         virtual?
       end
 
-      field :datetime do
-        sort_reverse false
-        pretty_value do
-          I18n.l(value , format: :friendly).titleize
-        end
-      end
-
       field :status
 
       field :aliada_link do
@@ -525,6 +518,10 @@ class Service < ActiveRecord::Base
       field :address
 
       scopes [:del_dia, :todos, :confirmados, :sin_confirmar]
+    end
+
+    edit do
+      field :datetime
     end
   end
 end
