@@ -34,6 +34,10 @@ class Recurrence < ActiveRecord::Base
     transition 'inactive' => 'active', :on => :activate
   end
 
+  def status_enum
+    STATUSES
+  end
+
   def name
     "#{weekday_in_spanish} a las #{hour}"
   end
