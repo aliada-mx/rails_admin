@@ -1,4 +1,5 @@
 @import 'common/variables'
+@import 'common/mixins'
 
 // Logo
 .navbar.navbar-default.navbar-fixed-top
@@ -46,3 +47,31 @@ i[class^='icon']
   .recurrence
 
   .new-recurrence
+
+.address_map
+  width: 100%
+  form
+    float: left
+    width: 29%
+    .field-row
+      width: 100%
+      margin: 10px
+      input
+        width: 100%
+        color: $black
+    #save_button,
+    #add_references_marker_button
+      width: 49.5%
+      +action-button($dark_pink)
+      padding: 10px 30px
+    #add_references_marker_button
+      +action-button($dark_gray)
+
+
+  .map-wrapper,
+  #map-container
+    float: left
+    width: 320px
+    height: 320px
+
+

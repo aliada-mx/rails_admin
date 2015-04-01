@@ -27,20 +27,18 @@ module RailsAdmin
         register_instance_option :controller do
           Proc.new do
 
+            @address = @object
+
             if request.get?
-
               render :action => @action.template_name
+            else
+              permitted_params = params.permit(address:[@address.attributes.keys])
+
+              @address.update_attributes(permitted_params[:address])
+
+              flash[:success] = 'El mapa se ha guardado exitosamente'
+              redirect_to rails_admin.address_map_path
             end
-            services = if @object.blank?
-                          @objects = list_entries(@model_config, :charge_services)
-                        else
-                          [ @object ]
-                       end
-
-            Resque.enqueue(ServiceCharger, services.map(&:id))
-
-            flash[:success] = 'Se han puesto en cola los servicios a cobrar, los erróneos aparecerán como tickets'
-            redirect_to back_or_index
           end
         end
       end
