@@ -519,9 +519,5 @@ class Service < ActiveRecord::Base
 
       scopes [:del_dia, :todos, :confirmados, :sin_confirmar]
     end
-
-    edit do
-      field :datetime
-    end
   end
 end

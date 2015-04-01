@@ -1,10 +1,7 @@
 namespace :db do
   desc "Migrate recurrences to one to many"
   task :migrate_recurrences => :environment do
-    one_time_from_recurrent = ServiceType.find_or_create_by!(name: 'one-time-from-recurrent',
-                                                             price_per_hour: '65',
-                                                             display_name: 'Una sola vez derivado de uno recurrente',
-                                                             hidden: true)
+    one_time_from_recurrent = ServiceType.find_or_create_by!(name: 'one-time-from-recurrent', price_per_hour: '65', display_name: 'Una sola vez derivado de uno recurrente', hidden: true)
 
     Service.with_recurrence.each do |service|
       recurrence = service.recurrence
@@ -15,7 +12,12 @@ namespace :db do
         next if _service.id == base_service.id
         
         _service.service_type = one_time_from_recurrent
+        begin
         _service.save!
+        puts "#{ _service.id } passed"
+        rescue
+          puts "#{ _service.id } failed"
+        end
       end
     end
   end
