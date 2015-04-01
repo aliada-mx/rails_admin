@@ -17,8 +17,8 @@ class UserMailer < ApplicationMailer
     sendgrid_template_mail to: service.user.email,
     substitutions:
       {'-user_full_name-' => [ service.user.full_name  ],
-      '-service_date-' => [(I18n.l service.datetime, format: '%A %d')],
-      '-service_time-' => [(I18n.l service.datetime, format: '%I %p')] ,
+      '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A %d')],
+      '-service_time-' => [(I18n.l service.tz_aware_datetime, format: '%I %p')] ,
       '-service_address-' => [service.address.full_address],
       '-service_type_name-' => [service.service_type.display_name],
       '-aliada_full_name-' => [ service.aliada.full_name],
@@ -27,7 +27,7 @@ class UserMailer < ApplicationMailer
     template_id: template_id
   end
   
-  def service_confirmation_pwd(service)
+  def service_confirmation_pwd(service, password)
     template_id = Setting.sendgrid_templates_ids[:service_confirmation_password]
     
     service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada).first
@@ -35,13 +35,13 @@ class UserMailer < ApplicationMailer
     sendgrid_template_mail to: service.user.email,
     substitutions:
       {'-user_full_name-' => [ service.user.full_name  ],
-      '-service_date-' => [(I18n.l service.datetime, format: '%A %d')],
-      '-service_time-' => [(I18n.l service.datetime, format: '%I %p')] ,
+      '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A %d')],
+      '-service_time-' => [(I18n.l service.tz_aware_datetime, format: '%I %p')] ,
       '-service_address-' => [service.address.full_address],
       '-service_type_name-' => [service.service_type.display_name],
       '-aliada_full_name-' => [ service.aliada.full_name],
       '-aliada_phone-' => [service.aliada.phone],
-      '-user_password-' => [service.user.password],
+      '-user_password-' => [password],
       '-service_cancelation_limit_hours-' => [ 24 ]},
     template_id: template_id
   end
