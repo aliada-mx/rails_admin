@@ -482,9 +482,6 @@ class Service < ActiveRecord::Base
     label_plural 'servicios'
     navigation_label 'Operación'
     navigation_icon 'icon-home'
-    configure :schedules do
-      visible false
-    end
 
     configure :extra_services do
       visible false
@@ -517,13 +514,6 @@ class Service < ActiveRecord::Base
       field :address
 
       scopes [:del_dia, :todos, :confirmados, :sin_confirmar]
-    end
-
-    edit do
-      field :user
-      field :aliada
-      field :datetime
-      field :address
     end
   end
 end
