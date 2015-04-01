@@ -10,7 +10,7 @@ class ReminderSender
 
   def self.services_to_remind
     day = ActiveSupport::TimeZone["Mexico City"].today + 1.day
-    services = Service.where(:datetime => day.beginning_of_day..day.end_of_day)
+    services = Service.not_canceled.where(:datetime => day.beginning_of_day..day.end_of_day)
     
     return services
   end
