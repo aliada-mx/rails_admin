@@ -25,15 +25,4 @@ namespace :db do
   end
 end
 
- [7, 14, 16, 22, 31, 36].each do |id|
-      
-      
-      
-      
-      dates.each do |date|
-        Schedule.where(:datetime => date.beginning_of_day.utc..date.end_of_day.utc, aliada_id: id).each do |sch|
-          sch.status = 'busy'
-          sch.save!
-        end
-      end
-    end
+
