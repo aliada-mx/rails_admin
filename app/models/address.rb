@@ -28,10 +28,8 @@ class Address < ActiveRecord::Base
 
   # An address might be instantiated with a postal code code and not a PostalCode object
   def ensure_postal_code!
-    return if postal_code_id.present?
-
     if postal_code_number.present?
-      self.postal_code = PostalCode.find_by!(number: postal_code_number)
+      self.postal_code = PostalCode.find_by(number: postal_code_number) || self.postal_code
       self.save!
     end
   end

@@ -43,13 +43,13 @@ RailsAdmin.config do |config|
 
     charge_services do
       visible do
-        bindings[:abstract_model].model.to_s == 'service'
+        bindings[:abstract_model].model.to_s == 'Service'
       end
     end
 
     address_map do
       visible do
-        bindings[:abstract_model].model.to_s == 'address'
+        bindings[:abstract_model].model.to_s == 'Address'
       end
     end
 

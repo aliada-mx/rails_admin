@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150330155839) do
+ActiveRecord::Schema.define(version: 20150401151352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,6 +36,8 @@ ActiveRecord::Schema.define(version: 20150330155839) do
     t.integer  "map_zoom"
     t.decimal  "references_latitude",  precision: 10, scale: 7
     t.decimal  "references_longitude", precision: 10, scale: 7
+    t.decimal  "map_center_latitude",  precision: 10, scale: 6
+    t.decimal  "map_center_longitude", precision: 10, scale: 6
   end
 
   add_index "addresses", ["postal_code_id"], name: "index_addresses_on_postal_code_id", using: :btree
