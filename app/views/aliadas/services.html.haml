@@ -2,7 +2,7 @@
 - @unfinished_services.each do |service|
   %h5
     En: 
-    #{service.address.street}
+    #{service.user.full_name}
     %h6= I18n.l service.tz_aware_datetime, format: "%A %e a las %I %P"
     = form_tag((finish_service_path)) do
       %input{:type=>"hidden", :value=>service.id, :name => :service}
