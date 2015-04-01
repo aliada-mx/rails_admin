@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 class UserMailer < ApplicationMailer
   def welcome(user)
     template_id = Setting.sendgrid_templates_ids[:welcome]
 
-    sendgrid_template_mail to: user.email,
+    sendgrid_template_mail to: user.email, subject: 'Bienvenido',
                            substitutions: {'-full_name-' => [ user.first_name ], '-password-' => [user.password]},
                            template_id: template_id
   end
@@ -14,7 +15,7 @@ class UserMailer < ApplicationMailer
    # binding.pry
     service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada).first
    # binding.pry
-    sendgrid_template_mail to: service.user.email,
+    sendgrid_template_mail to: service.user.email, subject: 'Confirmación de tu servicio',
     substitutions:
       {'-user_full_name-' => [ service.user.full_name  ],
       '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A %d')],
@@ -32,7 +33,7 @@ class UserMailer < ApplicationMailer
     
     service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada).first
     
-    sendgrid_template_mail to: service.user.email,
+    sendgrid_template_mail to: service.user.email,subject: 'Confirmación de tu servicio', 
     substitutions:
       {'-user_full_name-' => [ service.user.full_name  ],
       '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A %d')],
@@ -83,7 +84,7 @@ class UserMailer < ApplicationMailer
   def payment_problem(user, payment_method)
     template_id = Setting.sendgrid_templates_ids[:billing_issue]
     
-    sendgrid_template_mail to: 'alex@aliada.mx',
+    sendgrid_template_mail to: user.email, subject: 'Problema con tu método de pago',
     substitutions:
       {'-user_full_name-' => [ user.full_name  ],
       '-service_payment_last_4-' => [ payment_method.last4]},
