@@ -481,9 +481,6 @@ class Service < ActiveRecord::Base
     label_plural 'servicios'
     navigation_label 'Operación'
     navigation_icon 'icon-home'
-    configure :schedules do
-      visible false
-    end
 
     configure :extra_services do
       visible false
