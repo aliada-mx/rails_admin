@@ -323,6 +323,7 @@ class Service < ActiveRecord::Base
       user = User.create!(service_params[:user])
       service = Service.new(service_params.except!(:user, :address))
       code_type = CodeType.find_by(name: "personal")
+      password = user.password
 
       service.address = address
       service.user = user
@@ -340,7 +341,7 @@ class Service < ActiveRecord::Base
 
       user.create_promotional_code code_type
 
-      user.send_welcome_email
+      user.send_service_confirmation_pwd(service,password)
       return service
     end
   end

@@ -153,8 +153,8 @@ class User < ActiveRecord::Base
     UserMailer.service_confirmation(service).deliver!
   end
 
-  def send_service_confirmation_pwd(service)
-    UserMailer.service_confirmation_pwd(service).deliver!
+  def send_service_confirmation_pwd(service, pwd)
+    UserMailer.service_confirmation_pwd(service, pwd).deliver!
   end
 
   def send_billing_receipt(service)
