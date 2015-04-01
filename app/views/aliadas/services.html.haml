@@ -1,60 +1,54 @@
-%body
-  = yield
-  = area :javascript do
-    = render partial: 'common/javascript_templates'
-    = render partial: 'common/javascript_variables'
+%h2 Servicios por terminar
+- @unfinished_services.each do |service|
+  %h5
+    En: 
+    #{service.address.street}
+    %h6= I18n.l service.tz_aware_datetime, format: "%A %e a las %I %P"
+    = form_tag((finish_service_path)) do
+      %input{:type=>"hidden", :value=>service.id, :name => :service}
+      %div
+        ¿Llegue?
+        %select{:name => :begin_time}
+          - begin_hours_range(service).each do |h|
+            %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%I:%M %P"
+        ¿Acabe?
+        %select{:name => :end_time}
+          - end_hours_range(service).each do |h|
+            %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%I:%M %P"
+        %input{  :type => "submit", :name => "Pay", :value => "Guardar :)" }
+    %br
+    %br
+%h1 Servicios proximos    
+- @upcoming_services.each do |service|
+  %h1=  I18n.l service.tz_aware_datetime, format: "%A %e a las %I %P"
+  %h4
+    #{service.estimated_hours.floor} horas
+    #{(60*(service.estimated_hours-service.estimated_hours.floor)).floor} minutos
+  %h3 
+    #{service.address.street} 
+    #{service.address.number}
+    interior:
+    #{service.address.interior_number}
+  %h4
+    %b Colonia: 
+    #{service.address.colony},
+    #{service.address.city}
+  %img{:src => "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{service.address.latitude},#{service.address.longitude}&zoom=#{service.address.map_zoom}&markers=#{service.address.latitude},#{service.address.longitude}&markers=color:blue%7Clabel:S%7C#{service.address.references_latitude},#{service.address.references_longitude}"}
+  %h5= service.address.references 
+  %h3 
+    %b Cliente:
+    #{service.user.first_name}
+    #{service.user.last_name}
+  %h5 
+    %b tel: 
+    #{service.user.phone}
+  %h5 Entre calles: #{service.address.between_streets}
+  %h5 Baños:  #{service.bathrooms}
+  %h5 Cuartos:   #{service.bedrooms}
+  - if !service.confirmed 
+    = form_tag((confirm_service_path)) do
+      %input{:type=>"hidden", :value=>service.id, :name => :service}
+      %input.action-button-pink{  :type => "submit", :name => "confirmation", :value => "Si voy" }
+  %br
+  %br
 
-  %h2 Servicios por terminar
-  - @unfinished_services.each do |service|
-    %h5
-      En: 
-      #{service.address.street}
-      %h6= I18n.l service.tz_aware_datetime, format: "%A %e a las %I %P"
-      = form_tag((finish_service_path)) do
-        %input{:type=>"hidden", :value=>service.id, :name => :service}
-        %div
-          ¿Llegue?
-          %select{:name => :begin_time}
-            - begin_hours_range(service).each do |h|
-              %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%I:%M %P"
-          ¿Acabe?
-          %select{:name => :end_time}
-            - end_hours_range(service).each do |h|
-              %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%I:%M %P"
-          %input{  :type => "submit", :name => "Pay", :value => "Guardar :)" }
-      %br
-      %br
-  %h1 Servicios proximos    
-  - @upcoming_services.each do |service|
-    %h1=  I18n.l service.tz_aware_datetime, format: "%A %e a las %I %P"
-    %h4
-      #{service.estimated_hours.floor} horas
-      #{(60*(service.estimated_hours-service.estimated_hours.floor)).floor} minutos
-    %h3 
-      #{service.address.street} 
-      #{service.address.number}
-      interior:
-      #{service.address.interior_number}
-    %h4
-      %b Colonia: 
-      #{service.address.colony},
-      #{service.address.city}
-    %img{:src => "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{service.address.latitude},#{service.address.longitude}&zoom=#{service.address.map_zoom}&markers=#{service.address.latitude},#{service.address.longitude}&markers=color:blue%7Clabel:S%7C#{service.address.references_latitude},#{service.address.references_longitude}"}
-    %h5= service.address.references 
-    %h3 
-      %b Cliente:
-      #{service.user.first_name}
-      #{service.user.last_name}
-    %h5 
-      %b tel: 
-      #{service.user.phone}
-    %h5 Entre calles: #{service.address.between_streets}
-    %h5 Baños:  #{service.bathrooms}
-    %h5 Cuartos:   #{service.bedrooms}
-    - if !service.confirmed 
-      = form_tag((confirm_service_path)) do
-        %input{:type=>"hidden", :value=>service.id, :name => :service}
-        %input.action-button-pink{  :type => "submit", :name => "confirmation", :value => "Si voy" }
-    %br
-    %br
-  
