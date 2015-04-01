@@ -1,0 +1,20 @@
+.field-row
+  %icon.icon-home
+  = address_form.text_field :street, placeholder: 'Calle y número exterior', class: 'full-width', data: {bind: 'textInput: street'}
+.field-row
+  %icon.icon-hash
+  = address_form.text_field :number, placeholder: 'Número Exterior', class: 'two-thirds-width', data: {bind: 'textInput: number'}
+  = address_form.text_field :interior_number, placeholder: 'Interior', class: 'third-width important-placeholder', data: {bind: 'textInput: interior_number'}
+.field-row
+  = address_form.text_field :colony, placeholder: 'Colonia', class: 'full-width', data: {bind: 'textInput: colony'}
+.field-row
+  = address_form.text_field :between_streets, placeholder: 'Entre calles', class: 'full-width', data: {bind: 'textInput: between_streets'}
+.field-row
+  = address_form.text_field :city, placeholder: 'Ciudad/Delegación', class: 'half-width', data: {bind: 'textInput: city'}
+  = address_form.text_field :state, placeholder: 'Estado/Distrito', class: 'half-width', data: {bind: 'textInput: state'}
+.field-row
+  = address_form.text_field :postal_code_number, placeholder: 'Código postal', data: {bind: 'textInput: postal_code_number'}, class: 'two-thirds-width'
+
+= address_form.hidden_field :latitude, as: :hidden, data: {bind: 'textInput: latitude'}
+= address_form.hidden_field :longitude, as: :hidden, data: {bind: 'textInput: longitude'}
+= address_form.hidden_field :map_zoom, as: :hidden, data: {bind: 'textInput: map_zoom'}

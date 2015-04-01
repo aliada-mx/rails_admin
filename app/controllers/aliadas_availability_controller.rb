@@ -1,5 +1,6 @@
 class AliadasAvailabilityController < ApplicationController
   include AliadaSupport::DatetimeSupport
+  before_filter :set_user
 
   def for_calendar
     # We round up because our whole system depends on round hours
@@ -37,5 +38,9 @@ class AliadasAvailabilityController < ApplicationController
                                                 service: service,
                                                 recurrent: service_type.recurrent?,
                                                 periodicity: service_type.periodicity)
+    end
+
+    def set_user
+      @user = User.find(params[:user_id]) if params.include? :user_id
     end
 end

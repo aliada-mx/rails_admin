@@ -25,6 +25,10 @@ module Presenters
       rails_admin_edit_link(user)
     end
 
+    def aliada_link
+      rails_admin_edit_link(aliada)
+    end
+
     def friendly_datetime
       I18n.l(tz_aware_datetime, format: :future) if datetime
     end

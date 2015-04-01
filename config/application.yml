@@ -25,7 +25,6 @@ defaults: &defaults
   bedrooms_multiplier: 1 # to get hours
   bathrooms_multiplier: 0.5 # to get hours
   minimum_hours_service: 3
-  cost_per_hour: 65
   booking_for_tomorrow_limit: 23 # After this hour you cant book a service for tomorrow, in UTC or 5 pm in Mexico City Time
   too_late_cancelation_fee: 100 # in pesos
  
