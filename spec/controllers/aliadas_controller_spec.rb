@@ -112,7 +112,7 @@ feature 'AliadasController' do
       
     end 
     
-    it 'shows unfinished services and lets us charge them' do
+    xit 'shows unfinished services and lets us charge them' do
       aliada = create(:aliada)
       client = create(:user, phone: '54545454', first_name: 'Juan', last_name:'Perez Tellez')
       VCR.use_cassette('conekta_charge', match_requests_on: [:conekta_charge]) do
