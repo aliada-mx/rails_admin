@@ -43,7 +43,14 @@ class Service < ActiveRecord::Base
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
   # Rails admin tabs
   scope :del_dia, -> { on_day(Time.zone.now + 1.day).not_canceled }
-  scope :todos, -> { }
+  scope :todos, -> do 
+    find_by_sql all.joins(:user).to_sql.gsub(
+      'INNER JOIN "users" ON "users"."id" = "services"."user_id" AND (users.role in (\'client\',\'admin\'))',
+      'INNER JOIN "users" ON "users"."id" = "services"."user_id" OR "users"."id" = "services"."aliada_id" AND (users.role in (\'client\',\'admin\', \'aliada\'))',
+    ) 
+  end
+
+
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
 
@@ -247,7 +254,7 @@ class Service < ActiveRecord::Base
   end
 
   def enable_schedules!
-    self.schedules.in_the_future.map(&:enable_booked!)
+    self.schedules.in_the_future.map(&:enable_booked)
   end
 
   def charge!
@@ -477,7 +484,6 @@ class Service < ActiveRecord::Base
     end
   end
 
-
   rails_admin do
     label_plural 'servicios'
     navigation_label 'Operación'
@@ -493,20 +499,29 @@ class Service < ActiveRecord::Base
       field :user_link do
         virtual?
       end
+
       field :datetime do
         sort_reverse false
         pretty_value do
-          
           I18n.l(value , format: :friendly).titleize
         end
       end
+
       field :status
 
+      field :aliada_link do
+        virtual?
+      end
+
       field :aliada do
-        searchable [{users: :first_name }, {users: :last_name }, {users: :email}, {users: :phone}]
+        searchable [{users: :first_name },
+                    {users: :last_name },
+                    {users: :email},
+                    {users: :phone}]
         queryable true
         filterable true
       end
+
       field :recurrence
 
       field :created_at

@@ -1,11 +1,11 @@
 # Register actions
 RailsAdmin::Config::Actions.register(:create_aliada_working_hours, RailsAdmin::Config::Actions::CreateAliadaWorkingHours)
 
-
 RailsAdmin::Config::Fields::Types::register(:show_aliada_calendar, RailsAdmin::Config::Actions::ShowAliadaCalendar)
 
 RailsAdmin::Config::Actions.register(:charge_services, RailsAdmin::Config::Actions::ChargeServices)
-
+ 
+RailsAdmin::Config::Actions.register(:address_map, RailsAdmin::Config::Actions::AddressMap)
 
 RailsAdmin.config do |config|
   # By default rails admin does not support Inet fields so we force it
@@ -43,7 +43,13 @@ RailsAdmin.config do |config|
 
     charge_services do
       visible do
-        bindings[:abstract_model].model.to_s == 'Service'
+        bindings[:abstract_model].model.to_s == 'service'
+      end
+    end
+
+    address_map do
+      visible do
+        bindings[:abstract_model].model.to_s == 'address'
       end
     end
 

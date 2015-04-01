@@ -30,17 +30,18 @@ module RailsAdmin
             if request.get?
 
               render :action => @action.template_name
+            else
+              services = if @object.blank?
+                            @objects = list_entries(@model_config, :charge_services)
+                          else
+                            [ @object ]
+                         end
+
+              Resque.enqueue(ServiceCharger, services.map(&:id))
+
+              flash[:success] = 'Se han puesto en cola los servicios a cobrar, los erróneos aparecerán como tickets'
+              redirect_to back_or_index
             end
-            services = if @object.blank?
-                          @objects = list_entries(@model_config, :charge_services)
-                        else
-                          [ @object ]
-                       end
-
-            Resque.enqueue(ServiceCharger, services.map(&:id))
-
-            flash[:success] = 'Se han puesto en cola los servicios a cobrar, los erróneos aparecerán como tickets'
-            redirect_to back_or_index
           end
         end
       end
