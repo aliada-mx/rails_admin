@@ -33,7 +33,7 @@ class User < ActiveRecord::Base
   before_validation :ensure_password
   before_validation :set_default_role
 
-  default_scope { where('users.role in (?)', ['client', 'admin']) }
+  default_scope { where('users.role in (?)', ["client", "admin"]) }
 
   validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
   validates_presence_of :password, if: :password_required?

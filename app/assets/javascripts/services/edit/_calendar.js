@@ -55,6 +55,7 @@ aliada.services.edit.initialize_calendar_times = function() {
         service_type_id: aliada.ko.service_type().id,
         postal_code_number: aliada.user.postal_code_number,
         aliada_id: aliada.user.aliada_id,
+        user_id: aliada.user.id,
         service_id: aliada.service.id
       };
 
