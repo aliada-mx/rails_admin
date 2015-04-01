@@ -14,7 +14,7 @@ class AliadasController < ApplicationController
     @aliada = Aliada.find_by(authentication_token: params[:token])
     @service_to_finish = Service.where(id: params[:service], 
                                        aliada_id: @aliada.id, 
-                                       status: 'aliada_assigned').where("datetime <= ?", DateTime.now.utc).take
+                                       status: 'aliada_assigned').take
     if @service_to_finish
       @service_to_finish.aliada_reported_begin_time =  ActiveSupport::TimeZone["Mexico City"].parse(params[:begin_time])
       @service_to_finish.aliada_reported_end_time = ActiveSupport::TimeZone["Mexico City"].parse(params[:end_time])
