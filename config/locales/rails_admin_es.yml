@@ -72,6 +72,7 @@ es:
         scores: calificaciones
         next_service_link: 'Siguiente servicio'
       service_type:
+        <<: *common_attributes
         periodicity: periodicidad
         price_per_hour: precio por hora
       conekta_card:
@@ -139,7 +140,6 @@ es:
         forbidden_instructions: No limpiar /No tocar
         special_instructions: Otras instrucciones especiales
         user_link: Usuario
-      service_type:
       ticket:
         relevant_object: Servicio
         message: error

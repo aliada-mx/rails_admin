@@ -120,4 +120,3 @@ aliada.services.edit.initialize_calendar_times = function() {
     $year.html(calendar.getYear());
   };
 };
-_calendar = null
