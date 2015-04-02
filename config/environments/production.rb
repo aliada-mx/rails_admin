@@ -106,11 +106,11 @@ Rails.application.configure do
     }
   }
 
-  config.serve_static_assets = true
-  config.static_cache_control = 'public, max-age=31536000'
-  config.action_controller.asset_host = 'd255iwpyspwxxr.cloudfront.net'
+  # config.serve_static_assets = true
+  # config.static_cache_control = 'public, max-age=31536000'
+  # config.action_controller.asset_host = 'd255iwpyspwxxr.cloudfront.net'
 
   config.action_mailer.default_url_options = { :host => 'aliada.mx' }
 
-  # config.force_ssl = true
+  config.force_ssl = true
 end

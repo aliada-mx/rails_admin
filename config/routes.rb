@@ -55,10 +55,6 @@ Rails.application.routes.draw do
   end
 
 
-
-
-
-
   resources :schedules
 
   match 'calificar-servicio/:service_id', to: 'scores#create_by_service_id', as: :score_service, via: [:get, :post]

@@ -30,3 +30,4 @@
   aliada.service.bedrooms = #{@service.bedrooms};
   aliada.service.friendly_datetime = '#{@service.friendly_datetime}';
   aliada.service.is_recurrent = #{@service.recurrent?};
+  aliada.service.default_service_type = #{@service.service_type.to_json.html_safe};

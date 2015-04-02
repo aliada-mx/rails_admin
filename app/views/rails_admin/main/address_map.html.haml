@@ -15,6 +15,10 @@
 
 
   .col-lg-12.map-wrapper
+    - if @address.map_missing?
+      %h5
+        El mapa no tiene las coordenadas correctas
+
     = render partial: 'common/map'
 
 = area :javascript do

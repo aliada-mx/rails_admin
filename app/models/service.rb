@@ -42,7 +42,7 @@ class Service < ActiveRecord::Base
   scope :ordered_by_datetime, -> { order(:datetime) }
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
   # Rails admin tabs
-  scope :del_dia, -> { on_day(Time.zone.now + 1.day).not_canceled }
+  scope 'mañana', -> { on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
   scope :todos, -> {}
 
 
@@ -91,6 +91,7 @@ class Service < ActiveRecord::Base
   # Ask service_type to answer recurrent? method for us
   delegate :recurrent?, to: :service_type
   delegate :one_timer?, to: :service_type
+  delegate :one_timer_from_recurrent?, to: :service_type
   delegate :periodicity, to: :service_type
   delegate :wdays_count_to_end_of_recurrency, to: :recurrence
 
@@ -496,11 +497,9 @@ class Service < ActiveRecord::Base
         virtual?
       end
 
-      field :status
+      field :datetime
 
-      field :aliada_link do
-        virtual?
-      end
+      field :status
 
       field :aliada do
         searchable [{users: :first_name },
@@ -509,15 +508,16 @@ class Service < ActiveRecord::Base
                     {users: :phone}]
         queryable true
         filterable true
+        visible false
       end
 
-      field :recurrence
+      field :address_map_link
+
+      field :aliada_webapp_link
 
       field :created_at
 
-      field :address
-
-      scopes [:del_dia, :todos, :confirmados, :sin_confirmar]
+      scopes ['mañana', :todos, :confirmados, :sin_confirmar]
     end
   end
 end
