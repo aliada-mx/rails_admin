@@ -35,6 +35,10 @@ class ServiceType < ActiveRecord::Base
   def one_timer?
     name == 'one-time' || name == 'one-time-from-recurrent'
   end
+ 
+  def one_timer_from_recurrent?
+    name == 'one-time-from-recurrent'
+  end
 
   def benefits_list
     benefits.present? ? benefits.split(',') : []

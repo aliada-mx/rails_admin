@@ -78,7 +78,6 @@ $(document).ready(function() {
     update_calendar();
   });
 
-
   aliada.ko.current_step.subscribe(function(step) {
     if (step == 2) {
       $('textarea').css('overflow', 'hidden').autogrow();

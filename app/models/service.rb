@@ -91,6 +91,7 @@ class Service < ActiveRecord::Base
   # Ask service_type to answer recurrent? method for us
   delegate :recurrent?, to: :service_type
   delegate :one_timer?, to: :service_type
+  delegate :one_timer_from_recurrent?, to: :service_type
   delegate :periodicity, to: :service_type
   delegate :wdays_count_to_end_of_recurrency, to: :recurrence
 
