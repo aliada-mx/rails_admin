@@ -120,6 +120,7 @@ es:
         <<: *common_attributes
       score:
       service: &service_attributes
+        <<: *common_attributes
         datetime: fecha y hora del servicio
         zone: zona
         address: dirección
@@ -140,6 +141,8 @@ es:
         forbidden_instructions: No limpiar /No tocar
         special_instructions: Otras instrucciones especiales
         user_link: Usuario
+        address_map_link: 'Mapa'
+        aliada_webapp_link: 'Webapp de aliada'
       ticket:
         relevant_object: Servicio
         message: error

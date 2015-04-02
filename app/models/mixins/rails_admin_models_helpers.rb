@@ -19,5 +19,15 @@ module Mixins
 
       ActionController::Base.helpers.link_to(name, url)
     end
+
+    def aliada_show_webapp_link(aliada)
+      return '' if aliada.blank?
+
+      host = Setting.host
+      url =  Rails.application.routes.url_helpers.aliadas_services_path(aliada.authentication_token)
+      name = aliada.name || address.first_name || address.last_name
+
+      ActionController::Base.helpers.link_to(name, url)
+    end
   end
 end

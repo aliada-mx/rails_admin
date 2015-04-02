@@ -508,11 +508,14 @@ class Service < ActiveRecord::Base
                     {users: :phone}]
         queryable true
         filterable true
+        visible false
       end
 
-      field :created_at
-
       field :address_map_link
+
+      field :aliada_webapp_link
+
+      field :created_at
 
       scopes ['mañana', :todos, :confirmados, :sin_confirmar]
     end

@@ -39,6 +39,10 @@ module Presenters
       end
     end
 
+    def aliada_webapp_link
+      aliada_show_webapp_link(aliada)
+    end
+
     def aliada_link
       rails_admin_edit_link(aliada)
     end
