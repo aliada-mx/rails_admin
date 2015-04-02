@@ -7,7 +7,7 @@ module Presenters
     end
 
     def status_in_spanish
-      status_enum.to_h.invert[status]
+      Hash[*status_enum.flatten].to_h.invert[status]
     end
 
     def tz_aware_datetime
