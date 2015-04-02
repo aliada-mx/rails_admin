@@ -86,7 +86,7 @@ include  ActionView::Helpers::DateHelper
     template_id = Setting.sendgrid_templates_ids[:reminder]
     service = Service.where(id: service.id).joins(:user).joins(:address).joins(:service_type).first
     
-    sendgrid_template_mail to: service.user.email, subject: 'Recordatorio de visita',
+    sendgrid_template_mail to: 'alex@aliada.mx', subject: 'Recordatorio de visita',
     substitutions:
       {'-user_full_name-' => [service.user.full_name],
        '-aliada_full_name-'=> [service.aliada.full_name],
