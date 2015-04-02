@@ -14,6 +14,10 @@ class Address < ActiveRecord::Base
     return "#{self.street} #{self.number} int. #{self.interior_number}, Col. #{self.colony}, #{self.city}"
   end
 
+  def map_missing?
+    latitude.zero? || longitude.zero?
+  end
+
   def postal_code_or_number
     message = I18n.t('address.validations.postal_code_failed')
 

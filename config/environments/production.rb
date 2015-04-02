@@ -112,5 +112,5 @@ Rails.application.configure do
 
   config.action_mailer.default_url_options = { :host => 'aliada.mx' }
 
-  # config.force_ssl = true
+  config.force_ssl = true
 end

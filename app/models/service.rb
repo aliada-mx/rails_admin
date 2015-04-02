@@ -501,10 +501,6 @@ class Service < ActiveRecord::Base
 
       field :status
 
-      field :aliada_link do
-        virtual?
-      end
-
       field :aliada do
         searchable [{users: :first_name },
                     {users: :last_name },
@@ -514,11 +510,9 @@ class Service < ActiveRecord::Base
         filterable true
       end
 
-      field :recurrence
-
       field :created_at
 
-      field :address
+      field :address_map_link
 
       scopes ['mañana', :todos, :confirmados, :sin_confirmar]
     end

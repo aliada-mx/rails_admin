@@ -25,6 +25,20 @@ module Presenters
       rails_admin_edit_link(user)
     end
 
+    def address_map_link
+      if address
+        if address.map_missing?
+          name = "* #{address.name}" 
+        else
+          name = address.name
+        end
+
+        address_map_action_link(address, name: name)
+      else
+        'Le falta dirección a este servicio '
+      end
+    end
+
     def aliada_link
       rails_admin_edit_link(aliada)
     end
