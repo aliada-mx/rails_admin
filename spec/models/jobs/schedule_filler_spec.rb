@@ -20,6 +20,7 @@ describe 'Schedule Filler' do
 
   before do
     Timecop.freeze(starting_datetime)
+    # Creating 1 hour aliada_working_hours
     (7..(7 + total_available_hours - 1)).each do |i|
       AliadaWorkingHour.create(weekday: recurrence_service_datetime.weekday, hour: i, aliada: aliada, total_hours: 1, owner: 'aliada', periodicity: 7)
     end
@@ -27,6 +28,32 @@ describe 'Schedule Filler' do
 
   after do
     Timecop.return
+  end
+
+  context '#valid schedule filler in a specific day' do
+
+    it 'creates schedules for aliada in a specific day' do
+      # Exact number of total, booked and available schedules created
+      specific_day = Time.zone.parse('05 Apr 2015 00:00:00')
+      ScheduleFiller.fill_schedule_for_specific_day specific_day
+
+      expect(Schedule.where("datetime < ?", Time.zone.now).count).to be total_available_hours
+      expect(Schedule.available.where("datetime < ?", Time.zone.now).count).to be (total_available_hours - total_service_hours)
+      expect(Schedule.booked.where("datetime < ?", Time.zone.now).count).to be total_service_hours
+
+      #Compensate for UTC 
+      recurrence_in_the_past = specific_day.change(hour: client_recurrence.utc_hour(specific_day))
+
+      expect(Schedule.booked.where("datetime < ?", Time.zone.now).first.datetime).to eql recurrence_in_the_past
+      # Check the service date created for the client's recurrence in the future
+      expect(Service.last.datetime).not_to eql first_service.datetime
+      expect(Service.last.datetime).to eql recurrence_in_the_past
+
+      # Check that it has been created using the first created service
+      expect(Service.last.special_instructions).to eql first_service.special_instructions
+
+    end
+
   end
 
   context '#valid_filled_schedules' do
@@ -51,7 +78,7 @@ describe 'Schedule Filler' do
 
       expect(Schedule.booked.in_the_future.first.datetime).to eql recurrence_in_the_future
       # Check the service date created for the client's recurrence in the future
-      expect(Service.last.datetime).not_to be first_service.datetime
+      expect(Service.last.datetime).not_to eql first_service.datetime
       # Check that it has been created using the first created service
       expect(Service.last.special_instructions).to eql first_service.special_instructions
     end

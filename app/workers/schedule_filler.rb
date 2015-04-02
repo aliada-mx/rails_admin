@@ -15,7 +15,22 @@ class ScheduleFiller
       begin
         fill_aliadas_availability today_in_the_future
 
-        insert_clients_schedule today_in_the_future
+        insert_clients_schedule today_in_the_future, true
+      rescue Exception => e
+        Rails.logger.fatal e 
+        Raygun.track_exception(e)
+        raise e
+      end
+    end
+  end
+
+  def self.fill_schedule_for_specific_day specific_day
+    
+    ActiveRecord::Base.transaction do
+      begin
+        fill_aliadas_availability specific_day
+
+        insert_clients_schedule specific_day, true 
       rescue Exception => e
         Rails.logger.fatal e 
         Raygun.track_exception(e)
@@ -68,12 +83,16 @@ class ScheduleFiller
     beginning_of_user_recurrence = today_in_the_future.change(hour: user_recurrence.utc_hour(today_in_the_future))
 
     base_service_attributes = base_service.shared_attributes
-    service = Service.create!(base_service_attributes.merge({datetime: beginning_of_user_recurrence }))
+    service = Service.find_by(datetime: beginning_of_user_recurrence)
+    if not service
+      service = Service.create!(base_service_attributes.merge({datetime: beginning_of_user_recurrence }))
+    end
     service 
   end
 
   # client's recurrences, to book inside aliada's schedule 
-  def self.insert_clients_schedule today_in_the_future
+  #TODO: REMOVE fix_total_hours flag AFTER MIGRATION FIX
+  def self.insert_clients_schedule today_in_the_future, fix_total_hours = false
 
     Recurrence.active.each do |user_recurrence|
       if today_in_the_future.weekday == user_recurrence.weekday 
@@ -87,25 +106,44 @@ class ScheduleFiller
 
         schedules = Schedule.where("aliada_id = ? AND datetime >= ? AND datetime < ?", user_recurrence.aliada_id, beginning_datetime, ending_datetime )
         if schedules.empty? 
-          error = "Aliada's future schedule was not found. Probably, the client's recurrence was not built considering the aliada's recurrence."
-          Rails.logger.fatal error
-          raise error
+
+          #TODO: REMOVE AFTER MIGRATION FIX
+          if fix_total_hours
+
+            # Aliadas fantasmas
+            if not [43, 44].index user_recurrence.aliada_id
+
+              #binding.pry
+              error = "Aliada #{user_recurrence.aliada.first_name} #{user_recurrence.aliada.last_name} with empty or inactive schedules."
+              Rails.logger.fatal error
+              raise error
+
+            end
+            
+          else
+            error = "Aliada's future schedule was not found. Probably, the client's recurrence was not built considering the aliada's recurrence."
+            Rails.logger.fatal error
+            raise error
+          end
+
         elsif (schedules.count < user_recurrence.total_hours)
-          error = "Aliada's schedules count #{schedules.count} didn't match number of user recurrence total hours #{user_recurrence.total_hours}"
-          Rails.logger.fatal error
-          raise error
+          
+          #TODO: REMOVE AFTER MIGRATION FIX
+          if fix_total_hours
 
-          #schedules = []
-          #CREATE SCHEDULES
-          #( 0..( user_recurrence.total_hours - 1 ) ).each do |i|
-          #  if not Schedule.find_by(datetime: beginning_datetime + i.hours, aliada_id: user_recurrence.aliada_id)
-          #    schedule = Schedule.find_or_initialize_by(datetime: beginning_datetime + i.hours, aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, status: 'available', recurrence_id: user_recurrence.id)
-          #    schedule.save!
-          #    puts "CREATED SCHEDULE #{schedule.id}"
-          #    schedules << schedule
-          #  end 
-          #end
-
+            if (user_recurrence.total_hours - schedules.count) > 2
+              error = "Aliada's schedules difference #{(user_recurrence.total_hours - schedules.count)} is more than 2"
+              Rails.logger.fatal error
+              raise error
+            end
+          
+            user_recurrence.update_attribute(:total_hours, schedules.count) 
+          else
+            error = "Aliada's schedules count #{schedules.count} didn't match number of user recurrence total hours #{user_recurrence.total_hours}"
+            Rails.logger.fatal error
+            raise error
+          end
+          
         end
         
         # Assign the client to the aliada's schedule
@@ -115,9 +153,28 @@ class ScheduleFiller
   end
 
 
-  ##NO VALIDATION METHODS, TO BE RUN ONLY AFTER MIGRATION##
-  #
-  #
+  ##
+  ##
+  ## NO VALIDATION METHODS, TO BE RUN ONLY AFTER MIGRATION AND WHILE THE NEW WEBPAGE STABILIZES 
+  ##
+  ##
+  
+  def self.fix_recurrence_total_hours
+    today_in_the_future = Time.zone.now.beginning_of_day + Setting.time_horizon_days.days + 1.day
+    
+    ActiveRecord::Base.transaction do
+      begin
+        fill_aliadas_availability today_in_the_future
+
+        insert_clients_schedule today_in_the_future, true
+      rescue Exception => e
+        Rails.logger.fatal e 
+        Raygun.track_exception(e)
+        raise e
+      end
+    end
+  end
+
   
   def self.fill_schedule_after_migration
 
@@ -235,6 +292,41 @@ class ScheduleFiller
       end
     end
 
+  end
+
+  def self.fix_recurrence_ids_in_schedules
+
+    actualizadas = 0
+    conservadas = 0
+    borradas = 0
+    Schedule.all.each do |schedule|
+
+      datetime_in_mexico_city = schedule.datetime.in_time_zone("Mexico City")
+      if datetime_in_mexico_city.dst?
+        datetime_in_mexico_city += 1.hour 
+      end
+      weekday = datetime_in_mexico_city.weekday
+      hour = datetime_in_mexico_city.hour
+      
+      recurrences = schedule.aliada.aliada_working_hours.where("weekday = ? and hour = ?", weekday, hour)
+      if recurrences.empty?
+        schedule.update_attribute(:recurrence_id, nil)
+        borradas += 1
+        next
+      elsif recurrences.count > 1
+        raise "Hay mas matches de aliadas working hours para la schedule"
+      end
+      recurrence_id = recurrences.first.id
+
+      if schedule.recurrence_id != recurrence_id
+        actualizadas += 1
+        schedule.update_attribute(:recurrence_id, recurrence_id)
+      else
+        conservadas += 1
+      end     
+
+    end
+    return "ACTUALIZADAS #{actualizadas} CONSERVADAS #{conservadas} BORRADAS #{borradas}"
   end
 
 end
