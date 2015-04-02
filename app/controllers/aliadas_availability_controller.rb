@@ -24,7 +24,7 @@ class AliadasAvailabilityController < ApplicationController
 
     zone = Zone.find_by_postal_code_number(params[:postal_code_number])
     if zone.nil?
-      Raygun.track_exception(AliadaExceptions::AvailabilityNotFound.new(message: "No se encontró zona con disponiblidad", params)
+      Raygun.track_exception(AliadaExceptions::AvailabilityNotFound.new(message: "No se encontró zona con disponiblidad", object: params))
       return render json: { status: :success, dates_times: [] }
     end
 
