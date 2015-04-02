@@ -31,7 +31,7 @@ class UsersController < ApplicationController
 
     @services = ( recurrent_services + one_time ).select do |service|
       service.one_timer? && service.recurrence_id.nil? || service.recurrent?
-    end
+    end.uniq
   end
 
   def previous_services
