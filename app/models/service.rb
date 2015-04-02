@@ -42,7 +42,7 @@ class Service < ActiveRecord::Base
   scope :ordered_by_datetime, -> { order(:datetime) }
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
   # Rails admin tabs
-  scope :del_dia, -> { on_day(Time.zone.now + 1.day).not_canceled }
+  scope 'mañana', -> { on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
   scope :todos, -> {}
 
 
@@ -497,6 +497,8 @@ class Service < ActiveRecord::Base
         virtual?
       end
 
+      field :datetime
+
       field :status
 
       field :aliada_link do
@@ -518,7 +520,7 @@ class Service < ActiveRecord::Base
 
       field :address
 
-      scopes [:del_dia, :todos, :confirmados, :sin_confirmar]
+      scopes ['mañana', :todos, :confirmados, :sin_confirmar]
     end
   end
 end
