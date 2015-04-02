@@ -189,7 +189,6 @@ class Service < ActiveRecord::Base
     estimated_hours + hours_after_service
   end
 
-
   def ending_datetime
     datetime + total_hours.hours
   end

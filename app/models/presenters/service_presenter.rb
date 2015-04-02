@@ -6,6 +6,10 @@ module Presenters
       Service::STATUSES
     end
 
+    def status_in_spanish
+      Hash[*status_enum.flatten].to_h.invert[status]
+    end
+
     def tz_aware_datetime
       if datetime
         _datetime = datetime.in_time_zone(timezone)
