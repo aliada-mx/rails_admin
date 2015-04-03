@@ -6,7 +6,6 @@ $(function(){
     
     var submit_data = {
       attribute_name: $container.find('.attribute_name').data().attributename,
-      return_attribute: $container.find('.return_attribute').data().returnattribute,
       value: $input.val(),
     }
 

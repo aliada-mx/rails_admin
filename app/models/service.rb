@@ -43,8 +43,7 @@ class Service < ActiveRecord::Base
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
   # Rails admin tabs
   scope 'mañana', -> { on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
-  scope :todos, -> {}
-
+  scope :todos, -> { }
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
@@ -90,7 +89,7 @@ class Service < ActiveRecord::Base
     after_transition on: :pay do |service, transition|
       service.send_billing_receipt_email
 
-      service.billable_hours = service.amount_to_bill
+      service.billed_hours = service.amount_to_bill
       service.save!
     end
   end
