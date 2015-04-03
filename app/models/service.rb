@@ -68,6 +68,9 @@ class Service < ActiveRecord::Base
     transition ['created', 'aliada_assigned', 'in-progress'] => 'finished', :on => :finish
     transition ['created', 'aliada_assigned' ] => 'canceled', :on => :cancel
 
+    ###Ensure schedules are freed upon cancellation
+    after_transition any => 'canceled', :do => [:release_schedules]
+
     after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
 
     after_transition on: :assign do |service, transition|
@@ -250,6 +253,12 @@ class Service < ActiveRecord::Base
 
   def enable_schedules!
     self.schedules.in_the_future.map(&:enable_booked)
+  end
+
+  def release_schedules
+    self.schedules.each do |schedule|
+      schedule.enable
+    end
   end
 
   def charge!
