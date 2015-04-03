@@ -38,6 +38,10 @@ class UsersController < ApplicationController
     @services = User.find(params[:user_id]).services.in_the_past.not_canceled
   end
 
+  def clear_session
+    reset_session
+  end
+
   private
     def set_user
       @user = User.find(params[:user_id])

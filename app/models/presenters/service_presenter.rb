@@ -140,6 +140,18 @@ module Presenters
     def weekday_in_spanish
       tz_aware_datetime.dia_semana
     end
+
+    def to_json
+      attributes.merge!({amount_to_bill: amount_to_bill})
+    end
+
+    def friendly_aliada_reported_begin_time
+      I18n.l self.aliada_reported_begin_time, format: '%H:%M %p'
+    end
+
+    def friendly_aliada_reported_end_time
+      I18n.l self.aliada_reported_end_time, format: '%H:%M %p'
+    end
   end
 end
 

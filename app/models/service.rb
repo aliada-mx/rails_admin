@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 class Service < ActiveRecord::Base
-  include ApplicationHelper
   include Presenters::ServicePresenter
   include AliadaSupport::DatetimeSupport
   include Mixins::RailsAdminModelsHelpers
@@ -91,7 +90,7 @@ class Service < ActiveRecord::Base
     after_transition on: :pay do |service, transition|
       service.send_billing_receipt_email
 
-      service.billable_hours = amount_to_bill
+      service.billable_hours = service.amount_to_bill
       service.save!
     end
   end
@@ -263,11 +262,11 @@ class Service < ActiveRecord::Base
   def amount_to_bill
     if bill_by_billable_hours?
 
-      ceil_and_strip_insignificat_zeros amount_by_billable_hours
+      amount_by_billable_hours.ceil
 
     elsif bill_by_reported_hours?
 
-      ceil_and_strip_insignificat_zeros amount_by_reported_hours
+      amount_by_reported_hours.ceil
 
     else
       0
@@ -281,15 +280,18 @@ class Service < ActiveRecord::Base
   def charge!
     return if paid?
 
-    amount = amount_to_bill
-    product = OpenStruct.new({amount: amount,
-                              description: 'Servicio aliada',
-                              id: id})
-    
-    payment = user.charge!(product, self)
+    ActiveRecord::Base.transaction do
 
-    if payment && payment.paid?
-      pay!
+      amount = amount_to_bill
+      product = OpenStruct.new({amount: amount,
+                                description: 'Servicio aliada',
+                                id: id})
+      
+      payment = user.charge!(product, self)
+
+      if payment && payment.paid?
+        pay!
+      end
     end
   end
 
@@ -508,6 +510,8 @@ class Service < ActiveRecord::Base
     end
   end
 
+  attr_accessor :rails_admin_billable_hours_widget
+
   rails_admin do
     label_plural 'servicios'
     navigation_label 'Operación'
@@ -540,15 +544,22 @@ class Service < ActiveRecord::Base
 
       field :address_map_link
 
-      field :aliada_webapp_link
+      field :aliada_link
 
       field :rails_admin_billable_hours_widget do
-        render do
-          bindings[:view].render partial: 'rails_admin_billable_hours_widget', locals: {field: self, :form: bindings[:form], object: bindings[:object]}
+        virtual?
+        formatted_value do
+          bindings[:view].render partial: 'rails_admin/main/rails_admin_billable_hours_widget', locals: {field: self, 
+                                                                                        user: bindings[:current_user],
+                                                                                        form: bindings[:form],
+                                                                                        service: bindings[:object]}
+          
         end
       end
 
       field :created_at
+
+      field :aliada_webapp_link
 
       scopes ['mañana', :todos, :confirmados, :sin_confirmar]
     end

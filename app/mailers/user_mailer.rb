@@ -52,6 +52,13 @@ class UserMailer < ApplicationMailer
     template_id = Setting.sendgrid_templates_ids[:service_receipt]
     service = Service.where(id: service.id).joins(:address).joins(:service_type).first
     score_service_url = score_service_users_url(service.user, service)
+    
+    if service.bill_by_reported_hours?
+      service_worked_hours_text = "Ella nos dijo que trabajó de #{service.friendly_aliada_reported_end_time} a #{service.friendly_aliada_reported_begin_time}"
+    else
+      service_worked_hours_text = ""
+    end
+
 
     sendgrid_template_mail to: user.email,
       substitutions:
@@ -61,8 +68,7 @@ class UserMailer < ApplicationMailer
         '-service_time-' => [(I18n.l service.tz_aware_datetime, format: '%I %p')] ,
         '-service_type_name-' => [service.service_type.display_name] ,
         '-service_address-' => [service.address.full_address],
-        '-aliada_reported_begin_time-' =>[(I18n.l service.aliada_reported_begin_time, format: '%H:%M %p')],
-        '-aliada_reported_end_time-' =>[(I18n.l service.aliada_reported_end_time, format: '%H:%M %p')],
+        '-service_worked_hours-' => [service_worked_hours_text],
         '-service_friendly_total_hours-' =>[service.friendly_total_hours],
         '-service_price_per_hour-' => [service.service_type.price_per_hour],
         '-service_subtotal-' => [service.amount_to_bill],

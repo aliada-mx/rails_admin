@@ -1,0 +1,17 @@
+- update_path = Rails.application.routes.url_helpers.update_object_attribute_path('Service', service.id)
+
+.rails_admin_billable_hours_widget
+  .update_path{ data: {updatePath: "#{update_path}" } }
+
+  .attribute_name{ data:  {attributeName: 'billable_hours' } }
+  .return_attribute{ data:  {returnAttribute: 'billable_hours' } }
+
+  = text_field_tag :value, service.billable_hours, class: :billable_hours_input, tabindex: @loop_index + 1
+
+    
+  .amount_to_bill
+    %span.text
+      Cobrar $
+    %span.amount
+      = service.amount_to_bill 
+

@@ -136,7 +136,7 @@ feature 'Service' do
                          aliada_reported_end_time: Time.now + 3.hour,
                          datetime: starting_datetime,
                          estimated_hours: 3,
-                         service_type: one_time_service
+                         service_type: recurrent_service
                          )
       expect(s.amount_by_reported_hours).to be 195.0
     end
@@ -186,7 +186,6 @@ feature 'Service' do
       
       service.save
       
-
       VCR.use_cassette('conekta_user_charge', match_requests_on:[:conekta_charge]) do
         service.charge!
       end
@@ -207,7 +206,7 @@ feature 'Service' do
       service.aliada_reported_begin_time = starting_datetime
       service.aliada_reported_end_time = starting_datetime + 4.hours
     
-      expect(service.amount_to_bill).to eql 420.0
+      expect(service.amount_to_bill).to eql 420
     end
   end
 

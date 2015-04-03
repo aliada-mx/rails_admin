@@ -53,7 +53,16 @@ class Ability
               false
             end
           end
+        elsif subject_class == RailsAdminCustomAction
+          if current_user.admin?
+            true
+          else
+            false
+          end
         end
+
+
+
       end
     end
   end

@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/grillermo/rails_admin.git
-  revision: 427511291e153ca84706d0c7e9a26ed1dbc6768e
+  revision: f668f75b2db9bb8c517613bed9a464c525588082
   specs:
     rails_admin (0.6.6)
       builder (~> 3.1)

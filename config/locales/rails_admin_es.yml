@@ -143,6 +143,8 @@ es:
         user_link: Usuario
         address_map_link: 'Mapa'
         aliada_webapp_link: 'Webapp de aliada'
+        aliada_link: 'Aliada'
+        rails_admin_billable_hours_widget: 'Horas cobrables'
       ticket:
         relevant_object: Servicio
         message: error
