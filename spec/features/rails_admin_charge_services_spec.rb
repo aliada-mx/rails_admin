@@ -1,11 +1,14 @@
 feature 'Charge many services in the admin' do
+  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
   let(:admin){ create(:admin) }
 
-  let!(:service_1){ create(:service, status: 'finished') }
+  let!(:service_1){ create(:service, status: 'finished', 
+                           aliada_reported_begin_time: starting_datetime,
+                           aliada_reported_end_time: starting_datetime + 4.hours) }
   let!(:service_2){ create(:service, status: 'finished') }
   let!(:service_3){ create(:service, status: 'paid') }
 
-  let(:services_ids){ [service_1.id, service_2.id, service_3.id] }
+  let(:services_ids){ [ service_1.id ] }
   let(:path) {rails_admin.bulk_action_path(
                 bulk_action: 'charge_services',
                 model_name: 'service',
@@ -33,7 +36,6 @@ feature 'Charge many services in the admin' do
       before do
         ResqueSpec.inline = true
         expect_any_instance_of(User).to receive(:charge!).and_return(Payment.new(status: 'paid'))
-        expect_any_instance_of(Service).to receive(:amount_to_bill).and_return(0)
         expect_any_instance_of(Service).to receive(:pay!).and_call_original
       end
 
@@ -43,7 +45,6 @@ feature 'Charge many services in the admin' do
 
       it 'marks the services as paid' do
         login_as(admin)
-
 
         with_resque do
           with_rack_test_driver do

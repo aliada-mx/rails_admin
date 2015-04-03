@@ -2,6 +2,12 @@ class AliadasAvailabilityController < ApplicationController
   include AliadaSupport::DatetimeSupport
   before_filter :set_user
 
+  rescue_from AliadaExceptions::AvailabilityNotFound do |exception|
+
+    Raygun.track_exception(exception, custom_data: exception.service)
+    render json: { status: :error, code: :availability_not_found, message: 'Lo sentimos no encontramos disponibilidad :('}
+  end
+
   def for_calendar
     # We round up because our whole system depends on round hours
     # and its safer to asume more time than less
@@ -18,7 +24,7 @@ class AliadasAvailabilityController < ApplicationController
 
     zone = Zone.find_by_postal_code_number(params[:postal_code_number])
     if zone.nil?
-      Raygun.track_exception("No se encontró disponiblidad con parametros")
+      Raygun.track_exception(AliadaExceptions::AvailabilityNotFound.new(message: "No se encontró zona con disponiblidad", object: params))
       return render json: { status: :success, dates_times: [] }
     end
 
