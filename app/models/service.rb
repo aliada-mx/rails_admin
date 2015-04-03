@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 class Service < ActiveRecord::Base
+  include ApplicationHelper
   include Presenters::ServicePresenter
   include AliadaSupport::DatetimeSupport
   include Mixins::RailsAdminModelsHelpers
@@ -85,6 +86,13 @@ class Service < ActiveRecord::Base
 
     before_transition on: :cancel do |service, transition|
       service.enable_schedules!
+    end
+
+    after_transition on: :pay do |service, transition|
+      service.send_billing_receipt_email
+
+      service.billable_hours = amount_to_bill
+      service.save!
     end
   end
 
@@ -228,23 +236,41 @@ class Service < ActiveRecord::Base
       false
     end
   end
+
+  def reported_hours
+    (self.aliada_reported_end_time - self.aliada_reported_begin_time) / 3600.0
+  end
   
   #calculates the price to be charged for a service
-  def amount_to_bill
-    hours = self.aliada_reported_end_time.hour - self.aliada_reported_begin_time.hour
-    minutes = self.aliada_reported_end_time.min - self.aliada_reported_begin_time.min 
-    if hours < 3 && hours > 0
-    then
-      hours = 3
-      minutes = 0
-    end
-    amount = (hours*(self.service_type.price_per_hour))+(minutes * ((self.service_type.price_per_hour)/60.0))
-    
+  def amount_by_reported_hours
+    amount = reported_hours * service_type.price_per_hour
    
-    if amount > 0 && (self.aliada_reported_end_time.to_date === self.aliada_reported_begin_time.to_date)
-      return amount
+    if amount > 0 then amount else 0 end
+  end
+
+  def amount_by_billable_hours
+    billable_hours * service_type.price_per_hour
+  end
+
+  def bill_by_reported_hours?
+    aliada_reported_begin_time.present? && aliada_reported_end_time.present?
+  end
+
+  def bill_by_billable_hours?
+    billable_hours.present? && !billable_hours.zero?
+  end
+
+  def amount_to_bill
+    if bill_by_billable_hours?
+
+      ceil_and_strip_insignificat_zeros amount_by_billable_hours
+
+    elsif bill_by_reported_hours?
+
+      ceil_and_strip_insignificat_zeros amount_by_reported_hours
+
     else
-      return 0
+      0
     end
   end
 
@@ -255,7 +281,7 @@ class Service < ActiveRecord::Base
   def charge!
     return if paid?
 
-    amount = self.amount_to_bill
+    amount = amount_to_bill
     product = OpenStruct.new({amount: amount,
                               description: 'Servicio aliada',
                               id: id})
@@ -265,6 +291,10 @@ class Service < ActiveRecord::Base
     if payment && payment.paid?
       pay!
     end
+  end
+
+  def send_billing_receipt_email
+    UserMailer.billing_receipt(self.user, self).deliver
   end
 
   def create_double_charge_ticket
@@ -421,7 +451,6 @@ class Service < ActiveRecord::Base
     ScheduleInterval.build_from_range(datetime, ending_datetime, elements_for_key: estimated_hours, conditions:{ aliada_id: aliada_id })
   end
    
-  # Validations
   def service_type_exists
     message = 'El tipo de servicio elegido no existe'
 
@@ -454,7 +483,6 @@ class Service < ActiveRecord::Base
   def send_hour_changed_email
     ServiceMailer.hour_changed(self).deliver!
   end
-
 
   def send_untimely_cancellation_email
     ServiceMailer.untimely_cancelation(self).deliver!
@@ -513,6 +541,12 @@ class Service < ActiveRecord::Base
       field :address_map_link
 
       field :aliada_webapp_link
+
+      field :rails_admin_billable_hours_widget do
+        render do
+          bindings[:view].render partial: 'rails_admin_billable_hours_widget', locals: {field: self, :form: bindings[:form], object: bindings[:object]}
+        end
+      end
 
       field :created_at
 

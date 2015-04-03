@@ -48,5 +48,5 @@
           Servicio cancelado
 
       .numbers
-        %span.hours #{ number_to_human service.estimated_hours_with_extras } horas
+        %span.hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours_with_extras }
         %span.cash $#{ ceil_and_strip_insignificat_zeros service.cost } 

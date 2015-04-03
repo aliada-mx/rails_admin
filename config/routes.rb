@@ -32,6 +32,7 @@ Rails.application.routes.draw do
 
     get 'visitas-proximas', to: 'users#next_services', as: :next_services
     get 'historial', to: 'users#previous_services', as: :previous_services
+    match 'servicio/calificar/:service_id', to: 'scores#score_service', as: :score_service, via: [:get, :post]
 
     get 'servicio/nuevo', to: 'services#new', as: :new_service
     post 'servicio/create', to: 'services#create_new', as: :create_new_service
@@ -43,6 +44,7 @@ Rails.application.routes.draw do
     get 'servicios/recurrentes/:recurrence_id', to: 'recurrences#show', as: :show_recurrence_services, recurrence_id: /\d+/
 
     post 'conekta_card/create', to: 'conekta_cards#create', as: :create_conekta_card
+
   end
 
   post 'aliadas-availability', to: 'aliadas_availability#for_calendar', as: :aliadas_availability
@@ -56,8 +58,6 @@ Rails.application.routes.draw do
 
 
   resources :schedules
-
-  match 'calificar-servicio/:service_id', to: 'scores#create_by_service_id', as: :score_service, via: [:get, :post]
 
   # Resque-web
   # TODO: protect with devise authentication

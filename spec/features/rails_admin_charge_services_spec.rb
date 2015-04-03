@@ -33,7 +33,7 @@ feature 'Charge many services in the admin' do
       before do
         ResqueSpec.inline = true
         expect_any_instance_of(User).to receive(:charge!).and_return(Payment.new(status: 'paid'))
-        expect_any_instance_of(Service).to receive(:amount_to_bill).and_return(0)
+        expect_any_instance_of(Service).to receive(:amount_by_reported_hours).and_return(0)
         expect_any_instance_of(Service).to receive(:pay!).and_call_original
       end
 

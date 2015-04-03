@@ -99,7 +99,19 @@ module Presenters
       end
     end
 
-   def extras_hours
+    def friendly_total_hours
+      if bill_by_billable_hours?
+       seconds_to_hours_minutes_in_spanish(billable_hours.hours)
+
+      elsif bill_by_reported_hours?
+       seconds_to_hours_minutes_in_spanish(reported_hours.hours)
+
+     else
+       raise "Faltan horas en friendly total_hours del servicio #{self.id}"
+      end
+    end
+
+    def extras_hours
       extras.inject(0){ |hours,extra| hours += extra.hours || 0 }
     end
 
