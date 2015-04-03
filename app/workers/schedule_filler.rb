@@ -83,7 +83,7 @@ class ScheduleFiller
     beginning_of_user_recurrence = today_in_the_future.change(hour: user_recurrence.utc_hour(today_in_the_future))
 
     base_service_attributes = base_service.shared_attributes
-    service = Service.find_by(datetime: beginning_of_user_recurrence)
+    service = Service.find_by(datetime: beginning_of_user_recurrence, user_id: user_recurrence.user_id)
     if not service
       service = Service.create!(base_service_attributes.merge({datetime: beginning_of_user_recurrence }))
     end
@@ -294,6 +294,35 @@ class ScheduleFiller
 
   end
 
+  def self.fix_service_id_in_schedules fixed_date
+
+    incorrectas = 0
+    incorrect_hash = {}
+    Schedule.where("datetime >= ?", fixed_date).each do |schedule|
+      
+      if schedule.service_id
+      
+        schedule_datetime = schedule.datetime
+
+        beginning_of_service_datetime = schedule.service.datetime
+        ending_of_service_datetime = beginning_of_service_datetime + schedule.service.estimated_hours.to_f.ceil.hours + 2.hours
+
+        if not (schedule_datetime >= beginning_of_service_datetime) && (schedule_datetime <= ending_of_service_datetime)
+          # Deberían de ser los created_at del momento en que corrió el schedule filler
+          incorrectas += 1
+          incorrect_hash[schedule.service.id] = [] if not incorrect_hash[schedule.service.id]
+          incorrect_hash[schedule.service.id] << schedule.id
+        end
+
+      end
+
+    end
+
+    puts "INCORRECTAS #{incorrectas}"
+    return {incorrectas: incorrectas, incorrect_hash: incorrect_hash}
+    
+  end
+
   def self.fix_recurrence_ids_in_schedules
 
     actualizadas = 0
@@ -303,7 +332,7 @@ class ScheduleFiller
 
       datetime_in_mexico_city = schedule.datetime.in_time_zone("Mexico City")
       if datetime_in_mexico_city.dst?
-        datetime_in_mexico_city += 1.hour 
+        datetime_in_mexico_city -= 1.hour 
       end
       weekday = datetime_in_mexico_city.weekday
       hour = datetime_in_mexico_city.hour
@@ -329,4 +358,22 @@ class ScheduleFiller
     return "ACTUALIZADAS #{actualizadas} CONSERVADAS #{conservadas} BORRADAS #{borradas}"
   end
 
+  def self.fix_duplicate_services
+    services = Service.select(:datetime, :user_id).group(:datetime, :user_id).having("count(*) > 1")
+    services.each do |service|
+      duplicated_services = Service.where(datetime: service.datetime, user_id: service.user_id)
+
+      if duplicated_services.count < 2
+        raise "Error encontrando servicios duplicados"
+      end
+
+      duplicated_services.each do |dup_service|
+        if dup_service.schedules.empty?
+          dup_service.destroy
+        end
+      end
+      
+    end
+  end
+ 
 end
