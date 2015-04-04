@@ -39,11 +39,15 @@ class Recurrence < ActiveRecord::Base
   end
 
   def name
-    "#{weekday_in_spanish} a las #{hour}"
+    "#{weekday_in_spanish} de #{hour} a #{ending_hour}"
   end
 
   def base_service
     services.with_recurrence.ordered_by_created_at.first
+  end
+
+  def ending_hour
+    hour + total_hours
   end
 
   def owner_enum
