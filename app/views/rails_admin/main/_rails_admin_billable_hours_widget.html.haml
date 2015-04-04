@@ -5,7 +5,7 @@
 
   .attribute_name{ data:  {attributeName: 'billable_hours' } }
 
-  - if service.billable_hours.nil? || service.billed_hours.zero?
+  - if service.billed_hours.nil? || service.billed_hours.zero?
     = text_field_tag :value, service.billable_hours, class: :billable_hours_input, tabindex: @loop_index + 1
     .amount_to_bill
       %span.text
