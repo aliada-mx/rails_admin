@@ -26,6 +26,7 @@ class User < ActiveRecord::Base
 
   has_many :payment_provider_choices, -> { order('payment_provider_id DESC') }, inverse_of: :user
 
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable

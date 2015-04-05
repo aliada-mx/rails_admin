@@ -27,7 +27,6 @@ RailsAdmin.config do |config|
     bulk_delete
     show
     edit
-    delete
     
     create_aliada_working_hours do
       visible do
@@ -58,4 +57,5 @@ RailsAdmin.config do |config|
     # history_show
   end
 end
+
 

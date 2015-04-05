@@ -46,7 +46,11 @@ class Ticket < ActiveRecord::Base
         view = bindings[:view]
         ticket = bindings[:object]
 
-        view.content_tag(:div, ticket.classification_name, {class: "alert #{value} ticket-alert"})
+        if view
+          view.content_tag(:div, ticket.classification_name, {class: "alert #{value} ticket-alert"})
+        else
+          ''
+        end
       end
       help ''
     end

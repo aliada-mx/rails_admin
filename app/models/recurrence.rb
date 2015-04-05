@@ -39,11 +39,15 @@ class Recurrence < ActiveRecord::Base
   end
 
   def name
-    "#{weekday_in_spanish} a las #{hour}"
+    "#{weekday_in_spanish} de #{hour} a #{ending_hour}"
   end
 
   def base_service
     services.with_recurrence.ordered_by_created_at.first
+  end
+
+  def ending_hour
+    hour + total_hours
   end
 
   def owner_enum
@@ -82,7 +86,6 @@ class Recurrence < ActiveRecord::Base
   def tz_aware_hour(utc_datetime)
     utc_to_timezone(utc_datetime, self.timezone).weekday
   end
-
 
   def next_day_of_recurrence(starting_after_datetime)
     next_day = starting_after_datetime.change(hour: hour)

@@ -2,9 +2,6 @@
 
 aliada.services.edit.datetime_selection = function(aliada, ko) {
   // Select default service type from the form
-  var $selected_service_type = $('.service_types.radio_buttons').find(':checked');
-  var default_service_type = $selected_service_type.parent('label').data('service-type');
-
   _(aliada.ko).extend({
     friendly_datetime: ko.observable('').extend({
       default_value: null
@@ -21,7 +18,7 @@ aliada.services.edit.datetime_selection = function(aliada, ko) {
       default_value: null
     }),
 
-    service_type: ko.observable(default_service_type),
+    service_type: ko.observable(aliada.service.default_service_type),
   });
 
   aliada.ko.service_type_display_name = ko.computed(function() {

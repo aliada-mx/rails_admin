@@ -25,16 +25,17 @@
           %td
             = l service.datetime, format: :short
           %td
-            - if service.billed_hours
+            - if not service.billed_hours.zero?
               = service.billed_hours
             - else
-              = service.estimated_hours
+              = "#{ number_to_human service.estimated_hours } hrs estimadas"
           %td
             = "#{service.aliada.first_name} #{service.aliada.last_name}"
           %td
-            = service.status
+            = service.status_in_spanish
           %td
-            = service.cost
+            = "$#{ service.cost }"
+
           - if service.score
             %td.rating
               - ((5..1).first).downto((5..1).last).each do |i|
@@ -44,8 +45,8 @@
                   = radio_button_tag :value, i, false, class: "disabled" 
                 %span
           - else
-            %td.rating
-              = form_tag score_service_path(service.id), :id => "service_#{service.id}" do
+            %td.rating{class: service.finished? ? '' : 'disabled' }
+              = form_tag score_service_users_path(@user, service), :id => "service_#{service.id}" do
                 = radio_button_tag :value, 5, false, onclick: "submitRating(#{service.id}, 5)", class: "unchecked", id: "#{service.id}_5" 
                 %span
                 = radio_button_tag :value, 4, false, onclick: "submitRating(#{service.id}, 4)", class: "unchecked", id: "#{service.id}_4"

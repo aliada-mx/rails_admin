@@ -31,11 +31,15 @@ class UsersController < ApplicationController
 
     @services = ( recurrent_services + one_time ).select do |service|
       service.one_timer? && service.recurrence_id.nil? || service.recurrent?
-    end
+    end.uniq
   end
 
   def previous_services
     @services = User.find(params[:user_id]).services.in_the_past.not_canceled
+  end
+
+  def clear_session
+    reset_session
   end
 
   private

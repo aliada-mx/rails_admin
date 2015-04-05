@@ -3,7 +3,7 @@
   .conekta-form
     = hidden_field_tag :conekta_temporary_token
     .field
-      = text_field_tag nil, card_default.name , data: {'conekta' => 'card[name]'}, placeholder: 'Adria Gonzáles Sánchez', id: 'conekta_card_name', disabled: read_only
+      = text_field_tag nil, card_default.name , data: {'conekta' => 'card[name]'}, placeholder: 'Adriana González Sánchez', id: 'conekta_card_name', disabled: read_only
       %p NOMBRE COMO APARECE EN TU TARJETA
     .field
       = text_field_tag nil, card_default.last_4 , data: {'conekta' => 'card[number]'}, placeholder: '1234 5678 1234 5678', class: 'iconized', id: 'conekta_card_number', disabled: read_only

@@ -11,11 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150401151352) do
+ActiveRecord::Schema.define(version: 20150405025129) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "pg_stat_statements"
+  enable_extension "unaccent"
 
   create_table "addresses", force: true do |t|
     t.integer  "user_id"
@@ -251,12 +252,13 @@ ActiveRecord::Schema.define(version: 20150401151352) do
   create_table "service_types", force: true do |t|
     t.string   "name"
     t.integer  "periodicity"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
     t.integer  "price_per_hour"
     t.string   "display_name"
     t.text     "benefits"
     t.integer  "position"
+    t.boolean  "hidden",         default: false
   end
 
   create_table "services", force: true do |t|
@@ -288,6 +290,7 @@ ActiveRecord::Schema.define(version: 20150401151352) do
     t.boolean  "cancelation_fee_charged"
     t.boolean  "confirmed",                                               default: false
     t.decimal  "rooms_hours",                    precision: 10, scale: 3
+    t.decimal  "billable_hours",                 precision: 10, scale: 3, default: 0.0
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree

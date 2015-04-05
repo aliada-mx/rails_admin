@@ -20,6 +20,7 @@ class Service < ActiveRecord::Base
 
   belongs_to :address
   belongs_to :user, inverse_of: :services, foreign_key: :user_id
+  belongs_to :unscoped_user, foreign_key: :user_id
   belongs_to :aliada, inverse_of: :services, foreign_key: :aliada_id
   belongs_to :payment_method
   belongs_to :recurrence
@@ -41,10 +42,10 @@ class Service < ActiveRecord::Base
   scope :ordered_by_created_at, -> { order(:created_at) }
   scope :ordered_by_datetime, -> { order(:datetime) }
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
+  scope :join_users_and_aliadas, -> { joins('INNER JOIN users ON users.id = services.user_id OR users.id = services.aliada_id') }
   # Rails admin tabs
-  scope :del_dia, -> { on_day(Time.zone.now + 1.day).not_canceled }
-  scope :todos, -> {}
-
+  scope 'mañana', -> { on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
+  scope :todos, -> { }
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
@@ -53,7 +54,7 @@ class Service < ActiveRecord::Base
   validate :datetime_is_hour_o_clock
   validate :datetime_within_working_hours
   validate :service_type_exists
-  validates_presence_of :address, :user, :estimated_hours, :datetime, :service_type
+  validates_presence_of :address, :user, :estimated_hours, :service_type, :datetime
 
   # Callbacks
   after_initialize :set_defaults
@@ -86,11 +87,19 @@ class Service < ActiveRecord::Base
     before_transition on: :cancel do |service, transition|
       service.enable_schedules!
     end
+
+    after_transition on: :pay do |service, transition|
+      service.send_billing_receipt_email
+
+      service.billed_hours = service.amount_to_bill
+      service.save!
+    end
   end
 
   # Ask service_type to answer recurrent? method for us
   delegate :recurrent?, to: :service_type
   delegate :one_timer?, to: :service_type
+  delegate :one_timer_from_recurrent?, to: :service_type
   delegate :periodicity, to: :service_type
   delegate :wdays_count_to_end_of_recurrency, to: :recurrence
 
@@ -188,7 +197,6 @@ class Service < ActiveRecord::Base
     estimated_hours + hours_after_service
   end
 
-
   def ending_datetime
     datetime + total_hours.hours
   end
@@ -228,23 +236,41 @@ class Service < ActiveRecord::Base
       false
     end
   end
+
+  def reported_hours
+    (self.aliada_reported_end_time - self.aliada_reported_begin_time) / 3600.0
+  end
   
   #calculates the price to be charged for a service
-  def amount_to_bill
-    hours = self.aliada_reported_end_time.hour - self.aliada_reported_begin_time.hour
-    minutes = self.aliada_reported_end_time.min - self.aliada_reported_begin_time.min 
-    if hours < 3 && hours > 0
-    then
-      hours = 3
-      minutes = 0
-    end
-    amount = (hours*(self.service_type.price_per_hour))+(minutes * ((self.service_type.price_per_hour)/60.0))
-    
+  def amount_by_reported_hours
+    amount = reported_hours * service_type.price_per_hour
    
-    if amount > 0 && (self.aliada_reported_end_time.to_date === self.aliada_reported_begin_time.to_date)
-      return amount
+    if amount > 0 then amount else 0 end
+  end
+
+  def amount_by_billable_hours
+    billable_hours * service_type.price_per_hour
+  end
+
+  def bill_by_reported_hours?
+    aliada_reported_begin_time.present? && aliada_reported_end_time.present?
+  end
+
+  def bill_by_billable_hours?
+    billable_hours.present? && !billable_hours.zero?
+  end
+
+  def amount_to_bill
+    if bill_by_billable_hours?
+
+      amount_by_billable_hours.ceil
+
+    elsif bill_by_reported_hours?
+
+      amount_by_reported_hours.ceil
+
     else
-      return 0
+      0
     end
   end
 
@@ -255,16 +281,23 @@ class Service < ActiveRecord::Base
   def charge!
     return if paid?
 
-    amount = self.amount_to_bill
-    product = OpenStruct.new({amount: amount,
-                              description: 'Servicio aliada',
-                              id: id})
-    
-    payment = user.charge!(product, self)
+    ActiveRecord::Base.transaction do
 
-    if payment && payment.paid?
-      pay!
+      amount = amount_to_bill
+      product = OpenStruct.new({amount: amount,
+                                description: 'Servicio aliada',
+                                id: id})
+      
+      payment = user.charge!(product, self)
+
+      if payment && payment.paid?
+        pay!
+      end
     end
+  end
+
+  def send_billing_receipt_email
+    UserMailer.billing_receipt(self.user, self).deliver
   end
 
   def create_double_charge_ticket
@@ -421,7 +454,6 @@ class Service < ActiveRecord::Base
     ScheduleInterval.build_from_range(datetime, ending_datetime, elements_for_key: estimated_hours, conditions:{ aliada_id: aliada_id })
   end
    
-  # Validations
   def service_type_exists
     message = 'El tipo de servicio elegido no existe'
 
@@ -455,7 +487,6 @@ class Service < ActiveRecord::Base
     ServiceMailer.hour_changed(self).deliver!
   end
 
-
   def send_untimely_cancellation_email
     ServiceMailer.untimely_cancelation(self).deliver!
   end
@@ -480,6 +511,8 @@ class Service < ActiveRecord::Base
     end
   end
 
+  attr_accessor :rails_admin_billable_hours_widget
+  
   rails_admin do
     label_plural 'servicios'
     navigation_label 'Operación'
@@ -490,41 +523,48 @@ class Service < ActiveRecord::Base
     end
 
     list do
+      search_scope do
+        Proc.new do |scope, query|
+          scope.merge(UnscopedUser.with_name_phone_email(query)).merge(Service.join_users_and_aliadas)
+        end
+      end
+
+      configure :status do
+        queryable false
+        filterable true
+        visible false
+      end
+
       sort_by :datetime
 
       field :user_link do
         virtual?
       end
 
-      field :datetime do
-        sort_reverse false
-        pretty_value do
-          I18n.l(value , format: :friendly).titleize
-        end
-      end
+      field :datetime
 
       field :status
 
-      field :aliada_link do
+      field :address_map_link
+
+      field :aliada_link
+
+      field :rails_admin_billable_hours_widget do
         virtual?
+        formatted_value do
+          bindings[:view].render partial: 'rails_admin/main/rails_admin_billable_hours_widget', locals: {field: self, 
+                                                                                        user: bindings[:current_user],
+                                                                                        form: bindings[:form],
+                                                                                        service: bindings[:object]}
+          
+        end
       end
-
-      field :aliada do
-        searchable [{users: :first_name },
-                    {users: :last_name },
-                    {users: :email},
-                    {users: :phone}]
-        queryable true
-        filterable true
-      end
-
-      field :recurrence
 
       field :created_at
 
-      field :address
+      field :aliada_webapp_link
 
-      scopes [:del_dia, :todos, :confirmados, :sin_confirmar]
+      scopes ['mañana', :todos, :confirmados, :sin_confirmar]
     end
   end
 end

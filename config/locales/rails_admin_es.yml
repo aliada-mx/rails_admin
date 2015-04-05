@@ -11,6 +11,7 @@ es:
       payment_method: 'métodos de pago'
       postal_code: 'códigos postale'
       recurrence: 'recurrencia'
+      recurrences: 'recurrencias'
       aliada_working_hour: 'horario de Aliada'
       schedule: 'hora de servicio'
       score: 'calificación'
@@ -31,6 +32,7 @@ es:
         service_link: 'Servicio'
         services: 'servicios'
         schedules: 'horas de servicio'
+        role: 'rol'
       address: &address_attributes
         user: usuario
         postal_code: código postal
@@ -67,11 +69,14 @@ es:
         next_service_link: 'Siguiente servicio'
       aliada:
         <<: *user_attributes
+        <<: *common_attributes
         banned_users: usuarios que la banearon
         zones: zonas de trabajo
         scores: calificaciones
         next_service_link: 'Siguiente servicio'
+        aliada_working_hours: 'Horas de trabajo'
       service_type:
+        <<: *common_attributes
         periodicity: periodicidad
         price_per_hour: precio por hora
       conekta_card:
@@ -119,6 +124,7 @@ es:
         <<: *common_attributes
       score:
       service: &service_attributes
+        <<: *common_attributes
         datetime: fecha y hora del servicio
         zone: zona
         address: dirección
@@ -139,7 +145,10 @@ es:
         forbidden_instructions: No limpiar /No tocar
         special_instructions: Otras instrucciones especiales
         user_link: Usuario
-      service_type:
+        address_map_link: 'Mapa'
+        aliada_webapp_link: 'Webapp de aliada'
+        aliada_link: 'Aliada'
+        rails_admin_billable_hours_widget: 'Horas cobrables'
       ticket:
         relevant_object: Servicio
         message: error

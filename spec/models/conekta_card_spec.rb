@@ -28,7 +28,6 @@ describe 'ConektaCard' do
       VCR.use_cassette('conekta_charge') do
         card.token = token
         
-        
         conekta_charge = card.charge_in_conekta!(fake_product,user)
         charge = eval(conekta_charge.inspect)
 

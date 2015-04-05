@@ -1,5 +1,6 @@
 @import 'common/variables'
 @import 'common/mixins'
+@import "compass/css3/opacity"
 
 .service_history
   background-color: $white
@@ -26,8 +27,7 @@
 
   input
     position: absolute
-    filter: alpha(opacity=0)
-    opacity: 0
+    +opacity(0)
     cursor: pointer
     width: 2rem
     height: 2rem
@@ -37,16 +37,13 @@
     height: 2rem
     line-height: 2rem
     padding: .5rem 1.1rem 0
-    background: url(stars.png) 
+    background: image-url('stars.png') 
 
   input.unchecked:hover ~ span
-    background: url(star-full.png)
+    background: image-url('star-full.png')
 
   input.checked
     cursor: default !important
   input.checked ~ span
-    background: url(star-full.png)
-
-.disabled
-  cursor: default !important
+    background: image-url('star-full.png')
     

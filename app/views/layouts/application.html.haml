@@ -10,10 +10,11 @@
     = area :extra_head
     = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true
     = favicon_link_tag 
+    = render partial: 'common/zopim_chat'
   %body{class: area(:body_class){ '' } }
     = yield
     = area :javascript do
       = render partial: 'common/javascript_templates'
       = render partial: 'common/javascript_variables'
       = render partial: 'common/google_analytics'
-      = render partial: 'common/zopim_chat'
+     

@@ -6,6 +6,10 @@ module Presenters
       Service::STATUSES
     end
 
+    def status_in_spanish
+      Hash[*status_enum.flatten].to_h.invert[status]
+    end
+
     def tz_aware_datetime
       if datetime
         _datetime = datetime.in_time_zone(timezone)
@@ -23,6 +27,24 @@ module Presenters
 
     def user_link
       rails_admin_edit_link(user)
+    end
+
+    def address_map_link
+      if address
+        if address.map_missing?
+          name = "* #{address.name}" 
+        else
+          name = address.name
+        end
+
+        address_map_action_link(address, name: name)
+      else
+        'Le falta dirección a este servicio '
+      end
+    end
+
+    def aliada_webapp_link
+      aliada_show_webapp_link(aliada)
     end
 
     def aliada_link
@@ -77,7 +99,19 @@ module Presenters
       end
     end
 
-   def extras_hours
+    def friendly_total_hours
+      if bill_by_billable_hours?
+       seconds_to_hours_minutes_in_spanish(billable_hours.hours)
+
+      elsif bill_by_reported_hours?
+       seconds_to_hours_minutes_in_spanish(reported_hours.hours)
+
+     else
+       raise "Faltan horas en friendly total_hours del servicio #{self.id}"
+      end
+    end
+
+    def extras_hours
       extras.inject(0){ |hours,extra| hours += extra.hours || 0 }
     end
 
@@ -106,5 +140,18 @@ module Presenters
     def weekday_in_spanish
       tz_aware_datetime.dia_semana
     end
+
+    def to_json
+      attributes.merge!({amount_to_bill: amount_to_bill})
+    end
+
+    def friendly_aliada_reported_begin_time
+      I18n.l self.aliada_reported_begin_time, format: '%H:%M %p'
+    end
+
+    def friendly_aliada_reported_end_time
+      I18n.l self.aliada_reported_end_time, format: '%H:%M %p'
+    end
   end
 end
+

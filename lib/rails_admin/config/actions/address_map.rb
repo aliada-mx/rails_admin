@@ -37,7 +37,7 @@ module RailsAdmin
               @address.update_attributes(permitted_params[:address])
 
               flash[:success] = 'El mapa se ha guardado exitosamente'
-              redirect_to rails_admin.address_map_path
+              redirect_to rails_admin.address_map_path('Address', @address.id)
             end
           end
         end
