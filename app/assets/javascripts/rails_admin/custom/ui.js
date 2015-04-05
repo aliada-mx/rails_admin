@@ -1,4 +1,5 @@
 $(function(){
+  // Quick adding billable hours 
   $('body').on('change', '.billable_hours_input', function(e){
     var $input = $(this);
     var $container = $(this).parent('.rails_admin_billable_hours_widget');

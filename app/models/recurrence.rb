@@ -87,7 +87,6 @@ class Recurrence < ActiveRecord::Base
     utc_to_timezone(utc_datetime, self.timezone).weekday
   end
 
-
   def next_day_of_recurrence(starting_after_datetime)
     next_day = starting_after_datetime.change(hour: hour)
 

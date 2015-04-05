@@ -20,6 +20,7 @@ class Service < ActiveRecord::Base
 
   belongs_to :address
   belongs_to :user, inverse_of: :services, foreign_key: :user_id
+  belongs_to :unscoped_user, foreign_key: :user_id
   belongs_to :aliada, inverse_of: :services, foreign_key: :aliada_id
   belongs_to :payment_method
   belongs_to :recurrence
@@ -41,6 +42,7 @@ class Service < ActiveRecord::Base
   scope :ordered_by_created_at, -> { order(:created_at) }
   scope :ordered_by_datetime, -> { order(:datetime) }
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
+  scope :join_users_and_aliadas, -> { joins('INNER JOIN users ON users.id = services.user_id OR users.id = services.aliada_id') }
   # Rails admin tabs
   scope 'mañana', -> { on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
   scope :todos, -> { }
@@ -510,7 +512,7 @@ class Service < ActiveRecord::Base
   end
 
   attr_accessor :rails_admin_billable_hours_widget
-
+  
   rails_admin do
     label_plural 'servicios'
     navigation_label 'Operación'
@@ -521,6 +523,18 @@ class Service < ActiveRecord::Base
     end
 
     list do
+      search_scope do
+        Proc.new do |scope, query|
+          scope.merge(UnscopedUser.with_name_phone_email(query)).merge(Service.join_users_and_aliadas)
+        end
+      end
+
+      configure :status do
+        queryable false
+        filterable true
+        visible false
+      end
+
       sort_by :datetime
 
       field :user_link do
@@ -530,16 +544,6 @@ class Service < ActiveRecord::Base
       field :datetime
 
       field :status
-
-      field :aliada do
-        searchable [{users: :first_name },
-                    {users: :last_name },
-                    {users: :email},
-                    {users: :phone}]
-        queryable true
-        filterable true
-        visible false
-      end
 
       field :address_map_link
 
