@@ -11,6 +11,7 @@ es:
       payment_method: 'métodos de pago'
       postal_code: 'códigos postale'
       recurrence: 'recurrencia'
+      recurrences: 'recurrencias'
       aliada_working_hour: 'horario de Aliada'
       schedule: 'hora de servicio'
       score: 'calificación'
@@ -31,6 +32,7 @@ es:
         service_link: 'Servicio'
         services: 'servicios'
         schedules: 'horas de servicio'
+        role: 'rol'
       address: &address_attributes
         user: usuario
         postal_code: código postal
@@ -67,10 +69,12 @@ es:
         next_service_link: 'Siguiente servicio'
       aliada:
         <<: *user_attributes
+        <<: *common_attributes
         banned_users: usuarios que la banearon
         zones: zonas de trabajo
         scores: calificaciones
         next_service_link: 'Siguiente servicio'
+        aliada_working_hours: 'Horas de trabajo'
       service_type:
         <<: *common_attributes
         periodicity: periodicidad
