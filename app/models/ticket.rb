@@ -7,7 +7,7 @@ class Ticket < ActiveRecord::Base
     'alert-danger' => 'Problema',
   }
 
-  CATEGORY = {
+  CATEGORIES = {
     'conekta_charge_failure' => 'Error al cobrar conekta',
     'schedule_filler_error' => 'Error en el creador de disponibilidad',
     'availability_missing' => 'Falta de disponbilidad',
@@ -15,6 +15,7 @@ class Ticket < ActiveRecord::Base
 
   # Only classifications with bootstrap classes allowed
   validates :classification, inclusion: {in: CLASSIFICATIONS.keys  }
+  validates :category, inclusion: {in: CATEGORIES.keys  }
 
   belongs_to :relevant_object, polymorphic: true
 
@@ -23,7 +24,7 @@ class Ticket < ActiveRecord::Base
   end
 
   def category_name
-    CATEGORY[self.category]
+    CATEGORIES[self.category]
   end
 
   def self.create_error(options)
