@@ -133,7 +133,8 @@ es:
         service_type: tipo de servicio
         recurrence: recurrencia
         billed_hours: horas cobradas
-        hours_after_service: horas después del servicio
+        billable_hours: horas cobrables
+        hours_after_service: horas de colchón
         bathrooms: baños
         bedrooms: recámaras
         estimated_hours: Horas estimadas 
@@ -149,6 +150,11 @@ es:
         aliada_webapp_link: 'Webapp de aliada'
         aliada_link: 'Aliada'
         rails_admin_billable_hours_widget: 'Horas cobrables'
+        aliada_reported_begin_time: 'Hora de inicio reportada'
+        aliada_reported_end_time: 'Hora de final reportada'
+        cancelation_fee_charged: 'Cuota de cancelación'
+        confirmed: 'Confirmado'
+        rooms_hours: 'Horas por cuartos'
       ticket:
         relevant_object: Servicio
         message: error
