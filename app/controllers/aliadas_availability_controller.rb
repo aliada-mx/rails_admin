@@ -9,8 +9,6 @@ class AliadasAvailabilityController < ApplicationController
   end
 
   def for_calendar
-    return render json: { status: :success, dates_times: [] }
-
     # We round up because our whole system depends on round hours
     # and its safer to asume more time than less
     hours = params[:hours].to_f.ceil

@@ -29,23 +29,26 @@
           Datos de contacto: #{service.user.contact_data}
     .foot
       .actions
-        - if !service.canceled?
-          - if is_recurrent
-            = link_to show_recurrence_services_users_path(user_id: service.user.id, recurrence_id: service.recurrence.id), class: 'action-button size-large' do
-              %span.icon-clock.icon-button
-              Próximos servicios
+        - if current_user.admin?
+          .div
+            = service.id
+          .div
+            = service.status_in_spanish
+        
+        - if is_recurrent
+          = link_to show_recurrence_services_users_path(user_id: service.user.id, recurrence_id: service.recurrence.id), class: 'action-button size-large' do
+            %span.icon-clock.icon-button
+            Próximos servicios
 
+          = link_to edit_service_users_path(user_id: service.user.id, service_id: service.id), class: 'action-button size-large' do
+            %span.icon-pencil.icon-button
+            Modificar servicios
+
+        - else
+          .actions
             = link_to edit_service_users_path(user_id: service.user.id, service_id: service.id), class: 'action-button size-large' do
               %span.icon-pencil.icon-button
-              Modificar servicios
-
-          - else
-            .actions
-              = link_to edit_service_users_path(user_id: service.user.id, service_id: service.id), class: 'action-button size-large' do
-                %span.icon-pencil.icon-button
-                Modificar servicio
-        - else
-          Servicio cancelado
+              Modificar servicio
 
       .numbers
         %span.hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours_with_extras }

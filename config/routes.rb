@@ -34,6 +34,7 @@ Rails.application.routes.draw do
   resource :users, path: 'perfil/:user_id', except: [:edit, :show] do
     get 'cuenta' => :edit, as: :edit
 
+    get 'visitas-canceladas', to: 'users#canceled_services', as: :canceled_services
     get 'visitas-proximas', to: 'users#next_services', as: :next_services
     get 'historial', to: 'users#previous_services', as: :previous_services
     match 'servicio/calificar/:service_id', to: 'scores#score_service', as: :score_service, via: [:get, :post]

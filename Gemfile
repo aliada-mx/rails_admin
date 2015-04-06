@@ -49,6 +49,7 @@ gem 'chronic'
 gem 'heroku-deflater'
 # Serve fonts with correct headers
 gem 'font_assets'
+# 
  
 # EXCEPTIONS
 #
