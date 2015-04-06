@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
   has_many :credits
   has_many :redeemed_credits, :foreign_key => "redeemer_id", :class_name => "Credit"
   has_one :code
-  has_many :services, inverse_of: :user, foreign_key: :user_id
+  has_many :services, ->{ order(:datetime) }, inverse_of: :user, foreign_key: :user_id
   has_many :addresses
   has_many :schedules, inverse_of: :user, foreign_key: :user_id
   has_and_belongs_to_many :banned_aliadas,
@@ -203,22 +203,34 @@ class User < ActiveRecord::Base
     end
 
     list do
+      search_scope do
+        Proc.new do |scope, query|
+          query_without_accents = I18n.transliterate(query)
+
+          scope.merge(UnscopedUser.with_name_phone_email(query_without_accents))
+        end
+      end
+
+      field :role do
+        queryable false
+        filterable false
+      end
       field :first_name do
-        queryable true
-        filterable true
+        queryable false
+        filterable false
       end
       field :last_name do
-        queryable true
-        filterable true
+        queryable false
+        filterable false
       end
       field :email do
-        queryable true
-        filterable true
+        queryable false
+        filterable false
       end
       field :role
       field :phone do
-        queryable true
-        filterable true
+        queryable false
+        filterable false
       end
 
       field :default_address_link do

@@ -40,6 +40,7 @@ class Schedule < ActiveRecord::Base
   scope :in_or_before_datetime, ->(datetime) { where("datetime <= ?", datetime) }
   scope :ordered_by_aliada_datetime, -> { order(:aliada_id, :datetime) }
   scope :for_booking, ->(zone, starting_datetime) { in_zone(zone).in_or_after_datetime(starting_datetime).ordered_by_aliada_datetime }
+  scope :join_users_and_aliadas, -> { joins('INNER JOIN users ON users.id = schedules.user_id OR users.id = schedules.aliada_id') }
   # alias for rails admin
   scope :disponible, -> { available }
   scope :reservadas, -> { booked }
@@ -80,6 +81,7 @@ class Schedule < ActiveRecord::Base
 
   attr_accessor :index # for availability finders to track they schedule position on the main loop
   attr_accessor :original_status # for availability finders because they asume the state is available we keep a record of the original state
+  attr_accessor :blocked # for padding finders
 
   def timezone
     'Mexico City'
@@ -124,7 +126,19 @@ class Schedule < ActiveRecord::Base
       filterable true
     end
 
+    configure :service_id do
+      queryable true
+      filterable true
+    end
+
     list do
+      search_scope do
+        Proc.new do |scope, query|
+          query_without_accents = I18n.transliterate(query)
+
+          scope.merge(UnscopedUser.with_name_phone_email(query_without_accents)).merge(Schedule.join_users_and_aliadas)
+        end
+      end
       sort_by :datetime
 
       field :datetime
@@ -145,6 +159,8 @@ class Schedule < ActiveRecord::Base
 
       field :recurrence
       field :created_at
+
+      field :service
 
       scopes [:todos, :reservadas, :disponible]
     end

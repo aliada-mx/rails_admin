@@ -11,6 +11,9 @@ class Ticket < ActiveRecord::Base
     'conekta_charge_failure' => 'Error al cobrar conekta',
     'schedule_filler_error' => 'Error en el creador de disponibilidad',
     'availability_missing' => 'Falta de disponbilidad',
+    'padding_missing' => 'Horas colchón faltantes',
+    'service_without_enough_schedules' => 'Servicio sin suficientes horas de servicio',
+    'service_without_user' => 'Servicio usuario',
   }
 
   # Only classifications with bootstrap classes allowed
@@ -18,6 +21,15 @@ class Ticket < ActiveRecord::Base
   validates :category, inclusion: {in: CATEGORIES.keys  }
 
   belongs_to :relevant_object, polymorphic: true
+
+  # Rails admin scopes
+  CATEGORIES.each do |category, description|
+    scope description, -> { where(category: category) }
+  end
+
+  def name
+    category_name
+  end
 
   def classification_name
     CLASSIFICATIONS[self.classification]
@@ -78,6 +90,11 @@ class Ticket < ActiveRecord::Base
           CLASSIFICATIONS.invert
         end
       end
+    end
+
+    list do
+
+      scopes CATEGORIES.values
     end
   end
 end

@@ -1,58 +1,87 @@
 namespace :db do
   desc "Add padding to schedules"
   task :add_padding_to_schedules => :environment do
+    puts "Padding count #{ Schedule.padding.count }"
     ActiveRecord::Base.transaction do
-      Service.all.each do |service|
-        user = service.user
+      no_padding = 0
+      padding_1 = 0
+      ok = 0
+      Service.from_today_to_the_future.all.each do |service|
+        user_id = service.user_id
           
-        ending_datetime = service.ending_datetime
-        padding_ending_datetime = ending_datetime + 2.hours
+        service_ending_datetime = service.datetime + service.estimated_hours.floor.hours
+        padding_ending_datetime = service_ending_datetime + 1.hours
 
-        schedules = Schedule.where('datetime >= ?', ending_datetime)
-                            .where('datetime <= ?', padding_ending_datetime)
-                            .where(aliada_id: service.id).to_a
+        first_schedule_in_front = Schedule.where(datetime: service_ending_datetime).where(aliada_id: service.aliada_id).first
+        second_schedule_in_front = Schedule.where(datetime: padding_ending_datetime).where(aliada_id: service.aliada_id).first
+
+        schedules_in_front = [first_schedule_in_front, second_schedule_in_front]
 
 
-        schedules_count = schedules.count
+        if first_schedule_in_front && 
+           first_schedule_in_front.service_id != service.id && 
+           first_schedule_in_front.booked? 
+           first_schedule_in_front.busy? 
 
-        next if schedules_count.zero? #end of aliada's day
-
-        padding_count = schedules.select { |s| s.padding? }.count
-
-        next if padding_count == 2
-
-        available_count = schedules.select { |s| s.available? }.count
-
-        if available_count == 2
-          puts "adding 2 hours padding to service #{service.id}"
-          schedules.update_all(status: 'padding', user_id: user.id, recurrence_id: service.recurrence_id)
-          service.hours_after_service = 2
+          first_schedule_in_front.blocked = true
         end
 
-        if available_count == 1
-          error = "Se encontró un servicio con solo 1 hora de colchón"
-          puts error
+        if second_schedule_in_front && 
+           second_schedule_in_front.service_id != service.id && 
+           second_schedule_in_front.booked? 
+           second_schedule_in_front.busy? 
 
-          Ticket.create_warning(relevant_object: service, message: error)
-
-          schedules.update_all(status: 'padding', user_id: user.id, recurrence_id: service.recurrence_id)
-          service.hours_after_service = 1
+          second_schedule_in_front.blocked = true
         end
 
-        booked_count = schedules.select { |s| s.booked? }.count
-        if booked_count > 0
-          error = "Servicio #{service.id} #{service.name} que acaba #{service.ending_datetime} sin horas de colchón, con #{schedules.map { |s| [s.status, s.datetime] }.flatten} en frente \n"
+        if first_schedule_in_front.nil?
+          padding = 0
+          ok += 1
+        elsif second_schedule_in_front.nil?
+          padding = 1
+          ok += 1
+        elsif first_schedule_in_front.blocked
+          error = "El servicio tiene no tiene horas de colchón con el siguiente"
 
-          puts error
+          Ticket.create_warning(relevant_object: service, message: error, category: 'padding_missing')
+          no_padding += 1
+          first_schedule_in_front.update(status: 'padding', service_id: service.id, recurrence_id: service.recurrence_id, user_id: user_id)
 
-          Ticket.create_warning(relevant_object: service, message: error)
-          service.hours_after_service = 0
+          padding = 0
+        elsif second_schedule_in_front.blocked
+          error = "El servicio tiene solo 1 hora de colchón con el siguiente"
+
+          Ticket.create_warning(relevant_object: service, message: error, category: 'padding_missing')
+          second_schedule_in_front.update(status: 'padding', service_id: service.id, recurrence_id: service.recurrence_id, user_id: user_id)
+          padding_1 += 1
+          padding = 1
+        else
+          padding = 2
+          schedules_in_front.each do |schedule|
+            schedule.update(status: 'padding', service_id: service.id, recurrence_id: service.recurrence_id, user_id: user_id)
+          end
         end
 
-        service.save!
+        service.hours_after_service = padding
+        begin
+          service.save!
+        rescue
+          error = "El servicio no tiene usuario"
+          Ticket.create_warning(relevant_object: service, message: error, category: 'service_without_user')
+        end
+
+        if service.schedules.count < service.estimated_hours
+          error = "Servicio con insuficientes horas de servicio, estimado para #{service.estimated_hours} y apartadas #{service.schedules.count}"
+
+          Ticket.create_warning(relevant_object: service, message: error, category: 'service_without_enough_schedules')
+        end
       end
 
-      raise ActiveRecord::Rollback
+
+      puts "Se encontraron #{ok} servicios con 2 horas libres"
+      puts "Se encontraron #{no_padding} servicios pegados e imposible ponerles padding"
+      puts "Se encontraron #{padding_1} servicios con una sola hora de padding"
+      puts "Padding count #{ Schedule.padding.count }"
     end
   end
 end

@@ -30,13 +30,14 @@ class Service < ActiveRecord::Base
   belongs_to :zone
   has_many :extra_services
   has_many :extras, through: :extra_services
-  has_many :schedules
+  has_many :schedules, ->{ order(:datetime ) }
   has_many :tickets, as: :relevant_object
   has_one :score
 
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
+  scope :from_today_to_the_future, -> { where("datetime >= ?", Time.zone.now.beginning_of_aliadas_day)  }
   scope :not_ids, ->(ids) { where("services.id NOT IN ( ? )", ids) }
   scope :on_day, -> (datetime) { where('datetime >= ?', datetime.beginning_of_day).where('datetime <= ?', datetime.end_of_day) } 
   scope :canceled, -> { where('services.status = ?', 'canceled') }
@@ -553,7 +554,9 @@ class Service < ActiveRecord::Base
     list do
       search_scope do
         Proc.new do |scope, query|
-          scope.merge(UnscopedUser.with_name_phone_email(query)).merge(Service.join_users_and_aliadas)
+          query_without_accents = I18n.transliterate(query)
+
+          scope.merge(UnscopedUser.with_name_phone_email(query_without_accents)).merge(Service.join_users_and_aliadas)
         end
       end
 
@@ -623,7 +626,10 @@ class Service < ActiveRecord::Base
 
         field :hours_after_service
         field :rooms_hours
+        field :schedules
       end
+
+      field :tickets
 
       group :detalles_al_registrar do
         active false
