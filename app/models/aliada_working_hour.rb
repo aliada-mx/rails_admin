@@ -22,11 +22,9 @@ class AliadaWorkingHour < Recurrence
     new_recurrences.each do |recurrence|
       aliada = Aliada.find(aliada_id)
 
-      aliada.zones.each do |zone|
-        awh = AliadaWorkingHour.find_or_create_by(aliada_id: aliada_id, weekday: recurrence[:weekday], hour: recurrence[:hour], periodicity: 7, owner: 'aliada', total_hours: 1, user_id: nil)
-        # fill 30 days of schedules
-        awh.create_schedules_until_horizon        
-      end
+      awh = AliadaWorkingHour.find_or_create_by(aliada_id: aliada_id, weekday: recurrence[:weekday], hour: recurrence[:hour], periodicity: 7, owner: 'aliada', total_hours: 1, user_id: nil)
+      # fill 30 days of schedules
+      awh.create_schedules_until_horizon        
 
     end
 
