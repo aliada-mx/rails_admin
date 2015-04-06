@@ -42,7 +42,7 @@
 
           = link_to edit_service_users_path(user_id: service.user.id, service_id: service.id), class: 'action-button size-large' do
             %span.icon-pencil.icon-button
-            Modificar servicios
+            Modificar Recurrencia
 
         - else
           .actions
@@ -51,5 +51,5 @@
               Modificar servicio
 
       .numbers
-        %span.hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours_with_extras }
+        %span.hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours_with_extras.hours }
         %span.cash $#{ ceil_and_strip_insignificat_zeros service.cost } 

@@ -23,6 +23,7 @@
     .balance-section
       .label
         Balance
-        %span.icon-help-with-circle
+        -#
+          %span.icon-help-with-circle
       .balance{class: @user.balance < 0 ? 'negative' : ''}
         $#{@user.balance}

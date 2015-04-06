@@ -62,7 +62,7 @@ module AliadaSupport
       hours = (seconds / 3600)
       
       string = ""
-      string = "#{hours.to_i} horas" if !hours.zero?
+      string += "#{hours.to_i} horas" if !hours.zero?
       string += " #{minutes.to_i} minutos" if !minutes.zero?
 
       string.strip

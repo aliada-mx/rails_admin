@@ -211,9 +211,21 @@ class User < ActiveRecord::Base
         end
       end
 
+      field :user_next_services_path do
+        read_only true
+
+        formatted_value do
+          view = bindings[:view]
+          user = bindings[:object]
+
+          view.link_to(user.id, value)
+        end
+      end
+
       field :role do
         queryable false
         filterable false
+        visible false
       end
       field :first_name do
         queryable false

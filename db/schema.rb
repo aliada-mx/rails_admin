@@ -262,35 +262,35 @@ ActiveRecord::Schema.define(version: 20150406075201) do
   end
 
   create_table "services", force: true do |t|
-    t.integer  "address_id"
-    t.integer  "user_id"
-    t.integer  "service_type_id"
-    t.integer  "price"
-    t.integer  "recurrence_id"
-    t.datetime "created_at",                                                              null: false
-    t.datetime "updated_at",                                                              null: false
-    t.decimal  "billed_hours",                   precision: 10, scale: 3
-    t.decimal  "hours_after_service",            precision: 10, scale: 3
-    t.integer  "bathrooms"
-    t.integer  "bedrooms"
-    t.text     "special_instructions"
-    t.string   "status"
-    t.integer  "aliada_id"
-    t.datetime "datetime"
-    t.decimal  "estimated_hours",                precision: 10, scale: 3
-    t.text     "cleaning_supplies_instructions"
-    t.text     "garbage_instructions"
-    t.text     "attention_instructions"
-    t.text     "equipment_instructions"
-    t.text     "forbidden_instructions"
-    t.integer  "zone_id"
-    t.boolean  "entrance_instructions"
-    t.time     "aliada_reported_begin_time"
-    t.time     "aliada_reported_end_time"
     t.boolean  "cancelation_fee_charged"
     t.boolean  "confirmed",                                               default: false
-    t.decimal  "rooms_hours",                    precision: 10, scale: 3
+    t.boolean  "entrance_instructions"
+    t.datetime "created_at",                                                              null: false
+    t.datetime "datetime"
+    t.datetime "updated_at",                                                              null: false
     t.decimal  "billable_hours",                 precision: 10, scale: 3, default: 0.0
+    t.decimal  "billed_hours",                   precision: 10, scale: 3
+    t.decimal  "estimated_hours",                precision: 10, scale: 3
+    t.decimal  "hours_after_service",            precision: 10, scale: 3
+    t.decimal  "rooms_hours",                    precision: 10, scale: 3
+    t.integer  "address_id"
+    t.integer  "aliada_id"
+    t.integer  "bathrooms"
+    t.integer  "bedrooms"
+    t.integer  "price"
+    t.integer  "recurrence_id"
+    t.integer  "service_type_id"
+    t.integer  "user_id"
+    t.integer  "zone_id"
+    t.string   "status"
+    t.text     "attention_instructions"
+    t.text     "cleaning_supplies_instructions"
+    t.text     "equipment_instructions"
+    t.text     "forbidden_instructions"
+    t.text     "garbage_instructions"
+    t.text     "special_instructions"
+    t.time     "aliada_reported_begin_time"
+    t.time     "aliada_reported_end_time"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree

@@ -110,14 +110,10 @@ class AvailabilityForService
 
     def time_matches?
       if @is_recurrent
-        value = @requested_schedules.include_recurrent?(@current_schedule)
+        @requested_schedules.include_recurrent?(@current_schedule)
       else
-        value = @requested_schedules.include_datetime?(@current_schedule)
+        @requested_schedules.include_datetime?(@current_schedule)
       end
-
-      @report.push({message: 'Found 1 broken schedule continuity', objects: [@current_schedule] }) unless value
-
-      value 
     end
 
     def remove_aliada_availability!

@@ -12,7 +12,6 @@ module ServiceHelper
   end
   
   def service_in_wday_and_hour?(s, wday, t)
-    #binding.pry
     if(s.datetime.wday == wday)
       if((t >= (s.datetime.time.hour*1.hour)) && (t <=(s.datetime.time.hour+s.estimated_hours)*1.hour))
         return true

@@ -71,7 +71,7 @@ class Service < ActiveRecord::Base
     transition 'created' => 'aliada_missing', :on => :mark_as_missing
     transition 'finished' => 'paid', :on => :pay
     transition ['created', 'aliada_assigned', 'in-progress'] => 'finished', :on => :finish
-    transition ['created', 'aliada_assigned' ] => 'canceled', :on => :cancel
+    transition ['created', 'aliada_assigned', 'finished', 'paid'] => 'canceled', :on => :cancel
 
     ###Ensure schedules are freed upon cancellation
     after_transition any => 'canceled', :do => [:release_schedules]
@@ -222,6 +222,7 @@ class Service < ActiveRecord::Base
     finder = AvailabilityForService.new(self, available_after, aliada_id: aliada_id)
 
     aliadas_availability = finder.find
+    binding.pry
 
     raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
 
@@ -232,15 +233,24 @@ class Service < ActiveRecord::Base
 
   # Among recurrent services
   def shared_attributes
-    self.attributes.except('id',
-                           'datetime',
-                           'aliada_reported_being_time',
-                           'aliada_reported_end_time',
-                           'billed_hours',
-                           'created_at',
-                           'updated_at')
+    self.attributes.select { |key, value| [:entrance_instructions, 
+                                           :estimated_hours, 
+                                           :hours_after_service,
+                                           :rooms_hours,
+                                           :address_id,
+                                           :bathrooms,
+                                           :bedrooms,
+                                           :price,
+                                           :recurrence_id,
+                                           :service_type_id,
+                                           :user_id,
+                                           :zone_id,
+                                           :attention_instructions,
+                                           :cleaning_supplies_instructions,
+                                           :equipment_instructions,
+                                           :garbage_instructions,
+                                           :special_instructions].include? key.to_sym  }
   end
-
 
   def in_less_than_24_hours
     if datetime

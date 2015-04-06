@@ -162,7 +162,6 @@ module Mixins
       
       # Our starting point
       first_schedule_index = @continuous_schedules.first.index
-      @report.push({message: "At #{@current_schedule.datetime} there are #{free_schedules_count_after_current(@current_index)} available schedules in front"})
 
       i = @current_index
       while true
