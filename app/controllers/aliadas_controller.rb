@@ -10,12 +10,10 @@ class AliadasController < ApplicationController
   end
   
   def finish
-    
     @aliada = Aliada.find_by(authentication_token: params[:token])
     @service_to_finish = Service.where(id: params[:service], 
-                                       aliada_id: @aliada.id, 
-                                       status: 'aliada_assigned').take
-    if @service_to_finish
+                                       aliada_id: @aliada.id).first
+    if @service_to_finish.present?
       @service_to_finish.aliada_reported_begin_time =  ActiveSupport::TimeZone["Mexico City"].parse(params[:begin_time])
       @service_to_finish.aliada_reported_end_time = ActiveSupport::TimeZone["Mexico City"].parse(params[:end_time])
       @service_to_finish.finish!
@@ -42,10 +40,6 @@ class AliadasController < ApplicationController
      
       @unfinished_services = Service.joins(:user).where(aliada_id: @aliada.id, status: 'aliada_assigned').where("datetime <= ?", now.utc)
       @upcoming_services = Service.joins(:address).order('datetime ASC').where(aliada_id: @aliada.id, :datetime => date_to_show.beginning_of_day..date_to_show.end_of_day).not_canceled.joins(:user) 
-
-      
-
-
     else
       render text: 'Ruta invalida, ponte  en contacto con aliada' + params[:token]
     end
