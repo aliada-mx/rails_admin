@@ -146,11 +146,15 @@ module Presenters
     end
 
     def friendly_aliada_reported_begin_time
-      I18n.l self.aliada_reported_end_begin_in_gtm_6, format: '%H:%M %p'
+      if self.aliada_reported_begin_time
+        I18n.l self.aliada_reported_end_begin_in_gtm_6, format: '%H:%M %p'
+      end
     end
 
     def friendly_aliada_reported_end_time
-      I18n.l self.aliada_reported_end_time_in_gtm_6, format: '%H:%M %p'
+      if self.aliada_reported_end_time
+        I18n.l self.aliada_reported_end_time_in_gtm_6, format: '%H:%M %p'
+      end
     end
 
     def aliada_reported_end_time_in_gtm_6

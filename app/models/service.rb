@@ -246,7 +246,9 @@ class Service < ActiveRecord::Base
   end
 
   def reported_hours
-    (self.aliada_reported_end_time - self.aliada_reported_begin_time) / 3600.0
+    if bill_by_reported_hours?
+      (self.aliada_reported_end_time - self.aliada_reported_begin_time) / 3600.0
+    end
   end
   
   #calculates the price to be charged for a service
@@ -589,11 +591,11 @@ class Service < ActiveRecord::Base
         end
       end
 
-      field :created_at
-
       field :aliada_webapp_link
-
-      field :billed_hours
+      field :aliada_reported_begin_time
+      field :aliada_reported_end_time
+      field :reported_hours
+      field :created_at
 
       scopes ['mañana', :todos, :confirmados, :sin_confirmar]
     end
