@@ -25,7 +25,7 @@
           %td
             = l service.datetime, format: :short
           %td
-            - if not service.billed_hours.zero?
+            - if service.billed_hours.present? || !service.billed_hours.zero?
               = service.billed_hours
             - else
               = "#{ number_to_human service.estimated_hours } hrs estimadas"
@@ -46,7 +46,7 @@
                 %span
           - else
             %td.rating{class: service.finished? ? '' : 'disabled' }
-              = form_tag score_service_path(service.id), :id => "service_#{service.id}" do
+              = form_tag score_service_users_path(@user, service), :id => "service_#{service.id}" do
                 = radio_button_tag :value, 5, false, onclick: "submitRating(#{service.id}, 5)", class: "unchecked", id: "#{service.id}_5" 
                 %span
                 = radio_button_tag :value, 4, false, onclick: "submitRating(#{service.id}, 4)", class: "unchecked", id: "#{service.id}_4"

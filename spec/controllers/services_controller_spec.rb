@@ -458,7 +458,7 @@ feature 'ServiceController' do
           expect(user_service.schedules.booked.sort).to eql ( @future_service_interval.schedules + @previous_service_interval.schedules ).sort
           expect((@future_service_interval.schedules + @previous_service_interval.schedules).all?{ |schedule| schedule.booked? }).to eql true
 
-          click_button 'Cancelar'
+          click_button 'Cancelar servicio'
           
           expect(user_service.reload).to be_canceled
           expect(user_service.schedules.reload.booked.sort).to eql ( @previous_service_interval.schedules.sort )
@@ -473,7 +473,7 @@ feature 'ServiceController' do
 
           Timecop.travel(starting_datetime - 23.hours)
 
-          click_button 'Cancelar'
+          click_button 'Cancelar servicio'
 
           expect(user_service.reload).to be_canceled
           expect(user_service.reload.cancelation_fee_charged).to be true
@@ -487,7 +487,7 @@ feature 'ServiceController' do
           user_service.recurrence = recurrence
           user_service.save!
 
-          click_button 'Cancelar'
+          click_button 'Cancelar servicio'
 
           expect(user_service.reload).to be_canceled
           expect(user_service.recurrence.reload).to be_inactive

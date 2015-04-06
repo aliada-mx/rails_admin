@@ -64,7 +64,12 @@ class ConektaCard < ActiveRecord::Base
       currency: 'MXN',
       description: product.description,
       reference_id: product.id,
-      card: self.customer_id || self.token
+      card: self.customer_id || self.token,
+      details: {
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+      }
     })
 
     conekta_charge

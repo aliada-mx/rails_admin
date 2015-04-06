@@ -1,5 +1,5 @@
-//= require base
 //= require modules/dialogs
+//= require base
 
 $(function(){
 

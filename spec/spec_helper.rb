@@ -28,7 +28,6 @@ VCR.configure do |config|
 end
 
 RSpec.configure do |config|
-  DatabaseCleaner.strategy = :truncation
 
   # Authentication helpers
   config.include TestingSupport::DeviseHelpers
@@ -52,9 +51,6 @@ RSpec.configure do |config|
     # Use faster transaction strategy
     DatabaseCleaner.strategy = :transaction
 
-    # Ensure clean db because in aborted specs there might be left over objects
-    DatabaseCleaner.start
-    DatabaseCleaner.clean
   end
 
   config.before(:each) do

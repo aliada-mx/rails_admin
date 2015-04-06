@@ -21,8 +21,8 @@ module Presenters
     end
 
     def name
-      name = "#{friendly_datetime}"
-      name += " #{address.name}" if address
+      name = "#{I18n.l(datetime, format: :future)}"
+      name += ", #{address.name}" if address
     end
 
     def user_link
@@ -99,7 +99,19 @@ module Presenters
       end
     end
 
-   def extras_hours
+    def friendly_total_hours
+      if bill_by_billable_hours?
+       seconds_to_hours_minutes_in_spanish(billable_hours.hours)
+
+      elsif bill_by_reported_hours?
+       seconds_to_hours_minutes_in_spanish(reported_hours.hours)
+
+     else
+       raise "Faltan horas en friendly total_hours del servicio #{self.id}"
+      end
+    end
+
+    def extras_hours
       extras.inject(0){ |hours,extra| hours += extra.hours || 0 }
     end
 
@@ -127,6 +139,30 @@ module Presenters
 
     def weekday_in_spanish
       tz_aware_datetime.dia_semana
+    end
+
+    def to_json
+      attributes.merge!({amount_to_bill: amount_to_bill})
+    end
+
+    def friendly_aliada_reported_begin_time
+      if self.aliada_reported_begin_time
+        I18n.l self.aliada_reported_end_begin_in_gtm_6, format: '%H:%M %p'
+      end
+    end
+
+    def friendly_aliada_reported_end_time
+      if self.aliada_reported_end_time
+        I18n.l self.aliada_reported_end_time_in_gtm_6, format: '%H:%M %p'
+      end
+    end
+
+    def aliada_reported_end_time_in_gtm_6
+      self.aliada_reported_end_time.in_time_zone("Etc/GMT+6")
+    end
+
+    def aliada_reported_end_begin_in_gtm_6
+      self.aliada_reported_begin_time.in_time_zone("Etc/GMT+6")
     end
   end
 end

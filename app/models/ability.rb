@@ -8,7 +8,7 @@ class Ability
     if current_user.persisted?
       can do |action, subject_class, subject|
         if subject_class == User
-          if [:read, :update, :next_services, :previous_services, :edit].include? action
+          if [:read, :update, :next_services, :previous_services, :edit, :canceled_services].include? action
             if current_user.admin?
               true
             # User objects abilities
@@ -22,9 +22,11 @@ class Ability
             end
           end
         elsif subject_class == Score
-          if action == :create_by_service_id
+          if action == :score_service
             if current_user.admin?
               true
+            elsif !params.include? :user_id
+              false
             elsif params.include? :service_id
               Service.find(params[:service_id]).user_id == current_user.id
             else
@@ -51,7 +53,16 @@ class Ability
               false
             end
           end
+        elsif subject_class == RailsAdminCustomAction
+          if current_user.admin?
+            true
+          else
+            false
+          end
         end
+
+
+
       end
     end
   end

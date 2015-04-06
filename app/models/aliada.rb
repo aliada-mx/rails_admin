@@ -6,6 +6,7 @@ class Aliada < User
   has_many :zones, through: :aliada_zones
   has_many :documents, inverse_of: :aliada, foreign_key: :user_id
 
+  has_many :recurrences
   has_many :aliada_working_hours
   has_many :schedules, foreign_key: :aliada_id
   has_many :scores, foreign_key: :aliada_id
@@ -27,16 +28,6 @@ class Aliada < User
     where('users.role = ?', 'aliada')
   end
 
-  def next_service
-    services.in_the_future.last
-  end
-
-  def next_service_link
-    if next_service
-      rails_admin_edit_link(next_service)
-    end
-  end
-  
   def previous_service(current_service) # On the same day
     services.to_a.select{ |service| service.datetime >= current_service.datetime.beginning_of_day }
                  .select{ |service| service.datetime < current_service.datetime }
@@ -96,8 +87,12 @@ class Aliada < User
       read_only
     end
 
-    configure :next_service do
-      virtual?
+    configure :balance do
+      visible false
+    end
+
+    configure :sign_in_count do
+      visible false
     end
 
     show do
@@ -106,6 +101,10 @@ class Aliada < User
 
     list do
       field :name do
+        searchable [{users: :first_name },
+                    {users: :last_name },
+                    {users: :email},
+                    {users: :phone}]
         queryable true
         filterable true
       end
@@ -122,10 +121,17 @@ class Aliada < User
       field :last_name
       field :phone
       field :documents
+
+      field :recurrences
+      field :zones
+
+      field :password do
+        required false
+      end
+      field :password_confirmation
+
       group :login do
         active false
-        field :password
-        field :password_confirmation
         field :current_sign_in_at
         field :sign_in_count
         field :last_sign_in_at

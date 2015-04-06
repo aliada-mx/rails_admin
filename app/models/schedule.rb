@@ -3,6 +3,8 @@ class Schedule < ActiveRecord::Base
   include AliadaSupport::DatetimeSupport
   include Presenters::SchedulePresenter
 
+  has_paper_trail
+
   STATUSES = [
     ['Disponible','available'],
     ['Reservado para un servicio', 'booked'],
@@ -14,6 +16,7 @@ class Schedule < ActiveRecord::Base
   validates_presence_of [:datetime, :status, :aliada_id]
   validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
   validate :schedule_within_working_hours
+  validates_uniqueness_of :datetime, scope: :aliada_id
 
   # Associations
   belongs_to :user, inverse_of: :schedules, foreign_key: :user_id
@@ -37,6 +40,7 @@ class Schedule < ActiveRecord::Base
   scope :in_or_before_datetime, ->(datetime) { where("datetime <= ?", datetime) }
   scope :ordered_by_aliada_datetime, -> { order(:aliada_id, :datetime) }
   scope :for_booking, ->(zone, starting_datetime) { in_zone(zone).in_or_after_datetime(starting_datetime).ordered_by_aliada_datetime }
+  scope :join_users_and_aliadas, -> { joins('INNER JOIN users ON users.id = schedules.user_id OR users.id = schedules.aliada_id') }
   # alias for rails admin
   scope :disponible, -> { available }
   scope :reservadas, -> { booked }
@@ -77,6 +81,7 @@ class Schedule < ActiveRecord::Base
 
   attr_accessor :index # for availability finders to track they schedule position on the main loop
   attr_accessor :original_status # for availability finders because they asume the state is available we keep a record of the original state
+  attr_accessor :blocked # for padding finders
 
   def timezone
     'Mexico City'
@@ -89,7 +94,7 @@ class Schedule < ActiveRecord::Base
     end_of_aliadas_day = beginning_of_aliadas_day + Setting.businessday_hours.hours
 
     found = Time.iterate_in_hour_steps(beginning_of_aliadas_day, end_of_aliadas_day).any? do |current_datime|
-      current_datime.hour == self.datetime.hour
+      current_datime.hour == self.datetime.utc.hour
     end
 
     errors.add(:datetime, message) unless found
@@ -113,10 +118,6 @@ class Schedule < ActiveRecord::Base
     navigation_icon 'icon-calendar'
 
     configure :datetime do
-      pretty_value do
-        object = bindings[:object]
-        I18n.l(object.tz_aware_datetime, format: :future)
-      end
       sort_reverse false
     end
 
@@ -125,7 +126,19 @@ class Schedule < ActiveRecord::Base
       filterable true
     end
 
+    configure :service_id do
+      queryable true
+      filterable true
+    end
+
     list do
+      search_scope do
+        Proc.new do |scope, query|
+          query_without_accents = I18n.transliterate(query)
+
+          scope.merge(UnscopedUser.with_name_phone_email(query_without_accents)).merge(Schedule.join_users_and_aliadas)
+        end
+      end
       sort_by :datetime
 
       field :datetime
@@ -146,6 +159,8 @@ class Schedule < ActiveRecord::Base
 
       field :recurrence
       field :created_at
+
+      field :service
 
       scopes [:todos, :reservadas, :disponible]
     end

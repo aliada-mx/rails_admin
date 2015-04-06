@@ -1,4 +1,15 @@
 Rails.application.configure do
+
+  ENV["MYSQL_HOST"] = "aliadaweb.cvgrmul6eilx.us-west-2.rds.amazonaws.com"
+  ENV["MYSQL_USER"] = "root"
+  ENV["MYSQL_PASS"] = "F3nco389y8%nlp#"
+  ENV["MYSQL_DB"] = "aliadamx_db"
+
+  #ENV["MYSQL_HOST"] = "localhost"
+  #ENV["MYSQL_USER"] = "root"
+  #ENV["MYSQL_PASS"] = "Coderia2014"
+  #ENV["MYSQL_DB"] = "aliadamx_db"
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded on
@@ -15,9 +26,6 @@ Rails.application.configure do
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
-
-  ####Devise 
-  config.action_mailer.default_url_options = { :host => 'localhost:3000' }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -44,5 +52,5 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
   #
 
-  config.action_mailer.default_url_options = { :host => 'localhost' }
+  config.action_mailer.default_url_options = { :host => 'localhost:3000' }
 end

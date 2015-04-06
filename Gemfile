@@ -22,6 +22,8 @@ gem 'resque-web', require: 'resque_web'
 gem 'foreigner'
 # Localization
 gem 'rails-i18n', github: 'svenfuchs/rails-i18n', branch: 'master' # For 4.x
+# Tracking of changes
+gem 'paper_trail', '~> 4.0.0.beta'
 
 # ASSETS
 #
@@ -49,6 +51,7 @@ gem 'chronic'
 gem 'heroku-deflater'
 # Serve fonts with correct headers
 gem 'font_assets'
+# 
  
 # EXCEPTIONS
 #
@@ -116,7 +119,6 @@ group :development, :test do
 
   # Convert erb to haml
   gem 'erb2haml'
-
 end
 
 # Factories outside test group for usage on seeds

@@ -15,7 +15,7 @@ class Address < ActiveRecord::Base
   end
 
   def map_missing?
-    latitude.zero? || longitude.zero?
+    latitude.nil? || latitude.zero? || longitude.nil? || longitude.zero?
   end
 
   def postal_code_or_number

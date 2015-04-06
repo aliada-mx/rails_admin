@@ -2,7 +2,7 @@ module Presenters
   module SchedulePresenter
 
     def name
-      I18n.l(tz_aware_datetime, format: :future)
+      I18n.l(datetime, format: :future)
     end
 
     def tz_aware_datetime

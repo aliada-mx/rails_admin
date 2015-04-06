@@ -42,6 +42,8 @@ module AliadaSupport
     end
 
     def utc_to_timezone(utc_datetime, timezone)
+      return utc_datetime unless utc_datetime.utc?
+
       time_obj = utc_datetime.in_time_zone(timezone)
       if time_obj.dst?
         time_obj += 1.hour
@@ -51,6 +53,19 @@ module AliadaSupport
 
     def weekday_to_spanish(weekday)
       Time.weekdays.select { |weekday_trio| weekday_trio.first == weekday }.first.third
+    end
+
+    def seconds_to_hours_minutes_in_spanish(seconds)
+      return '0 horas' if seconds.zero?
+
+      minutes = ((seconds % 3600) / 60)
+      hours = (seconds / 3600)
+      
+      string = ""
+      string = "#{hours.to_i} horas" if !hours.zero?
+      string += " #{minutes.to_i} minutos" if !minutes.zero?
+
+      string.strip
     end
   end
 end

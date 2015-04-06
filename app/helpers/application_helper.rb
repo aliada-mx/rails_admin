@@ -1,15 +1,5 @@
 module ApplicationHelper
-  def humanize_hours hours
-    minutes = hours.hours / 60
-
-    hours, minutes = minutes.divmod(60)
-
-    humanized = "#{hours.to_i} hrs."
-    unless minutes.zero?
-      humanized += " #{minutes.to_i} mins."
-    end
-    humanized
-  end
+  include AliadaSupport::DatetimeSupport
 
   def controller_action_name
     "#{params[:controller]}-#{params[:action]}".parameterize
@@ -25,5 +15,9 @@ module ApplicationHelper
 
   def in_admin_controller?
     params[:controller] == 'rails_admin/main'
+  end
+
+  def in_dst?
+    Time.zone.now.in_time_zone('Mexico City').dst?
   end
 end

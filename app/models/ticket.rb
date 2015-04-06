@@ -6,23 +6,39 @@ class Ticket < ActiveRecord::Base
     'alert-warning' => 'Advertencia',
     'alert-danger' => 'Problema',
   }
+
+  CATEGORIES = {
+    'conekta_charge_failure' => 'Error al cobrar conekta',
+    'schedule_filler_error' => 'Error en el creador de disponibilidad',
+    'availability_missing' => 'Falta de disponbilidad',
+    'padding_missing' => 'Horas colchón faltantes',
+    'service_without_enough_schedules' => 'Servicio sin suficientes horas de servicio',
+    'service_without_user' => 'Servicio usuario',
+  }
+
   # Only classifications with bootstrap classes allowed
   validates :classification, inclusion: {in: CLASSIFICATIONS.keys  }
+  validates :category, inclusion: {in: CATEGORIES.keys  }
 
   belongs_to :relevant_object, polymorphic: true
+
+  # Rails admin scopes
+  CATEGORIES.each do |category, description|
+    scope description, -> { where(category: category) }
+  end
+
+  def name
+    category_name
+  end
 
   def classification_name
     CLASSIFICATIONS[self.classification]
   end
 
-  # def classification_enum
-  #   CLASSIFICATIONS.invert
-  # end
-
-  def classification_partial
-
+  def category_name
+    CATEGORIES[self.category]
   end
-  
+
   def self.create_error(options)
     options.merge!({classification: 'alert-danger'})
     Ticket.create(options)
@@ -46,9 +62,25 @@ class Ticket < ActiveRecord::Base
         view = bindings[:view]
         ticket = bindings[:object]
 
-        view.content_tag(:div, ticket.classification_name, {class: "alert #{value} ticket-alert"})
+        if view
+          view.content_tag(:div, ticket.classification_name, {class: "alert #{value} ticket-alert"})
+        else
+          ''
+        end
       end
       help ''
+    end
+
+    configure :message do
+      css_class "ticket-message"
+
+      pretty_value do
+        value.html_safe
+      end
+    end
+
+    configure :relevant_object do
+      css_class "ticket-relevant_object"
     end
 
     edit do 
@@ -58,6 +90,11 @@ class Ticket < ActiveRecord::Base
           CLASSIFICATIONS.invert
         end
       end
+    end
+
+    list do
+
+      scopes CATEGORIES.values
     end
   end
 end

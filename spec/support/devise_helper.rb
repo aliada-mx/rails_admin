@@ -10,5 +10,9 @@ module TestingSupport
     def logout
       visit(destroy_user_session_path)
     end
+
+    def clear_session
+      visit(clear_session_path)
+    end
   end
 end

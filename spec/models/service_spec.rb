@@ -13,8 +13,8 @@ feature 'Service' do
                             weekday: ( starting_datetime + 1.day - 1.hour).weekday,
                             hour: ( starting_datetime + 1.day - 1.hour).hour,
                             periodicity: 7) }
-  let!(:recurrent_service) { create(:service_type, name: 'recurrent') }
-  let!(:one_time_service) { create(:service_type, name: 'one-time') }
+  let!(:recurrent_service) { create(:service_type, name: 'recurrent', price_per_hour: 65) }
+  let!(:one_time_service) { create(:service_type, name: 'one-time', price_per_hour: 105) }
   let!(:service){ create(:service,
                          aliada: aliada,
                          user: user,
@@ -129,16 +129,16 @@ feature 'Service' do
     end
   end
 
-  describe '#amount_to_bill' do
+  describe '#amount_by_reported_hours' do
     it 'returns the amount result of calculating hours and multiplying by price' do
       s = Service.create(price: 65,
                          aliada_reported_begin_time: Time.now, 
                          aliada_reported_end_time: Time.now + 3.hour,
                          datetime: starting_datetime,
                          estimated_hours: 3,
-                         service_type: one_time_service
+                         service_type: recurrent_service
                          )
-      expect(s.amount_to_bill).to be 195.0
+      expect(s.amount_by_reported_hours).to be 195.0
     end
     it 'returns 0 with invalid begin and end' do
       s = Service.create(price: 65,
@@ -148,7 +148,7 @@ feature 'Service' do
                          datetime: starting_datetime,
                          estimated_hours: 3
                          )
-      expect(s.amount_to_bill).to be 0
+      expect(s.amount_by_reported_hours).to be 0
     end
   end
 
@@ -186,11 +186,46 @@ feature 'Service' do
       
       service.save
       
-
       VCR.use_cassette('conekta_user_charge', match_requests_on:[:conekta_charge]) do
         service.charge!
       end
       expect(Payment.all.count).to eql 1
+    end
+  end
+
+  describe '#amount_to_bill' do
+    it 'calculates using the billable hours when these are set' do
+      service.billable_hours = 3
+      service.aliada_reported_begin_time = starting_datetime
+      service.aliada_reported_end_time = starting_datetime + 4.hours
+    
+      expect(service.amount_to_bill).to eql 315
+    end
+
+    it 'calculates using the reported hours when these are set and the billable_hours are not' do
+      service.aliada_reported_begin_time = starting_datetime
+      service.aliada_reported_end_time = starting_datetime + 4.hours
+    
+      expect(service.amount_to_bill).to eql 420
+    end
+  end
+
+  describe '#friendly_total_hours' do
+    it 'uses the billable hours if available' do
+      service.billable_hours = 3.50
+      service.aliada_reported_begin_time = starting_datetime
+      service.aliada_reported_end_time = starting_datetime + 4.hours
+      
+
+      expect(service.friendly_total_hours).to eql '3 horas 30 minutos'
+    end
+
+    it 'uses the reported hours if the billable_hours are empty' do
+      service.aliada_reported_begin_time = starting_datetime
+      service.aliada_reported_end_time = starting_datetime + 4.hours + 30.minutes
+      
+
+      expect(service.friendly_total_hours).to eql '4 horas 30 minutos'
     end
   end
 

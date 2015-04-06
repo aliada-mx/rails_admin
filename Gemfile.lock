@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/grillermo/rails_admin.git
-  revision: 427511291e153ca84706d0c7e9a26ed1dbc6768e
+  revision: 8ec3713c5125af0c483137d62901248ff8eb6b7d
   specs:
     rails_admin (0.6.6)
       builder (~> 3.1)
@@ -254,6 +254,9 @@ GEM
     nyan-cat-formatter (0.11)
       rspec (>= 2.99, >= 2.14.2, < 4)
     orm_adapter (0.5.0)
+    paper_trail (4.0.0.beta2)
+      activerecord (>= 3.0, < 6.0)
+      activesupport (>= 3.0, < 6.0)
     paperclip (4.2.1)
       activemodel (>= 3.0.0)
       activesupport (>= 3.0.0)
@@ -478,6 +481,7 @@ DEPENDENCIES
   nestive
   newrelic_rpm
   nyan-cat-formatter
+  paper_trail (~> 4.0.0.beta)
   paperclip
   pg
   pry-rails

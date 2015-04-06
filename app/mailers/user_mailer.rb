@@ -51,34 +51,35 @@ class UserMailer < ApplicationMailer
   def billing_receipt(user, service)
     template_id = Setting.sendgrid_templates_ids[:service_receipt]
     service = Service.where(id: service.id).joins(:address).joins(:service_type).first
+    score_service_url = score_service_users_url(service.user, service)
     
+    if service.bill_by_reported_hours?
+      service_worked_hours_text = "Ella nos dijo que trabajó de #{service.friendly_aliada_reported_end_time} a #{service.friendly_aliada_reported_begin_time}"
+    else
+      service_worked_hours_text = ""
+    end
 
 
-    hours      = service.aliada_reported_end_time.hour - service.aliada_reported_begin_time.hour
-    minutes    = service.aliada_reported_end_time.min  - service.aliada_reported_begin_time.min
-    total_time = hours + minutes/60.0
-    hours      = hours.floor
-    minutes    = ((total_time - hours)*60).floor
-    
     sendgrid_template_mail to: user.email,
-    substitutions:
-      {'-user_full_name-' => [ user.full_name  ],
-      '-service_payment_last_4'=> [if service.payment_method then service.payment_method.last4 else "0000" end],
-      '-service_date-' => [(I18n.l service.datetime, format: '%A %d')],
-      '-service_time-' => [(I18n.l service.datetime, format: '%I %p')] ,
-      '-service_address-' => [service.address.full_address],
-      '-aliada_reported_begin_time-' =>[(I18n.l service.aliada_reported_begin_time, format: '%H:%M %p')],
-      '-aliada_reported_end_time-' =>[(I18n.l service.aliada_reported_end_time, format: '%H:%M %p')],
-      '-service_friendly_total_hours-' =>[if hours < 3 then "3 hrs." else "#{hours} hrs con #{minutes} minutos" end],
-      '-service_amount_to_bill-' => ["$#{service.service_type.price_per_hour}"],
-      '-service_subtotal-' => ["$#{service.amount_to_bill}"],
-      '-aliada_full_name-' => [service.aliada.full_name],
-      '-service_score_1-' => ["#{score_service_url(service.id)}?value=1"],
-      '-service_score_2-' => ["#{score_service_url(service.id)}?value=2"],
-      '-service_score_3-' => ["#{score_service_url(service.id)}?value=3"],
-      '-service_score_4-' => ["#{score_service_url(service.id)}?value=4"],
-      '-service_score_5-' => ["#{score_service_url(service.id)}?value=5"]},
-    template_id: template_id
+      substitutions:
+        {'-user_full_name-' => [ user.full_name  ],
+        '-service_payment_last_4'=> [if service.payment_method then service.payment_method.last4 else "0000" end],
+        '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A %d')],
+        '-service_time-' => [(I18n.l service.tz_aware_datetime, format: '%I %p')] ,
+        '-service_type_name-' => [service.service_type.display_name] ,
+        '-service_address-' => [service.address.full_address],
+        '-service_worked_hours-' => [service_worked_hours_text],
+        '-service_friendly_total_hours-' =>[service.friendly_total_hours],
+        '-service_price_per_hour-' => [service.service_type.price_per_hour],
+        '-service_subtotal-' => [service.amount_to_bill],
+        '-aliada_full_name-' => [service.aliada.full_name],
+        '-service_score_1_url-' => ["#{score_service_url}?value=1"],
+        '-service_score_2_url-' => ["#{score_service_url}?value=2"],
+        '-service_score_3_url-' => ["#{score_service_url}?value=3"],
+        '-service_score_4_url-' => ["#{score_service_url}?value=4"],
+        '-service_score_5_url-' => ["#{score_service_url}?value=5"]},
+      template_id: template_id
+
   end
   
   def payment_problem(user, payment_method)

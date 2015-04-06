@@ -11,6 +11,7 @@ es:
       payment_method: 'métodos de pago'
       postal_code: 'códigos postale'
       recurrence: 'recurrencia'
+      recurrences: 'recurrencias'
       aliada_working_hour: 'horario de Aliada'
       schedule: 'hora de servicio'
       score: 'calificación'
@@ -31,6 +32,7 @@ es:
         service_link: 'Servicio'
         services: 'servicios'
         schedules: 'horas de servicio'
+        role: 'rol'
       address: &address_attributes
         user: usuario
         postal_code: código postal
@@ -67,10 +69,12 @@ es:
         next_service_link: 'Siguiente servicio'
       aliada:
         <<: *user_attributes
+        <<: *common_attributes
         banned_users: usuarios que la banearon
         zones: zonas de trabajo
         scores: calificaciones
         next_service_link: 'Siguiente servicio'
+        aliada_working_hours: 'Horas de trabajo'
       service_type:
         <<: *common_attributes
         periodicity: periodicidad
@@ -129,7 +133,8 @@ es:
         service_type: tipo de servicio
         recurrence: recurrencia
         billed_hours: horas cobradas
-        hours_after_service: horas después del servicio
+        billable_hours: horas cobrables
+        hours_after_service: horas de colchón
         bathrooms: baños
         bedrooms: recámaras
         estimated_hours: Horas estimadas 
@@ -143,8 +148,16 @@ es:
         user_link: Usuario
         address_map_link: 'Mapa'
         aliada_webapp_link: 'Webapp de aliada'
+        aliada_link: 'Aliada'
+        rails_admin_billable_hours_widget: 'Horas cobrables'
+        aliada_reported_begin_time: 'Hora reportada de inicio'
+        aliada_reported_end_time: 'Hora reportada final'
+        cancelation_fee_charged: 'Cuota de cancelación'
+        confirmed: 'Confirmado'
+        rooms_hours: 'Horas por cuartos'
+        reported_hours: 'Horas reportadas'
       ticket:
-        relevant_object: Servicio
+        relevant_object: Registro
         message: error
         action_needed: acción sugerida
         classification: tipo de ticket

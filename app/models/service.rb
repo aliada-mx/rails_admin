@@ -4,6 +4,8 @@ class Service < ActiveRecord::Base
   include AliadaSupport::DatetimeSupport
   include Mixins::RailsAdminModelsHelpers
 
+  has_paper_trail
+
   STATUSES = [
     ['Creado','created'],
     ['Aliada asignada', 'aliada_assigned'],
@@ -20,6 +22,7 @@ class Service < ActiveRecord::Base
 
   belongs_to :address
   belongs_to :user, inverse_of: :services, foreign_key: :user_id
+  belongs_to :unscoped_user, foreign_key: :user_id
   belongs_to :aliada, inverse_of: :services, foreign_key: :aliada_id
   belongs_to :payment_method
   belongs_to :recurrence
@@ -27,13 +30,14 @@ class Service < ActiveRecord::Base
   belongs_to :zone
   has_many :extra_services
   has_many :extras, through: :extra_services
-  has_many :schedules
+  has_many :schedules, ->{ order(:datetime ) }
   has_many :tickets, as: :relevant_object
   has_one :score
 
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
+  scope :from_today_to_the_future, -> { where("datetime >= ?", Time.zone.now.beginning_of_aliadas_day)  }
   scope :not_ids, ->(ids) { where("services.id NOT IN ( ? )", ids) }
   scope :on_day, -> (datetime) { where('datetime >= ?', datetime.beginning_of_day).where('datetime <= ?', datetime.end_of_day) } 
   scope :canceled, -> { where('services.status = ?', 'canceled') }
@@ -41,10 +45,10 @@ class Service < ActiveRecord::Base
   scope :ordered_by_created_at, -> { order(:created_at) }
   scope :ordered_by_datetime, -> { order(:datetime) }
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
+  scope :join_users_and_aliadas, -> { joins('INNER JOIN users ON users.id = services.user_id OR users.id = services.aliada_id') }
   # Rails admin tabs
   scope 'mañana', -> { on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
-  scope :todos, -> {}
-
+  scope :todos, -> { }
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
@@ -54,6 +58,7 @@ class Service < ActiveRecord::Base
   validate :datetime_within_working_hours
   validate :service_type_exists
   validates_presence_of :address, :user, :estimated_hours, :service_type, :datetime
+  validates_uniqueness_of :datetime, scope: :user_id
 
   # Callbacks
   after_initialize :set_defaults
@@ -76,7 +81,7 @@ class Service < ActiveRecord::Base
     after_transition on: :assign do |service, transition|
       aliada = transition.args.first
 
-      service.aliada = aliada
+        service.aliada = aliada
       service.save!
 
       if service.recurrent?
@@ -88,6 +93,20 @@ class Service < ActiveRecord::Base
 
     before_transition on: :cancel do |service, transition|
       service.enable_schedules!
+    end
+
+    after_transition on: :pay do |service, transition|
+      service.send_billing_receipt_email
+
+      service.billed_hours = service.billable_hours
+      service.save!
+    end
+
+    after_transition on: :finish do |service, transition|
+      if service.bill_by_reported_hours?
+        service.billable_hours = service.reported_hours
+        service.save!
+      end
     end
   end
 
@@ -118,8 +137,8 @@ class Service < ActiveRecord::Base
   end
 
   def create_charge_failed_ticket(user, amount, error)
-    Ticket.create_error(relevant_object_id: self.id,
-                        relevant_object_type: 'Service',
+    Ticket.create_error(relevant_object: self,
+                        category: 'conekta_charge_failure',
                         message: "No se pudo realizar cargo de #{amount} a la tarjeta de #{user.first_name} #{user.last_name}. #{error.message_to_purchaser}")
   end
   
@@ -185,6 +204,7 @@ class Service < ActiveRecord::Base
   def create_aliada_missing_ticket
     Ticket.create_warning message: "No se encontró una aliada para el servicio", 
                           action_needed: "Asigna una aliada al servicio",
+                          category: 'availability_missing',
                           relevant_object: self
   end
 
@@ -231,23 +251,43 @@ class Service < ActiveRecord::Base
       false
     end
   end
+
+  def reported_hours
+    if bill_by_reported_hours?
+      (self.aliada_reported_end_time - self.aliada_reported_begin_time) / 3600.0
+    end
+  end
   
   #calculates the price to be charged for a service
-  def amount_to_bill
-    hours = self.aliada_reported_end_time.hour - self.aliada_reported_begin_time.hour
-    minutes = self.aliada_reported_end_time.min - self.aliada_reported_begin_time.min 
-    if hours < 3 && hours > 0
-    then
-      hours = 3
-      minutes = 0
-    end
-    amount = (hours*(self.service_type.price_per_hour))+(minutes * ((self.service_type.price_per_hour)/60.0))
-    
+  def amount_by_reported_hours
+    amount = reported_hours * service_type.price_per_hour
    
-    if amount > 0 && (self.aliada_reported_end_time.to_date === self.aliada_reported_begin_time.to_date)
-      return amount
+    if amount > 0 then amount else 0 end
+  end
+
+  def amount_by_billable_hours
+    billable_hours * service_type.price_per_hour
+  end
+
+  def bill_by_reported_hours?
+    aliada_reported_begin_time.present? && aliada_reported_end_time.present?
+  end
+
+  def bill_by_billable_hours?
+    billable_hours.present? && !billable_hours.zero?
+  end
+
+  def amount_to_bill
+    if bill_by_billable_hours?
+
+      amount_by_billable_hours.ceil
+
+    elsif bill_by_reported_hours?
+
+      amount_by_reported_hours.ceil
+
     else
-      return 0
+      0
     end
   end
 
@@ -264,22 +304,23 @@ class Service < ActiveRecord::Base
   def charge!
     return if paid?
 
-    amount = self.amount_to_bill
-    product = OpenStruct.new({amount: amount,
-                              description: 'Servicio aliada',
-                              id: id})
-    
-    payment = user.charge!(product, self)
+    ActiveRecord::Base.transaction do
 
-    if payment && payment.paid?
-      pay!
+      amount = amount_to_bill
+      product = OpenStruct.new({amount: amount,
+                                description: 'Servicio aliada',
+                                id: id})
+      
+      payment = user.charge!(product, self)
+
+      if payment && payment.paid?
+        pay!
+      end
     end
   end
 
-  def create_double_charge_ticket
-    Ticket.create_warning message: "Se intentó cobrar un servicio ya cobrado", 
-                          action_needed: "Deselecciona el servicio al cobrar",
-                          relevant_object: self
+  def send_billing_receipt_email
+    UserMailer.billing_receipt(self.user, self).deliver
   end
 
   def charge_cancelation_fee!
@@ -430,7 +471,6 @@ class Service < ActiveRecord::Base
     ScheduleInterval.build_from_range(datetime, ending_datetime, elements_for_key: estimated_hours, conditions:{ aliada_id: aliada_id })
   end
    
-  # Validations
   def service_type_exists
     message = 'El tipo de servicio elegido no existe'
 
@@ -450,7 +490,7 @@ class Service < ActiveRecord::Base
     end_of_aliadas_day = beginning_of_aliadas_day + Setting.businessday_hours.hours
 
     found = Time.iterate_in_hour_steps(beginning_of_aliadas_day, end_of_aliadas_day).any? do |current_datime|
-      current_datime.hour == self.datetime.hour
+      current_datime.hour == self.datetime.utc.hour
     end
 
     errors.add(:datetime, message) unless found
@@ -463,7 +503,6 @@ class Service < ActiveRecord::Base
   def send_hour_changed_email
     ServiceMailer.hour_changed(self).deliver!
   end
-
 
   def send_untimely_cancellation_email
     ServiceMailer.untimely_cancelation(self).deliver!
@@ -489,6 +528,8 @@ class Service < ActiveRecord::Base
     end
   end
 
+  attr_accessor :rails_admin_billable_hours_widget
+  
   rails_admin do
     label_plural 'servicios'
     navigation_label 'Operación'
@@ -498,7 +539,42 @@ class Service < ActiveRecord::Base
       visible false
     end
 
+    configure :aliada_reported_begin_time do
+      read_only true
+      pretty_value do
+        if value
+          object = bindings[:object]
+
+          object.friendly_aliada_reported_begin_time
+        end
+      end
+    end
+
+    configure :aliada_reported_end_time do
+      read_only true
+      pretty_value do
+        if value
+          object = bindings[:object]
+          object.friendly_aliada_reported_end_time
+        end
+      end
+    end
+
     list do
+      search_scope do
+        Proc.new do |scope, query|
+          query_without_accents = I18n.transliterate(query)
+
+          scope.merge(UnscopedUser.with_name_phone_email(query_without_accents)).merge(Service.join_users_and_aliadas)
+        end
+      end
+
+      configure :status do
+        queryable false
+        filterable true
+        visible false
+      end
+
       sort_by :datetime
 
       field :user_link do
@@ -509,23 +585,73 @@ class Service < ActiveRecord::Base
 
       field :status
 
-      field :aliada do
-        searchable [{users: :first_name },
-                    {users: :last_name },
-                    {users: :email},
-                    {users: :phone}]
-        queryable true
-        filterable true
-        visible false
-      end
-
       field :address_map_link
 
-      field :aliada_webapp_link
+      field :aliada_link
 
+      field :rails_admin_billable_hours_widget do
+        virtual?
+        formatted_value do
+          bindings[:view].render partial: 'rails_admin/main/rails_admin_billable_hours_widget', locals: {field: self, 
+                                                                                        user: bindings[:current_user],
+                                                                                        form: bindings[:form],
+                                                                                        service: bindings[:object]}
+          
+        end
+      end
+
+      field :aliada_webapp_link
+      field :aliada_reported_begin_time
+      field :aliada_reported_end_time
+      field :reported_hours
       field :created_at
 
       scopes ['mañana', :todos, :confirmados, :sin_confirmar]
+    end
+
+    edit do
+      field :status
+      field :datetime
+      field :user
+      field :aliada
+      field :address
+      field :service_type
+      field :recurrence
+
+      field :cancelation_fee_charged
+
+      group :horas_de_servicio do
+        field :estimated_hours
+        field :aliada_reported_begin_time
+        field :aliada_reported_end_time
+
+        field :billable_hours
+        field :billed_hours do
+          read_only true
+          visible do
+            value.present? && !value.zero?
+          end
+        end
+
+        field :hours_after_service
+        field :rooms_hours
+        field :schedules
+      end
+
+      field :tickets
+
+      group :detalles_al_registrar do
+        active false
+        field :bathrooms
+        field :bedrooms
+        field :special_instructions
+        field :cleaning_supplies_instructions
+        field :garbage_instructions
+        field :attention_instructions
+        field :equipment_instructions
+        field :forbidden_instructions
+        field :entrance_instructions
+      end
     end
   end
 end

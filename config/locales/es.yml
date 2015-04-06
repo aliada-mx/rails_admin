@@ -53,7 +53,7 @@ es:
     - sábado
     formats:
       default: ! '%d/%m/%Y'
-      long: ! '%d-%B-%Y'
+      long: ! '%a, %e %b %Y %Z'
       short: ! '%d-%b'
     month_names:
     -
@@ -207,8 +207,8 @@ es:
   time:
     am: am
     formats:
-      default: ! '%A, %d de %B de %Y %H:%M:%S %z'
-      long: ! '%d de %B de %Y %H:%M'
+      default: ! '%d/%m/%Y'
+      long: ! '%a, %e %b %Y %H:%M'
       short: ! '%d de %b %H:%M'
       future: '%d de %B %Y, %l:%S %P'
       week_day:  '%A %e'

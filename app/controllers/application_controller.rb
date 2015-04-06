@@ -4,6 +4,28 @@ class ApplicationController < ActionController::Base
 
   before_filter :initialize_js_variables
   before_filter :set_default_user
+
+  before_filter :set_admin_timezone
+
+
+  def set_admin_timezone
+    if in_admin_controller?
+      if params[:action] == 'edit' && request.method == 'POST'
+        model_name = params[:model_name]
+
+        params[model_name][:in_rails_admin] = true
+      end
+
+      if in_dst?
+        Time.zone = "Etc/GMT+6"
+
+      else
+        Time.zone = "Mexico City"
+      end
+    else
+      Time.zone = "UTC"
+    end
+  end
    
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
