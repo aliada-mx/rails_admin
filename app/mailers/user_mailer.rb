@@ -62,7 +62,7 @@ class UserMailer < ApplicationMailer
       substitutions:
         {'-user_full_name-' => [ user.full_name  ],
         '-service_payment_last_4'=> [if service.payment_method then service.payment_method.last4 else "0000" end],
-        '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A')],
+        '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A %d')],
         '-service_time-' => [(I18n.l service.tz_aware_datetime, format: '%I %p')] ,
         '-service_type_name-' => [service.service_type.display_name] ,
         '-service_address-' => [service.address.full_address],
@@ -77,6 +77,7 @@ class UserMailer < ApplicationMailer
         '-service_score_4_url-' => ["#{score_service_url}?value=4"],
         '-service_score_5_url-' => ["#{score_service_url}?value=5"]},
       template_id: template_id
+
   end
   
   def payment_problem(user, payment_method)
