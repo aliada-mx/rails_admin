@@ -16,6 +16,14 @@ module WeekdayPatch
         ['saturday', 6, 'Sábado'],
       ]
     end
+
+    def next_weekday wday
+      if wday == 6
+        return 'sunday'
+      else
+        weekdays[wday + 1][0]
+      end
+    end
     
     # Iterate in a range step by step hours
     def iterate_in_hour_steps(start, end_)
@@ -30,7 +38,7 @@ module WeekdayPatch
 
   def dia_semana
     self.class.weekdays.select{ |day| day[1] == wday }.first.third
-  end
+  end 
 
   def weekday
     self.class.weekdays.select{ |day| day[1] == wday }.first.first

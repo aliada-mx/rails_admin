@@ -34,9 +34,7 @@ class AliadaWorkingHour < Recurrence
 
   def create_schedules_until_horizon
 
-    Chronic.time_class= ActiveSupport::TimeZone[self.timezone]
-    next_weekday_utc = Chronic.parse("next #{self.weekday}").utc.beginning_of_day
-    starting_datetime = next_weekday_utc.change(hour: self.utc_hour(next_weekday_utc))
+    starting_datetime = next_recurrence_with_hour_now_in_utc
 
     recurrence_days = wdays_until_horizon(self.wday, starting_from: starting_datetime)
 
