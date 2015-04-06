@@ -14,6 +14,7 @@ class Schedule < ActiveRecord::Base
   validates_presence_of [:datetime, :status, :aliada_id]
   validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
   validate :schedule_within_working_hours
+  validates_uniqueness_of :datetime, scope: :aliada_id
 
   # Associations
   belongs_to :user, inverse_of: :schedules, foreign_key: :user_id
@@ -89,7 +90,7 @@ class Schedule < ActiveRecord::Base
     end_of_aliadas_day = beginning_of_aliadas_day + Setting.businessday_hours.hours
 
     found = Time.iterate_in_hour_steps(beginning_of_aliadas_day, end_of_aliadas_day).any? do |current_datime|
-      current_datime.hour == self.datetime.hour
+      current_datime.hour == self.datetime.utc.hour
     end
 
     errors.add(:datetime, message) unless found
@@ -113,10 +114,6 @@ class Schedule < ActiveRecord::Base
     navigation_icon 'icon-calendar'
 
     configure :datetime do
-      pretty_value do
-        object = bindings[:object]
-        I18n.l(object.tz_aware_datetime, format: :future)
-      end
       sort_reverse false
     end
 

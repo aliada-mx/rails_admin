@@ -1,6 +1,6 @@
 describe 'Availability' do
   include TestingSupport::SchedulesHelper
-  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 15:00:00') } # 4 pm on Mexico City TZ
+  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 15:00:00 UTC') } # 4 pm on Mexico City TZ
   let!(:user) { create(:user) }
   let!(:recurrence){ create(:recurrence, weekday: starting_datetime.weekday, hour: starting_datetime.hour ) }
   let!(:aliada) { create(:aliada, created_at: starting_datetime) }

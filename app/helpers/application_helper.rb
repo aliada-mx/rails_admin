@@ -16,4 +16,8 @@ module ApplicationHelper
   def in_admin_controller?
     params[:controller] == 'rails_admin/main'
   end
+
+  def in_dst?
+    Time.zone.now.in_time_zone('Mexico City').dst?
+  end
 end

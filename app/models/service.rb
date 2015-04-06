@@ -56,6 +56,7 @@ class Service < ActiveRecord::Base
   validate :service_type_exists
   validates_presence_of :address, :user, :estimated_hours, :service_type, :datetime
 
+
   # Callbacks
   after_initialize :set_defaults
   after_create :ensure_zone!
@@ -473,7 +474,7 @@ class Service < ActiveRecord::Base
     end_of_aliadas_day = beginning_of_aliadas_day + Setting.businessday_hours.hours
 
     found = Time.iterate_in_hour_steps(beginning_of_aliadas_day, end_of_aliadas_day).any? do |current_datime|
-      current_datime.hour == self.datetime.hour
+      current_datime.hour == self.datetime.utc.hour
     end
 
     errors.add(:datetime, message) unless found
@@ -520,6 +521,14 @@ class Service < ActiveRecord::Base
 
     configure :extra_services do
       visible false
+    end
+
+    configure :aliada_reported_begin_time do
+      read_only true
+      pretty_value do
+        object = bindings[:object]
+        I18n.l(object.aliada_reported_begin_time, format: :future)
+      end
     end
 
     list do

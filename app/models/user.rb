@@ -180,15 +180,16 @@ class User < ActiveRecord::Base
       field :role
       field :first_name
       field :last_name
+      field :email
       field :phone
+      field :password do
+        required false
+      end
+      field :password_confirmation
 
       field :services
       group :login_info do
         active false
-        field :password do
-          required false
-        end
-        field :password_confirmation
         field :current_sign_in_at
         field :sign_in_count
         field :last_sign_in_at

@@ -42,6 +42,8 @@ module AliadaSupport
     end
 
     def utc_to_timezone(utc_datetime, timezone)
+      return utc_datetime unless utc_datetime.utc?
+
       time_obj = utc_datetime.in_time_zone(timezone)
       if time_obj.dst?
         time_obj += 1.hour

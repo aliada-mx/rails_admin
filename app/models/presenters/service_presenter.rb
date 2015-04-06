@@ -21,7 +21,7 @@ module Presenters
     end
 
     def name
-      name = "#{friendly_datetime}"
+      name = "#{datetime}"
       name += " #{address.name}" if address
     end
 
