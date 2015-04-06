@@ -70,6 +70,23 @@ class Recurrence < ActiveRecord::Base
     'Mexico City'
   end
 
+  def in_dst?
+    Time.zone.now.in_time_zone(self.timezone).dst?
+  end
+
+  def now_in_timezone
+    time_obj = Time.zone.now.in_time_zone(self.timezone)
+    if in_dst?
+      time_obj += 1.hour
+    end
+    time_obj
+  end
+
+  def weekday_now
+    time_obj = now_in_timezone
+    time_obj.weekday
+  end
+
   def utc_hour(utc_date)
     Chronic.time_class= ActiveSupport::TimeZone[self.timezone]
     time_obj = Chronic.parse("#{utc_date.strftime('%F')} #{self.hour}")
@@ -77,6 +94,14 @@ class Recurrence < ActiveRecord::Base
       time_obj += 1.hour
     end
     time_obj.utc.hour
+  end
+
+  def utc_weekday(utc_date)
+    if self.utc_hour(utc_date) <= 23 and self.utc_hour(utc_date) > 6
+      return self.weekday
+    else
+      return Time.next_weekday self.wday  
+    end
   end
 
   def tz_aware_hour(utc_datetime)
@@ -87,6 +112,31 @@ class Recurrence < ActiveRecord::Base
     utc_to_timezone(utc_datetime, self.timezone).weekday
   end
 
+  def next_recurrence_now_in_time_zone
+    if self.weekday == now_in_timezone.weekday
+      return now_in_timezone
+    else
+      next_day = now_in_timezone
+      while self.wday != next_day.wday
+        next_day += 1.day
+      end
+      return next_day
+    end
+  end
+
+  def next_recurrence_with_hour_now_in_time_zone
+    next_recurrence_now_in_time_zone.change(hour: self.hour)
+  end
+
+  def next_recurrence_with_hour_now_in_utc
+    time_obj = next_recurrence_with_hour_now_in_time_zone
+    if time_obj.dst?
+      time_obj += 1.hour
+    end
+    time_obj.utc
+  end
+
+  # TODO: fix
   def next_day_of_recurrence(starting_after_datetime)
     next_day = starting_after_datetime.change(hour: hour)
 
