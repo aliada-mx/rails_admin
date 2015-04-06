@@ -4,6 +4,8 @@ class Service < ActiveRecord::Base
   include AliadaSupport::DatetimeSupport
   include Mixins::RailsAdminModelsHelpers
 
+  has_paper_trail
+
   STATUSES = [
     ['Creado','created'],
     ['Aliada asignada', 'aliada_assigned'],
