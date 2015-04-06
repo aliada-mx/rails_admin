@@ -15,8 +15,8 @@ describe 'Schedule Filler' do
   let!(:client_recurrence) { create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: 7, aliada: aliada, user: user, total_hours: total_service_hours, owner: 'user') }
 
   # services scheduled for client's schedule
-  let!(:first_service){ create(:service, aliada: aliada, user: user, recurrence: client_recurrence, datetime: recurrence_service_datetime, special_instructions: "first service") }
-  let!(:other_service){ create(:service, aliada: aliada, user: user, recurrence: client_recurrence, datetime: recurrence_service_datetime + 7.day, special_instructions: "last service") }
+  let!(:first_service){ create(:service, aliada: aliada, user: user, recurrence: client_recurrence, datetime: recurrence_service_datetime + 1.hour , special_instructions: "first service") }
+  let!(:other_service){ create(:service, aliada: aliada, user: user, recurrence: client_recurrence, datetime: recurrence_service_datetime + 7.day + 1.hour, special_instructions: "last service") }
 
   before do
     Timecop.freeze(starting_datetime)
@@ -62,7 +62,7 @@ describe 'Schedule Filler' do
       first_service.update_attribute(:created_at, first_service.created_at - 1.day)
       # Empty schedules before the job
       expect(Schedule.in_the_future.count).to be 0
-      ScheduleFiller.perform
+      ScheduleFiller.perform(false)
     end
 
     it 'creates schedules for aliada' do
@@ -91,7 +91,7 @@ describe 'Schedule Filler' do
       other_aliada = create(:aliada)
       # client's recurrence, built without aliada's recurrence
       other_client_recurrence = create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, aliada: other_aliada, user: user, total_hours: total_service_hours)
-      expect{ScheduleFiller.perform}.to raise_error(RuntimeError)
+      expect{ScheduleFiller.perform(false)}.to raise_error(RuntimeError)
     end
   
     it "shows error of client's recurrence without an aliada's recurrence" do
@@ -99,7 +99,7 @@ describe 'Schedule Filler' do
       # client's recurrence, built without aliada's recurrence
       other_client_recurrence = create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, aliada: other_aliada, user: user, total_hours: total_service_hours)
       service = create(:service, aliada: other_aliada, user: user, recurrence: other_client_recurrence, datetime: recurrence_service_datetime, special_instructions: "first service")
-      expect{ScheduleFiller.perform}.to raise_error(RuntimeError)
+      expect{ScheduleFiller.perform(false)}.to raise_error(RuntimeError)
     end
 
   end

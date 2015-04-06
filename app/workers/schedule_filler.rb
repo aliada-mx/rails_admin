@@ -4,18 +4,19 @@ class ScheduleFiller
     :background_jobs
   end
 
-  def self.perform
-    self.fill_schedule
+  #TODO: Eliminate fix_total_hours after schedule stabilization
+  def self.perform fix_total_hours = true
+    self.fill_schedule fix_total_hours
   end
 
-  def self.fill_schedule
+  def self.fill_schedule fix_total_hours
     today_in_the_future = Time.zone.now.beginning_of_day + Setting.time_horizon_days.days + 1.day
     
     ActiveRecord::Base.transaction do
       begin
         fill_aliadas_availability today_in_the_future
 
-        insert_clients_schedule today_in_the_future, true
+        insert_clients_schedule today_in_the_future, fix_total_hours
       rescue Exception => e
         Rails.logger.fatal e 
         Raygun.track_exception(e)
@@ -42,28 +43,20 @@ class ScheduleFiller
   # aliada's recurrences, to build the whole availability
   def self.fill_aliadas_availability today_in_the_future
     AliadaWorkingHour.active.each do |aliada_recurrence|
-      if today_in_the_future.weekday == aliada_recurrence.weekday 
+
+      if today_in_the_future.weekday == aliada_recurrence.utc_weekday(today_in_the_future)
 
         #Compensate for UTC 
         beginning_of_recurrence = today_in_the_future.change(hour: aliada_recurrence.utc_hour(today_in_the_future))
 
         zones = aliada_recurrence.aliada.zones
-        
-        ( 0..(  aliada_recurrence.total_hours - 1 ) ).each do |i|
           
-          if not Schedule.find_by(datetime: beginning_of_recurrence + i.hours, aliada_id: aliada_recurrence.aliada_id)
+        if not Schedule.find_by(datetime: beginning_of_recurrence, aliada_id: aliada_recurrence.aliada_id)
 
-            schedule_intervals = ScheduleInterval.build_from_range(beginning_of_recurrence + i.hours, 
-                                                             beginning_of_recurrence + i.hours + 1.hours,
-                                                             from_existing: false,
-                                                             conditions: {aliada_id: aliada_recurrence.aliada_id, 
-                                                                          recurrence_id: aliada_recurrence.id,
-                                                                          zones: zones, 
-                                                                          service_id: nil})
+          Schedule.create!(datetime: beginning_of_recurrence, aliada_id:  aliada_recurrence.aliada_id, zones: zones, recurrence_id: aliada_recurrence.id)
 
-            schedule_intervals.persist!
-          end
         end
+
       end
     end
   end
@@ -80,6 +73,7 @@ class ScheduleFiller
     end
 
     # Compensate UTC 
+    # MAL
     beginning_of_user_recurrence = today_in_the_future.change(hour: user_recurrence.utc_hour(today_in_the_future))
 
     base_service_attributes = base_service.shared_attributes
@@ -94,11 +88,9 @@ class ScheduleFiller
   #TODO: REMOVE fix_total_hours flag AFTER MIGRATION FIX
   def self.insert_clients_schedule today_in_the_future, fix_total_hours = false
 
-    Recurrence.active.each do |user_recurrence|
-      if today_in_the_future.weekday == user_recurrence.weekday 
+    Recurrence.active.each do |user_recurrence| 
 
-        service = create_service_in_clients_schedule today_in_the_future, user_recurrence
-        # Find the schedule in which the client will be assigned
+      if today_in_the_future.weekday == user_recurrence.utc_weekday(today_in_the_future)
 
         # Compensate UTC
         beginning_datetime = today_in_the_future.change(hour: user_recurrence.utc_hour(today_in_the_future))
@@ -113,10 +105,14 @@ class ScheduleFiller
             # Aliadas fantasmas
             if not [43, 44].index user_recurrence.aliada_id
 
-              #binding.pry
-              error = "Aliada #{user_recurrence.aliada.first_name} #{user_recurrence.aliada.last_name} with empty or inactive schedules."
-              Rails.logger.fatal error
-              raise error
+              error = "Servicio no se pudo crear porque el horario de la aliada no permitía crear un servicio a esa hora. Aliada #{user_recurrence.aliada.first_name} #{user_recurrence.aliada.last_name}, horario - #{user_recurrence.weekday} #{user_recurrence.hour}:00 hrs"
+
+              Ticket.create_error(relevant_object: user_recurrence, message: error)
+
+              next
+
+              #Rails.logger.fatal error
+              #raise error
 
             end
             
@@ -146,6 +142,8 @@ class ScheduleFiller
           
         end
         
+        service = create_service_in_clients_schedule today_in_the_future, user_recurrence
+
         # Assign the client to the aliada's schedule
         ScheduleInterval.new(schedules).book_schedules(aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, service_id: service.id)
       end
@@ -175,125 +173,6 @@ class ScheduleFiller
     end
   end
 
-  
-  def self.fill_schedule_after_migration
-
-    today_in_the_future = Time.zone.now.beginning_of_day + Setting.time_horizon_days.days + 1.day 
-
-    ActiveRecord::Base.transaction do
-      begin
-        # Create schedules based on the Aliada Working Hours
-        create_schedules_for_aliadas 
-
-        fill_aliadas_availability_no_validation today_in_the_future
-
-        insert_clients_schedule_no_validation today_in_the_future
-      rescue Exception => e
-        Rails.logger.fatal e
-        Raygun.track_exception(e)
-        raise e
-      end
-    end
-
-  end
-
-  def self.create_schedules_for_aliadas
-
-    ( 0..( Setting.time_horizon_days - 1 ) ).each do |i|
-      
-      datetime = Time.zone.now.beginning_of_day + i.days
-
-      Aliada.all.each do |aliada|
-         
-          aliada.aliada_working_hours.each do |awh|
-
-            if awh.weekday == datetime.weekday
-                
-              beginning_of_recurrence = datetime.change(hour: awh.utc_hour(datetime))
-              ending_of_recurrence = beginning_of_recurrence + awh.total_hours.hours
-
-              ScheduleInterval.create_from_range_if_not_exists(beginning_of_recurrence, 
-                                                             ending_of_recurrence,
-                                                             conditions: {aliada_id: aliada.id, 
-                                                                          recurrence_id: awh.id,
-                                                                          zones: aliada.zones, 
-                                                                          service_id: nil})
-            end
-      
-          end
-
-      end
-
-    end
-
-  end
-
-  # aliada's recurrences, to build the whole availability
-  def self.fill_aliadas_availability_no_validation today_in_the_future 
-    AliadaWorkingHour.active.each do |aliada_recurrence|
-      if today_in_the_future.weekday == aliada_recurrence.weekday 
-
-        #Compensate for UTC 
-        beginning_of_recurrence = today_in_the_future.change(hour: aliada_recurrence.utc_hour(today_in_the_future))
-
-        zones = aliada_recurrence.aliada.zones
-
-        ( 0..(  aliada_recurrence.total_hours - 1 ) ).each do |i|
-
-          if not Schedule.find_by(datetime: beginning_of_recurrence + i.hours, aliada_id: aliada_recurrence.aliada_id)
-
-            schedule_intervals = ScheduleInterval.build_from_range(beginning_of_recurrence + i.hours, 
-                                                             beginning_of_recurrence + i.hours + 1.hours,
-                                                             from_existing: false,
-                                                             conditions: {aliada_id: aliada_recurrence.aliada_id, 
-                                                                          recurrence_id: aliada_recurrence.id,
-                                                                          zones: zones, 
-                                                                          service_id: nil})
-            schedule_intervals.persist!
-
-          end
-
-        end
-
-      end
-    end
-  end
-
-  # client's recurrences, to book inside aliada's schedule 
-  def self.insert_clients_schedule_no_validation today_in_the_future 
-
-    Recurrence.active.where("user_id is not null").each do |user_recurrence|
-      if today_in_the_future.weekday == user_recurrence.weekday 
-
-        service = create_service_in_clients_schedule today_in_the_future, user_recurrence
-
-        # Compensate for UTC
-        beginning_datetime = today_in_the_future.change(hour: user_recurrence.utc_hour(today_in_the_future))
-        ending_datetime = beginning_datetime + user_recurrence.total_hours.hours
-        
-        # Find the schedule in which the client will be assigned
-        schedules = Schedule.where("aliada_id = ? AND datetime >= ? AND datetime < ?", user_recurrence.aliada_id, beginning_datetime, ending_datetime )
-        if schedules.empty? or (schedules.count < user_recurrence.total_hours)
-          schedules = []
-          #CREATE SCHEDULES
-          ( 0..( user_recurrence.total_hours - 1 ) ).each do |i|
-            if not Schedule.find_by(datetime: beginning_datetime + i.hours, aliada_id: user_recurrence.aliada_id)
-
-              schedule = Schedule.find_or_initialize_by(datetime: beginning_datetime + i.hours, aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, status: 'available', recurrence_id: user_recurrence.id)
-              schedule.save!
-              puts "CREATED SCHEDULE #{schedule.id}"
-              schedules << schedule
-            end 
-          end
-        end
-        
-        # Assign the client to the aliada's schedule
-        ScheduleInterval.new(schedules).book_schedules(aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, service_id: service.id)
-      end
-    end
-
-  end
-
   def self.fix_service_id_in_schedules fixed_date
 
     incorrectas = 0
@@ -317,11 +196,12 @@ class ScheduleFiller
       end
 
     end
-
+    
     puts "INCORRECTAS #{incorrectas}"
     return {incorrectas: incorrectas, incorrect_hash: incorrect_hash}
     
   end
+
 
   def self.fix_recurrence_ids_in_schedules
 
@@ -339,8 +219,12 @@ class ScheduleFiller
       
       recurrences = schedule.aliada.aliada_working_hours.where("weekday = ? and hour = ?", weekday, hour)
       if recurrences.empty?
-        schedule.update_attribute(:recurrence_id, nil)
-        borradas += 1
+        if schedule.recurrence_id
+          schedule.update_attribute(:recurrence_id, nil)
+          borradas += 1
+        else
+          conservadas += 1
+        end
         next
       elsif recurrences.count > 1
         raise "Hay mas matches de aliadas working hours para la schedule"
@@ -359,6 +243,7 @@ class ScheduleFiller
   end
 
   def self.fix_duplicate_services
+    service_count = 0
     services = Service.select(:datetime, :user_id).group(:datetime, :user_id).having("count(*) > 1")
     services.each do |service|
       duplicated_services = Service.where(datetime: service.datetime, user_id: service.user_id)
@@ -369,11 +254,13 @@ class ScheduleFiller
 
       duplicated_services.each do |dup_service|
         if dup_service.schedules.empty?
+          service_count += 1
           dup_service.destroy
         end
       end
       
     end
+    return "SERVICIOS DUPLICADOS CORREGIDOS #{service_count}"
   end
  
 end

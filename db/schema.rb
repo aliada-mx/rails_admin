@@ -294,6 +294,7 @@ ActiveRecord::Schema.define(version: 20150405025129) do
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
+  add_index "services", ["datetime", "user_id"], name: "index_services_on_datetime_and_user_id", unique: true, using: :btree
   add_index "services", ["recurrence_id"], name: "index_services_on_recurrence_id", using: :btree
   add_index "services", ["service_type_id"], name: "index_services_on_service_type_id", using: :btree
   add_index "services", ["user_id"], name: "index_services_on_user_id", using: :btree
