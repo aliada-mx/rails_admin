@@ -92,8 +92,15 @@ class Service < ActiveRecord::Base
     after_transition on: :pay do |service, transition|
       service.send_billing_receipt_email
 
-      service.billed_hours = service.amount_to_bill
+      service.billed_hours = service.billable_hours
       service.save!
+    end
+
+    after_transition on: :finish do |service, transition|
+      if service.bill_by_reported_hours?
+        service.billable_hours = service.reported_hours
+        service.save!
+      end
     end
   end
 
@@ -239,7 +246,9 @@ class Service < ActiveRecord::Base
   end
 
   def reported_hours
-    (self.aliada_reported_end_time - self.aliada_reported_begin_time) / 3600.0
+    if bill_by_reported_hours?
+      (self.aliada_reported_end_time - self.aliada_reported_begin_time) / 3600.0
+    end
   end
   
   #calculates the price to be charged for a service
@@ -523,6 +532,27 @@ class Service < ActiveRecord::Base
       visible false
     end
 
+    configure :aliada_reported_begin_time do
+      read_only true
+      pretty_value do
+        if value
+          object = bindings[:object]
+
+          object.friendly_aliada_reported_begin_time
+        end
+      end
+    end
+
+    configure :aliada_reported_end_time do
+      read_only true
+      pretty_value do
+        if value
+          object = bindings[:object]
+          object.friendly_aliada_reported_end_time
+        end
+      end
+    end
+
     list do
       search_scope do
         Proc.new do |scope, query|
@@ -561,11 +591,55 @@ class Service < ActiveRecord::Base
         end
       end
 
+      field :aliada_webapp_link
+      field :aliada_reported_begin_time
+      field :aliada_reported_end_time
+      field :reported_hours
       field :created_at
 
-      field :aliada_webapp_link
-
       scopes ['mañana', :todos, :confirmados, :sin_confirmar]
+    end
+
+    edit do
+      field :status
+      field :datetime
+      field :user
+      field :aliada
+      field :address
+      field :service_type
+      field :recurrence
+
+      field :cancelation_fee_charged
+
+      group :horas_de_servicio do
+        field :estimated_hours
+        field :aliada_reported_begin_time
+        field :aliada_reported_end_time
+
+        field :billable_hours
+        field :billed_hours do
+          read_only true
+          visible do
+            value.present? && !value.zero?
+          end
+        end
+
+        field :hours_after_service
+        field :rooms_hours
+      end
+
+      group :detalles_al_registrar do
+        active false
+        field :bathrooms
+        field :bedrooms
+        field :special_instructions
+        field :cleaning_supplies_instructions
+        field :garbage_instructions
+        field :attention_instructions
+        field :equipment_instructions
+        field :forbidden_instructions
+        field :entrance_instructions
+      end
     end
   end
 end

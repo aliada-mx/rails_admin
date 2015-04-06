@@ -24,11 +24,24 @@ feature 'AliadasController' do
   after do
     Timecop.return
   end
+
+  describe '#finish' do
+    it 'saves the billable hours calculated with reported hours' do
+      params = {
+        begin_time: starting_datetime,
+        end_time: starting_datetime + 3.hours,
+        service: service.id,
+      }
+
+      with_rack_test_driver do
+        page.driver.submit :post, finish_service_path(aliada.authentication_token), params
+      end
+
+      expect(service.reload.billable_hours).to eql 3
+    end
+  end
   
   describe '#services' do
-    
-
-
     
     it 'checks the aliada has a valid token' do
       aliada = create(:aliada)
