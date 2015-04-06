@@ -523,14 +523,6 @@ class Service < ActiveRecord::Base
       visible false
     end
 
-    configure :aliada_reported_begin_time do
-      read_only true
-      pretty_value do
-        object = bindings[:object]
-        I18n.l(object.aliada_reported_begin_time, format: :future)
-      end
-    end
-
     list do
       search_scope do
         Proc.new do |scope, query|
