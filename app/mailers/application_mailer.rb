@@ -7,18 +7,18 @@ class ApplicationMailer < ActionMailer::Base
     header.add_category(category)
 
     template_filter = {
-        "templates" =>  {
+          "templates" =>  {
           "settings" => {
-            "enable" => 1,
-            "template_id" => template_id
-          }
+          "enable" => 1,
+          "template_id" => template_id
         }
       }
+    }
     header.set_filters(template_filter)
 
     headers['X-SMTPAPI'] = header.to_json
 
     mail(subject: subject ,  to:[ to ])
-   
+
   end
 end

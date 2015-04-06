@@ -30,8 +30,8 @@ class UsersController < ApplicationController
     one_time = @user.services.not_canceled.in_the_future.to_a
 
     @services = ( recurrent_services + one_time ).select do |service|
-      service.one_timer? && service.recurrence_id.nil? || service.recurrent?
-    end.uniq
+      ( service.one_timer? && service.recurrence_id.nil? ) || service.recurrent?
+    end.uniq{ |s| s.recurrence_id }.uniq { |s| s.id }
   end
 
   def previous_services
@@ -39,7 +39,7 @@ class UsersController < ApplicationController
   end
 
   def canceled_services
-    @services = User.find(params[:user_id]).services
+    @services = User.find(params[:user_id]).services.canceled
   end
 
   def clear_session

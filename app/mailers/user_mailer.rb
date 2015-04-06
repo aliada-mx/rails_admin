@@ -12,9 +12,7 @@ class UserMailer < ApplicationMailer
   
   def service_confirmation(service)
     template_id = Setting.sendgrid_templates_ids[:service_confirmation]
-   # binding.pry
     service = Service.where(id: service.id).joins(:address).joins(:service_type).joins(:aliada).first
-   # binding.pry
     sendgrid_template_mail to: service.user.email, subject: 'Confirmación de tu servicio',
     substitutions:
       {'-user_full_name-' => [ service.user.full_name  ],

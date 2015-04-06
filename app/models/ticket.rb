@@ -10,10 +10,9 @@ class Ticket < ActiveRecord::Base
   CATEGORIES = {
     'conekta_charge_failure' => 'Error al cobrar conekta',
     'schedule_filler_error' => 'Error en el creador de disponibilidad',
-    'availability_missing' => 'Falta de disponbilidad',
     'padding_missing' => 'Horas colchón faltantes',
     'service_without_enough_schedules' => 'Servicio sin suficientes horas de servicio',
-    'service_without_user' => 'Servicio usuario',
+    'service_without_user' => 'Servicio sin usuario',
   }
 
   # Only classifications with bootstrap classes allowed
@@ -26,6 +25,7 @@ class Ticket < ActiveRecord::Base
   CATEGORIES.each do |category, description|
     scope description, -> { where(category: category) }
   end
+  scope :todos, -> { }
 
   def name
     category_name
@@ -94,7 +94,7 @@ class Ticket < ActiveRecord::Base
 
     list do
 
-      scopes CATEGORIES.values
+      scopes [ :todos ] + CATEGORIES.values
     end
   end
 end
