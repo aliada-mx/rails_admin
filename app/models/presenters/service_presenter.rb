@@ -21,8 +21,8 @@ module Presenters
     end
 
     def name
-      name = "#{datetime}"
-      name += " #{address.name}" if address
+      name = "#{I18n.l(datetime, format: :future)}"
+      name += ", #{address.name}" if address
     end
 
     def user_link

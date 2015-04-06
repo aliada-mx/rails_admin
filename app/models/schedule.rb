@@ -3,6 +3,8 @@ class Schedule < ActiveRecord::Base
   include AliadaSupport::DatetimeSupport
   include Presenters::SchedulePresenter
 
+  has_paper_trail
+
   STATUSES = [
     ['Disponible','available'],
     ['Reservado para un servicio', 'booked'],

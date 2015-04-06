@@ -157,7 +157,7 @@ es:
         rooms_hours: 'Horas por cuartos'
         reported_hours: 'Horas reportadas'
       ticket:
-        relevant_object: Servicio
+        relevant_object: Registro
         message: error
         action_needed: acción sugerida
         classification: tipo de ticket

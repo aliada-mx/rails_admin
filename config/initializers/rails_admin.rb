@@ -17,7 +17,7 @@ RailsAdmin.config do |config|
   config.current_user_method(&:current_user)
 
   ## == PaperTrail ==
-  # config.audit_with :paper_trail, 'User', 'PaperTrail::Version' # PaperTrail >= 3.0.0
+  config.audit_with :paper_trail, 'User', 'PaperTrail::Version' # PaperTrail >= 3.0.0
 
   config.actions do
     dashboard                     # mandatory
@@ -53,8 +53,16 @@ RailsAdmin.config do |config|
     end
 
     ## With an audit adapter, you can add:
-    # history_index
-    # history_show
+    history_index
+    history_show
+  end
+
+  config.model PaperTrail::Version do
+    visible false
+  end
+
+  config.model PaperTrail::VersionAssociation do
+    visible false
   end
 end
 

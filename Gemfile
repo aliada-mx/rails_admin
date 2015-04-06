@@ -22,6 +22,8 @@ gem 'resque-web', require: 'resque_web'
 gem 'foreigner'
 # Localization
 gem 'rails-i18n', github: 'svenfuchs/rails-i18n', branch: 'master' # For 4.x
+# Tracking of changes
+gem 'paper_trail', '~> 4.0.0.beta'
 
 # ASSETS
 #
