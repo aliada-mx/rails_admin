@@ -71,7 +71,7 @@ class Service < ActiveRecord::Base
     transition 'created' => 'aliada_missing', :on => :mark_as_missing
     transition 'finished' => 'paid', :on => :pay
     transition ['created', 'aliada_assigned', 'in-progress'] => 'finished', :on => :finish
-    transition ['created', 'aliada_assigned' ] => 'canceled', :on => :cancel
+    transition ['created', 'aliada_assigned', 'finished', 'paid'] => 'canceled', :on => :cancel
 
     after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
 

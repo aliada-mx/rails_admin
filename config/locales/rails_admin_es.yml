@@ -67,6 +67,7 @@ es:
         reset_password_sent_at: cuando enviamos contraseña nueva
         default_address_link: 'Dirección por default'
         next_service_link: 'Siguiente servicio'
+        user_next_services_path: 'Entrar como el usuario'
       aliada:
         <<: *user_attributes
         <<: *common_attributes

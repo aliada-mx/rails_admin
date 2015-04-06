@@ -53,5 +53,9 @@ module Presenters
         "#{message.first}"
       end.join(',')
     end
+
+    def user_next_services_path
+      Rails.application.routes.url_helpers.next_services_users_path(self)
+    end
   end
 end
