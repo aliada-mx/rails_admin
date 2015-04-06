@@ -1,6 +1,8 @@
 class Recurrence < ActiveRecord::Base
   include AliadaSupport::DatetimeSupport
 
+  has_paper_trail
+
   OWNERS = [
     'aliada',
     'user'
