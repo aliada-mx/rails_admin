@@ -67,9 +67,14 @@ class ScheduleFiller
     # TODO: modify query with status for inactive recurrences
     base_service = user_recurrence.base_service
     unless base_service
-      error = "Services have not been created for this user's recurrence"
-      Rails.logger.fatal error
-      raise error
+
+      error = "No existen servicios para la recurrencia del usuario #{user_recurrence.user.first_name} #{user_recurrence.user.last_name}"
+      Ticket.create_error(relevant_object: user_recurrence, message: error)
+      
+      return nil
+
+      #Rails.logger.fatal error
+      #raise error
     end
 
     # Compensate UTC 
@@ -105,7 +110,7 @@ class ScheduleFiller
             # Aliadas fantasmas
             if not [43, 44].index user_recurrence.aliada_id
 
-              error = "Servicio no se pudo crear porque el horario de la aliada no permitía crear un servicio a esa hora. Aliada #{user_recurrence.aliada.first_name} #{user_recurrence.aliada.last_name}, horario - #{user_recurrence.weekday} #{user_recurrence.hour}:00 hrs"
+              error = "Servicio no se pudo crear porque el horario de la aliada no permitía crear un servicio a esa hora. Aliada #{user_recurrence.aliada.first_name} #{user_recurrence.aliada.last_name}, servicio a las #{beginning_datetime.in_time_zone('Mexico City')}, horario de usuario #{user_recurrence.user.first_name} #{user_recurrence.user.last_name} - #{user_recurrence.weekday} #{user_recurrence.hour}:00 hrs"
 
               Ticket.create_error(relevant_object: user_recurrence, message: error)
 
@@ -128,9 +133,17 @@ class ScheduleFiller
           if fix_total_hours
 
             if (user_recurrence.total_hours - schedules.count) > 2
+
               error = "Aliada's schedules difference #{(user_recurrence.total_hours - schedules.count)} is more than 2"
-              Rails.logger.fatal error
-              raise error
+              
+              error = "Servicio no se pudo crear porque las horas totales en la recurrencia del usuario excenden las que se tienen con su aliada. Aliada #{user_recurrence.aliada.first_name} #{user_recurrence.aliada.last_name}, Usuario #{user_recurrence.user.first_name} #{user_recurrence.user.last_name}, horario - #{user_recurrence.weekday} #{user_recurrence.hour}:00 hrs, horas totales #{user_recurrence.total_hours}"
+              
+              Ticket.create_error(relevant_object: user_recurrence, message: error)
+
+              next
+
+              #Rails.logger.fatal error
+              #raise error
             end
           
             user_recurrence.update_attribute(:total_hours, schedules.count) 
@@ -144,8 +157,11 @@ class ScheduleFiller
         
         service = create_service_in_clients_schedule today_in_the_future, user_recurrence
 
-        # Assign the client to the aliada's schedule
-        ScheduleInterval.new(schedules).book_schedules(aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, service_id: service.id)
+        if service
+          # Assign the client to the aliada's schedule
+          ScheduleInterval.new(schedules).book_schedules(aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, service_id: service.id)
+        end
+
       end
     end
   end
@@ -208,7 +224,7 @@ class ScheduleFiller
     actualizadas = 0
     conservadas = 0
     borradas = 0
-    Schedule.all.each do |schedule|
+    Schedule.where("datetime > ?", "2015-05-01").each do |schedule|
 
       datetime_in_mexico_city = schedule.datetime.in_time_zone("Mexico City")
       if datetime_in_mexico_city.dst?
