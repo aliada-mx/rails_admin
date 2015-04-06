@@ -25,7 +25,7 @@
           %td
             = l service.datetime, format: :short
           %td
-            - if not service.billed_hours.zero?
+            - if service.billed_hours.present? || !service.billed_hours.zero?
               = service.billed_hours
             - else
               = "#{ number_to_human service.estimated_hours } hrs estimadas"

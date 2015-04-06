@@ -87,10 +87,6 @@ class Aliada < User
       read_only
     end
 
-    configure :aliada_zones do
-      visible false
-    end
-
     configure :balance do
       visible false
     end
@@ -127,11 +123,15 @@ class Aliada < User
       field :documents
 
       field :recurrences
+      field :zones
+
+      field :password do
+        required false
+      end
+      field :password_confirmation
 
       group :login do
         active false
-        field :password
-        field :password_confirmation
         field :current_sign_in_at
         field :sign_in_count
         field :last_sign_in_at
