@@ -69,7 +69,9 @@ class ScheduleFiller
     unless base_service
 
       error = "No existen servicios para la recurrencia del usuario #{user_recurrence.user.first_name} #{user_recurrence.user.last_name}"
-      Ticket.create_error(relevant_object: user_recurrence, message: error)
+      Ticket.create_error(relevant_object: user_recurrence,
+                          category: 'schedule_filler_error',
+                          message: error)
       
       return nil
 
@@ -112,7 +114,9 @@ class ScheduleFiller
 
               error = "Servicio no se pudo crear porque el horario de la aliada no permitía crear un servicio a esa hora. Aliada #{user_recurrence.aliada.first_name} #{user_recurrence.aliada.last_name}, servicio a las #{beginning_datetime.in_time_zone('Mexico City')}, horario de usuario #{user_recurrence.user.first_name} #{user_recurrence.user.last_name} - #{user_recurrence.weekday} #{user_recurrence.hour}:00 hrs"
 
-              Ticket.create_error(relevant_object: user_recurrence, message: error)
+              Ticket.create_error(relevant_object: user_recurrence,
+                                  category: 'schedule_filler_error',
+                                  message: error)
 
               next
 
@@ -138,7 +142,9 @@ class ScheduleFiller
               
               error = "Servicio no se pudo crear porque las horas totales en la recurrencia del usuario excenden las que se tienen con su aliada. Aliada #{user_recurrence.aliada.first_name} #{user_recurrence.aliada.last_name}, Usuario #{user_recurrence.user.first_name} #{user_recurrence.user.last_name}, horario - #{user_recurrence.weekday} #{user_recurrence.hour}:00 hrs, horas totales #{user_recurrence.total_hours}"
               
-              Ticket.create_error(relevant_object: user_recurrence, message: error)
+              Ticket.create_error(relevant_object: user_recurrence,
+                                  category: 'schedule_filler_error',
+                                  message: error)
 
               next
 

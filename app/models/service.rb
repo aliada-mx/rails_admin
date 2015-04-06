@@ -133,8 +133,8 @@ class Service < ActiveRecord::Base
   end
 
   def create_charge_failed_ticket(user, amount, error)
-    Ticket.create_error(relevant_object_id: self.id,
-                        relevant_object_type: 'Service',
+    Ticket.create_error(relevant_object: self,
+                        category: 'conekta_charge_failure',
                         message: "No se pudo realizar cargo de #{amount} a la tarjeta de #{user.first_name} #{user.last_name}. #{error.message_to_purchaser}")
   end
   
@@ -200,6 +200,7 @@ class Service < ActiveRecord::Base
   def create_aliada_missing_ticket
     Ticket.create_warning message: "No se encontró una aliada para el servicio", 
                           action_needed: "Asigna una aliada al servicio",
+                          category: 'availability_missing',
                           relevant_object: self
   end
 
@@ -310,12 +311,6 @@ class Service < ActiveRecord::Base
 
   def send_billing_receipt_email
     UserMailer.billing_receipt(self.user, self).deliver
-  end
-
-  def create_double_charge_ticket
-    Ticket.create_warning message: "Se intentó cobrar un servicio ya cobrado", 
-                          action_needed: "Deselecciona el servicio al cobrar",
-                          relevant_object: self
   end
 
   def charge_cancelation_fee!

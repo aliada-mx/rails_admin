@@ -6,6 +6,13 @@ class Ticket < ActiveRecord::Base
     'alert-warning' => 'Advertencia',
     'alert-danger' => 'Problema',
   }
+
+  CATEGORY = {
+    'conekta_charge_failure' => 'Error al cobrar conekta',
+    'schedule_filler_error' => 'Error en el creador de disponibilidad',
+    'availability_missing' => 'Falta de disponbilidad',
+  }
+
   # Only classifications with bootstrap classes allowed
   validates :classification, inclusion: {in: CLASSIFICATIONS.keys  }
 
@@ -15,14 +22,10 @@ class Ticket < ActiveRecord::Base
     CLASSIFICATIONS[self.classification]
   end
 
-  # def classification_enum
-  #   CLASSIFICATIONS.invert
-  # end
-
-  def classification_partial
-
+  def category_name
+    CATEGORY[self.category]
   end
-  
+
   def self.create_error(options)
     options.merge!({classification: 'alert-danger'})
     Ticket.create(options)
@@ -53,6 +56,18 @@ class Ticket < ActiveRecord::Base
         end
       end
       help ''
+    end
+
+    configure :message do
+      css_class "ticket-message"
+
+      pretty_value do
+        value.html_safe
+      end
+    end
+
+    configure :relevant_object do
+      css_class "ticket-relevant_object"
     end
 
     edit do 
