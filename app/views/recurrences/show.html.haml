@@ -7,6 +7,7 @@
   .head
     .badge
       Recurrente
+      = @base_service.recurrence.user.name
       =image_tag("recurrence.png", {:title => 'Servicio recurrente'})
     .title
       Todos los #{ensure_plural(@base_service.recurrence.weekday_in_spanish) }

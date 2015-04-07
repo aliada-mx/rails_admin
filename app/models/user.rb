@@ -219,7 +219,7 @@ class User < ActiveRecord::Base
           view = bindings[:view]
           user = bindings[:object]
 
-          view.link_to(user.id, value)
+          view.link_to(user.id, value, target: '_blank')
         end
       end
 

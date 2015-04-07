@@ -403,8 +403,6 @@ class Service < ActiveRecord::Base
 
   # We can't use the name 'update' because thats a builtin method
   def update_existing!(service_params)
-    return if canceled?
-
     ActiveRecord::Base.transaction do
 
       service_params['datetime'] = Service.parse_date_time(service_params)
@@ -422,12 +420,13 @@ class Service < ActiveRecord::Base
   # Cancel this service and all related through the recurrence
   def cancel_all!
     ActiveRecord::Base.transaction do
-      cancel!
+      cancel
 
+      binding.pry
       if recurrent?
         recurrence.services.in_the_future.each do |service|
           next if self.id == service.id
-          service.cancel!
+          service.cancel
         end
         recurrence.deactivate!
         recurrence.save!
