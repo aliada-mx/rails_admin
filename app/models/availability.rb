@@ -90,7 +90,8 @@ class Availability
 
   def book_new(service)
     service_shared_attributes = service.shared_attributes
-    one_time_service_type = ServiceType.find_by!(name: 'one-time')
+    one_time_service_type = ServiceType.one_time
+    one_time_from_recurrent_service_type = ServiceType.one_time_from_recurrent
 
     schedules_intervals.each_with_index do |schedule_interval, i|
       # First service is the master, will have its service type set to recurrent(or not)
@@ -98,7 +99,7 @@ class Availability
       if i == 0
         _service = service 
       else
-        _service = Service.new(service_shared_attributes.merge({ service_type: one_time_service_type }))
+        _service = Service.new(service_shared_attributes.merge({ service_type: one_time_from_recurrent_service_type }))
       end
 
       _service.datetime = schedule_interval.beginning_of_interval 

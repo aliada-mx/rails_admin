@@ -15,6 +15,7 @@ feature 'Service' do
                             periodicity: 7) }
   let!(:recurrent_service) { create(:service_type, name: 'recurrent', price_per_hour: 65) }
   let!(:one_time_service) { create(:service_type, name: 'one-time', price_per_hour: 105) }
+  let!(:one_time_from_recurrent) { create(:one_time_from_recurrent) }
   let!(:service){ create(:service,
                          aliada: aliada,
                          user: user,
