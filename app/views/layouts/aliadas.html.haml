@@ -1,0 +1,15 @@
+!!!
+%html
+  %head
+    %title 
+      = area :title, 'Aliada' 
+    %meta{ name: 'description', content: '' }
+    %meta{ name: 'keywords', content: '' }
+    %meta{ name: 'viewport', content: 'width=device-width, initial-scale=1, user-scalable=yes' }
+    = csrf_meta_tags
+    = area :extra_head
+    = favicon_link_tag 
+  %body{class: area(:body_class){ '' } }
+    = yield
+   
+     
