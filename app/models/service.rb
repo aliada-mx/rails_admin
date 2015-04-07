@@ -61,7 +61,6 @@ class Service < ActiveRecord::Base
   validate :service_type_exists
   validates_presence_of :address, :user, :estimated_hours, :service_type, :datetime
   validates_uniqueness_of :datetime, scope: :user_id
-  validates_uniqueness_of :datetime, scope: :aliada_id
 
   # Callbacks
   after_initialize :set_defaults
