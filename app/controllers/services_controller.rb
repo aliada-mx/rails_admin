@@ -19,7 +19,7 @@ class ServicesController < ApplicationController
 
   rescue_from AliadaExceptions::AvailabilityNotFound do |exception|
 
-    Raygun.track_exception(exception, custom_data: exception)
+    Raygun.track_exception(exception, custom_data: exception.to_h)
     render json: { status: :error, code: :availability_not_found, message: 'Lo sentimos no encontramos disponibilidad :('}
   end
 

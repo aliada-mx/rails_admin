@@ -10,6 +10,7 @@ namespace :db do
       service.aliada_reported_end_time = nil
       service.cancelation_fee_charged = false
       service.confirmed = false
+      service.status = 'aliada_assigned'
 
       begin
         service.save!
