@@ -60,7 +60,6 @@ class Service < ActiveRecord::Base
   validate :datetime_within_working_hours
   validate :service_type_exists
   validates_presence_of :address, :user, :estimated_hours, :service_type, :datetime
-  validates_uniqueness_of :datetime, scope: :user_id
 
   # Callbacks
   after_initialize :set_defaults

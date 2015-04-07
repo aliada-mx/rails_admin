@@ -1,6 +1,9 @@
 - is_recurrent = service.recurrent?
 - class_name = is_recurrent ? 'recurrent' : 'one-time'
 
+- if is_recurrent
+  - next_recurrencet_service = service.recurrence.next_service
+
 .service-card-wrapper.col-lg-6
   .service-card{class: class_name}
     .head
@@ -40,7 +43,7 @@
             %span.icon-clock.icon-button
             Próximos servicios
 
-          = link_to edit_service_users_path(user_id: service.user.id, service_id: service.id), class: 'action-button size-large' do
+          = link_to edit_service_users_path(user_id: next_recurrencet_service.user_id, service_id: next_recurrencet_service.id), class: 'action-button size-large' do
             %span.icon-pencil.icon-button
             Modificar Recurrencia
 
@@ -51,5 +54,5 @@
               Modificar servicio
 
       .numbers
-        %span.hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours_with_extras.hours }
+        .hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours_with_extras.hours }
         %span.cash $#{ ceil_and_strip_insignificat_zeros service.cost } 

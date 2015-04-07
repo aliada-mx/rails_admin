@@ -9,15 +9,15 @@ class Recurrence < ActiveRecord::Base
   ]
 
   STATUSES = [
-    ['active', 'Activa'],
-    ['inactive', 'Inactiva']
+    ['Activa','active'],
+    ['Inactiva','inactive']
   ]
 
   validates_presence_of [:weekday, :hour]
   validates :weekday, inclusion: {in: Time.weekdays.map{ |days| days[0] } }
   validates :hour, inclusion: {in: [*0..23] } 
   validates_numericality_of :periodicity, greater_than: 1
-  validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[0] } }
+  validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
 
   belongs_to :user
   belongs_to :aliada
@@ -46,6 +46,10 @@ class Recurrence < ActiveRecord::Base
 
   def base_service
     services.with_recurrence.ordered_by_created_at.first
+  end
+
+  def next_service
+    services.ordered_by_datetime.where('datetime > ?', Time.zone.now).first
   end
 
   def ending_hour

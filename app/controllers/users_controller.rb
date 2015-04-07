@@ -24,11 +24,11 @@ class UsersController < ApplicationController
   end
 
   def next_services
-    recurrent_services = @user.services.recurrent.to_a
+    recurrent_services = @user.services.recurrent.not_canceled.to_a.uniq { |s| s.recurrence_id }
 
-    one_timers = @user.services.one_timers.to_a
+    one_timers = @user.services.one_timers.not_canceled.to_a
 
-    @services = recurrent_services + one_timers
+    @services = ( recurrent_services + one_timers )
   end
 
   def previous_services
