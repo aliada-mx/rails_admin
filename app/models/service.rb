@@ -61,6 +61,7 @@ class Service < ActiveRecord::Base
   validate :service_type_exists
   validates_presence_of :address, :user, :estimated_hours, :service_type, :datetime
   validates_uniqueness_of :datetime, scope: :user_id
+  validates_uniqueness_of :datetime, scope: :aliada_id
 
   # Callbacks
   after_initialize :set_defaults
@@ -224,7 +225,6 @@ class Service < ActiveRecord::Base
     finder = AvailabilityForService.new(self, available_after, aliada_id: aliada_id)
 
     aliadas_availability = finder.find
-    binding.pry
 
     raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
 
