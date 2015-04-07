@@ -123,6 +123,7 @@ class Aliada < User
       field :role
       field :first_name
       field :last_name
+      field :email
       field :phone
       field :documents
 

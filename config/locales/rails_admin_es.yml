@@ -25,6 +25,7 @@ es:
       common: &common_attributes
         <<: *model_names
         name: nombre
+        postal_code_number: 'número de código postal'
         created_at: 'Fecha de creación'
         updated_at: 'Fecha de última actualización'
         datetime: 'Día y hora'
@@ -47,6 +48,7 @@ es:
         latitude: latitud
         longitude: longitud
       user: &user_attributes
+        <<: *common_attributes
         next_service: siguiente servicio
         address: dirección
         addresses: direcciones

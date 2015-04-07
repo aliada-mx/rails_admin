@@ -176,9 +176,11 @@ class User < ActiveRecord::Base
     navigation_icon 'icon-user'
     label_plural 'usuarios'
 
-
     edit do
       field :role
+      field :postal_code_number do
+        read_only true
+      end
       field :first_name
       field :last_name
       field :email
@@ -188,7 +190,10 @@ class User < ActiveRecord::Base
       end
       field :password_confirmation
 
+      field :banned_aliadas
+
       field :services
+
       group :login_info do
         active false
         field :current_sign_in_at
@@ -250,10 +255,8 @@ class User < ActiveRecord::Base
         virtual?
       end
 
-      field :next_service_link do
-        virtual?
-      end
       field :created_at
+      field :postal_code_number
     end
   end
 end
