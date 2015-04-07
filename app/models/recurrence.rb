@@ -41,7 +41,7 @@ class Recurrence < ActiveRecord::Base
   end
 
   def name
-    "#{weekday_in_spanish} de #{hour} a #{ending_hour}"
+    "#{weekday_in_spanish} de #{hour} a #{ending_hour} (#{id})"
   end
 
   def base_service

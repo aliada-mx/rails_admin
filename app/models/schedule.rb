@@ -129,6 +129,11 @@ class Schedule < ActiveRecord::Base
     configure :service_id do
       queryable true
       filterable true
+      visible false
+    end
+
+    edit do
+      exclude_fields :versions
     end
 
     list do
