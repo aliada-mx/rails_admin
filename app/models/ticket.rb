@@ -25,7 +25,8 @@ class Ticket < ActiveRecord::Base
   CATEGORIES.each do |category, description|
     scope description, -> { where(category: category) }
   end
-  scope :todos, -> { }
+  scope :sin_resolver, -> { where("classification != ?", 'alert-success') }
+  scope :resueltos, -> { where(classification: 'alert-success') }
 
   def name
     category_name
@@ -47,6 +48,11 @@ class Ticket < ActiveRecord::Base
   def self.create_warning(options)
     options.merge!({classification: 'alert-warning'})
     Ticket.create(options)
+  end
+
+  def solve!
+    self.classification = 'alert-success'
+    self.save!
   end
 
   rails_admin do
@@ -94,7 +100,7 @@ class Ticket < ActiveRecord::Base
 
     list do
 
-      scopes [ :todos ] + CATEGORIES.values
+      scopes [ :sin_resolver ] + CATEGORIES.values + [ :resueltos ]
     end
   end
 end

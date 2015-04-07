@@ -292,7 +292,11 @@ es:
         menu: "Mapa"
         title: "Mapa"
         breadcrumb: "Mapa"
-        bulk_link: "Mapa"
+      solve_ticket:
+        menu: 'Marcar como resuelto'
+        breadcrumb: 'Marcar como resuelto'
+        title: 'Marcar como resuelto'
+        bulk_link: 'Marcar como resueltos'
     form:
       cancel: "Cancelar"
       basic_info: "Información básica"

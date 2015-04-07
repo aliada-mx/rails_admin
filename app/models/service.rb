@@ -403,7 +403,10 @@ class Service < ActiveRecord::Base
 
   # We can't use the name 'update' because thats a builtin method
   def update_existing!(service_params)
+    return if canceled?
+
     ActiveRecord::Base.transaction do
+
       service_params['datetime'] = Service.parse_date_time(service_params)
       self.attributes = service_params.except(:user, :address)
 
