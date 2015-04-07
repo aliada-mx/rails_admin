@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
     ['admin', 'Admin'],
   ]
 
+  has_many :recurrences
   has_many :credits
   has_many :redeemed_credits, :foreign_key => "redeemer_id", :class_name => "Credit"
   has_one :code

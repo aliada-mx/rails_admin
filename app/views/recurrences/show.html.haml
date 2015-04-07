@@ -9,7 +9,7 @@
       Recurrente
       =image_tag("recurrence.png", {:title => 'Servicio recurrente'})
     .title
-      Todos los #{ensure_plural(@base_service.weekday_in_spanish) }
+      Todos los #{ensure_plural(@base_service.recurrence.weekday_in_spanish) }
     .small-letters
       a partir del #{@base_service.friendly_date }
 

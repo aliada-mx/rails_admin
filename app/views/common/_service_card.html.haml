@@ -11,7 +11,7 @@
 
       .title
         - if is_recurrent
-          Todos los #{ensure_plural(service.weekday_in_spanish) }
+          Todos los #{ensure_plural(service.recurrence.weekday_in_spanish) }
         - else 
           = service.friendly_date.capitalize
       .small-letters

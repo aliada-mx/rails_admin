@@ -6,12 +6,52 @@ namespace :db do
     puts "fixing #{case_name}"
     case case_name
       when 'recurrencias de diego arvizu'
-
+        user = User.find 673
         wednesday_recurrence_with_friday_services = Recurrence.find 2317
         
         wednesday_recurrence_with_friday_services.weekday = 'friday'
 
         wednesday_recurrence_with_friday_services.save!
+
+        base_service = Service.find 1672
+
+        base_service.created_at -= 1.week
+        
+        base_service.save!
+
+        service = Service.find 2187
+        service.service_type = ServiceType.one_time_from_recurrent
+        service.save!
+      when 'gizela recurrence'
+        user = User.find 510
+
+        thursday_recurrence = Recurrence.create!(user: user,
+                                                 status: 'active', 
+                                                 hour: 15,
+                                                 periodicity: 7,
+                                                 total_hours: 6,
+                                                 aliada_id: 17,
+                                                 weekday: 'thursday')
+
+        tuesday_recurrence = Recurrence.create!(user: user,
+                                                status: 'active', 
+                                                hour: 15,
+                                                total_hours: 6,
+                                                aliada_id: 17,
+                                                periodicity: 7,
+                                                weekday: 'tuesday')
+
+        user.services.all.each do |service|
+          if service.datetime.in_time_zone('Etc/GMT+6').weekday == 'thursday'
+            service.recurrence = thursday_recurrence
+          end
+
+          if service.datetime.in_time_zone('Etc/GMT+6').weekday == 'tuesday'
+            service.recurrence = tuesday_recurrence
+          end
+
+          service.save!
+        end
+      end
     end
-  end
 end

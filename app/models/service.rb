@@ -49,6 +49,8 @@ class Service < ActiveRecord::Base
   # Rails admin tabs
   scope 'mañana', -> { on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
   scope :todos, -> { }
+  scope :one_timers, -> { where(service_type: ServiceType.one_time ) }
+  scope :recurrent, -> { where(service_type: ServiceType.recurrent ) }
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
