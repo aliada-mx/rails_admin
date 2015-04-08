@@ -87,6 +87,8 @@ gem 'rails_admin', github: 'grillermo/rails_admin'
 # permissions
 gem 'cancancan'
 
+# MIGRATION CALLBACKS
+gem 'migration_data'
 
 # MAILING
 #
