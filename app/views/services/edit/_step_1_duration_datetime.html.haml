@@ -4,13 +4,18 @@
       Recurrente
       =image_tag("recurrence-contrast.png", {:title => 'Servicio recurrente'})
 
+
   %h1#service_duration
     - if @is_recurrent
       Modificar los servicios
+
+      %h3
+        = ensure_plural(@service.recurrence.weekday_in_spanish)
+        = @service.friendly_time
     - else
       Modificar tu servicio
  
-  - should_hide = @service.try(:is_recurrent?) || @service.try(:one_timer_from_recurrent?)
+  - should_hide = @service.try(:recurrent?) || @service.try(:one_timer_from_recurrent?)
   %h4{class: should_hide ? 'concealed' : ''}
     ¿Qué tipo de servicio necesitas?
   = render partial: 'common/service_type_buttons', locals: {form: edit_service_form, promotional: false, disable_one_time: @service.recurrent?}

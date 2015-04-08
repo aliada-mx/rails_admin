@@ -45,24 +45,10 @@ RSpec.configure do |config|
   config.include TestingSupport::DriverHelpers
 
   config.before(:suite) do
-    # Clean database
     DatabaseCleaner.clean_with(:truncation)
-
-    # Use faster transaction strategy
-    DatabaseCleaner.strategy = :transaction
-
-  end
-
-  config.before(:each) do
-    # Track transactions
-    DatabaseCleaner.start
   end
 
   config.after(:each) do
-    DatabaseCleaner.clean
-  end
-
-  config.after(:suite) do
-    DatabaseCleaner.clean
+    DatabaseCleaner.clean_with(:truncation)
   end
 end

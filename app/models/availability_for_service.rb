@@ -130,7 +130,7 @@ class AvailabilityForService
         wday_hour_intervals.each do |wday_hour, intervals_hash|
           intervals_hash.each do |interval_key, interval|
             if interval.size > @requested_service_hours
-              padding = interval.size - @requested_service_hours
+              padding = interval.size.to_i - @requested_service_hours.to_i
 
               interval[padding * -1..-1].map(&:as_padding)
             end

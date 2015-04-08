@@ -119,6 +119,9 @@ group :development, :test do
 
   # Convert erb to haml
   gem 'erb2haml'
+
+  # webrick replacement
+  gem 'puma'
 end
 
 # Factories outside test group for usage on seeds

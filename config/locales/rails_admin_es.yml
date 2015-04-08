@@ -126,6 +126,8 @@ es:
       schedule:
         <<: *common_attributes
       score:
+        <<: *common_attributes
+        value: valor
       service: &service_attributes
         <<: *common_attributes
         datetime: fecha y hora del servicio

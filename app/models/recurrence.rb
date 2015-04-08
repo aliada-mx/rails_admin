@@ -41,7 +41,7 @@ class Recurrence < ActiveRecord::Base
   end
 
   def name
-    "#{weekday_in_spanish} de #{hour} a #{ending_hour}"
+    "#{weekday_in_spanish} de #{hour} a #{ending_hour} (#{id})"
   end
 
   def base_service
@@ -116,6 +116,15 @@ class Recurrence < ActiveRecord::Base
 
   def tz_aware_hour(utc_datetime)
     utc_to_timezone(utc_datetime, self.timezone).weekday
+  end
+
+  def friendly_time
+    text = ""
+    if hour > 13
+      text += "#{ hour - 12 }:00 pm"
+    else
+      text += "#{ hour }:00 am"
+    end
   end
 
   def next_recurrence_now_in_time_zone

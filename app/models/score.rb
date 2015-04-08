@@ -7,5 +7,12 @@ class Score < ActiveRecord::Base
     label_plural 'calificaciones'
     parent Aliada
     navigation_icon 'icon-certificate'
+
+    list do
+      field :user
+      field :value
+      field :aliada
+      field :service
+    end
   end
 end
