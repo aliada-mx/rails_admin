@@ -118,6 +118,15 @@ class Recurrence < ActiveRecord::Base
     utc_to_timezone(utc_datetime, self.timezone).weekday
   end
 
+  def friendly_time
+    text = ""
+    if hour > 13
+      text += "#{ hour - 12 }:00 pm"
+    else
+      text += "#{ hour }:00 am"
+    end
+  end
+
   def next_recurrence_now_in_time_zone
     if self.weekday == now_in_timezone.weekday
       return now_in_timezone
