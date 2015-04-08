@@ -45,7 +45,9 @@ module Presenters
     end
 
     def postal_code_number
-      default_address.postal_code.number
+      if default_address
+        default_address.postal_code.number
+      end
     end
 
     def error_messages
