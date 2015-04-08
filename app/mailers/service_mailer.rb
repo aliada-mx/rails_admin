@@ -82,7 +82,8 @@ include  ActionView::Helpers::DateHelper
     template_id: template_id
   end
 
-  def reminder(service)
+ 
+   def reminder(service)
     template_id = Setting.sendgrid_templates_ids[:reminder]
     service = Service.where(id: service.id).joins(:user).joins(:address).joins(:service_type).first
     
@@ -92,7 +93,7 @@ include  ActionView::Helpers::DateHelper
       {'-user_full_name-' => [service.user.full_name],
        '-aliada_full_name-'=> [service.aliada.full_name],
        '-aliada_phone-'=>[service.aliada.phone],
-       '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A %d')],
+       '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A %d de %B a las ')],
       '-service_time-' => [(I18n.l service.tz_aware_datetime, format: '%I %p')] ,
       '-service_address-' => [service.address.full_address],
       '-late_cancelation_fee-' => ["$100"],
