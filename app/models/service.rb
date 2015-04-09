@@ -51,6 +51,7 @@ class Service < ActiveRecord::Base
   scope :todos, -> { }
   scope :one_timers, -> { where(service_type: ServiceType.one_time ) }
   scope :recurrent, -> { where(service_type: ServiceType.recurrent ) }
+  scope :con_horas_reportadas, -> { where('aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL') }
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
@@ -677,7 +678,7 @@ class Service < ActiveRecord::Base
       field :reported_hours
       field :created_at
 
-      scopes ['mañana', :todos, :confirmados, :sin_confirmar]
+      scopes ['mañana', :todos, :confirmados, :sin_confirmar, :con_horas_reportadas]
     end
 
     edit do
