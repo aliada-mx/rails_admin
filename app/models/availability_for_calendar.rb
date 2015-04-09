@@ -63,6 +63,7 @@ class AvailabilityForCalendar
 
         store! if enough_continuous_schedules?
       else
+        # @report.push(message: "Broken schedule continuity with schedules #{ @continuous_schedules.last.try(:attributes) }, #{ @current_schedule.attributes }")
         restart_continues_schedules
       end
 
@@ -86,6 +87,7 @@ class AvailabilityForCalendar
       trim_to_size
 
       if @is_recurrent && broken_continous_intervals?
+        @report.push(message: "Broken continuity in schedule", objects: @current_schedule)
         # If we dont have a continous recurrence we have nothing
         remove_wday_availability!
         return

@@ -82,7 +82,8 @@ include  ActionView::Helpers::DateHelper
     template_id: template_id
   end
 
-  def reminder(service)
+ 
+   def reminder(service)
     template_id = Setting.sendgrid_templates_ids[:reminder]
     service = Service.where(id: service.id).joins(:user).joins(:address).joins(:service_type).first
     

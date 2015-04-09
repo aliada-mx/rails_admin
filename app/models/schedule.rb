@@ -41,6 +41,8 @@ class Schedule < ActiveRecord::Base
   scope :ordered_by_aliada_datetime, -> { order(:aliada_id, :datetime) }
   scope :for_booking, ->(zone, starting_datetime) { in_zone(zone).in_or_after_datetime(starting_datetime).ordered_by_aliada_datetime }
   scope :join_users_and_aliadas, -> { joins('INNER JOIN users ON users.id = schedules.user_id OR users.id = schedules.aliada_id') }
+  scope :in_weekday, -> (wday) { where('extract(dow from datetime::timestamp) = ?', wday) }
+  scope :in_weekday, -> (hour) { where('extract(hour from datetime::timestamp) = ?', hour) }
   # alias for rails admin
   scope :disponible, -> { available }
   scope :reservadas, -> { booked }
@@ -110,6 +112,10 @@ class Schedule < ActiveRecord::Base
 
   def service_link
     rails_admin_edit_link(service)
+  end
+
+  def next_schedule
+    Schedule.where(datetime: datetime+ 1.hour, aliada_id: aliada_id).first
   end
 
   rails_admin do
