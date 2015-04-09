@@ -54,7 +54,14 @@ class ServicesController < ApplicationController
   end
 
   def new
-    @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
+    if current_user.admin?
+      @aliadas = Aliada.all
+    else
+      @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
+
+      @aliadas = @user.aliadas + [@any_aliada]
+    end
+    
   end
 
   def create_new
