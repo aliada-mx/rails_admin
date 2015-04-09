@@ -56,10 +56,10 @@ class ServicesController < ApplicationController
   def new
     @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
     if current_user.admin?
-      @aliadas = Aliada.all + [@any_aliada]
+      @aliadas = Aliada.all.order(:first_name) + [@any_aliada]
     else
 
-      @aliadas = @user.aliadas + [@any_aliada]
+      @aliadas = @user.aliadas.order(:first_name) + [@any_aliada]
     end
   end
 
@@ -74,9 +74,9 @@ class ServicesController < ApplicationController
     @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
 
     if current_user.admin?
-      @aliadas = Aliada.all + [@any_aliada]
+      @aliadas = Aliada.all.order(:first_name) + [@any_aliada]
     else
-      @aliadas = @user.aliadas + [@any_aliada]
+      @aliadas = @user.aliadas.order(:first_name) + [@any_aliada]
     end
     @is_recurrent = @service.recurrent?
   end
