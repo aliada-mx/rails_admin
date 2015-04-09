@@ -11,6 +11,8 @@ RailsAdmin::Config::Actions.register(:solve_ticket, RailsAdmin::Config::Actions:
 
 RailsAdmin::Config::Actions.register(:enable_schedules, RailsAdmin::Config::Actions::EnableSchedules)
 
+RailsAdmin::Config::Actions.register(:book_schedules, RailsAdmin::Config::Actions::BookSchedules)
+
 RailsAdmin.config do |config|
   # By default rails admin does not support Inet fields so we force it
   class RailsAdmin::Config::Fields::Types::Inet < RailsAdmin::Config::Fields::Base
@@ -63,6 +65,12 @@ RailsAdmin.config do |config|
     end
 
     enable_schedules do
+      visible do
+        bindings[:abstract_model].model.to_s == 'Schedule'
+      end
+    end
+
+    book_schedules do
       visible do
         bindings[:abstract_model].model.to_s == 'Schedule'
       end

@@ -4,7 +4,7 @@ require 'rails_admin/config/actions/base'
 module RailsAdmin
   module Config
     module Actions
-      class EnableSchedules < RailsAdmin::Config::Actions::Base
+      class BookSchedules < RailsAdmin::Config::Actions::Base
 
         register_instance_option :bulkable? do
           true
@@ -22,16 +22,13 @@ module RailsAdmin
         
         register_instance_option :controller do
           Proc.new do
-            @objects = list_entries(@model_config, :enable_schedules)
+            @objects = list_entries(@model_config, :book_schedules)
 
             @objects.map do |schedule|
-              schedule.status = 'available'
-              schedule.service_id = nil
-              schedule.user_id = nil
-              schedule.recurrence_id = nil
+              schedule.status = 'booked'
               schedule.save!
             end
-            flash[:success] = 'Se han habilitado las horas de servicio'
+            flash[:success] = 'Se han reservado las horas de servicio'
             redirect_to back_or_index
           end
         end
