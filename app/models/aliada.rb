@@ -104,14 +104,15 @@ class Aliada < User
     end
 
     list do
-      field :name do
-        searchable [{users: :first_name },
-                    {users: :last_name },
-                    {users: :email},
-                    {users: :phone}]
-        queryable true
-        filterable true
+      search_scope do
+        Proc.new do |scope, query|
+          query_without_accents = I18n.transliterate(query)
+
+          scope.merge(UnscopedUser.with_name_phone_email(query_without_accents))
+        end
       end
+
+      field :name
       field :phone do
         queryable true
         filterable true

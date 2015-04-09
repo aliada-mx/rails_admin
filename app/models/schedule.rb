@@ -48,7 +48,7 @@ class Schedule < ActiveRecord::Base
   scope :disponible, -> { available }
   scope :reservadas, -> { booked }
   scope :todos, -> { }
-  scope :siguientes, -> { where('datetime >= ?', Time.zone.now) }
+  scope :siguientes, -> { where('datetime >= ?', Time.zone.now).ordered_by_aliada_datetime }
 
   scope :previous_aliada_schedule, ->(zone, current_schedule, aliada) { 
     in_zone(zone)
