@@ -23,11 +23,20 @@
     .body
       %ul.summary
         %li.checked
-          Aliada: #{ service.aliada.name }
+          - if is_recurrent
+            Aliada: #{ service.recurrence.aliada.name }
+          - else
+            Aliada: #{ service.aliada.name }
         %li.checked
-          Pago: #{service.user.payment_provider_name}
+          - if is_recurrent
+            Pago: #{service.recurrence.next_service.user.payment_provider_name}
+          - else
+            Pago: #{service.user.payment_provider_name}
         %li.checked
-          Dirección: #{service.address.name}
+          - if is_recurrent
+            Pago: #{service.recurrence.next_service.address.name}
+          - else
+            Dirección: #{service.address.name}
         %li.checked
           Datos de contacto: #{service.user.contact_data}
     .foot
