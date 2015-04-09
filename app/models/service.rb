@@ -222,7 +222,6 @@ class Service < ActiveRecord::Base
     finder = AvailabilityForService.new(self, available_after, aliada_id: aliada_id)
 
     aliadas_availability = finder.find
-    binding.pry
 
     raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
 
