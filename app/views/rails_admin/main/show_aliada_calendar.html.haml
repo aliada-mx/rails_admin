@@ -8,8 +8,8 @@
       - @days_of_week.each do |day|
         %th= @date_headers[day]
   %tbody
-    - begin_time = 7.hour.to_i - ActiveSupport::TimeZone["Mexico City"].utc_offset
-    - end_time = 20.hour.to_i - ActiveSupport::TimeZone["Mexico City"].utc_offset
+    - begin_time = 7.hour.to_i #- ActiveSupport::TimeZone["Mexico City"].utc_offset
+    - end_time = 20.hour.to_i #- ActiveSupport::TimeZone["Mexico City"].utc_offset
     - (begin_time..end_time).step((0.5).hour) do |t|
       %tr
         %th= I18n.l Time.at(t), format: "%k:%M"
