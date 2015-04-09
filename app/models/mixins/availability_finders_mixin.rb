@@ -245,7 +245,6 @@ module Mixins
       if @service.present?
         # We will consider the passed service schedules as available (without saving the status change)
         # just for this run, we'll restore their state later
-        #
 
         services_ids = @service.related_services_ids
 
