@@ -111,11 +111,11 @@ class Aliada < User
           scope.merge(UnscopedUser.with_name_phone_email(query_without_accents))
         end
       end
+      field :full_name
 
-      field :name
       field :phone do
-        queryable true
-        filterable true
+        queryable false
+        filterable false
       end
       field :aliada_webapp_link
     end

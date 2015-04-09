@@ -24,6 +24,7 @@ es:
     attributes:
       common: &common_attributes
         <<: *model_names
+        full_name: nombre completo
         name: nombre
         postal_code_number: 'número de código postal'
         created_at: 'Fecha de creación'

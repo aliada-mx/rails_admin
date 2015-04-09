@@ -243,11 +243,7 @@ class User < ActiveRecord::Base
         filterable false
         visible false
       end
-      field :first_name do
-        queryable false
-        filterable false
-      end
-      field :last_name do
+      field :full_name do
         queryable false
         filterable false
       end
@@ -255,7 +251,6 @@ class User < ActiveRecord::Base
         queryable false
         filterable false
       end
-      field :role
       field :phone do
         queryable false
         filterable false
