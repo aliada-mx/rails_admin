@@ -301,6 +301,11 @@ es:
         breadcrumb: 'Marcar como resuelto'
         title: 'Marcar como resuelto'
         bulk_link: 'Marcar como resueltos'
+      enable_schedules: 
+        menu: 'Habilitar horas de servicio'
+        breadcrumb: 'Habilitar horas de servicio'
+        title: 'Habilitar horas de servicio'
+        bulk_link: 'Habilitar horas de servicios'
     form:
       cancel: "Cancelar"
       basic_info: "Información básica"

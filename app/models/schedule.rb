@@ -171,8 +171,6 @@ class Schedule < ActiveRecord::Base
       field :recurrence
       field :created_at
 
-      field :service
-
       scopes [:todos, :reservadas, :disponible]
     end
 

@@ -432,7 +432,7 @@ class Service < ActiveRecord::Base
   end
 
   def next_service
-    recurrence.services.ordered_by_datetime.where('datetime > ?', Time.zone.now).first
+    recurrence.services.not_canceled.ordered_by_datetime.where('datetime > ?', Time.zone.now).first
   end
 
 
