@@ -7,17 +7,14 @@ namespace :db do
       recurrence = service.recurrence
 
       base_service = recurrence.base_service
+      extra_ids = base_service.extra_ids
 
       recurrence.services.each do |_service|
         next if _service.id == base_service.id
         
         _service.service_type = one_time_from_recurrent
-        begin
+        _service.update_attributes(extra_ids: extra_ids)
         _service.save!
-        puts "#{ _service.id } passed"
-        rescue
-          puts "#{ _service.id } failed"
-        end
       end
     end
   end

@@ -25,6 +25,7 @@ es:
       common: &common_attributes
         <<: *model_names
         name: nombre
+        postal_code_number: 'número de código postal'
         created_at: 'Fecha de creación'
         updated_at: 'Fecha de última actualización'
         datetime: 'Día y hora'
@@ -47,6 +48,7 @@ es:
         latitude: latitud
         longitude: longitud
       user: &user_attributes
+        <<: *common_attributes
         next_service: siguiente servicio
         address: dirección
         addresses: direcciones
@@ -124,6 +126,8 @@ es:
       schedule:
         <<: *common_attributes
       score:
+        <<: *common_attributes
+        value: valor
       service: &service_attributes
         <<: *common_attributes
         datetime: fecha y hora del servicio
@@ -153,7 +157,7 @@ es:
         rails_admin_billable_hours_widget: 'Horas cobrables'
         aliada_reported_begin_time: 'Hora reportada de inicio'
         aliada_reported_end_time: 'Hora reportada final'
-        cancelation_fee_charged: 'Cuota de cancelación'
+        cancelation_fee_charged: '¿Cargo por cancelación tardía hecho?'
         confirmed: 'Confirmado'
         rooms_hours: 'Horas por cuartos'
         reported_hours: 'Horas reportadas'
@@ -292,7 +296,11 @@ es:
         menu: "Mapa"
         title: "Mapa"
         breadcrumb: "Mapa"
-        bulk_link: "Mapa"
+      solve_ticket:
+        menu: 'Marcar como resuelto'
+        breadcrumb: 'Marcar como resuelto'
+        title: 'Marcar como resuelto'
+        bulk_link: 'Marcar como resueltos'
     form:
       cancel: "Cancelar"
       basic_info: "Información básica"

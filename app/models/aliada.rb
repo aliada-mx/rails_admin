@@ -72,6 +72,10 @@ class Aliada < User
     return Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week)
   end
 
+  def aliada_webapp_link
+    aliada_show_webapp_link(self)
+  end
+
   rails_admin do
     label_plural 'aliadas'
     navigation_label 'Personas'
@@ -112,13 +116,14 @@ class Aliada < User
         queryable true
         filterable true
       end
-      field :next_service_link
+      field :aliada_webapp_link
     end
 
     edit do
       field :role
       field :first_name
       field :last_name
+      field :email
       field :phone
       field :documents
 

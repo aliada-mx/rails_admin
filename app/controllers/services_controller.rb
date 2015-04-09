@@ -72,13 +72,13 @@ class ServicesController < ApplicationController
   def update
     service = @user.services.find(params[:service_id])
 
+    next_services_path = next_services_users_path(user_id: @user.id, service_id: service.id)
+
     if params[:update_button]
       service.update_existing!(service_params)
     elsif params[:cancel_button]
       service.cancel_all!
     end
-      
-    next_services_path = next_services_users_path(user_id: @user.id, service_id: service.id)
 
     return render json: { status: :success, next_path: next_services_path, service_id: service.id }
   end
@@ -145,6 +145,7 @@ class ServicesController < ApplicationController
       params.require(:service).permit(:zone_id,
                                       :bathrooms,
                                       :bedrooms,
+                                      :rooms_hours,
                                       {extra_ids: []},
                                       :estimated_hours,
                                       :room_hours,

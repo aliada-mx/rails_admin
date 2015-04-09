@@ -11,7 +11,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema.define(version: 20150407233814) do
+
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -294,7 +296,6 @@ ActiveRecord::Schema.define(version: 20150407233814) do
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree
-  add_index "services", ["datetime", "user_id"], name: "index_services_on_datetime_and_user_id", unique: true, using: :btree
   add_index "services", ["recurrence_id"], name: "index_services_on_recurrence_id", using: :btree
   add_index "services", ["service_type_id"], name: "index_services_on_service_type_id", using: :btree
   add_index "services", ["user_id"], name: "index_services_on_user_id", using: :btree

@@ -10,6 +10,8 @@ class RecurrencesController < ApplicationController
   def show
     @recurrence = Recurrence.find(params[:recurrence_id])
     @base_service = @recurrence.base_service
-    @services = @recurrence.services.ordered_by_datetime.in_the_future.select { |service| service.one_timer? }
+    @services = @recurrence.services.ordered_by_datetime.in_the_future.select do |service| 
+      service.one_timer_from_recurrent? && !service.canceled?
+    end
   end
 end

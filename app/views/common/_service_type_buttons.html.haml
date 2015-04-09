@@ -1,4 +1,4 @@
-- should_hide = @service.service_type.present? && ( @service.try(:is_recurrent?) || @service.try(:one_timer_from_recurrent?) )
+- should_hide = @service.service_type.present? && ( @service.try(:recurrent?) || @service.try(:one_timer_from_recurrent?) )
 
 %fieldset.service_types.radio_buttons.large{class: should_hide ? 'concealed' : ''}
   - disabled = disable_one_time ? ServiceType.one_time.id : nil

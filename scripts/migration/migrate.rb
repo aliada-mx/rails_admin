@@ -157,7 +157,6 @@ def parse_horas_aliadas
 
     aliadas = Aliada.where("first_name like '%#{first_name}%' AND last_name like '%#{last_name}%'")
     if aliadas.empty? or aliadas.count > 1
-      binding.pry
       raise "Aliada no encontrada o varias aliadas con los parámetros de búsqueda."
     end
     aliada = aliadas.first

@@ -23,7 +23,7 @@ class ChangeReportedTimesToDatetime < ActiveRecord::Migration
     end
     
     #Arregla los billable hours,
-    services = Service.where("billable_hours < 0").where(status: 'finished')
+    services = Service.where("billable_hours <= 0").where(status: 'finished').where('aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL')
     services.each do |s|
       s.billable_hours = s.reported_hours
       s.save!

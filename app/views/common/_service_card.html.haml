@@ -5,17 +5,20 @@
   .service-card{class: class_name}
     .head
       - if is_recurrent
-        .badge
-          Recurrente
-          =image_tag("recurrence.png", {:title => 'Servicio recurrente'})
+        = link_to edit_service_users_path(user_id: service.recurrence.next_service.user.id, service_id: service.id), class: 'action-button size-large' do
+          .badge
+            Recurrente
+            =image_tag("recurrence.png", {:title => 'Servicio recurrente'})
 
       .title
         - if is_recurrent
-          Todos los #{ensure_plural(service.weekday_in_spanish) }
+          Todos los #{ensure_plural(service.recurrence.weekday_in_spanish) }
+          .small-letters
+            = service.recurrence.friendly_time
         - else 
           = service.friendly_date.capitalize
-      .small-letters
-        = service.friendly_time
+          .small-letters
+            = service.friendly_time
 
     .body
       %ul.summary
@@ -40,7 +43,7 @@
             %span.icon-clock.icon-button
             Próximos servicios
 
-          = link_to edit_service_users_path(user_id: service.user.id, service_id: service.id), class: 'action-button size-large' do
+          = link_to edit_service_users_path(user_id: service.recurrence.next_service.user.id, service_id: service.id), class: 'action-button size-large' do
             %span.icon-pencil.icon-button
             Modificar Recurrencia
 
@@ -51,5 +54,5 @@
               Modificar servicio
 
       .numbers
-        %span.hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours_with_extras.hours }
+        .hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours_with_extras.hours }
         %span.cash $#{ ceil_and_strip_insignificat_zeros service.cost } 

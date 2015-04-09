@@ -80,7 +80,6 @@ class ScheduleFiller
     end
 
     # Compensate UTC 
-    # MAL
     beginning_of_user_recurrence = today_in_the_future.change(hour: user_recurrence.utc_hour(today_in_the_future))
 
     base_service_attributes = base_service.shared_attributes
@@ -88,6 +87,8 @@ class ScheduleFiller
     if not service
       service = Service.create!(base_service_attributes.merge({datetime: beginning_of_user_recurrence }))
     end
+    service.service_type = ServiceType.one_time_from_recurrent
+    service.save!
     service 
   end
 

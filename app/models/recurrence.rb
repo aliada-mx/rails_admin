@@ -9,15 +9,15 @@ class Recurrence < ActiveRecord::Base
   ]
 
   STATUSES = [
-    ['active', 'Activa'],
-    ['inactive', 'Inactiva']
+    ['Activa','active'],
+    ['Inactiva','inactive']
   ]
 
   validates_presence_of [:weekday, :hour]
   validates :weekday, inclusion: {in: Time.weekdays.map{ |days| days[0] } }
   validates :hour, inclusion: {in: [*0..23] } 
   validates_numericality_of :periodicity, greater_than: 1
-  validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[0] } }
+  validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
 
   belongs_to :user
   belongs_to :aliada
@@ -41,11 +41,15 @@ class Recurrence < ActiveRecord::Base
   end
 
   def name
-    "#{weekday_in_spanish} de #{hour} a #{ending_hour}"
+    "#{weekday_in_spanish} de #{hour} a #{ending_hour} (#{id})"
   end
 
   def base_service
     services.with_recurrence.ordered_by_created_at.first
+  end
+
+  def next_service
+    services.ordered_by_datetime.where('datetime > ?', Time.zone.now).first
   end
 
   def ending_hour
@@ -114,6 +118,15 @@ class Recurrence < ActiveRecord::Base
     utc_to_timezone(utc_datetime, self.timezone).weekday
   end
 
+  def friendly_time
+    text = ""
+    if hour > 13
+      text += "#{ hour - 12 }:00 pm"
+    else
+      text += "#{ hour }:00 am"
+    end
+  end
+
   def next_recurrence_now_in_time_zone
     if self.weekday == now_in_timezone.weekday
       return now_in_timezone
@@ -176,6 +189,15 @@ class Recurrence < ActiveRecord::Base
     end
 
     list do
+
+      search_scope do
+        Proc.new do |scope, query|
+          query_without_accents = I18n.transliterate(query)
+
+          scope.merge(UnscopedUser.with_name_phone_email(query_without_accents))
+        end
+      end
+
       field :user do 
         searchable [{users: :first_name }, {users: :last_name }, {users: :email}, {users: :phone}]
         queryable true

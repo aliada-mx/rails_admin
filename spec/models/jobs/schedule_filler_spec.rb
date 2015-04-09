@@ -10,6 +10,7 @@ describe 'Schedule Filler' do
   let(:zone){ create(:zone) }
   let(:aliada){ create(:aliada) }
   let(:user){ create(:user) }
+  let!(:one_time_from_recurrent){ create(:service_type, name: 'one-time-from-recurrent') }
   
   # client's recurrence, built with aliada's recurrence
   let!(:client_recurrence) { create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: 7, aliada: aliada, user: user, total_hours: total_service_hours, owner: 'user') }

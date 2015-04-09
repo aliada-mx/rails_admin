@@ -90,7 +90,8 @@ class Availability
 
   def book_new(service)
     service_shared_attributes = service.shared_attributes
-    one_time_service_type = ServiceType.find_by!(name: 'one-time')
+    one_time_service_type = ServiceType.one_time
+    one_time_from_recurrent_service_type = ServiceType.one_time_from_recurrent
 
     schedules_intervals.each_with_index do |schedule_interval, i|
       # First service is the master, will have its service type set to recurrent(or not)
@@ -98,10 +99,88 @@ class Availability
       if i == 0
         _service = service 
       else
-        _service = Service.new(service_shared_attributes.merge({ service_type: one_time_service_type }))
+        _service = Service.new(service_shared_attributes.merge({ service_type: one_time_from_recurrent_service_type }))
       end
 
       _service.datetime = schedule_interval.beginning_of_interval 
+
+      _service.hours_after_service = schedule_interval.padding_count
+
+      _service.assign(aliada)
+
+      _service.ensure_updated_recurrence!
+
+      _service.save!
+
+      schedule_interval.book_schedules(aliada_id: aliada.id,
+                                       user_id: _service.user_id,
+                                       service_id: _service.id,
+                                       recurrence_id: service.recurrence_id) # the recurrence_id can be nil for one-time services
+    end
+
+    self
+  end
+
+  def rebook_one_time(service)
+    service_shared_attributes = service.shared_attributes
+
+    one_time_from_recurrent_service_type = ServiceType.one_time_from_recurrent
+
+    # We want the datetime before changing it on our update because we will use it to determine
+    # if we should reuse the service or create a new
+    in_the_future = service.datetime_was > Time.zone.now
+
+    schedules_intervals.each_with_index do |schedule_interval, i|
+      if service.recurrence_id
+        service.service_type = one_time_from_recurrent_service_type
+      end
+
+      service.datetime = schedule_interval.beginning_of_interval 
+
+      service.aliada_id = schedule_interval.aliada_id
+
+      service.hours_after_service = schedule_interval.padding_count
+
+      service.assign(aliada)
+
+      service.ensure_updated_recurrence!
+
+      service.save!
+
+      schedule_interval.book_schedules(aliada_id: aliada.id,
+                                       user_id: service.user_id,
+                                       service_id: service.id,
+                                       recurrence_id: service.recurrence_id) # the recurrence_id can be nil for one-time services
+    end
+
+    self
+  end
+
+  def rebook_recurrent(service)
+    service_shared_attributes = service.shared_attributes
+
+    one_time_service_type = ServiceType.one_time
+    one_time_from_recurrent_service_type = ServiceType.one_time_from_recurrent
+
+    schedules_intervals.each_with_index do |schedule_interval, i|
+      if i == 0
+
+        if service.one_timer_from_recurrent?
+
+          _service = service
+
+        elsif service.recurrent?
+
+          _service = Service.new(service_shared_attributes.merge({ service_type: one_time_from_recurrent_service_type }))
+
+        end
+      else
+        _service = Service.new(service_shared_attributes.merge({ service_type: one_time_from_recurrent_service_type }))
+      end
+
+      _service.datetime = schedule_interval.beginning_of_interval 
+
+      _service.aliada_id = schedule_interval.aliada_id
 
       _service.hours_after_service = schedule_interval.padding_count
 
@@ -130,8 +209,9 @@ class Availability
     end
   end
 
-  def clean_up_services(service)
-
+  # We asume the same padding
+  def padding_count
+    schedules_intervals.first.padding_count
   end
 
   def beginning

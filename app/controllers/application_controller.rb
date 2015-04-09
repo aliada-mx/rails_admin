@@ -9,6 +9,8 @@ class ApplicationController < ActionController::Base
 
 
   def set_admin_timezone
+    return if Rails.env == 'test'
+
     if in_admin_controller?
       if params[:action] == 'edit' && request.method == 'POST'
         model_name = params[:model_name]
