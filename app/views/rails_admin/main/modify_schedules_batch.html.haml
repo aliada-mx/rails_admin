@@ -1,0 +1,51 @@
+:javascript
+  jQuery(function($) {
+    $.filters.options.regional = {
+      datePicker: {
+        dateFormat: "yy-mm-dd",
+        maxDate: 30,
+        dayNames: ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+        dayNamesShort: ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+        dayNamesMin: ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+        firstDay: "1",
+        monthNames: ["January","February","March","April","May","June","July","August","September","October","November","December"],
+        monthNamesShort: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+      }
+    }
+    $('button[type=reset]').click(function(e){
+      e.preventDefault();
+      $('input.date').val('');
+      $('#date_filters_form').submit();
+    })
+  
+  });
+
+:javascript
+  $(function() {
+    $('.date').datepicker($.filters.options.regional.datePicker);
+  });
+
+%form#date_filters_form{"accept-charset" => "UTF-8", :method => "get"}
+  .well
+    %span#filters_box
+      %p.filter.form-search
+        %span
+          Rango de fechas
+        %input.date.additional-fieldset.between.input-small{:name => "start_date", :placeholder => "-∞", :type => "text", :value => params[:start_date]}
+        %span
+          y
+        %input.date.additional-fieldset.between.input-small{:name => "end_date", :placeholder => "∞", :type => "text", :value => params[:end_date]}
+        %button.btn.btn-primary{:type => "submit"}
+          %i.icon-white.icon-refresh
+          Refresh
+        %button.btn.btn-danger{:type => "reset"}
+          %i.icon-white
+          Clear
+    %select{:multiple => true}
+      -@aliadas.each do |a|
+        %option= a.full_name
+    Estatus a poner:    
+    %select
+      - Service::STATUSES.each do |s|
+        %option= s.second
+

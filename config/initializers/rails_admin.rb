@@ -3,6 +3,8 @@ RailsAdmin::Config::Actions.register(:create_aliada_working_hours, RailsAdmin::C
 
 RailsAdmin::Config::Fields::Types::register(:show_aliada_calendar, RailsAdmin::Config::Actions::ShowAliadaCalendar)
 
+RailsAdmin::Config::Actions.register(:modify_schedules_batch, RailsAdmin::Config::Actions::ModifySchedulesBatch)
+
 RailsAdmin::Config::Actions.register(:charge_services, RailsAdmin::Config::Actions::ChargeServices)
  
 RailsAdmin::Config::Actions.register(:address_map, RailsAdmin::Config::Actions::AddressMap)
@@ -43,6 +45,12 @@ RailsAdmin.config do |config|
     show_aliada_calendar do
       visible do
         bindings[:abstract_model].model.to_s == 'Aliada'
+      end
+    end
+
+    modify_schedules_batch do
+      visible do
+        bindings[:abstract_model].model.to_s == 'Schedule'
       end
     end
 

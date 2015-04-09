@@ -71,7 +71,7 @@ class Service < ActiveRecord::Base
   state_machine :status, :initial => 'created' do
     transition 'created' => 'aliada_assigned', :on => :assign
     transition 'created' => 'aliada_missing', :on => :mark_as_missing
-    transition [ 'finished', 'aliada_assigned' ] => 'paid', :on => :pay
+    transition ['finished', 'aliada_assigned' ] => 'paid', :on => :pay
     transition ['created', 'aliada_assigned', 'in-progress'] => 'finished', :on => :finish
     transition ['created', 'aliada_assigned', 'finished', 'paid'] => 'canceled', :on => :cancel
 

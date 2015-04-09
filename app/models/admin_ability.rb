@@ -11,9 +11,8 @@ class AdminAbility
         can :create_aliada_working_hours
         can :show_aliada_calendar
         can :charge_services
-
+        can :modify_schedules_batch
       end
     end
   end
 end
-
