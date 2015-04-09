@@ -59,7 +59,7 @@ class ServicesController < ApplicationController
       @aliadas = Aliada.all.order(:first_name) + [@any_aliada]
     else
 
-      @aliadas = @user.aliadas.order(:first_name) + [@any_aliada]
+      @aliadas = @user.aliadas + [@any_aliada]
     end
   end
 
@@ -76,7 +76,7 @@ class ServicesController < ApplicationController
     if current_user.admin?
       @aliadas = Aliada.all.order(:first_name) + [@any_aliada]
     else
-      @aliadas = @user.aliadas.order(:first_name) + [@any_aliada]
+      @aliadas = @user.aliadas + [@any_aliada]
     end
     @is_recurrent = @service.recurrent?
   end
