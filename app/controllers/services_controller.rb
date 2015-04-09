@@ -54,14 +54,13 @@ class ServicesController < ApplicationController
   end
 
   def new
+    @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
     if current_user.admin?
-      @aliadas = Aliada.all
+      @aliadas = Aliada.all + [@any_aliada]
     else
-      @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
 
       @aliadas = @user.aliadas + [@any_aliada]
     end
-    
   end
 
   def create_new
@@ -72,11 +71,11 @@ class ServicesController < ApplicationController
 
   def edit
     @service = @user.services.find(params[:service_id])
-    if current_user.admin?
-      @aliadas = Aliada.all
-    else
-      @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
+    @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
 
+    if current_user.admin?
+      @aliadas = Aliada.all + [@any_aliada]
+    else
       @aliadas = @user.aliadas + [@any_aliada]
     end
     @is_recurrent = @service.recurrent?
