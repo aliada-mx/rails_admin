@@ -11,8 +11,9 @@ module Devise
 
       def authenticate!
         user = User.find_by_email(params[:user][:email])
+        md5_hashed_password = Digest::MD5.hexdigest(params[:user][:password])
         
-        if user && params[:user][:password].present? && user.md5_password == Digest::MD5.hexdigest(params[:user][:password])
+        if user && params[:user][:password].present? && user.md5_password == md5_hashed_password 
           user.password = params[:user][:password]
           user.md5_password = nil
           user.save!

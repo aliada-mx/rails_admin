@@ -24,6 +24,7 @@ es:
     attributes:
       common: &common_attributes
         <<: *model_names
+        full_name: nombre completo
         name: nombre
         postal_code_number: 'número de código postal'
         created_at: 'Fecha de creación'
@@ -301,6 +302,16 @@ es:
         breadcrumb: 'Marcar como resuelto'
         title: 'Marcar como resuelto'
         bulk_link: 'Marcar como resueltos'
+      enable_schedules: 
+        menu: 'Habilitar horas de servicio'
+        breadcrumb: 'Habilitar horas de servicio'
+        title: 'Habilitar horas de servicio'
+        bulk_link: 'Habilitar horas de servicios'
+      book_schedules: 
+        menu: 'Reservar hora de servicio'
+        breadcrumb: 'Reservar hora de servicio'
+        title: 'Reservar hora de servicio'
+        bulk_link: 'Reservar hora de servicios'
     form:
       cancel: "Cancelar"
       basic_info: "Información básica"

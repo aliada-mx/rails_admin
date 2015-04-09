@@ -432,7 +432,7 @@ class Service < ActiveRecord::Base
   end
 
   def next_service
-    recurrence.services.ordered_by_datetime.where('datetime > ?', Time.zone.now).first
+    recurrence.services.not_canceled.ordered_by_datetime.where('datetime > ?', Time.zone.now).first
   end
 
 
@@ -519,6 +519,7 @@ class Service < ActiveRecord::Base
     if recurrent?
       self.recurrence.update_attributes(total_hours: service_to_edit.total_hours,
                                         hour: service_to_edit.tz_aware_datetime.hour,
+                                        aliada_id: service_to_edit.aliada_id,
                                         weekday: service_to_edit.tz_aware_datetime.weekday )
     end
 

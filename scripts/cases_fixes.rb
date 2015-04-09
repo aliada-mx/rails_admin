@@ -69,3 +69,5 @@ def enable_schedules_for_service(service_id: 788, aliada_id: 32, wday: 3, hour: 
   end
 end
 
+
+move

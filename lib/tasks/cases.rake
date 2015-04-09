@@ -52,6 +52,49 @@ namespace :db do
 
           service.save!
         end
+      when 'paulina bravo' 
+        user = User.find 515
+
+        thursday_recurrence = Recurrence.create!(user: user,
+                                                 status: 'active', 
+                                                 hour: 8,
+                                                 periodicity: 7,
+                                                 total_hours: 3,
+                                                 aliada_id: 17,
+                                                 weekday: 'thursday')
+
+
+        user.services.all.each do |service|
+          if service.datetime.in_time_zone('Etc/GMT+6').weekday == 'thursday'
+            puts "found service service id #{service.id} recurrence id #{service.recurrence_id} service type #{service.service_type.name}"
+            service.recurrence_id = 2676
+            service.save!
+          end
+
+        end
+      when 'maria graciela lopez'
+        user = User.find 91
+
+        recurrence = Recurrence.create!(user: user,
+                                                 status: 'active', 
+                                                 hour: 7,
+                                                 periodicity: 7,
+                                                 total_hours: 3,
+                                                 aliada_id: 1,
+                                                 weekday: 'friday')
+
+
+        user.services.all.each do |service|
+          if service.datetime.in_time_zone('Etc/GMT+6').weekday == 'friday'
+            puts "found service service id #{service.id} recurrence id #{service.recurrence_id} service type #{service.service_type.name}"
+            service.recurrence_id = 2682
+            service.save!
+          end
+
+        end
+
       end
+
+
     end
 end

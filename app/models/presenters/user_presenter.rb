@@ -19,6 +19,8 @@ module Presenters
     end
 
     def name
+      return full_name if full_name.present?
+
       return "#{first_name} #{last_name}" if first_name.present? || last_name.present?
       email
     end

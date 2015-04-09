@@ -43,10 +43,12 @@ class Schedule < ActiveRecord::Base
   scope :join_users_and_aliadas, -> { joins('INNER JOIN users ON users.id = schedules.user_id OR users.id = schedules.aliada_id') }
   scope :in_weekday, -> (wday) { where('extract(dow from datetime::timestamp) = ?', wday) }
   scope :in_weekday, -> (hour) { where('extract(hour from datetime::timestamp) = ?', hour) }
-  # alias for rails admin
+  scope :with_recurrence, -> { where('recurrence_id IS NOT NULL') }
+  # scopes for rails admin
   scope :disponible, -> { available }
   scope :reservadas, -> { booked }
   scope :todos, -> { }
+  scope :siguientes, -> { where('datetime >= ?', Time.zone.now).ordered_by_aliada_datetime }
 
   scope :previous_aliada_schedule, ->(zone, current_schedule, aliada) { 
     in_zone(zone)
@@ -164,16 +166,12 @@ class Schedule < ActiveRecord::Base
         filterable true
       end
 
-      field :service_link do
-        virtual?
-      end
+      field :service
 
       field :recurrence
       field :created_at
 
-      field :service
-
-      scopes [:todos, :reservadas, :disponible]
+      scopes [:siguientes, :todos, :reservadas, :disponible]
     end
 
   end

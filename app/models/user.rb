@@ -34,6 +34,7 @@ class User < ActiveRecord::Base
 
   before_validation :ensure_password
   before_validation :set_default_role
+  before_save :fill_full_name
 
   default_scope { where('users.role in (?)', ["client", "admin"]) }
 
@@ -44,6 +45,10 @@ class User < ActiveRecord::Base
 
   after_initialize do
     self.balance ||= 0 if self.respond_to? :balance
+  end
+
+  def fill_full_name
+    self.full_name = "#{first_name.strip} #{last_name.strip}" if first_name.present? && last_name.present?
   end
   
   def create_promotional_code code_type
@@ -115,17 +120,12 @@ class User < ActiveRecord::Base
     services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }.uniq || []
   end
   
-  def full_name
-    return "#{self.first_name} #{self.last_name}"
-  end
-
-
   def set_default_role
     self.role ||= 'client' if self.respond_to? :role
   end
 
   def ensure_password
-    self.password ||= generate_random_pronouncable_password if self.respond_to? :password
+    self.password ||= generate_random_pronouncable_password if self.password.blank? && self.encrypted_password.blank?
   end
 
   def ensure_first_payment!(payment_method_options, service)
@@ -177,6 +177,16 @@ class User < ActiveRecord::Base
     label_plural 'usuarios'
 
     edit do
+      field :user_next_services_path do
+        read_only true
+
+        formatted_value do
+          view = bindings[:view]
+          user = bindings[:object]
+
+          view.link_to(user.id, value, target: '_blank')
+        end
+      end
       field :role
       field :postal_code_number do
         read_only true
@@ -233,11 +243,7 @@ class User < ActiveRecord::Base
         filterable false
         visible false
       end
-      field :first_name do
-        queryable false
-        filterable false
-      end
-      field :last_name do
+      field :full_name do
         queryable false
         filterable false
       end
@@ -245,7 +251,6 @@ class User < ActiveRecord::Base
         queryable false
         filterable false
       end
-      field :role
       field :phone do
         queryable false
         filterable false

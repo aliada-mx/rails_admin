@@ -12,7 +12,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 
-ActiveRecord::Schema.define(version: 20150407233814) do
+ActiveRecord::Schema.define(version: 20150409155130) do
 
 
   # These are extensions that must be enabled in order to support this database
@@ -338,6 +338,7 @@ ActiveRecord::Schema.define(version: 20150407233814) do
     t.decimal  "balance",                            precision: 7, scale: 2, default: 0.0
     t.string   "conekta_customer_id"
     t.string   "md5_password"
+    t.string   "full_name"
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", using: :btree
