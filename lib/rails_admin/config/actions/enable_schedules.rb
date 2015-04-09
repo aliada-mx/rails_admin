@@ -10,10 +10,6 @@ module RailsAdmin
           true
         end
 
-        register_instance_option :member? do
-          true
-        end
-
         register_instance_option :link_icon do
           # Escoger uno bonito de http://getbootstrap.com/2.3.2/base-css.html#icons
           'icon-folder-open'
@@ -26,11 +22,7 @@ module RailsAdmin
         
         register_instance_option :controller do
           Proc.new do
-            services = if @object.blank?
-                          @objects = list_entries(@model_config, :charge_services)
-                        else
-                          [ @object ]
-                       end
+            @objects = list_entries(@model_config, :enable_schedules)
 
             @objects.map do |schedule|
               schedule.status = 'available'

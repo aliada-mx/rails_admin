@@ -307,6 +307,11 @@ es:
         breadcrumb: 'Habilitar horas de servicio'
         title: 'Habilitar horas de servicio'
         bulk_link: 'Habilitar horas de servicios'
+      book_schedules: 
+        menu: 'Reservar hora de servicio'
+        breadcrumb: 'Reservar hora de servicio'
+        title: 'Reservar hora de servicio'
+        bulk_link: 'Reservar hora de servicios'
     form:
       cancel: "Cancelar"
       basic_info: "Información básica"
