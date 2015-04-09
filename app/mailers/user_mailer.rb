@@ -62,7 +62,7 @@ class UserMailer < ApplicationMailer
       substitutions:
         {'-user_full_name-' => [ user.full_name  ],
         '-service_payment_last_4'=> [if service.payment_method then service.payment_method.last4 else "0000" end],
-        '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A %d')],
+        '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A %d de %B')],
         '-service_time-' => [(I18n.l service.tz_aware_datetime, format: '%I %p')] ,
         '-service_type_name-' => [service.service_type.display_name] ,
         '-service_address-' => [service.address.full_address],
