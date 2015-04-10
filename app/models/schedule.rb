@@ -155,16 +155,14 @@ class Schedule < ActiveRecord::Base
       sort_by :datetime
 
       field :datetime
-      field :status
+      field :status do
+        queryable false
+      end
       field :user_link do
         virtual?
       end
 
-      field :aliada do
-        searchable [{users: :first_name }, {users: :last_name }, {users: :email}, {users: :phone}]
-        queryable true
-        filterable true
-      end
+      field :aliada 
 
       field :service
 

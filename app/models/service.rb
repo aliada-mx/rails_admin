@@ -295,8 +295,11 @@ class Service < ActiveRecord::Base
   end
 
   def in_less_than_24_hours
-    if datetime
-      in_24_hours = Time.zone.now + 24.hours
+    # While creating a service there is no datetime 
+    # and rails admin blows up so we must check
+    now = Time.zone.now
+    if datetime && datetime > now
+      in_24_hours = now + 24.hours
 
       datetime < in_24_hours
     else

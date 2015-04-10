@@ -19,8 +19,6 @@ namespace :db do
       end
 
       puts "fixed #{fixed_services} services "
-
-      raise ActiveRecord::Rollback
     end
   end
 end
