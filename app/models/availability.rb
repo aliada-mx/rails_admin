@@ -237,6 +237,7 @@ class Availability
 
       dates_times[date].push({value: time, friendly_time: friendly_time, friendly_datetime: friendly_datetime }) 
       dates_times[date].uniq!
+      dates_times[date].sort_by!{ |date_time| date_time[:value] }
     end
 
     dates_times
