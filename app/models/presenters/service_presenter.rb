@@ -164,6 +164,10 @@ module Presenters
     def aliada_reported_end_begin_in_gtm_6
       self.aliada_reported_begin_time.in_time_zone("Etc/GMT+6")
     end
+
+    def wday_hour
+      "#{tz_aware_datetime.wday} #{tz_aware_datetime.hour}" 
+    end
   end
 end
 

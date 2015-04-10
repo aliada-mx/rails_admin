@@ -403,7 +403,7 @@ class Service < ActiveRecord::Base
 
       user.send_confirmation_email(service)
       return service
-    end
+    end 
   end
 
   def self.create_initial!(service_params)
