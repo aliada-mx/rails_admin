@@ -3,7 +3,7 @@
   %h5
     En: 
     #{service.user.full_name}
-    %h6= I18n.l service.tz_aware_datetime, format: "%A %e a las %I %P"
+    %h6= I18n.l service.tz_aware_datetime, format: "%A %e de %B a las %I %P"
     = form_tag((finish_service_path)) do
       %input{:type=>"hidden", :value=>service.id, :name => :service}
       %div
@@ -26,7 +26,7 @@
     %br
 %h1 Servicios proximos    
 - @upcoming_services.each do |service|
-  %h1=  I18n.l service.tz_aware_datetime, format: "%A %e a las %I %P"
+  %h1=  I18n.l service.tz_aware_datetime, format: "%A %e de %B  a las %I %P"
   %h4
     #{service.estimated_hours.floor} horas
     #{(60*(service.estimated_hours-service.estimated_hours.floor)).floor} minutos
