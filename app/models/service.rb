@@ -103,7 +103,12 @@ class Service < ActiveRecord::Base
 
     after_transition on: :finish do |service, transition|
       if service.bill_by_reported_hours?
-        service.billable_hours = service.reported_hours
+        hours = service.reported_hours
+        if hours < 3
+          service.billable_hours = 3
+        else
+          service.billable_hours = hours
+        end
         service.save!
       end
     end
