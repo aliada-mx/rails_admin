@@ -204,6 +204,8 @@ class User < ActiveRecord::Base
 
       field :services
 
+      field :balance
+
       group :login_info do
         active false
         field :current_sign_in_at
