@@ -8,13 +8,19 @@
       %input{:type=>"hidden", :value=>service.id, :name => :service}
       %div
         ¿Llegue?
-        %select{:name => :begin_time}
-          - begin_hours_range(service).each do |h|
-            %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%I:%M %P"
+        %select{:name => :begin_hour}
+          - (7..19).each do |h|
+            %option{:value => h}= I18n.l Time.at(h.hour).utc, format: "%I %P"
+        %select{:name => :begin_min}
+          - (0..59).each do |m|
+            %option{:value => m}= m 
         ¿Acabe?
-        %select{:name => :end_time}
-          - end_hours_range(service).each do |h|
-            %option{:value => Time.at(h)}= I18n.l Time.at(h), format: "%I:%M %P"
+        %select{:name => :end_hour}
+          - (9..22).each do |h|
+            %option{:value => h}= I18n.l Time.at(h.hour).utc, format: "%I %P"
+        %select{:name => :end_min}
+          - (0..59).each do |m|
+            %option{:value => m}= m 
         %input{  :type => "submit", :name => "Pay", :value => "Guardar :)" }
     %br
     %br
