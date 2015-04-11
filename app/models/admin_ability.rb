@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AdminAbility
   include CanCan::Ability
 
@@ -8,9 +9,11 @@ class AdminAbility
         can :dashboard
         can :manage, :all
 
-        can :tickets_resumen
+        can :create_aliada_working_hours
+        can :show_aliada_calendar
+        can :charge_services
+        can :modify_schedules_batch
       end
     end
   end
 end
-

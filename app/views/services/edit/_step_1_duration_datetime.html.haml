@@ -1,0 +1,48 @@
+%section.step_1_duration_datetime{data: {bind: 'visible: current_step() == 1'}}
+  - if @is_recurrent
+    .badge
+      Recurrente
+      =image_tag("recurrence-contrast.png", {:title => 'Servicio recurrente'})
+
+
+  %h1#service_duration
+    - if @is_recurrent
+      Modificar los servicios
+
+      %h3
+        = ensure_plural(@service.recurrence.weekday_in_spanish)
+        = @service.friendly_time
+    - else
+      Modificar tu servicio
+ 
+  - should_hide = @service.try(:recurrent?) || @service.try(:one_timer_from_recurrent?)
+  %h4{class: should_hide ? 'concealed' : ''}
+    ¿Qué tipo de servicio necesitas?
+  = render partial: 'common/service_type_buttons', locals: {form: edit_service_form, promotional: false, disable_one_time: @service.recurrent?}
+
+  %h4
+    %icon.calendar
+    Cambia el número de horas
+
+  = render partial: 'common/hours_selector', locals: {form: edit_service_form}
+
+  = render partial: 'common/extras', locals: {form: edit_service_form, collapsable: true}
+
+  %h4#choose-aliada
+    %icon.aliada
+    Elige tu aliada
+  = render partial: 'common/aliadas_selector', locals: {form: edit_service_form}
+
+  %h4#choose-date
+    %icon.icon-calendar
+    Elige el día de la visita
+  = render partial: 'common/calendar'
+
+  %h4
+    %icon.icon-clock
+    Selecciona la hora que más te convenga
+
+  = render partial: 'common/time_selector', locals: {form: edit_service_form}
+
+  = edit_service_form.hidden_field :date, data: {bind: 'value: date'}
+  = edit_service_form.hidden_field :time, data: {bind: 'value: time'}

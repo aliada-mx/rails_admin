@@ -1,5 +1,7 @@
+# -*- encoding : utf-8 -*-
 describe 'Aliada' do
-  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 07:00:00') }
+  let(:timezone){ 'UTC' }
+  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
   let(:ending_datetime){ starting_datetime + 6.hour}
   let(:aliada){ create(:aliada) }
   let(:other_aliada){ create(:aliada) }
@@ -33,15 +35,15 @@ describe 'Aliada' do
     end
 
     it 'returns the total work hours minus number of services hours until horizon for alidas' do
-      service_1 = create(:service, datetime: starting_datetime, billable_hours: 3)
-      service_2 = create(:service, datetime: starting_datetime + 4.hours, billable_hours: 3)
+      service_1 = create(:service, datetime: starting_datetime, estimated_hours: 3)
+      service_2 = create(:service, datetime: starting_datetime + 4.hours, estimated_hours: 3)
       aliada.services << service_1
       aliada.services << service_2
-      expect(aliada.busy_services_hours).to eql 411
+      expect(aliada.busy_services_hours).to eql 410
     end
 
     it 'returns the total work hours minus number of services hours until horizon for alidas' do
-      service = create(:service, datetime: starting_datetime + 1.hour, billable_hours: 3)
+      service = create(:service, datetime: starting_datetime + 1.hour, estimated_hours: 3)
       aliada.services << service
       expect(aliada.busy_services_hours).to eql 415
     end

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ChangeAddressType < ActiveRecord::Migration
   def change
     rename_column :addresses, :address, :street

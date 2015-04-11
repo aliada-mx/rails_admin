@@ -1,5 +1,10 @@
+# -*- encoding : utf-8 -*-
 class User < ActiveRecord::Base
+  #Required to enable token authentication
+  acts_as_token_authenticatable
+
   include Presenters::UserPresenter
+  include Mixins::RailsAdminModelsHelpers
   include UsersHelper
 
   ROLES = [
@@ -7,10 +12,14 @@ class User < ActiveRecord::Base
     ['aliada', 'Aliada'],
     ['admin', 'Admin'],
   ]
-  validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
 
-  has_many :services, inverse_of: :user, foreign_key: :user_id
+  has_many :recurrences
+  has_many :credits
+  has_many :redeemed_credits, :foreign_key => "redeemer_id", :class_name => "Credit"
+  has_one :code
+  has_many :services, ->{ order(:datetime) }, inverse_of: :user, foreign_key: :user_id
   has_many :addresses
+  has_many :schedules, inverse_of: :user, foreign_key: :user_id
   has_and_belongs_to_many :banned_aliadas,
                           class_name: 'Aliada',
                           join_table: :banned_aliada_users,
@@ -19,21 +28,73 @@ class User < ActiveRecord::Base
 
   has_many :payment_provider_choices, -> { order('payment_provider_id DESC') }, inverse_of: :user
 
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+  devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable
 
   before_validation :ensure_password
   before_validation :set_default_role
+  before_save :fill_full_name
 
-  default_scope { where('users.role in (?)', ['client', 'admin']) }
+  default_scope { where('users.role in (?)', ["client", "admin"]) }
+
+  validates :role, inclusion: {in: ROLES.map{ |pairs| pairs[0] } }
+  validates_presence_of :password, if: :password_required?
+  validates_confirmation_of :password, if: :password_required?
+  validates_length_of :password, within: Devise.password_length, allow_blank: true
+
+  after_initialize do
+    self.balance ||= 0 if self.respond_to? :balance
+  end
+
+  def fill_full_name
+    self.full_name = "#{first_name.strip} #{last_name.strip}" if first_name.present? && last_name.present?
+  end
+  
+  def create_promotional_code code_type
+    if self.role == "client"
+      Code.generate_unique_code self, code_type
+    end
+  end
+
+  def password_required?
+    !persisted? || !password.blank? || !password_confirmation.blank?
+  end
+
+  def self.email_exists?(email)
+    ## Devise is configured to save emails in lower case lets search them like so
+    User.find_by_email(email.strip.downcase).present?
+  end
 
   def create_first_payment_provider!(payment_method_id)
     payment_method = PaymentMethod.find(payment_method_id)
     payment_provider = payment_method.provider_class.create!
 
     create_payment_provider_choice(payment_provider)
+  end
+
+  def charge_balance(amount)
+    credits_charger = CreditsCharger.new(amount, self)
+    credits_charger.charge!
+  end
+
+  def register_debt(debt)
+    self.balance -= debt
+    self.save!
+  end
+
+  def charge!(product, service)
+    credits_payment = charge_balance(product.amount)
+
+    product.amount = credits_payment.left_to_charge
+
+    payment = default_payment_provider.charge!(product, self, service)
+
+    if payment.nil?
+      register_debt(credits_payment.left_to_charge)
+    end
+    payment
   end
 
   def create_payment_provider_choice(payment_provider)
@@ -62,53 +123,98 @@ class User < ActiveRecord::Base
     services.in_the_past.joins(:aliada).order('aliada_id').map(&:aliada)
   end
 
+  def aliadas
+    services.joins(:aliada).map(&:aliada).select { |aliada| !banned_aliadas.include? aliada }.uniq || []
+  end
+  
   def set_default_role
     self.role ||= 'client' if self.respond_to? :role
   end
 
   def ensure_password
-    self.password ||= generate_random_pronouncable_password if self.respond_to? :password
+    self.password ||= generate_random_pronouncable_password if self.password.blank? && self.encrypted_password.blank?
   end
 
-  def ensure_first_payment!(payment_method_options)
-    default_payment_provider.ensure_first_payment!(self, payment_method_options)
+  def ensure_first_payment!(payment_method_options, service)
+    default_payment_provider.ensure_first_payment!(self, payment_method_options, service)
+  end
+
+  def redeem_code code_name
+    code = Code.find_by(name: code_name)
+    if code
+      Credit.create(user_id: code.user_id, code_id: code.id, redeemer_id: self.id)
+    end
   end
 
   def admin?
     role == 'admin'
   end
 
+  def timezone
+    'Mexico City'
+  end
+
+  def send_welcome_email
+    UserMailer.welcome(self).deliver!
+  end
+
+  def send_confirmation_email(service)
+    UserMailer.service_confirmation(service).deliver!
+  end
+
+  def send_service_confirmation_pwd(service, pwd)
+    UserMailer.service_confirmation_pwd(service, pwd).deliver!
+  end
+
+  def send_billing_receipt(service)
+    UserMailer.billing_receipt(self, service)
+  end
+  
+  def send_payment_problem_email(payment_method)
+    UserMailer.payment_problem(self, payment_method)
+  end
+  
+  def send_address_change_email(new_address, prev_address)
+    UserMailer.user_address_changed(self, new_address, prev_address)
+  end
+
   rails_admin do
     navigation_label 'Personas'
     navigation_icon 'icon-user'
-    exclude_fields :payment_provider_choices
     label_plural 'usuarios'
 
-    list do
-      configure :name do
-        virtual?
-      end
-
-      configure :default_address do
-        virtual?
-      end
-
-      configure :next_service do
-        virtual?
-      end
-
-      include_fields :name, :email, :default_address, :next_service
-    end
-
     edit do
+      field :user_next_services_path do
+        read_only true
+
+        formatted_value do
+          view = bindings[:view]
+          user = bindings[:object]
+
+          view.link_to(user.id, value, target: '_blank')
+        end
+      end
       field :role
+      field :postal_code_number do
+        read_only true
+      end
       field :first_name
       field :last_name
+      field :email
       field :phone
+      field :password do
+        required false
+      end
+      field :password_confirmation
+
+      field :banned_aliadas
+
+      field :services
+
+      field :balance
+
       group :login_info do
         active false
-        field :password
-        field :password_confirmation
         field :current_sign_in_at
         field :sign_in_count
         field :last_sign_in_at
@@ -117,6 +223,54 @@ class User < ActiveRecord::Base
         field :remember_created_at
         field :reset_password_sent_at
       end
+
+      exclude_fields :payment_provider_choices
+    end
+
+    list do
+      search_scope do
+        Proc.new do |scope, query|
+          query_without_accents = I18n.transliterate(query)
+
+          scope.merge(UnscopedUser.with_name_phone_email(query_without_accents))
+        end
+      end
+
+      field :user_next_services_path do
+        read_only true
+
+        formatted_value do
+          view = bindings[:view]
+          user = bindings[:object]
+
+          view.link_to(user.id, value, target: '_blank')
+        end
+      end
+
+      field :role do
+        queryable false
+        filterable false
+        visible false
+      end
+      field :full_name do
+        queryable false
+        filterable false
+      end
+      field :email do
+        queryable false
+        filterable false
+      end
+      field :phone do
+        queryable false
+        filterable false
+      end
+
+      field :default_address_link do
+        virtual?
+      end
+
+      field :created_at
+      field :postal_code_number
     end
   end
 end

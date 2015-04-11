@@ -1,4 +1,210 @@
-@mixin font-size($sizeValue: 1.6) 
-  font-size: ($sizeValue * 10) + px
-  font-size: $sizeValue + rem
+@import "compass/css3/border-radius"
+@import "common/variables"
 
+@mixin centered()
+  margin-left: auto
+  margin-right: auto
+  text-align: center
+  display: block
+
+@mixin soft-transition($time: 300ms, $property: all, $easing: cubic-bezier(0,.5,.5,1))
+  -webkit-transition: $property $time $easing
+  -moz-transition: $property $time $easing
+  -ms-transition: $property $time $easing
+  -o-transition: $property $time $easing
+  transition: $property $time $easing
+
+
+@mixin round-corners
+  +border-radius(3px)
+
+@function action-button-background-color($color)
+  @if $color == $dark_pink
+    @return $pink
+
+  @if $color == $dark_gray
+    @return $medium_gray
+
+  @if $color == $green or $color == $purple
+    @return transparent
+
+  @return $color
+
+@function action-button-text-color($color)
+  @if $color == $dark_pink or $color == $dark_gray
+    @return white
+  @if $color == transparent
+    @return $dark_gray
+
+  @return $color
+
+@function action-button-hover-background-color($color)
+  @if $color == $dark_pink
+    @return lighten($pink, 4%)
+
+  @if $color == transparent
+    @return $dark_gray
+
+  @return $color
+
+@function action-button-border-color($color)
+  @if $color == transparent
+    @return $dark_gray
+
+  @return $color
+
+
+@mixin action-button($color)
+  +round-corners
+  box-sizing: border-box
+  display: inline-block
+  text-align: center
+  background-color: action-button-background-color($color)
+  border: 1px solid action-button-border-color($color)
+  color: action-button-text-color($color)
+  cursor: pointer
+  +soft-transition
+  &.active
+    background-color: action-button-hover-background-color($color)
+    color: white !important
+    cursor: default
+    pointer-events: none
+  &:link
+    color: action-button-text-color($color) 
+    text-decoration: none
+  &:focus
+    color: action-button-text-color($color) 
+    text-decoration: none
+  &:hover
+    background-color: action-button-hover-background-color($color)
+    color: white
+    text-decoration: none
+  .icon-button
+    +rem(margin-right, 0.5rem)
+  &.size-extra-large
+    +rem(font-size, $large-font)
+    font-weight: 800
+    +rem(padding, 1rem 3rem)
+    width: 100%
+
+    .icon-button
+      +rem(font-size, 1.4rem)
+
+  &.size-large
+    +rem(font-size, 1.7rem)
+    +rem(padding, 1rem 2rem)
+    min-width: 240px
+
+    .icon-button
+      +rem(font-size, 1.2rem)
+
+  &.size-medium
+    +rem(font-size, 1.5rem)
+    padding: 6px 12px
+
+    .icon-button
+      +rem(font-size, 0.8rem)
+
+  &.size-small
+    +rem(font-size, 0.8rem)
+    padding: 5px 10px
+
+    .icon-button
+      +rem(font-size, 1rem)
+
+@mixin arrow($direction)
+  @if $direction == down
+    width: 0
+    height: 0
+    border-top: none
+    border-bottom: 12px solid $green
+    border-right: 6px solid transparent
+    border-left: 6px solid transparent
+  @if $direction == up
+    width: 0
+    height: 0
+    +soft-transition
+    border-top: 12px solid $green
+    border-right: 6px solid transparent
+    border-left: 6px solid transparent
+    margin: 0 auto
+    position: absolute
+    top: 40%
+    right: 0
+    left: 0
+
+
+
+@function parseInt($n)
+  @return $n / ($n * 0 + 1)
+
+@mixin rem($property, $values)
+  $px: ()
+  $rem: ()
+  @each $value in $values
+    @if $value == 0 or $value == auto
+      $px: append($px, $value)
+      $rem: append($rem, $value)
+    @else
+      $unit: unit($value)
+      $val: parseInt($value)
+      @if $unit == "px"
+        $px: append($px, $value)
+        $rem: append($rem, $val / 10 + rem)
+      @if $unit == "rem"
+        $px: append($px, $val * 10 + px)
+        $rem: append($rem, $value)
+  @if $px == $rem
+    #{$property}: $px
+  @else
+    #{$property}: $px
+    #{$property}: $rem
+
+@mixin input-placeholder()
+  &::-webkit-input-placeholder
+    @content
+  &:-moz-placeholder
+    @content
+  &::-moz-placeholder
+    @content
+  &:-ms-input-placeholder
+    @content
+
+@mixin prevent-collapse()
+  overflow: hidden
+
+@mixin no-selection
+  -webkit-touch-callout: none
+  -webkit-user-select: none
+  -khtml-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
+
+
+@mixin transparent-background($opacity:0.6)
+  background: rgb(255, 255, 255) transparent
+  background: rgba(255, 255, 255, $opacity)
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#99ffffff, endColorstr=#99ffffff )
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99ffffff, endColorstr=#99ffffff)"
+
+
+// To be placed inside a body tag
+@mixin sticky-footer
+  .container
+    main
+      margin-bottom: 80px
+
+  min-height: 100%
+  position: relative
+  &:after
+    content: ''
+    display: block
+    height: $footer-height
+    min-height: 100%
+    position: relative
+
+  footer
+    position: absolute
+    bottom: 0
+    width: 100%

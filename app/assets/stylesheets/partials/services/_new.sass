@@ -1,0 +1,20 @@
+@import 'common/mixins'
+
+body.new_service
+  +sticky-footer
+
+  > .container
+    min-height: 1050px
+
+  main
+    section
+      > *
+        margin: 20px 0
+      > h1
+        margin-top: 0
+      > h4
+        font-weight: 700
+
+  .container.two-columns
+    margin-bottom: 150px
+

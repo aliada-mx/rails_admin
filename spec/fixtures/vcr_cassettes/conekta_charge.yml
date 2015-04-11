@@ -2,16 +2,16 @@
 http_interactions:
 - request:
     method: post
-    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=3000&card=tok_test_visa_4242&currency=MXN&description=fake%20test%20product&reference_id=1
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=30000&card=tok_test_visa_4242&currency=MXN&description=fake%20test%20product&details%5Bemail%5D=user-39@aliada.mx&details%5Bname%5D=Test%20User&details%5Bphone%5D=123456&reference_id=1
     body:
       encoding: UTF-8
       string: ''
     headers:
       User-Agent:
-      - Conekta/v1 RubyBindings/0.5.1
+      - Conekta/v1 RubyBindings/0.5.2
       X-Conekta-Client-User-Agent:
-      - '{"bindings_version":"0.5.1","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
-        Kernel Version 13.4.0: Sun Aug 17 19:50:11 PDT 2014; root:xnu-2422.115.4~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
+        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
       Accept:
       - application/vnd.conekta-v1.0.0+json
       Accept-Language:
@@ -32,9 +32,9 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Fri, 13 Feb 2015 01:03:07 GMT
+      - Fri, 03 Apr 2015 17:45:52 GMT
       Etag:
-      - '"45f0f73e28ad86fc54577ee5a12364c2"'
+      - '"9275bc8a0f5be4b60c03e62ef30fe280"'
       Server:
       - nginx/1.1.19
       Status:
@@ -42,18 +42,44 @@ http_interactions:
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - 085bff99222db6f2566d3c1bd421c499
+      - 26becc498d19202aa4d30781e9b1209a
       X-Runtime:
-      - '4.572293'
+      - '4.360030'
       Content-Length:
-      - '640'
+      - '1234'
       Connection:
       - keep-alive
     body:
-      encoding: UTF-8
-      string: '{"id":"54dd4d4624122936be0010fb","livemode":false,"created_at":1423789382,"status":"paid","currency":"MXN","description":"fake
-        test product","reference_id":"1","failure_code":null,"failure_message":null,"monthly_installments":null,"object":"charge","amount":3000,"paid_at":1423789387,"fee":391,"customer_id":"","refunds":[],"payment_method":{"name":"Jorge
-        Lopez","exp_month":"12","exp_year":"19","auth_code":"271607","object":"card_payment","type":"credit","last4":"4242","brand":"visa","issuer":"","account_type":"","country":"US","fraud_score":null,"fraud_indicators":[]},"details":{"name":null,"phone":null,"email":null,"line_items":[]}}'
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJpZCI6IjU1MWVkMWNiMTljZTg4MGQ4ZjAwMDkwZiIsImxpdmVtb2RlIjpm
+        YWxzZSwiY3JlYXRlZF9hdCI6MTQyODA4MzE0Nywic3RhdHVzIjoicGFpZCIs
+        ImN1cnJlbmN5IjoiTVhOIiwiZGVzY3JpcHRpb24iOiJmYWtlIHRlc3QgcHJv
+        ZHVjdCIsInJlZmVyZW5jZV9pZCI6IjEiLCJmYWlsdXJlX2NvZGUiOm51bGws
+        ImZhaWx1cmVfbWVzc2FnZSI6bnVsbCwibW9udGhseV9pbnN0YWxsbWVudHMi
+        Om51bGwsIm9iamVjdCI6ImNoYXJnZSIsImFtb3VudCI6MzAwMDAsInBhaWRf
+        YXQiOjE0MjgwODMxNTEsImZlZSI6MTI5OSwiY3VzdG9tZXJfaWQiOiIiLCJy
+        ZWZ1bmRzIjpbXSwicGF5bWVudF9tZXRob2QiOnsibmFtZSI6IkpvcmdlIExv
+        cGV6IiwiZXhwX21vbnRoIjoiMTIiLCJleHBfeWVhciI6IjE5IiwiYXV0aF9j
+        b2RlIjoiMDAwMDAwIiwib2JqZWN0IjoiY2FyZF9wYXltZW50IiwidHlwZSI6
+        ImNyZWRpdCIsImxhc3Q0IjoiNDI0MiIsImJyYW5kIjoidmlzYSIsImlzc3Vl
+        ciI6IiIsImFjY291bnRfdHlwZSI6IiIsImNvdW50cnkiOiJVUyIsImZyYXVk
+        X3Njb3JlIjoyOSwiZnJhdWRfaW5kaWNhdG9ycyI6W3siZGVzY3JpcHRpb24i
+        OiJFbiBsYXMgw7psdGltYXMgNiBob3JhcyBsYSBwZXJzb25hIGhhIGludGVu
+        dGFkbyByZWFsaXphciBjb21wcmFzIGNvbiBtw6FzIGRlIHVuYSB0YXJqZXRh
+        IGRpc3RpbnRhOyBwb3Igc2VndXJpZGFkIHNlIGhhIGJsb3F1ZWFkbyBsYSBj
+        b21wcmEuIiwid2VpZ2h0IjpudWxsfSx7ImRlc2NyaXB0aW9uIjoiRWwgZGlz
+        cG9zaXRpdm8gY29uIGVsIHF1ZSBzZSBoaXpvIGxhIGNvbXByYSBzZSBlbmN1
+        ZW50cmEgZnVlcmEgZGUgTcOpeGljbyB5IGxhIHBlcnNvbmEgdGllbmUgYXNv
+        Y2lhZGEgYSBlbGxhIGRpc3RpbnRhcyB0YXJqZXRhcywgY29ycmVvcywgZGly
+        ZWNjaW9uZXMgSVAsIGV0Yy4gRXN0ZSBwYXRyw7NuIGVzIG11eSBjb23Dum4g
+        ZW4gYXRhcXVlczsgcG9yIHNlZ3VyaWRhZCBzZSBoYSBibG9xdWVhZG8gbGEg
+        Y29tcHJhLiIsIndlaWdodCI6bnVsbH0seyJkZXNjcmlwdGlvbiI6IkxhIHRy
+        YW5zYWNjacOzbiBzZSBoYSBhcHJvYmFkbyBhIHRyYXbDqXMgZGUgdW4gcGFn
+        byB2w61hIGxhIG1vZGFsaWRhZCBQYWdhIE3Ds3ZpbCBkZSBCYW5vcnRlLiIs
+        IndlaWdodCI6bnVsbH1dfSwiZGV0YWlscyI6eyJuYW1lIjoiVGVzdCBVc2Vy
+        IiwicGhvbmUiOiIxMjM0NTYiLCJlbWFpbCI6InVzZXItMzlAYWxpYWRhLm14
+        IiwibGluZV9pdGVtcyI6W119fQ==
     http_version: 
-  recorded_at: Fri, 13 Feb 2015 01:02:51 GMT
+  recorded_at: Fri, 03 Apr 2015 17:44:02 GMT
 recorded_with: VCR 2.9.3

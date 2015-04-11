@@ -1,6 +1,11 @@
+# -*- encoding : utf-8 -*-
 Rails.application.routes.draw do
   get 'aliadadmin', to: redirect('aliadadmin/ticket')
   mount RailsAdmin::Engine => 'aliadadmin', as: 'rails_admin'
+
+  scope :rails_admin do
+    post 'update_object_attribute/:object_class/:object_id', to: 'rails_admin_custom_actions#update_object_attribute', as: :update_object_attribute
+  end
 
   root to: 'static_pages#home'
   get 'como-funciona', to: 'static_pages#how_it_works', as: :how_it_works
@@ -18,19 +23,31 @@ Rails.application.routes.draw do
   resources :aliadas
 
   scope :servicio do
-    post 'inicial', to: 'services#initial', as: :initial_service
-    get 'inicial', to: 'services#initial'
-    post 'create', to: 'services#create', as: :create_service
+    get 'inicial', to: 'services#initial', as: :initial_service
+
+    post 'save_incomplete_service', to: 'services#incomplete_service', as: :save_incomplete_service
+    post 'check_email', to: 'services#check_email', as: :check_email
+    post 'check_postal_code', to: 'services#check_postal_code', as: :check_postal_code
+
+    post 'create', to: 'services#create_initial', as: :create_initial_service
   end
 
   resource :users, path: 'perfil/:user_id', except: [:edit, :show] do
     get 'cuenta' => :edit, as: :edit
 
+    get 'visitas-canceladas', to: 'users#canceled_services', as: :canceled_services
     get 'visitas-proximas', to: 'users#next_services', as: :next_services
     get 'historial', to: 'users#previous_services', as: :previous_services
+    match 'servicio/calificar/:service_id', to: 'scores#score_service', as: :score_service, via: [:get, :post]
 
     get 'servicio/nuevo', to: 'services#new', as: :new_service
-    get 'servicio/:service_id', to: 'services#show', as: :show_service, service_id: /\d+/
+    post 'servicio/create', to: 'services#create_new', as: :create_new_service
+
+    get 'servicio/:service_id', to: 'services#edit', as: :edit_service, service_id: /\d+/
+    patch 'servicio/:service_id', to: 'services#update', as: :update_service, service_id: /\d+/
+    post 'servicio/:service_id', to: 'services#update', as: :update_service_post, service_id: /\d+/
+
+    get 'servicios/recurrentes/:recurrence_id', to: 'recurrences#show', as: :show_recurrence_services, recurrence_id: /\d+/
 
     post 'conekta_card/create', to: 'conekta_cards#create', as: :create_conekta_card
 
@@ -43,7 +60,10 @@ Rails.application.routes.draw do
     get 'aliadas/servicios/:token', to: 'aliadas#services', as: :aliadas_services
     post 'aliadas/servicios/finish/:token', to: 'aliadas#finish', as: :finish_service
     post 'aliadas/servicios/confirm/:token', to: 'aliadas#confirm', as: :confirm_service
+
   end
+  
+  get '#clear_session', to: 'user#clear_session', as: 'clear_session'
 
   resources :schedules
 

@@ -1,0 +1,10 @@
+= form.select :aliada_id, options_from_collection_for_select(@aliadas, :id, :name, @service.aliada_id), class: 'selectpicker'
+
+= append :javascript do
+  = javascript_include_tag 'jquery.selectBoxIt'
+  :javascript
+    $("#service_aliada_id").selectBoxIt({
+      // Trigger events on original dom element
+      aggressiveChange: true,
+      autoWidth: false
+    });

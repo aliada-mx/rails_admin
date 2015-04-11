@@ -1,5 +1,31 @@
+<script type="text/javascript" src="https://cdn.raygun.io/raygun4js/raygun.min.js"></script>
 <script>
-    aliada = {};
+    aliada = {
+        services: {
+            initial: {},
+            edit: {},
+            new: {}
+        },
+        service: {},
+        user: {},
+        dialogs: {},
+        calendar: {}
+    };
 
     aliada.conekta_public_key = '<%= @conekta_public_key %>';
+    aliada.bedrooms_multiplier = <%= Setting.bedrooms_multiplier %>;
+    aliada.bathrooms_multiplier = <%= Setting.bathrooms_multiplier %>;
+    aliada.minimum_hours_service = <%= Setting.minimum_hours_service %>;
+
+    aliada.map_marker_icon = '<%= image_url("map-marker-icon.png") %>';
+    aliada.default_map_zoom = 16;
+
+    aliada.rails_environment = '<%= Rails.env %>';
+
+    raygun_api_key = '<%= Raygun.configuration.api_key %>';
+
+    aliada.user.id = <%= @user.try(:id) || 'null' %>;
+
+    <%= area :extra_javascript_variables do %>
+    <% end %>
 </script>

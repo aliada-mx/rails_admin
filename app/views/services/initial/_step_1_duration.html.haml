@@ -1,4 +1,12 @@
-= initial_service_form.text_field :bathrooms
-= initial_service_form.text_field :bedrooms 
-= initial_service_form.hidden_field :billable_hours
-= initial_service_form.collection_check_boxes :extra_ids, Extra.all, :id, :name
+%section.step_1_duration{data: {bind: 'visible: current_step() == 1'}}
+  = hidden_field :incomplete_service, :id
+
+  %h1
+    Cuéntanos más de tu casa
+
+  %h4
+    Dinos cuánto tiempo necesitas a la aliada
+
+  = render partial: 'common/hours_selector', locals: {form: initial_service_form}
+
+  = render partial: 'common/extras', locals: {form: initial_service_form, collapsable: false}

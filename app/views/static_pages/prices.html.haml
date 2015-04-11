@@ -1,0 +1,43 @@
+%section.header-section-wrapper
+  .gray-navigation
+    = render partial: "common/public_navigation"
+
+
+#old_static_container
+  #lista-precios.contenedor960
+    %h1 Precios
+
+    .tabulador-precios
+      .tipo-visita
+        .tipo-titulo
+          Limpieza única
+        .precio
+          $105
+          %span por hora
+      %ul.summary.incluye
+        %li.checked Aliada profesional y capacitada
+        %li.checked Con referencias validadas
+        %li.checked Atención telefónica
+        %li.checked Sólo pagas las horas utilizadas
+      = link_to initial_service_path, {class: 'action-button-pink size-large'} do
+        Programa tu visita
+
+    .tabulador-precios
+      .tipo-visita
+        .tipo-titulo
+          Limpieza semanal
+        .precio
+          $65
+          %span por hora
+      %ul.summary.incluye
+        %li.checked Aliada profesional y capacitada
+        %li.checked Con referencias validadas
+        %li.checked Atención telefónica
+        %li.checked Sólo pagas las horas utilizadas
+        %li.checked La misma aliada cada visita
+        %li.checked Precio especial
+      = link_to initial_service_path, {class: 'action-button-pink size-large'} do
+        Programa tu visita
+      
+
+= render partial: "common/footer"

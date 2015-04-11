@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 feature 'ConektaCardsController' do
   include TestingSupport::SharedExpectations::ConektaCardExpectations
 
@@ -13,6 +14,7 @@ feature 'ConektaCardsController' do
   context 'on the user profile' do
     before do
       allow_any_instance_of(User).to receive(:default_payment_provider).and_return(previous_conekta_card)
+      clear_session
     end
 
     # TODO enable when adding new cards feature is done

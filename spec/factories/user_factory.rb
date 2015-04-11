@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 FactoryGirl.define do
   factory :user, class: User do
     role 'client'
@@ -6,6 +7,7 @@ FactoryGirl.define do
     first_name 'Test'
     last_name 'User'
     password '12345678'
+    
   end
 
   factory :admin, parent: :user do

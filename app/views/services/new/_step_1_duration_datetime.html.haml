@@ -1,0 +1,34 @@
+%section.step_1_duration_datetime{data: {bind: 'visible: current_step() == 1'}}
+  %h1#service_duration
+    Programa una nueva visita
+
+  %h4
+    ¿Qué tipo de servicio necesitas?
+  = render partial: 'common/service_type_buttons', locals: {form: new_service_form, promotional: false, disable_one_time: false}
+
+  %h4
+    %icon.calendar
+    ¿Cuántas horas necesitas?
+
+  = render partial: 'common/hours_selector', locals: {form: new_service_form}
+
+  = render partial: 'common/extras', locals: {form: new_service_form, collapsable: true}
+
+  %h4#choose-aliada
+    %icon.aliada
+    Elige a tu Aliada
+  = render partial: 'common/aliadas_selector', locals: {form: new_service_form}
+
+  %h4#choose-date
+    %icon.icon-calendar
+    Elige el día de la visita
+  = render partial: 'common/calendar'
+
+  %h4#choose-time
+    %icon.icon-clock
+    Selecciona la hora que más te convenga
+
+  = render partial: 'common/time_selector', locals: {form: new_service_form}
+
+  = new_service_form.hidden_field :date, data: {bind: 'value: date'}
+  = new_service_form.hidden_field :time, data: {bind: 'value: time'}

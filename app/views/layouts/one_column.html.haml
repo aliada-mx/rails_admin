@@ -1,9 +1,18 @@
+= append(:body_class){ ' one-column ' }
+
 = extends :application do
-  %header
-    = render partial: 'common/inner_header'
+  .container
+    .row
+      = render partial: 'common/header'
 
-  %nav
-    = render partial: 'common/inner_navigation'
+    .row
+      = render partial: 'common/inner_navigation'
 
-  %main
-    = yield
+    .row 
+      = render partial: 'common/messages'
+
+    .row
+      %main
+        = yield
+
+= render partial: "common/footer"

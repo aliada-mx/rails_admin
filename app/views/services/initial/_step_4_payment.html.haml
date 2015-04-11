@@ -1,2 +1,9 @@
-= initial_service_form.collection_radio_buttons :payment_method_id, PaymentMethod.all, :id, :name
-= render partial: 'common/conekta_form'
+%section.step_4_payment{data: {bind: 'visible: current_step() == 4'}, style: 'display: none'}
+  %h1
+    Agrega un método de pago
+  %p
+    El cargo a tu tarjeta se hace después de realizada la limpieza.
+
+  = render partial: 'common/payment_methods', locals: {form: initial_service_form}
+
+  = render partial: 'common/conekta_form', locals: { card_default: @empty_conekta_card, read_only: false }

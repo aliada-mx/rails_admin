@@ -1,0 +1,19 @@
+.bathroom-bedrooms-container.concealed
+  %h5
+    En mi domicilio hay:
+
+  .bathroom-bedrooms
+    %span.less-sign{data: {action: 'less-bedrooms' }}
+    = form.hidden_field :bedrooms, data: {bind: 'value: bedrooms'}
+    = text_field_tag :bedrooms, nil, read_only: true, data: {bind: 'attr: {placeholder: bedrooms_text}'}
+    %span.plus-sign{data: {action: 'more-bedrooms' }}
+
+  .bathroom-bedrooms
+    %span.less-sign{data: {action: 'less-bathrooms' }}
+    = form.hidden_field :bathrooms, data: {bind: 'value: bathrooms'}
+    = text_field_tag :bathrooms_text, nil, readonly: true, data: {bind: 'attr: {placeholder: bathrooms_text}'}
+    %span.plus-sign{data: {action: 'more-bathrooms' }}
+
+
+= append :javascript do
+  = javascript_include_tag 'modules/bathroom-bedrooms'

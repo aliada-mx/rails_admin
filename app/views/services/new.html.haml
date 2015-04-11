@@ -1,0 +1,17 @@
+= append :navigation do
+  = render partial: 'common/inner_navigation'
+
+= append(:body_class){ ' new_service ' }
+
+= form_for @service, url: create_new_service_users_path(@user) do |new_service_form|
+  %main
+    = render partial: 'services/new/step_1_duration_datetime', locals: {new_service_form: new_service_form}
+    = render partial: 'services/new/step_2_success', locals: {new_service_form: new_service_form}
+
+  %aside
+    = render partial: 'services/new/summary', locals: {initial_service_form: new_service_form}
+
+= append :javascript do
+  = javascript_include_tag 'services/new'
+  :javascript
+    aliada.user.postal_code_number = "#{@user.postal_code_number}";

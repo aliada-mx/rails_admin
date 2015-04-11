@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -85,11 +86,28 @@ Rails.application.configure do
 
   # Lograge
   config.lograge.enabled = true
-    config.lograge.custom_options = lambda do |event|
-      params = event.payload[:params].reject do |k|
-        ['controller', 'action'].include? k
-      end
-
-      { "params" => params }
+  config.lograge.custom_options = lambda do |event|
+    params = event.payload[:params].reject do |k|
+      ['controller', 'action'].include? k
     end
+
+    { "params" => params }
+  end
+
+  config.paperclip_defaults = {
+    :storage => :s3,
+    :s3_headers => { 
+      'Cache-Control' => 'max-age=315576000',
+      'Expires' => 1.years.from_now.httpdate 
+    },
+    :s3_credentials => {
+      :bucket => ENV['S3_BUCKET_NAME'],
+      :access_key_id => ENV['AWS_ACCESS_KEY_ID'],
+      :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY']
+    }
+  }
+
+  config.action_mailer.default_url_options = { :host => 'aliada.mx' }
+
+  config.force_ssl = true
 end

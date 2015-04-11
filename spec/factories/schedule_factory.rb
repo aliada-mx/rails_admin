@@ -1,9 +1,17 @@
+# -*- encoding : utf-8 -*-
 FactoryGirl.define do
   factory :schedule, class: Schedule do
     status 'available'
     datetime Time.now    
     association :aliada, factory: :aliada
-    association :zone, factory: :zone
+
+    transient do
+      zone { create(:zone) }
+    end
+
+    after :build do |schedule, evaluator|
+      schedule.zones << evaluator.zone
+    end
 
     trait :with_service do
       transient do

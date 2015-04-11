@@ -1,0 +1,63 @@
+%section.header-section-wrapper
+  .gray-navigation
+    = render partial: "common/public_navigation"
+
+#old_static_container
+
+  #como-funciona.contenedor960
+    #funcionamiento
+      %h1 ¿Cómo funciona aliada?
+      .paso
+        .icono
+          = image_tag("ubica-domicilio.png", { :title => "Ubica tu aliada más cercana" })
+        .explica
+          Ingresa tu código postal. <br>
+          Así ubicaremos a tu aliada más cercana.
+      .paso
+        .icono
+          = image_tag("agenda-visita.png", { :title => "Agenda y reserva tu servicio" })
+        .explica
+          Agenda y reserva tu servicio. <br>
+          Selecciona el día y hora que necesitas a tu aliada
+      .paso
+        .icono
+          = image_tag("pago-seguro-verde.png", { :title => "Paga de manera segura" })
+        .explica
+          Paga de manera segura con tu tarjeta de débito o crédito desde
+          nuestra plataforma. No más pagos en efectivo.
+
+      .paso
+        .icono
+          = image_tag("relajate.png", { :title => "Relájate" })
+        .explica
+          Relájate. La aliada llegará puntal en el día y hora que la <br>
+          necesites para que tu puedas dedicarte a las cosas que <br>
+          realmente te apasionan.
+
+    #preguntas
+      %h4 Preguntas frecuentes
+      %p.pregunta ¿Qué está incluido en el servicio?
+      %p Nuestros servicios principales son limpieza general (barrer, trapear, sacudir, etc.), lavado y planchado de ropa. El detalle de los servicios incluidos se puede consultar en nuestro checklist de limpieza.
+      %p.pregunta ¿Qué tarjetas acepta Aliada?
+      %p De crédito y débito, Visa, Master Card y American Express.
+      %p.pregunta ¿Puedo cancelar/reagendar una visita?
+      %p Si necesitas cancelar o reagendar una cita, puedes hacerlo por medio de la página web.
+      %p
+        =link_to("Ir a preguntas frecuentes", "/faq")
+
+  %section.payment-section-wrapper
+    .container
+      .row.call-to-action-wrapper
+        .payment-description.col-lg-6
+          %p 
+            ¿Listo para programar tu visita?
+        .call-to-action-container
+          = link_to initial_service_path, {class: 'action-button-pink size-large'} do
+            Pide una aliada
+      .row
+        .payment-description.col-lg-6
+          %p Paga en línea de forma segura. <br> Sin dinero en efectivo, sin problemas.
+        .payment-logos.col-lg-6
+          =image_tag("payment-logos.png", {:title => 'Métodos de pago' })
+
+= render partial: "common/footer"

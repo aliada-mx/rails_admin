@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateRecurrences < ActiveRecord::Migration
   def change
     create_table :recurrences do |t|

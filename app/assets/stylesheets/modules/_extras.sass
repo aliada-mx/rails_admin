@@ -1,0 +1,77 @@
+@import 'common/mixins'
+@import 'common/variables'
+@import "compass/css3/opacity"
+
+
+.extras-toggle-button
+  cursor: pointer
+  &:hover
+    color: $green
+
+#extras
+  height: 100%
+  .check-box-container
+    display: inline-block
+    width: 140px
+    float: left
+    margin-right: 15px
+    margin-bottom: 15px
+    label
+      +round-corners
+      border: 2px solid $dark_gray
+      cursor: pointer
+      display: inline-block
+      height: 100%
+      position: relative
+      width: 100%
+      text-align: center
+      background-color: white
+      +soft-transition
+      +no-selection
+      img
+        +centered
+        +no-selection
+        margin-top: 15px
+      .checked
+        display: none
+      .foot
+        position: absolute
+        bottom: 0
+        min-height: 34px
+        width: 100%
+        h4
+          font-weight: 600
+          +rem(font-size, 1.4rem)
+        .small-letters
+          +rem(font-size, $small-font)
+
+    input[type=checkbox]
+      +opacity(0)
+      position: absolute
+    input[type=checkbox]:checked + label
+      background-color: $green
+      color: white
+      border-color: $green
+      .checked
+        display: block
+      .unchecked
+        display: none
+
+    &:last-child
+      margin-right: 0
+
+  &.large
+    .check-box-container
+      height: 125px
+
+  &.small
+    .check-box-container
+      height: 95px
+
+@media screen and(max-width: 400px) 
+  fieldset.checkboxes.large
+    text-align: center
+    .check-box-container
+      display: inline-block
+      float: none
+

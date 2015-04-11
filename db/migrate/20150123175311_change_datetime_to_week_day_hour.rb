@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ChangeDatetimeToWeekDayHour < ActiveRecord::Migration
   def change
     remove_column :recurrences, :starting_datetime, :datetime

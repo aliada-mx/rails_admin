@@ -1,10 +1,9 @@
 es:
   activerecord:
-    models:
+    models: &model_names
       address:  'direccion'
       user: 'usuario'
       aliada: 'aliada'
-      service_type: 'tipos de servicio'
       conekta_card: 'tarjeta de conekta'
       document: 'archivo'
       extras: 'extra de servicio'
@@ -12,6 +11,7 @@ es:
       payment_method: 'métodos de pago'
       postal_code: 'códigos postale'
       recurrence: 'recurrencia'
+      recurrences: 'recurrencias'
       aliada_working_hour: 'horario de Aliada'
       schedule: 'hora de servicio'
       score: 'calificación'
@@ -20,8 +20,22 @@ es:
       ticket: 'ticket'
       zone: 'zona'
       extra: 'extra'
+      incomplete_service: 'registro inconcluso'
     attributes:
-      address:
+      common: &common_attributes
+        <<: *model_names
+        full_name: nombre completo
+        name: nombre
+        postal_code_number: 'número de código postal'
+        created_at: 'Fecha de creación'
+        updated_at: 'Fecha de última actualización'
+        datetime: 'Día y hora'
+        user_link: 'Usuario'
+        service_link: 'Servicio'
+        services: 'servicios'
+        schedules: 'horas de servicio'
+        role: 'rol'
+      address: &address_attributes
         user: usuario
         postal_code: código postal
         street: calle
@@ -34,7 +48,8 @@ es:
         references: referencias
         latitude: latitud
         longitude: longitud
-      user: &user
+      user: &user_attributes
+        <<: *common_attributes
         next_service: siguiente servicio
         address: dirección
         addresses: direcciones
@@ -53,13 +68,21 @@ es:
         last_sign_in_ip: ip de su último login
         remember_created_at: cuando pidió contraseña nueva
         reset_password_sent_at: cuando enviamos contraseña nueva
+        default_address_link: 'Dirección por default'
+        next_service_link: 'Siguiente servicio'
+        user_next_services_path: 'Entrar como el usuario'
       aliada:
-        <<: *user
+        <<: *user_attributes
+        <<: *common_attributes
         banned_users: usuarios que la banearon
         zones: zonas de trabajo
         scores: calificaciones
-      event:
+        next_service_link: 'Siguiente servicio'
+        aliada_working_hours: 'Horas de trabajo'
       service_type:
+        <<: *common_attributes
+        periodicity: periodicidad
+        price_per_hour: precio por hora
       conekta_card:
         last4: últimos 4 dígitos
         exp_month: mes de expiración
@@ -72,16 +95,20 @@ es:
       document:
         user: usuario
         file: archivo
-      extras:
+      extra:
         name: nombre
         hours: horas
+        icon: ícono
       payment:
         payment_provider: proveedor del cobro
         amount: monto
         user: usuario
       payment_method:
+        <<: *common_attributes
       postal_code:
+        <<: *common_attributes
       recurrence:
+        <<: *common_attributes
         user: usuario
         periodicity: periodicidad
         weekday: día de la semana
@@ -98,8 +125,12 @@ es:
         zone: zona
         type: tipo
       schedule:
+        <<: *common_attributes
       score:
-      service:
+        <<: *common_attributes
+        value: valor
+      service: &service_attributes
+        <<: *common_attributes
         datetime: fecha y hora del servicio
         zone: zona
         address: dirección
@@ -107,18 +138,51 @@ es:
         price: monto
         service_type: tipo de servicio
         recurrence: recurrencia
+        billed_hours: horas cobradas
         billable_hours: horas cobrables
-        hours_before_service: horas antes del servicio
-        hours_after_service: horas después del servicio
+        hours_after_service: horas de colchón
         bathrooms: baños
         bedrooms: recámaras
-      service_type:
+        estimated_hours: Horas estimadas 
+        entrance_instructions: ¿Estará en casa?
+        garbage_instructions: ¿Dónde depositará la basura?
+        cleaning_supplies_instructions: ¿Dónde están los utensilios de limpieza?
+        attention_instructions: Poner especial atención a 
+        equipment_instructions: Usar un producto o equipo específico para limpiar
+        forbidden_instructions: No limpiar /No tocar
+        special_instructions: Otras instrucciones especiales
+        user_link: Usuario
+        address_map_link: 'Mapa'
+        aliada_webapp_link: 'Webapp de aliada'
+        aliada_link: 'Aliada'
+        rails_admin_billable_hours_widget: 'Horas cobrables'
+        aliada_reported_begin_time: 'Hora reportada de inicio'
+        aliada_reported_end_time: 'Hora reportada final'
+        cancelation_fee_charged: '¿Cargo por cancelación tardía hecho?'
+        confirmed: 'Confirmado'
+        rooms_hours: 'Horas por cuartos'
+        reported_hours: 'Horas reportadas'
       ticket:
-        relevant_object: Servicio
+        relevant_object: Registro
         message: error
         action_needed: acción sugerida
         classification: tipo de ticket
-      zones:
+      incomplete_service:
+        <<: *common_attributes
+        <<: *user_attributes
+        <<: *service_attributes
+        <<: *address_attributes
+        date: Fecha pedida
+        time: Hora pedida
+        service: Servicio 
+        postal_code_number: Código postal
+        postal_code_not_found: No existía el código postal
+      zone:
+        <<: *common_attributes
+        postal_codes: 'Códigos postales'
+      users:
+        <<: *common_attributes
+        <<: *user_attributes
   admin:
     home:
       name: Inicio
@@ -171,10 +235,11 @@ es:
         title: "Detalles de %{model_label} '%{object_label}'"
         menu: "Mostrar"
         breadcrumb: "%{object_label}"
-      charge_order:
-        title: "Cobrar orden"
-        menu: "Cobrar orden"
-        link: "Cobrar orden"
+      charge_services:
+        title: "Cobrar servicio"
+        menu: "Cobrar servicios"
+        link: "Cobrar servicio"
+        bulk_link: "Cobrar servicios"
       show_in_app:
         menu: "Mostrar en la app"
       new:
@@ -215,9 +280,38 @@ es:
         title: "Historial para %{model_label} '%{object_label}'"
         menu: "Historial"
         breadcrumb: "Historial"
-      tickets_list:
-        title: Lista de tickets
-        menu: últimos tickets
+      create_aliada_working_hours:
+        menu: "Horarios"
+        title: "Horarios"
+        breadcrumb: "Horarios"
+      charge_service:
+        menu: "Cobrar servicio"
+        title: "Cobrar servicio"
+        breadcrumb: "Cobrar servicio"
+      show_aliada_calendar:
+        menu: "Semana de la aliada"
+        title: "Semana de la aliada"
+        breadcrumb: "Semana de la aliada"
+        bulk_link: "Semana de la aliada"
+      address_map:
+        menu: "Mapa"
+        title: "Mapa"
+        breadcrumb: "Mapa"
+      solve_ticket:
+        menu: 'Marcar como resuelto'
+        breadcrumb: 'Marcar como resuelto'
+        title: 'Marcar como resuelto'
+        bulk_link: 'Marcar como resueltos'
+      enable_schedules: 
+        menu: 'Habilitar horas de servicio'
+        breadcrumb: 'Habilitar horas de servicio'
+        title: 'Habilitar horas de servicio'
+        bulk_link: 'Habilitar horas de servicios'
+      book_schedules: 
+        menu: 'Reservar hora de servicio'
+        breadcrumb: 'Reservar hora de servicio'
+        title: 'Reservar hora de servicio'
+        bulk_link: 'Reservar hora de servicios'
     form:
       cancel: "Cancelar"
       basic_info: "Información básica"

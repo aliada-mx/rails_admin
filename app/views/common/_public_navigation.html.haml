@@ -1,0 +1,26 @@
+%header.container
+  %div.row.header-container
+    %div.logo-container.col-lg-2
+      - if controller_action_name == 'static_pages-home'
+        = link_to image_tag("logo-shadowed.png", :class => 'logo'), '/';
+      - else
+        = link_to image_tag("logo-contrast.png", :class => 'logo'), '/';
+
+    %nav.nav-container.col-lg-10
+      %ul.nav
+        %li
+          = link_to("Cómo funciona", :how_it_works, {})
+        %li
+          = link_to("Precios", :prices, {})
+        %li
+          = link_to("Preguntas Frecuentes", :faq, {})
+        %li
+          - if user_signed_in?
+            %a{href: next_services_users_path(@user), title: 'Mis servicios', class: 'account-link' }
+              %span.icon.icon-user
+              Mis servicios
+            - if @user.admin?
+              = link_to("- Aliadadmin", rails_admin.dashboard_path )
+
+          - else
+            = link_to("Log in", new_user_session_path, { :class => 'action-button-gray'})

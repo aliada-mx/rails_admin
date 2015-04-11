@@ -1,9 +1,14 @@
+# -*- encoding : utf-8 -*-
 class Aliada < User
-  include AliadaSupport::AliadasHelpers
+  include AliadaSupport::DatetimeSupport
+  include Mixins::RailsAdminModelsHelpers
 
   has_many :aliada_zones
   has_many :zones, through: :aliada_zones
+  has_many :documents, inverse_of: :aliada, foreign_key: :user_id
 
+  has_many :recurrences
+  has_many :aliada_working_hours
   has_many :schedules, foreign_key: :aliada_id
   has_many :scores, foreign_key: :aliada_id
   has_many :services, foreign_key: :aliada_id
@@ -16,7 +21,7 @@ class Aliada < User
 
   # TODO optimize to get all aliadas even those without services but the ones with services 
   # must have services.datetime >= Time.zone.now.beginning_of_day
-  scope :for_booking, ->(aliadas_ids) { where(id: aliadas_ids).eager_load(:services) }
+  scope :for_booking, ->(aliadas_ids) {where(id: aliadas_ids).eager_load(:services).eager_load(:zones)}
 
   # We override the default_scope class method so the user default scope from
   # which we inherited does not override ours
@@ -24,10 +29,6 @@ class Aliada < User
     where('users.role = ?', 'aliada')
   end
 
-  def next_service
-    services.in_the_future.last
-  end
-  
   def previous_service(current_service) # On the same day
     services.to_a.select{ |service| service.datetime >= current_service.datetime.beginning_of_day }
                  .select{ |service| service.datetime < current_service.datetime }
@@ -56,11 +57,24 @@ class Aliada < User
   # in the future
   def service_hours
     now = Time.zone.now
-    services.to_a.select{ |service| service.datetime >= now }.inject(0) { |sum, service| sum += service.total_hours }
+    services.to_a.select{|service| service.datetime >= now }.inject(0) { |sum, service| sum += service.total_hours}
   end
 
   def busy_services_hours
     businesshours_until_horizon - service_hours
+  end
+
+  def timezone
+    'Mexico City'
+  end
+
+  def current_week_services
+    today = ActiveSupport::TimeZone["Mexico City"].today
+    return Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week)
+  end
+
+  def aliada_webapp_link
+    aliada_show_webapp_link(self)
   end
 
   rails_admin do
@@ -78,8 +92,12 @@ class Aliada < User
       read_only
     end
 
-    configure :next_service do
-      virtual?
+    configure :balance do
+      visible false
+    end
+
+    configure :sign_in_count do
+      visible false
     end
 
     show do
@@ -87,20 +105,40 @@ class Aliada < User
     end
 
     list do
-      field :name
-      field :phone
-      field :next_service
+      search_scope do
+        Proc.new do |scope, query|
+          query_without_accents = I18n.transliterate(query)
+
+          scope.merge(UnscopedUser.with_name_phone_email(query_without_accents))
+        end
+      end
+      field :full_name
+
+      field :phone do
+        queryable false
+        filterable false
+      end
+      field :aliada_webapp_link
     end
 
     edit do
       field :role
       field :first_name
       field :last_name
+      field :email
       field :phone
+      field :documents
+
+      field :recurrences
+      field :zones
+
+      field :password do
+        required false
+      end
+      field :password_confirmation
+
       group :login do
         active false
-        field :password
-        field :password_confirmation
         field :current_sign_in_at
         field :sign_in_count
         field :last_sign_in_at

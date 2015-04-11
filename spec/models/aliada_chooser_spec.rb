@@ -1,62 +1,38 @@
+# -*- encoding : utf-8 -*-
 describe 'AliadaChooser' do
   include TestingSupport::SchedulesHelper
 
   describe '#choose' do
-    let(:starting_datetime) { Time.zone.parse('01 Jan 2015 16:00:00') }
+    let(:starting_datetime) { Time.zone.parse('01 Jan 2015 22:00:00') } # 4 pm on Mexico City TZ
     let!(:user) { create(:user) }
     let!(:zone_1) { create(:zone) }
     let!(:zone_2) { create(:zone) }
     let!(:aliada_1) { create(:aliada, created_at: starting_datetime - 3.hours) }
     let!(:aliada_2) { create(:aliada, created_at: starting_datetime - 2.hours) }
     let!(:aliada_3) { create(:aliada, created_at: starting_datetime - 1.hour) }
-    let!(:recurrence){ create(:recurrence, weekday: starting_datetime.weekday, hour: starting_datetime.hour ) }
     let!(:one_time_service_type) { create(:service_type, name: 'one-time') }
-    let!(:recurrent_service_type) { create(:service_type, name: 'recurrent') }
     let!(:address_1){ create(:address)}
     let!(:service_1){ create(:service,
                              user: user,
-                             recurrence: recurrence,
                              zone: zone_1,
                              service_type: one_time_service_type,
+                             timezone: 'Mexico City',
                              datetime: starting_datetime,
-                             billable_hours: 3,
+                             estimated_hours: 3,
                              address: address_1) }
 
     before :each do
       Timecop.freeze(starting_datetime)
 
-      create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada_id: aliada_1.id, zone_id: zone_1.id})
-      create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada_id: aliada_2.id, zone_id: zone_1.id})
-      create_recurrent!(starting_datetime, hours: 5, periodicity: 7, conditions: {aliada_id: aliada_3.id, zone_id: zone_1.id})
+      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_1.id, zones: [zone_1]})
+      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_2.id, zones: [zone_1]})
+      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_3.id, zones: [zone_1]})
 
-      @aliadas_availability = ScheduleChecker.find_aliadas_availability(service_1)
+      @aliadas_availability = AvailabilityForService.find_aliadas_availability(service_1, starting_datetime - 1.hour)
     end
 
     after :each do
       Timecop.return
-    end
-
-    it 'doesnt filter valid aliadas availability' do
-      chooser = AliadaChooser.new(@aliadas_availability, service_1)
-
-      chooser.choose!
-
-      expect(chooser.aliadas_availability.has_aliada? aliada_1).to be true
-      expect(chooser.aliadas_availability.has_aliada? aliada_2).to be true
-      expect(chooser.aliadas_availability.has_aliada? aliada_3).to be true
-    end
-
-    it 'filters out aliadas with discontinues intervals for a recurrent services' do
-      Schedule.where(aliada: aliada_2, datetime: starting_datetime + 7.day).destroy_all
-      service_1.service_type = recurrent_service_type
-
-      aliadas_availability = ScheduleChecker.find_aliadas_availability(service_1)
-      chooser = AliadaChooser.new(aliadas_availability, service_1)
-      chooser.choose!
-
-      expect(chooser.aliadas_availability.has_aliada? aliada_1).to be true
-      expect(chooser.aliadas_availability.has_aliada? aliada_2).to be false
-      expect(chooser.aliadas_availability.has_aliada? aliada_3).to be true
     end
 
     context '#sort_candidates' do

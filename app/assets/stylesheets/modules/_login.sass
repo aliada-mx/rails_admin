@@ -1,0 +1,60 @@
+@import 'common/variables'
+@import 'common/mixins'
+@import 'compass/css3/box-shadow'
+
+body.password_recovery,
+body.login
+  background-image: image-url('white-mosaic.png')
+
+.password_recovery,
+.login-container
+  margin-top: 10%
+
+  .logo-container
+    img
+      display: block
+      max-width: 150px
+      width: 100%
+      +rem(margin, 0 auto 4rem)
+
+  .password_recovery-form-wrapper,
+  .login-form-wrapper
+    text-align: center
+
+    .password_recovery-container,
+    .login-form-container
+      background-color: white
+      display: inline-block
+      min-width: 330px
+      max-width: 550px
+      width: 100%
+      +rem(padding, 4rem 4rem 0)
+      +box-shadow($medium-gray 0px 0px 4px)
+
+      h1
+        margin-bottom: 20px
+
+      .password_recovery_form,
+      .login-form
+        min-width: 330px
+        max-width: 350px
+        margin: 0 auto
+
+        form
+          +rem(margin, 4rem 0 6rem)
+
+          input[type=text], input[type=email], input[type=password]
+            +rem(padding-left, 2.5rem)
+            +rem(margin, 1rem 0)
+
+        .recover-password
+          font-style: italic
+          text-align: right
+          +rem(font-size, 1.2rem)
+          +rem(margin, 0.5rem 0)
+
+      .actions
+        input
+          width: 100%
+          +rem(padding, 0.4rem)
+          +rem(font-size, 1.8rem)

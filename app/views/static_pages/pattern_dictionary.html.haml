@@ -25,9 +25,9 @@
 = select_tag 'horas', options_for_select( ['2.5 horas (55 m2)', '1'] )
 
 %a.small-letters
-  No sabes los metros cuadrados
+  ¿No sabes los metros cuadrados? Dinos el número de recamaras
 
-.counter
+.bathroom-bedrooms
   text_field_tag 'cuartos'
   %span.plus-sign
   %span.less-sign
@@ -159,3 +159,15 @@
   .actions
     %a.action
       Modificar todas las visitas próximas
+
+// Messages
+.messages-container
+  .message.warning
+    %span.icon-calendar
+    Tu próxima visita es el jueves 13. ¿Necesitas mover tu cita?
+    %a Da click aquí para modificarla <span class="icon-pencil"></span>
+
+  .message.danger
+    %span.icon-notice
+    Tu método de pago ha sido rechazado por el banco. No podrás programar nuevos servicios. Por favor,
+    %a Da click aquí para modificarla <span class="icon-pencil"></span>

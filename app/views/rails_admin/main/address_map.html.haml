@@ -1,0 +1,30 @@
+.address_map
+  = form_for @address, url: address_map_path, method: :POST do |address_form|
+    = render partial: 'addresses/form', locals: {address_form: address_form}
+    = address_form.hidden_field :references_latitude, as: :hidden, data: {bind: 'value: references_latitude'}
+    = address_form.hidden_field :references_longitude, as: :hidden, data: {bind: 'value: references_longitude'}
+
+    = address_form.hidden_field :map_center_longitude, as: :hidden, data: {bind: 'value: map_center_longitude'}
+    = address_form.hidden_field :map_center_latitude, as: :hidden, data: {bind: 'value: map_center_latitude'}
+
+    .field-row
+      = address_form.text_field :references, placeholder: 'nombre de referencia', class: 'full-width', data: {bind: 'value: references, css: {disabled: references_added() }'}
+    .field-row
+      = link_to 'Agregar referencia','#', id: 'add_references_marker_button'
+      = address_form.submit 'Guardar', id: 'save_button'
+
+
+  .col-lg-12.map-wrapper
+    - if @address.map_missing?
+      %h5
+        El mapa no tiene las coordenadas correctas
+
+    = render partial: 'common/map'
+
+= area :javascript do
+  :javascript
+    aliada = {
+      address_json: #{@address.to_json}
+    }
+  = javascript_include_tag 'rails_admin/actions/address_map'
+

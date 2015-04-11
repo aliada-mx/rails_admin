@@ -1,0 +1,51 @@
+@import 'common/variables'
+@import 'common/mixins'
+@import "compass/css3/box-sizing"
+@import 'bootstrap/mixins/grid'
+@import 'compass/css3/box-shadow'
+
+body.two-columns
+  header
+    +make-xs-column(12)
+
+  nav
+    +make-xs-column(12)
+
+  main
+    +box-sizing(border-box)
+    background-color: white
+    padding: 30px 42px
+    max-width: 550px
+    min-width: 300px
+    width: 57%
+    float: left
+    margin-bottom: 50px
+
+  aside
+    +box-sizing(border-box)
+    float: right
+    max-width: 390px
+    min-width: 300px
+    margin-left: 20px
+    width: 43%
+    .action-button-pink.size-extra-large
+      margin-top: 25px
+      +rem(padding, 2rem 3rem)
+
+    .aliada_seal
+      text-align: center
+      padding-top: 50px
+
+@media screen and(max-width: 400px) 
+  .two-columns
+    .container
+      main
+        padding: 10px
+        margin: 10px !important
+      aside
+        width: 100%
+        padding-top: 0 
+        padding-bottom: 0 
+        padding-left: 0 
+        padding-right: 0 
+        margin-left: 0

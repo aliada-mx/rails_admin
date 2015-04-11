@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ChangeWeekDayForStartingDatetimeInRecurrences < ActiveRecord::Migration
   def change
     add_column :recurrences, :starting_datetime, :datetime

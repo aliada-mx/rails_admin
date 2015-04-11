@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 feature 'Admin ability to browse as a user' do
   let!(:user){ create(:user) }
   let!(:admin){ create(:admin) }
@@ -21,3 +22,4 @@ feature 'Admin ability to browse as a user' do
     end
   end
 end
+

@@ -1,8 +1,9 @@
+# -*- encoding : utf-8 -*-
 RSpec.describe ServiceHelper, :type => :helper do
   describe 'suggest address' do
     let!(:user) { create(:user) }
-    let!(:postal_code) { create(:postal_code, code: '11800') }
-    let!(:other_postal_code) { create(:postal_code, code: '11800') }
+    let!(:postal_code) { create(:postal_code, number: '11800') }
+    let!(:other_postal_code) { create(:postal_code, number: '11800') }
     let!(:address) { create(:address, user: user, postal_code: postal_code) }
 
     it 'returns the a address with the same postal code' do
@@ -14,4 +15,3 @@ RSpec.describe ServiceHelper, :type => :helper do
     end
   end
 end
-

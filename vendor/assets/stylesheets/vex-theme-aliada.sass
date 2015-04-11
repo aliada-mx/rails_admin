@@ -1,0 +1,111 @@
+@import 'common/variables'
+@import 'vex_mixins'
+@import 'vex_keyframes'
+
++keyframes-vex-pulse
+
+.vex.vex-theme-plain
+  .vex-content
+    background: #fff
+    font-family: "Helvetica Neue", sans-serif
+    font-size: 1.1em
+    line-height: 1.5em
+    left: 25%
+    margin: 0 auto
+    max-width: 800px
+    min-width: 300px
+    padding: 2em
+    position: fixed
+    text-align: center
+    width: 52%
+    top: 33%
+    max-height: 400px
+
+    .dialog-content
+      overflow: auto
+      max-height: 300px
+
+    &.email_already_exists
+      width: 30%
+
+    h1
+      margin-bottom: 20px
+
+    p
+      text-align: center
+      margin: 10px 0
+      word-wrap: break-word
+
+    [class^="action-button"]
+      margin: 10px
+    &.error
+      h1
+        color: #FF3D3D
+
+  .vex-close
+    position: absolute
+    top: -17px
+    right: -17px
+    cursor: pointer
+    background: image-url('close-sprite.png')
+    background-size: 35px
+    background-repeat: no-repeat
+    width: 35px
+    height: 35px
+    &:hover
+      background-position: 0 -35px
+
+  .vex-dialog-form
+
+    .vex-dialog-message
+      margin-bottom: .5em
+
+    .vex-dialog-input
+      margin-bottom: 1em
+
+      textarea, input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="email"], input[type="month"], input[type="number"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="time"], input[type="url"], input[type="week"]
+        background: #f0f0f0
+        width: 100%
+        padding: .25em .67em
+        border: 0
+        font-family: inherit
+        font-weight: inherit
+        font-size: inherit
+        min-height: 2.5em
+        margin: 0 0 .25em
+
+        &:focus
+          +box-shadow(inset 0 0 0 2px rgba(0, 0, 0, .2))
+          outline: none
+
+    .vex-dialog-buttons
+      +pie-clearfix()
+
+  .vex-dialog-button
+    &.vex-last
+      margin-left: 0
+
+    &:focus
+      +vex-animation(vex-pulse 1.1s infinite)
+      outline: none
+
+      // vex-pulse uses -webkit-filter which
+      // doesn't play so nice in mobile webkit
+      @media (max-width: 568px)
+        +vex-animation(none)
+
+    &.vex-dialog-ok-button
+      width: 85px
+      float: right
+
+    &.vex-dialog-cancel-button
+      width: 85px
+      float: right
+
+.vex-loading-spinner.vex-theme-plain
+  height: 2.5em
+  width: 2.5em
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 568px)
+  .vex-content
+    left: 0% !important

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 
@@ -20,15 +21,15 @@ VCR.configure do |config|
   config.cassette_library_dir = "spec/fixtures/vcr_cassettes"
   config.hook_into :webmock # or :fakeweb
 
-  config.register_request_matcher :conekta_preauthorization do |real_request, recorded_request|
-    preauth_regex = /^https:\/\/.*:@api.conekta.io\/charges\?amount=300&card=card_.*&currency=MXN&description=Pre-autorizaci%C3%B3n%20de%20tarjeta%20\d+&reference_id=/
+  config.register_request_matcher :conekta_charge do |real_request, recorded_request|
+    charge_regex = /^https:\/\/.*:@api.conekta.io\/charges\?amount=\d+&card=.*&currency=MXN&description=.*&reference_id=\d+/
 
-    real_request.uri == recorded_request.uri || (preauth_regex.match(real_request.uri) && preauth_regex.match(recorded_request.uri))
+    real_request.uri == recorded_request.uri || (charge_regex.match(real_request.uri) && charge_regex.match(recorded_request.uri))
   end
 end
 
+
 RSpec.configure do |config|
-  DatabaseCleaner.strategy = :truncation
 
   # Authentication helpers
   config.include TestingSupport::DeviseHelpers
@@ -46,14 +47,12 @@ RSpec.configure do |config|
   config.include TestingSupport::DriverHelpers
 
   config.before(:suite) do
-    # Test all factories validity
-    FactoryGirl.lint
-
     # Clean database
     DatabaseCleaner.clean_with(:truncation)
 
     # Use faster transaction strategy
     DatabaseCleaner.strategy = :transaction
+
   end
 
   config.before(:each) do
@@ -68,4 +67,5 @@ RSpec.configure do |config|
   config.after(:suite) do
     DatabaseCleaner.clean
   end
+
 end

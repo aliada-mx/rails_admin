@@ -1,23 +1,27 @@
-- flash.each do |name, msg|
-  - if msg.class == Array
-    - msg.each do |message|
-      = content_tag :div, message, :id => "flash_#{name}"
-  - else
-    \#{content_tag :div, msg, :id => "flash_#{name}"}
+= append(:body_class){ ' login ' }
 
-= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
-  .field
-    = f.label :email
-    %br/
-    = f.email_field :email, autofocus: true
-  .field
-    = f.label :password
-    %br/
-    = f.password_field :password, autocomplete: "off"
-  - if devise_mapping.rememberable?
-    .field
-      = f.check_box :remember_me
-      = f.label :remember_me
-  .actions
-    = f.submit "Log in"
-= render "devise/shared/links"
+.login-container.col-lg-12
+  = render partial: 'common/messages'
+  .login-form-wrapper
+    .login-form-container
+      =link_to root_path, { class: 'logo-container' } do
+        =image_tag('logo-contrast.png', { :title => 'Aliada'})
+
+      %h1 ¡Hola de nuevo!
+      %p Entra a tu perfil, modifica tus visitas y programa nuevas.
+      .login-form.form-control
+        = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+          .field
+            %span.icon.icon-envelope
+            = f.email_field :email, autofocus: true, placeholder: 'Correo electrónico'
+          .field
+            %span.icon.icon-asterisk7
+            = f.password_field :password, autocomplete: "off", placeholder: 'Contraseña'
+          .recover-password
+            = render "devise/shared/links"
+
+          .actions
+            = f.submit "Entrar", class: 'action-button-pink'
+
+= prepend :javascript do
+  = javascript_include_tag 'minimal'

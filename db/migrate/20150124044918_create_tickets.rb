@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateTickets < ActiveRecord::Migration
   def change
     create_table :tickets do |t|

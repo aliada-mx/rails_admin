@@ -1,0 +1,129 @@
+@import 'common/variables'
+@import 'compass/css3/box-shadow'
+@import "compass/css3/opacity"
+@import 'common/mixins'
+
+form.new_service,
+form.edit_service
+  min-height: 730px
+
+
+.fields
+  padding: 20px 0 20px 40px
+  .field-row
+    position: relative
+    margin: 10px 0
+    width: 100%
+    display: inline-block
+  icon
+    position: absolute
+    left: -40px
+    float: left
+    top: 0px
+
+  textarea
+    width: 100%
+    border: none
+    border-bottom: 1px solid $dark_gray
+    margin: 5px 0
+    resize: vertical
+
+  input[type=password],
+  input[type=text]
+    &.full-width
+      width: 100%
+
+    &.half-width
+      width: 49.5%
+
+    &.two-thirds-width
+      width: 67%
+
+    &.third-width
+      width: 32%
+    
+input
+  +input-placeholder
+    color: $light_gray
+    font-weight: 600
+  &.important-placeholder
+    +input-placeholder
+      font-weight: 800
+      color: $green
+  &.error
+    color: $error
+    +input-placeholder
+      color: $error
+  &[type=password],
+  &[type=text]
+    border: none
+    border-bottom: 1px solid $dark_gray
+
+fieldset.checkboxes, fieldset.radio_buttons
+  .check-box-container, .radio_button_container
+    display: inline-block
+    width: 140px
+    float: left
+    margin-right: 15px
+    margin-bottom: 15px
+    label
+      +round-corners
+      border: 2px solid $dark_gray
+      cursor: pointer
+      display: inline-block
+      height: 100%
+      position: relative
+      width: 100%
+      text-align: center
+      background-color: white
+      +soft-transition
+      +no-selection
+      img
+        +centered
+        +no-selection
+        margin-top: 15px
+      .checked
+        display: none
+      .foot
+        position: absolute
+        bottom: 0
+        min-height: 34px
+        width: 100%
+        h4
+          font-weight: 600
+        .small-letters
+          +rem(font-size, $small-font)
+
+    input[type=checkbox],
+    input[type=radio]
+      +opacity(0)
+      position: absolute
+    input[type=checkbox]:checked + label, 
+    input[type=radio]:checked + label
+      background-color: $green
+      color: white
+      border-color: $green
+      .checked
+        display: block
+      .unchecked
+        display: none
+
+
+    &:last-child
+      margin-right: 0
+
+  &.extra_large
+    .check-box-container, .radio_button_container
+      height: 125px
+
+  &.large
+    .check-box-container, .radio_button_container
+      height: 100px
+
+@media screen and(max-width: 400px) 
+  fieldset.checkboxes.large
+    text-align: center
+    .check-box-container, .radio_button_container
+      display: inline-block
+      float: none
+

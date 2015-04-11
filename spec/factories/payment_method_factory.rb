@@ -1,6 +1,7 @@
+# -*- encoding : utf-8 -*-
 FactoryGirl.define do
   factory :payment_method, class: PaymentMethod do
-    name 'Conekta credit card'
+    name 'Tarjeta'
     payment_provider_type 'ConektaCard'
   end
 end

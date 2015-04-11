@@ -1,0 +1,91 @@
+@import 'common/variables'
+@import 'common/mixins'
+
+// Logo
+.navbar.navbar-default.navbar-fixed-top
+  .logo
+    padding: 20px
+    display: block
+
+// Sidebar
+.container-fluid .col-sm-3.col-md-2.reset-left .sidebar-nav
+  padding: 50px 9px 9px 9px
+
+// Content
+body > div.container-fluid > div > div.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2
+  margin-top: 34px
+  margin-left: 15.2%
+
+// Sidebar section title (navigational_label)
+li.dropdown-header
+  font-size: 18px
+
+// Model header title container
+.page-header
+  border-bottom: none
+  h1
+    color: $green
+
+// Icons
+i[class^='icon']
+  margin-right: 5px
+
+// Tickets visual warnings
+.ticket-alert
+  padding: 5px
+  text-align: center
+  margin: 5px
+  display: inline-block
+
+// Actions
+
+.create_aliada_working_hours
+  background: $light_green
+  .centered
+    margin: auto
+    display: block
+  .recurrence
+
+  .new-recurrence
+
+.address_map
+  width: 100%
+  form
+    float: left
+    width: 29%
+    .field-row
+      width: 100%
+      margin: 10px
+      input
+        width: 100%
+        color: $black
+    #save_button,
+    #add_references_marker_button
+      width: 49.5%
+      +action-button($dark_pink)
+      padding: 10px 30px
+    #add_references_marker_button
+      +action-button($dark_gray)
+
+
+  .map-wrapper,
+  #map-container
+    float: left
+    width: 320px
+    height: 320px
+
+
+.rails_admin_billable_hours_widget
+  .billable_hours_input,
+  .amount_to_bill
+    display: inline-block
+  .billable_hours_input
+    width: 40px
+
+// Index 
+
+// Wrap inside cell the text
+#bulk_form table tbody td.ticket-message,
+#bulk_form table tbody td.ticket-relevant_object
+  white-space: normal
+

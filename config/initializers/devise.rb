@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
@@ -10,10 +11,10 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
+  config.mailer_sender = 'info@aliada.mx'
 
   # Configure the class responsible to send e-mails.
-  # config.mailer = 'Devise::Mailer'
+   config.mailer = 'CustomDeviseMailer'
 
   # ==> ORM configuration
   # Load and configure the ORM. Supports :active_record (default) and
@@ -242,6 +243,10 @@ Devise.setup do |config|
   #   manager.intercept_401 = false
   #   manager.default_strategies(scope: :user).unshift :some_external_strategy
   # end
+  config.warden do |manager| 
+    manager.default_strategies.push( :md5_database_authenticatable, Devise::Strategies::Md5DatabaseAuthenticatable )
+    manager.default_strategies(:scope=> :user).unshift :md5_database_authenticatable
+  end 
 
   # ==> Mountable engine configurations
   # When using Devise inside an engine, let's call it `MyEngine`, and this engine

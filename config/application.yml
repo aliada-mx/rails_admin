@@ -1,19 +1,62 @@
 defaults: &defaults
-  beginning_of_aliadas_day: 7 # Beginning of bussines day
-  end_of_aliadas_day: 21 # End of business day
-  hours_before_service: 1 # Minimal amount of time it takes an aliada to reach a service destination
+  padding_hours_between_services: 2
+  beginning_of_aliadas_day: 13 # Beginning of bussines day in UTC, or 7 am in Mexico City Time
+  end_of_aliadas_day: 3 # End of business day, or 9 pm in Mexico City Time
+  businessday_hours: 14 # Make sure to update this if you update the beginning_of_aliadas_day and end_of_aliadas_day
+  show_tomorrow_services_cutoff: 1 # UTC hour 1 or Mexico City 7 after which the aliadas services list will show tomorrow's services 
   hours_after_service: 1 # Minimal amount of time after a service is done needed for each aliada
   time_horizon_days: 30 # How far in the future we build schedules and look for datetime data
   payment_providers: [
     ['Tarjeta con Conekta', 'ConektaCard'], 
+    ['Pago con créditos', 'User'], 
     ['Método de pago de prueba', 'TestPaymentMethod'], 
   ]
-
+  #
+  # Careful while editing the text here as it determines looks on the frontend
+  hours_space_room: [
+    { hours: 3.0,   text: '<b>3h</b>     ~55m²'},
+    { hours: 3.5, text: '<b>3.5h</b>  ~90m²'},
+    { hours: 4.0, text: '<b>4h</b>     ~120m²'},
+    { hours: 5.0, text: '<b>5h</b>     ~150m²'},
+    { hours: 5.5,   text: '<b>5.5h</b>     ~165m²'},
+    { hours: 6.0,   text: '<b>6h</b>     ~+180m²'}  
+  ]
+  bedrooms_multiplier: 1 # to get hours
+  bathrooms_multiplier: 0.5 # to get hours
+  minimum_hours_service: 3
+  booking_for_tomorrow_limit: 23 # After this hour you cant book a service for tomorrow, in UTC or 5 pm in Mexico City Time
+  too_late_cancelation_fee: 100 # in pesos
+ 
+  sendgrid_templates_ids: 
+    welcome: '371f2a77-45c5-4644-b3be-0639395a4ca3' 
+    service_confirmation_password: '5fcc2d0e-9ada-42c5-8c8d-b570694f49e5'
+    aliada_changed: 'ba8d08bb-ec8f-48ce-b1be-611fd592aef0'
+    hour_changed: 'e69adba7-9b10-4b9d-bae7-e9dfdb8433e9'
+    untimely_cancelation: 'f9bbeba4-aad4-41c2-b00d-ede6f71e9544'
+    reset_password: 'af7ae3d3-5d00-42c2-af08-844308e26db3'
+    service_receipt: '2a97de3e-b576-4449-8759-86ff399a99fc'
+    billing_issue: '932cc5f0-fb25-4136-ae8d-95f3f8866cdc'
+    change_client_address: '5137f774-5f17-4476-bf29-18d1afd5f3bd'
+    change_service_address: '16fa65bd-e292-4323-a8b8-041ce074ac43'
+    timely_cancelation: '87b19244-a4bb-4f9b-a7ba-35c8f28c1a9a'
+    reminder: 'cad1ca4c-6cc0-4725-a78c-9e42b167d1ab'
+    service_confirmation: 'c25504da-8cb2-49be-a4c4-16ca4de53b41'
+    test_email: '8ce0b5a8-8860-4c80-8f2d-1f6471bf0480'
+  admin_emails: ['ana@aliada.mx']
+    
 development:
   <<: *defaults
+  host: 'localhost:3000'
 
 test:
   <<: *defaults
+  host: 'localhost:3000'
 
 production:
+  host: 'aliada.mx'
+  <<: *defaults
+  
+    
+staging:
+  host: 'staging.aliada.mx'
   <<: *defaults

@@ -7,6 +7,7 @@ source 'https://rails-assets.org'
 gem 'rails', '4.1.9'
 # Use sqlite3 as the database for Active Record
 gem 'pg'
+gem 'mysql2'
 # Use SCSS for stylesheets
 gem 'state_machine'
 # Settings management
@@ -19,6 +20,10 @@ gem 'resque-scheduler'
 gem 'resque-web', require: 'resque_web'
 # Support for add_foreing_key (we downgraded from 4.2 to 4.1)
 gem 'foreigner'
+# Localization
+gem 'rails-i18n', github: 'svenfuchs/rails-i18n', branch: 'master' # For 4.x
+# Tracking of changes
+gem 'paper_trail', '~> 4.0.0.beta'
 
 # ASSETS
 #
@@ -35,16 +40,30 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 # Easy file attachment management for ActiveRecord
 gem 'paperclip'
+# AWS storage adapter
+gem 'aws-sdk', '~> 1.5.7'
 # Bootstrap
 gem 'bootstrap-sass'
 # Sass framework
 gem 'compass-rails'
+gem 'chronic'
+# Gzip compression
+gem 'heroku-deflater'
+# Serve fonts with correct headers
+gem 'font_assets'
+# 
  
-# BOWER
+# EXCEPTIONS
+#
+# Exception catching and logging
+gem 'raygun4ruby'
+ 
+# JAVASCRIPT 
 #
 gem 'rails-assets-underscore'
 gem 'rails-assets-knockout'
-
+# Named railes routes for js
+gem "js-routes"
 
 # TEMPLATING
 #
@@ -54,28 +73,29 @@ gem 'nestive'
 
 # Authentication
 gem 'devise'
-
-# Time pargin
-gem 'chronic'
+gem 'simple_token_authentication', '~> 1.0'
 
 # PAYMENT SYSTEMS
 gem 'conekta'
 
-
-group :production do
-  # Logging
-  gem "lograge"
-end
-
-# Inverte <=> operator for sortings
+# Invert <=> operator for sortings
 gem 'invert'
 
 # ADMIN
+# 
 gem 'rails_admin', github: 'grillermo/rails_admin'
 # permissions
 gem 'cancancan'
 
+# MIGRATION CALLBACKS
+gem 'migration_data'
+
+# MAILING
+#
+gem 'smtpapi'
+
 group :development, :test do
+  gem 'guard-rspec', require: false
   # Call 'pry' anywhere in the code to stop execution and get a debugger console
   gem 'pry-rails'
   # Automatically call pry on exception
@@ -102,17 +122,22 @@ group :development, :test do
   # Convert erb to haml
   gem 'erb2haml'
 
+  # webrick replacement
+  gem 'puma'
 end
 
+# Factories outside test group for usage on seeds
+gem 'factory_girl_rails'
+
 group :test do
+  # For the lols run it $ rspec --format NyanCatWideFormatter
+  gem "nyan-cat-formatter"
+
   # Testing framework
   gem 'rspec-rails', '~> 3.0.1'
 
   # Functional testing
   gem 'capybara'
-
-  # Factories
-  gem 'factory_girl_rails'
 
   # Testing coverage
   gem 'simplecov', :require => false
@@ -134,4 +159,22 @@ group :test do
 
   # Record requests to be replayed on tests
   gem 'vcr'
+
+  # test resque
+  gem 'resque_spec'
 end
+
+group :production, :staging do
+  # Heroku support
+  gem 'rails_12factor'
+
+  # Performance monitoring
+  gem 'newrelic_rpm'
+end
+
+
+group :production, :staging, :development do
+  # Quiet down the partials rendering
+  gem "lograge"
+end
+

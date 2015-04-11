@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class RenameServicesHoursFields < ActiveRecord::Migration
   def change
     rename_column :services, :time_to_arrive, :hours_before_service

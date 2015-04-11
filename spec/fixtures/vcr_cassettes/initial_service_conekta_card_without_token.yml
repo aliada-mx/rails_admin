@@ -8,10 +8,10 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Conekta/v1 RubyBindings/0.5.1
+      - Conekta/v1 RubyBindings/0.5.2
       X-Conekta-Client-User-Agent:
-      - '{"bindings_version":"0.5.1","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
-        Kernel Version 13.4.0: Sun Aug 17 19:50:11 PDT 2014; root:xnu-2422.115.4~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.2.0","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"Alejandros-MacBook-Pro-2.local","release":"14.0.0","version":"Darwin
+        Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro5,5"}}'
       Accept:
       - application/vnd.conekta-v1.0.0+json
       Accept-Language:
@@ -32,7 +32,7 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Fri, 13 Feb 2015 00:57:01 GMT
+      - Tue, 10 Mar 2015 00:32:17 GMT
       Server:
       - nginx/1.1.19
       Status:
@@ -40,9 +40,9 @@ http_interactions:
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - c88473e717e9899fde382b7bd064050a
+      - ba7461cbd118a67a65738d364e4a4893
       X-Runtime:
-      - '0.033971'
+      - '0.031766'
       Content-Length:
       - '154'
       Connection:
@@ -52,5 +52,5 @@ http_interactions:
       string: '{"object":"error","type":null,"message":"Object  could not be found.","message_to_purchaser":"El
         recurso no ha sido encontrado.","param":null,"code":null}'
     http_version: 
-  recorded_at: Fri, 13 Feb 2015 00:56:32 GMT
+  recorded_at: Tue, 10 Mar 2015 00:31:52 GMT
 recorded_with: VCR 2.9.3

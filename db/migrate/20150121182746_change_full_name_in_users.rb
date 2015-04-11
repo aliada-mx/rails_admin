@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ChangeFullNameInUsers < ActiveRecord::Migration
   def change
     remove_column :users, :full_name, :string

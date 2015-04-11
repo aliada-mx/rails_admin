@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module UsersHelper
   def generate_random_pronouncable_password(size: 4)
     vowels = %w{a e i o u}

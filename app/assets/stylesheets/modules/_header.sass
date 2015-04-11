@@ -1,0 +1,38 @@
+@import 'common/variables'
+@import 'common/mixins'
+
+.container 
+  header.inner
+    padding-left: 0
+    padding-right: 0
+    .logo-container
+      padding: 30px 30px 30px 0px
+      float: left
+      img
+        height: 40px
+    .help-container
+      text-align: right
+      padding: 30px 0px 30px 30px
+      float: right
+
+      .account-link
+        display: inline-block
+        letter-spacing: 0px
+        text-decoration: underline
+        vertical-align: middle
+        +rem(margin, 0 1rem 0 0)
+        +rem(font-size, 1.8rem)
+
+      .icon
+        display: inline-block
+        vertical-align: middle
+        +rem(font-size, 2rem)
+
+      .login-button
+        margin-left: 10px
+
+@media screen and(max-width: 400px) 
+  .container 
+    header
+      .logo-container, .helper-container
+        margin: 20px 0

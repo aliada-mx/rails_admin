@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Payment < ActiveRecord::Base
   belongs_to :user
   belongs_to :payment_provider, polymorphic: true
@@ -19,6 +20,13 @@ class Payment < ActiveRecord::Base
                     user: user,
                     payment_provider: payment_provider,
                     api_raw_response: charge_hash.to_json)
+  end
+
+  def self.create_from_credit_payment(amount, user)
+    Payment.create!(amount: amount, 
+                    user: user,
+                    payment_provider_type: 'User',
+                    payment_provider_id: user.id)
   end
 
   def provider

@@ -1,4 +1,24 @@
-= initial_service_form.collection_radio_buttons :service_type_id, ServiceType.all, :id, :name
-= render partial: 'common/calendar'
-= initial_service_form.date_field :date
-= initial_service_form.time_field :time
+%section.step_3_visit_info{data: {bind: 'visible: current_step() == 3'}, style: 'display: none'}
+  %h1
+    ¿Cuándo te visitamos?
+  %p
+    Elige la frecuencia de la visita
+
+  = render partial: 'common/service_type_buttons', locals: {form: initial_service_form, promotional: true, disable_one_time: false}
+
+  %h4#choose-date
+    %icon.icon-calendar
+    Elige el día de la visita
+  = render partial: 'common/calendar'
+
+  %p.smallis-letters
+    Si quieres reservar para más de un día al final podrás hacerlo.
+
+  %h4#choose-time
+    %icon.icon-clock
+    Selecciona la hora que más te convenga
+
+  = render partial: 'common/time_selector', locals: {form: initial_service_form}
+
+  = initial_service_form.hidden_field :date, data: {bind: 'value: date'}
+  = initial_service_form.hidden_field :time, data: {bind: 'value: time'}

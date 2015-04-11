@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 #  Netsted Hash:
 # 
 #  str_hash = {

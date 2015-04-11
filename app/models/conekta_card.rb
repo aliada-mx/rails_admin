@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+# -*- coding: utf-8 -*-
 class ConektaCard < ActiveRecord::Base
 
   def self.create_for_user!(user, temporary_token, object)
@@ -68,14 +70,31 @@ class ConektaCard < ActiveRecord::Base
     end
   end
 
+  def charge_in_conekta!(product, user)
+    conekta_charge = Conekta::Charge.create({
+      amount: (product.amount * 100).floor,
+      currency: 'MXN',
+      description: product.description,
+      reference_id: product.id,
+      card: self.customer_id || self.token,
+      details: {
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+      }
+    })
+
+    conekta_charge
+  end
+
   def payment_possible?
     preauthorized?
   end
 
-  def ensure_first_payment!(user, payment_method_options)
+  def ensure_first_payment!(user, payment_method_options, service)
     temporary_token = payment_method_options[:conekta_temporary_token]
     create_customer(user, temporary_token)
-    preauthorize!(user)
+    preauthorize!(user, service)
   end
 
   def preauthorize!(user, object)

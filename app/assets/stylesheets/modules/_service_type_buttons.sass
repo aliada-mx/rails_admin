@@ -1,0 +1,46 @@
+@import "compass/css3/opacity"
+@import 'common/variables'
+@import 'common/mixins'
+
+fieldset.radio_buttons.large
+  width: 100%
+  margin: 10px auto 20px auto
+  .radio-button-container
+    width: 50%
+    display: inline-block
+    text-align: center
+    float: left
+    span[class*="action-button"]
+      width: 94%
+      min-width: 210px
+    label
+      height: 100%
+      cursor: pointer
+    &.recurrent
+      background-color: $light_green
+      input[type=radio]:checked + span
+        background-color: $green
+        color: white
+    &.one-time
+      input[type=radio]:checked + span
+        background-color: $dark_gray
+        color: white
+    .head
+      height: 30px
+      width: 100%
+      .best-value
+        font-weight: 800
+        color: $green
+        line-height: 30px
+    ul.benefits
+      margin: 10px
+      li
+        text-align: left
+        +rem(font-size, $smallish-font)
+        font-weight: 700
+    &.non-promotional
+      .head
+        height: 0
+  input[type='radio']
+    +opacity(0)
+    position: absolute

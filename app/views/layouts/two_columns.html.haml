@@ -1,13 +1,18 @@
+= append(:body_class){ ' two-columns ' }
+
 = extends :application do
+  .container
+    .row
+      = render partial: 'common/header'
 
-  %header
-    = render partial: 'common/inner_header'
+    .row
+      = area :navigation
 
-  %nav
-    = area :navigation
+    .row 
+      = render partial: 'common/messages'
 
-  %main
-    = yield
+    .row
+      = yield
 
-  %aside
-    = area :sidebar
+
+= render partial: "common/footer"

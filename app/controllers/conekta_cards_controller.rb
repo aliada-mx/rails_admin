@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ConektaCardsController < ApplicationController
   before_filter :set_user
   load_and_authorize_resource

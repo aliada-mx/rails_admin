@@ -1,0 +1,49 @@
+.summary-container
+  %h1
+    Resumen
+
+  %ul.summary
+    %li{data: {bind: 'css: {checked: current_step() >= 1}'}}
+      %span{data: {bind: 'text_: "Duración: {{ hours }} horas "'}} 
+      %ul{data: {bind: "foreach: {data: extra_items, as: 'item'}"}}
+        %li{data: {bind:'text: item'}}
+      %a.small-letters{data: {bind: 'visible: are_fields_editable("hours"), click: function(){ aliada.ko.current_step(1) } '}}
+        %icon.pencil.small
+        editar
+
+    %li{data: {bind: 'css: {checked: is_address_done, unchecked: !is_address_done()}'}}
+      %span{data: {bind: 'text: address'}}
+      %a.small-letters{data: {bind: 'visible: are_fields_editable("address"), click: function(){ aliada.ko.current_step(2) } '}}
+        %icon.pencil.small
+        editar
+
+    %li{data: {bind: 'css: {checked: is_name_email_phone_done, unchecked: !is_name_email_phone_done()}'}}
+      %span{data: {bind: 'text: name_email_phone'}}
+      %a.small-letters{data: {bind: 'visible: are_fields_editable("name_email_phone"), click: function(){ aliada.ko.current_step(2) } '}}
+        %icon.pencil.small
+        editar
+
+    %li{data: {bind: 'css: {checked: is_datetime_done, unchecked: !is_datetime_done()}'}}
+      %span{data: {bind: 'text: friendly_datetime'}}
+      %a.small-letters{data: {bind: 'visible: are_fields_editable("datetime"), click: function(){ aliada.ko.current_step(3) } '}}
+        %icon.pencil.small
+        editar
+
+  .foot
+    %span.hours{data: {bind: 'text_: "{{ hours }} horas:"'}}
+    %span.cash{data: {bind: 'text_: "${{ price }}"'}}
+  -# TODO promotional codes
+    .promotional-code{data: {bind: 'visible: current_step() == 5'}}
+      %a
+        APLICAR
+      = text_field_tag 'promo-code', nil, placeholder: 'código promocional'
+
+  .tos-container{data: {bind: 'visible: current_step() == 4'}}
+    = label_tag :tos do
+      Acepto los 
+      = link_to terms_path, target: 'blank' do
+        términos y condiciones del servicio
+      = check_box_tag :tos, '0', false, {data: {bind: 'checked: tos_accepted'}}
+
+
+= initial_service_form.submit 'Confirmar visita', id: 'next_button', class: 'action-button-pink size-extra-large', data: {bind: 'value: next_button_text '}

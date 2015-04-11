@@ -1,0 +1,81 @@
+@import 'common/variables'
+@import 'common/mixins'
+
+.conekta-form-container
+  background: $lightest_gray
+  border: 1px solid $dark_gray
+  border-radius: 10px
+  +rem(margin, 2rem 0)
+  +rem(padding, 1.5rem 0)
+  max-width: 460px
+
+  h5
+    color: white
+    background: $darkest_gray
+    +rem(margin, 0 0 3rem 0)
+    +rem(padding, 1.2rem 2rem)
+
+  .conekta-form
+    margin: 0
+    +rem(padding, 0rem 2rem)
+
+    .field
+      position: relative
+      +rem(margin-bottom, 1.5rem)
+
+      input[type=text]
+        border: 1px solid $light_gray
+        color: $darkest_gray
+        width: 100%
+        +rem(font-size, 1.5rem)
+        +rem(padding, 0.5rem 1rem)
+
+        &.iconized
+          +rem(padding-right, 5rem)
+
+      select
+        color: $dark_gray
+        border: none
+        border-radius: 0 !important
+        background: white
+        margin: 0
+        padding: 0
+        width: 60px
+
+      p
+        letter-spacing: -1px
+        font-style: italic
+        font-weight: 800
+        +rem(font-size, 1.2rem)
+
+      table
+        td
+          width: 150px
+
+
+      .expiration-date-field
+        background: white
+        border: 1px solid $light_gray
+        display: inline-block
+        +rem(padding, 0.5rem 0)
+
+
+      .icon
+        position: absolute
+        top: 6px
+        right: 8px
+        +rem(font-size, 2rem)
+        &.image-icon
+          top: 2px
+          right: 1px
+
+        img
+          max-width: 40px
+          width: 100%
+        &.icon-lock
+          color: $yellow
+
+      &:last-child
+        margin-bottom: 0
+
+

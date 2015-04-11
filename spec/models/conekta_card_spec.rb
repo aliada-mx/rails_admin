@@ -1,7 +1,9 @@
+# -*- encoding : utf-8 -*-
 describe 'ConektaCard' do
   include TestingSupport::SharedExpectations::ConektaCardExpectations
 
   let!(:card){ create(:conekta_card) } 
+  let!(:service){ create(:service) }
   let!(:user){ create(:user, 
                       phone: '123456',
                       first_name: 'Test',
@@ -9,7 +11,7 @@ describe 'ConektaCard' do
                       email: 'user-39@aliada.mx',
                       conekta_customer_id: "cus_M3V9nERCq9qDLZdD1") } 
   let(:token){ 'tok_test_visa_4242' }
-  let(:fake_product){ double(price_for_conekta: 3000,
+  let(:fake_product){ double(amount: 300,
                              description: 'fake test product',
                              id: 1)}
 
@@ -23,14 +25,14 @@ describe 'ConektaCard' do
       end
     end
 
-    it 'creates a charge' do
+    it 'charge_in_conekta' do
       VCR.use_cassette('conekta_charge') do
         card.token = token
-
-        conekta_charge = card.charge!(fake_product)
+        
+        conekta_charge = card.charge_in_conekta!(fake_product,user)
         charge = eval(conekta_charge.inspect)
 
-        expect(charge['amount']).to eql 3000
+        expect(charge['amount']).to eql 30000
         expect(charge['status']).to eql 'paid'
         expect(charge['livemode']).to eql false
         expect(charge['object']).to eql 'charge'
@@ -44,8 +46,8 @@ describe 'ConektaCard' do
       expect(ConektaCard.first).to eql card
 
       # TODO use regex matchers because the request wont match if the id of the generated card changes
-      VCR.use_cassette('new_card', match_requests_on: [:conekta_preauthorization]) do
-        ConektaCard.create_for_user!(user, token)
+      VCR.use_cassette('new_card', match_requests_on: [:conekta_charge]) do
+        ConektaCard.create_for_user!(user, token, service)
       end
 
       new_conekta_card = ConektaCard.second

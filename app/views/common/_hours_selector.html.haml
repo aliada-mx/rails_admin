@@ -1,0 +1,21 @@
+= form.select :rooms_hours, options_from_collection_for_select(Setting.hours_space_room.to_a, :hours, :text, @service.estimated_hours_without_extras), class: 'selectpicker'
+
+= form.hidden_field :estimated_hours, data: {bind: 'value: hours'}
+
+%a.small-letters.bathroom-bedrooms-toggle-button
+  ¿No sabes los metros cuadrados?
+  -#
+    .action-button-transparent.size-medium.hours_calculator.icon-clock
+      Calculadora de horas
+
+
+= render partial: 'common/bathroom_bedrooms', locals: {form: form}
+
+= append :javascript do
+  = javascript_include_tag 'jquery.selectBoxIt'
+  :javascript
+    $("#service_rooms_hours").selectBoxIt({
+      // Trigger events on original dom element
+      aggressiveChange: true,
+      autoWidth: false
+    })
