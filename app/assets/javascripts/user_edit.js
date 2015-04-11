@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 //= require base
 //= require modules/conekta
 //= require modules/dialogs
@@ -66,7 +65,3 @@ $(function() {
     return;
   });
 });
-||||||| merged common ancestors
-=======
-//= require minimal
->>>>>>> master

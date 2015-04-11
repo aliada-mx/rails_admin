@@ -14,6 +14,7 @@ class Ticket < ActiveRecord::Base
     'padding_missing' => 'Horas colchón faltantes',
     'service_without_enough_schedules' => 'Servicio sin suficientes horas de servicio',
     'service_without_user' => 'Servicio sin usuario',
+    'users_without_cards' => 'Usuarios sin tarjetas',
   }
 
   # Only classifications with bootstrap classes allowed
@@ -29,6 +30,10 @@ class Ticket < ActiveRecord::Base
   scope :sin_resolver, -> { where("classification != ?", 'alert-success') }
   scope :resueltos, -> { where(classification: 'alert-success') }
 
+  after_initialize do
+    self.message ||= ''
+  end
+
   def name
     category_name
   end
@@ -43,12 +48,12 @@ class Ticket < ActiveRecord::Base
 
   def self.create_error(options)
     options.merge!({classification: 'alert-danger'})
-    Ticket.create(options)
+    Ticket.find_or_create_by(options)
   end
   
   def self.create_warning(options)
     options.merge!({classification: 'alert-warning'})
-    Ticket.create(options)
+    Ticket.find_or_create_by(options)
   end
 
   def solve!

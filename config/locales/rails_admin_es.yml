@@ -71,6 +71,7 @@ es:
         default_address_link: 'Dirección por default'
         next_service_link: 'Siguiente servicio'
         user_next_services_path: 'Entrar como el usuario'
+        default_payment_provider: 'Con que paga'
       aliada:
         <<: *user_attributes
         <<: *common_attributes

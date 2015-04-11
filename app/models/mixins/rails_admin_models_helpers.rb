@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Mixins
   module RailsAdminModelsHelpers
+
     def rails_admin_edit_link(object, name: nil)
       return '' if object.blank?
 
@@ -10,6 +11,7 @@ module Mixins
 
       ActionController::Base.helpers.link_to(name, url)
     end
+    module_function :rails_admin_edit_link
 
     def address_map_action_link(address, name: nil)
       return '' if address.blank?
