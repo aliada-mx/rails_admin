@@ -1,10 +1,30 @@
-= hidden_field_tag :conekta_temporary_token
-= text_field_tag nil, nil, data: {'conekta' => 'card[name]'}
-= text_field_tag nil, nil, data: {'conekta' => 'card[number]'}
-= select_tag nil, options_for_select([*1..12], 1), data: {'conekta' => 'card[exp_month]'}
-= select_tag nil, options_for_select([*2015..2030], 1), data: {'conekta' => 'card[exp_year]'}
-= text_field_tag nil, nil, data: {'conekta' => 'card[cvc]'}
-
+.conekta-form-container
+  %h5 Tarjeta de débito o crédito
+  .conekta-form
+    = hidden_field_tag :conekta_temporary_token
+    .field
+      = text_field_tag nil, card_default.name , data: {'conekta' => 'card[name]'}, placeholder: 'Adriana González Sánchez', id: 'conekta_card_name', disabled: read_only
+      %p NOMBRE COMO APARECE EN TU TARJETA
+    .field
+      = text_field_tag nil, nil, data: {'conekta' => 'card[number]'}, placeholder: card_default.last4 || '1234 5678 1234 5678', class: 'iconized', id: 'conekta_card_number', disabled: read_only
+      %p NÚMERO DE LA TARJETA
+      %span.icon.icon-lock
+    .field
+      %table
+        %tr
+          %td
+            %span.expiration-date-field
+              = select_tag nil, options_for_select([*1..12], card_default.exp_month || 1), data: {'conekta' => 'card[exp_month]'}, disabled: read_only
+              %span /
+              = select_tag nil, options_for_select([*2015..2030], card_default.exp_year || 2015), data: {'conekta' => 'card[exp_year]'}, id: 'conekta_card_exp_year', disabled: read_only
+            %p VENCIMIENTO (MM/AA)
+          %td
+          %td
+            = text_field_tag nil, nil, data: {'conekta' => 'card[cvc]'}, placeholder: '123', class: 'iconized', id: 'conekta_card_cvc', readonly: read_only
+            %p CVC
+            %span.icon.image-icon
+              =image_tag('cvc.png', {:title => 'Número de tarjeta'})
+              
 = append :javascript do
   %script{type: "text/javascript", src: "https://conektaapi.s3.amazonaws.com/v0.3.2/js/conekta.js"}
   = javascript_include_tag 'conekta'

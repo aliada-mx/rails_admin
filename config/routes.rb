@@ -33,6 +33,16 @@ Rails.application.routes.draw do
     get 'servicio/:service_id', to: 'services#show', as: :show_service, service_id: /\d+/
 
     post 'conekta_card/create', to: 'conekta_cards#create', as: :create_conekta_card
+
+    resources :conekta_cards, only: [ :show, :update ]
+  end
+
+  post 'aliadas-availability', to: 'aliadas_availability#for_calendar', as: :aliadas_availability
+
+  devise_scope :aliadas do
+    get 'aliadas/servicios/:token', to: 'aliadas#services', as: :aliadas_services
+    post 'aliadas/servicios/finish/:token', to: 'aliadas#finish', as: :finish_service
+    post 'aliadas/servicios/confirm/:token', to: 'aliadas#confirm', as: :confirm_service
   end
 
   resources :schedules

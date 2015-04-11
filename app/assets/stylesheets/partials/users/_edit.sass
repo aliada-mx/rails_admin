@@ -1,0 +1,48 @@
+@import 'common/variables'
+@import 'common/mixins'
+
+body.edit-user
+  +sticky-footer
+  main
+    margin-bottom: 30px   
+  .edit_conekta_card
+    margin-top: 40px
+  form
+    > h1
+      +rem(margin-bottom, 1rem)
+    .personal-info
+      max-width: 850px
+      +prevent-collapse()
+      icon
+        +rem(font-size, 2.2rem)
+
+      .actions
+        width: 100%
+        clear: both
+        text-align: right
+        margin-right: 30px
+
+        input[type=submit]
+          float: left
+
+    input#user_phone,
+    input#user_email
+      width: 250px
+
+    .contact-info
+      width: 55% 
+      display: inline-block
+
+    .passwords
+      min-width: 320px
+      width: 35%
+      padding-left: 0
+      display: inline-block
+
+      
+  .bottom-buttons-container
+    max-width: 850px
+    width: 100%
+
+  .conekta-form
+    +rem(margin, 2rem 0)

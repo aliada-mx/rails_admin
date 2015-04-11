@@ -1,0 +1,178 @@
+<script type="text/html" id="email_already_exists_template">
+    <div class="dialog-content">
+        <p>
+            Tú o alguien más con el email <b>{{ email }}</b> ya ha usado aliada antes.
+        </p>
+    
+        <fieldset>
+            <button class='action-button-gray size-large left' id='try-another-email-button'>
+                Probar con otro email
+            </button>
+        
+            <a class='action-button-gray size-large right' href='<%= new_user_session_path %>'>Haz login</a>
+        </fieldset>
+    </div>
+</script>
+
+<script type="text/html" id="postal_code_number_missing_template">
+    <div class="dialog-content">
+        <h1>
+            Me gustaría que aliada estuviera aqui
+        </h1>
+        <p class='left'>
+            Desafortunadamente aliada no está disponible en tu zona(C.P. {{ postal_code_number }}) por el momento.
+            <br>
+            Por favor ten paciencia mientras hacemos el máximo esfuerzo para crecer y ayudar a más personas.
+            <br>
+            Te avisaremos cuando estemos en tu zona.
+        </p>
+    
+        <div>
+            Muchas gracias :)
+        </div>
+    
+        <button class='action-button-gray size-large' id='try-another-postal-code-button'>
+            Probar otro código postal
+        </button>
+    </div>
+</script>
+
+<script type="text/html" id="platform_error_template">
+    <div class="dialog-content">
+        <h1>
+            Error con aliada :(
+        </h1>
+        <p>
+            Algo salió mal con aliada.mx ya estamos enterados y estamos trabajando para arreglarlo lo más rápido posible.
+        </p>
+        <p>
+            {{ error }}
+        </p>
+    </div>
+</script>
+
+<script type="text/html" id="conekta_error_template">
+    <div class="dialog-content">
+        <h1>
+            Problema con tu tarjeta
+        </h1>
+        <p>
+            Algo salió mal al guardar tu tarjeta de crédito.
+        </p>
+        <p>
+            {{ error }}
+        </p>
+        <p>
+            Prueba con otra tarjeta por favor.
+        </p>
+    </div>
+</script>
+
+<script type="text/html" id="invalid_service_template">
+    <div class="dialog-content">
+        <h1>
+            Hay un problema con los datos del servicio
+        </h1>
+        <p>
+            Algo salió mal al guardar tu servicio.
+        </p>
+        <p>
+            {{ error }}
+        </p>
+    </div>
+</script>
+
+<script type="text/html" id="aliada_busy_message_template">
+    <div class="dialog-content">
+        <h1>
+            Espera un momento por favor...
+        </h1>
+        <p class='loader_container'>
+            <%= image_tag("loader-medium.gif") %>
+        </p>
+    </div>
+</script>
+
+<script type="text/html" id="aliada_busy_message_template">
+    <div class="dialog-content">
+        <h1>
+            Espera un momento por favor...
+        </h1>
+        <p class='loader_container'>
+            <%= image_tag("loader-medium.gif") %>
+        </p>
+    </div>
+</script>
+
+<script type="text/html" id="update_service_success_template">
+    <div class="dialog-content">
+        <h1>
+            Cambio realizado exitosamente
+        </h1>
+        <p>
+            hemos guardado los cambios exitosamente, recibirás un correo con un resumen de los mismos.
+        </p>
+    </div>
+</script>
+
+<% if @service.present? && @service.service_type_id.present? && @service.datetime.present?  %>
+    <script type="text/html" id="cancel_one_time_service_template">
+        <div class="dialog-content">
+            <h1>
+            <% if @service.recurrent? %>
+                ¿Estás seguro que deseas cancelar todos los servicios de esta recurrencia?
+            <% else %>
+                ¿Estás seguro que deseas cancelar tu servicio?
+            <% end %>
+            </h1>
+            <p>
+            <% if @service.in_less_than_24_hours %>
+                Como faltan menos de 24 horas para el servicio. 
+                Te haremos un cobro de $<%= @too_late_cancelation_fee %> pesos.
+                <br></br>
+                Esto es para compensar a la Aliada que se quedará sin ese servicio.
+            <% else %>
+                <% if @service.recurrent? %>
+                    Al confirmar dejarás de recibir a tu Aliada los <%= ensure_plural(@service.weekday_in_spanish) %> a las <%= @service.friendly_time %>
+                <% else %>
+                    Al confirmar dejarás de recibir a tu Aliada el <%= ensure_plural(@service.weekday_in_spanish) %> a las <%= @service.friendly_time %>
+                <% end %>
+                y no podrás hacer un servicio nuevo para esa fecha.
+            <% end %>
+            </p>
+        </div>
+    </script>
+<% end %>
+
+<script type="text/html" id="confirm_recurrent_service_change_template">
+    <div class="dialog-content">
+        <h1>
+            ¿Estás seguro que deseas modificar tu servicio recurrente?
+        </h1>
+        <p>
+            Tus cambios aplicarán a todos los servicios futuros de esta recurrencia.
+        </p>
+    </div>
+</script>
+
+<script type="text/html" id="confirm_change_card_template">
+    <div class="dialog-content">
+        <h1>
+            ¿estás seguro que deseas guardar esta tarjeta como nuevo método de pago?
+        </h1>
+        <p>
+            usaremos esta nueva tarjeta para todos los futuros cobros.
+        </p>
+    </div>
+</script>
+
+<script type="text/html" id="succesful_card_change_template">
+    <div class="dialog-content">
+        <h1>
+            Tarjeta guardada exitosamente
+        </h1>
+        <p>
+            hemos guardado la nueva tarjeta exitosamente, ahora es tu método de pago para todos tus servicios.
+        </p>
+    </div>
+</script>

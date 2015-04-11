@@ -1,14 +1,27 @@
 class ConektaCard < ActiveRecord::Base
-  def self.create_for_user!(user, temporary_token)
+
+  def self.create_for_user!(user, temporary_token, object)
     conekta_customer = Conekta::Customer.find(user.conekta_customer_id)
 
     api_card = conekta_customer.create_card(:token => temporary_token)
 
     conekta_card = ConektaCard.create!
     conekta_card.update_from_api_card(eval(api_card.inspect))
-    conekta_card.preauthorize!(user)
+    conekta_card.preauthorize!(user, object)
 
     user.create_payment_provider_choice(conekta_card).provider
+  end
+
+  def friendly_name
+    "Tarjeta #{brand} con terminación #{last4}"
+  end
+
+  def placeholder_for_form
+    self.exp_year = "20#{ exp_year }" if exp_year.present?
+
+    self.last4 = "XXXX XXXX XXXX #{ last4 }" if last4.present?
+
+    self
   end
 
   def create_customer(user, temporary_token)
@@ -39,17 +52,23 @@ class ConektaCard < ActiveRecord::Base
     update_from_api_card(card_attributes)
   end
 
-  def charge!(product)
-    Conekta::Charge.create({
-      amount: product.price_for_conekta,
-      currency: 'MXN',
-      description: product.description,
-      reference_id: product.id,
-      card: self.token
-    })
+  def charge!(product, user, object)
+    begin
+      conekta_charge = charge_in_conekta!(product, user)
+     
+      payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
+      payment.pay!
+      
+      payment
+    rescue Conekta::Error => exception
+      Raygun.track_exception(exception)
+
+      object.create_charge_failed_ticket(user, product.price, exception)
+      nil
+    end
   end
 
-  def payment_possible?(service)
+  def payment_possible?
     preauthorized?
   end
 
@@ -59,14 +78,12 @@ class ConektaCard < ActiveRecord::Base
     preauthorize!(user)
   end
 
-  def preauthorize!(user)
-    preauthorization = OpenStruct.new({price_for_conekta: 300,
+  def preauthorize!(user, object)
+    preauthorization = OpenStruct.new({amount: 3,
                                        description: "Pre-autorización de tarjeta #{id}",
-                                       reference_id: self.id})
-    conekta_charge = charge!(preauthorization)
+                                       id: self.id})
 
-    payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
-    payment.pay!
+    charge!(preauthorization, user, object)
 
     self.preauthorized = true
     self.save!
@@ -77,5 +94,15 @@ class ConektaCard < ActiveRecord::Base
     label_plural 'tarjetas de Conekta'
     parent PaymentMethod
     navigation_icon 'icon-chevron-right'
+
+    configure :created_at do
+      sortable true
+    end
+
+
+    list do
+      sort_by :created_at
+
+    end
   end
 end

@@ -44,6 +44,16 @@ class User < ActiveRecord::Base
     PaymentProviderChoice.create!(payment_provider: payment_provider, default: true, user: self)
   end
 
+  def default_address
+    addresses.first
+  end
+
+  def create_charge_failed_ticket(user, amount, error)
+    Ticket.create_error(relevant_object: self,
+                        category: 'conekta_charge_failure',
+                        message: "No se pudo realizar cargo de #{amount} a la tarjeta de #{user.first_name} #{user.last_name}. #{error.message_to_purchaser}")
+  end
+
   def default_payment_provider
     payment_provider_choices.default.provider
   end
