@@ -84,8 +84,6 @@ class ConektaCard < ActiveRecord::Base
       
       payment
     rescue Conekta::Error => exception
-      Raygun.track_exception(exception)
-
       service.create_charge_failed_ticket(user, product.price, exception)
       nil
     end

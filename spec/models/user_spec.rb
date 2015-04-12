@@ -17,11 +17,15 @@ describe 'User' do
   let!(:other_conekta_card){ create(:conekta_card) }
 
   describe '#past_aliadas' do
+
     before do
       Timecop.freeze(starting_datetime + 1.hour)
+      clear_session
     end
+
     after do
       Timecop.return
+      clear_session
     end
 
     it 'returns the aliadas on the user services' do

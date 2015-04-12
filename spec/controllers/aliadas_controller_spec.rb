@@ -19,10 +19,12 @@ feature 'AliadasController' do
                          ) }
   before do
     Timecop.freeze(starting_datetime)
+    clear_session
   end
 
   after do
     Timecop.return
+    clear_session
   end
 
   describe '#finish' do

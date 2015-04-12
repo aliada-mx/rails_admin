@@ -12,8 +12,6 @@ class ServicesController < ApplicationController
   end
 
   rescue_from Conekta::Error do |exception|
-
-    Raygun.track_exception(exception)
     render json: { status: :error, code: :conekta_error, message: exception.message_to_purchaser}
   end
 
