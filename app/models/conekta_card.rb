@@ -3,15 +3,17 @@
 class ConektaCard < ActiveRecord::Base
 
   def self.create_for_user!(user, temporary_token, object)
-    conekta_customer = Conekta::Customer.find(user.conekta_customer_id)
+    ActiveRecord::Base.transaction requires_new: true do
+      conekta_customer = Conekta::Customer.find(user.conekta_customer_id)
 
-    api_card = conekta_customer.create_card(:token => temporary_token)
+      api_card = conekta_customer.create_card(:token => temporary_token)
 
-    conekta_card = ConektaCard.create!
-    conekta_card.update_from_api_card(eval(api_card.inspect))
-    conekta_card.preauthorize!(user, object)
+      conekta_card = ConektaCard.create!
+      conekta_card.update_from_api_card(eval(api_card.inspect))
+      conekta_card.preauthorize!(user, object)
 
-    user.create_payment_provider_choice(conekta_card).provider
+      user.create_payment_provider_choice(conekta_card).provider
+    end
   end
 
   def friendly_name
@@ -67,6 +69,7 @@ class ConektaCard < ActiveRecord::Base
 
       object.create_charge_failed_ticket(user, product.price, exception)
       nil
+      raise exception
     end
   end
 

@@ -212,17 +212,27 @@ class User < ActiveRecord::Base
 
       field :services
 
-      field :balance
 
-      field :default_payment_provider do
-        formatted_value do
-          if value
-            Mixins::RailsAdminModelsHelpers.rails_admin_edit_link(value)
+      group :informacion_de_pago do
+
+        field :balance
+
+        field :default_payment_provider do
+          formatted_value do
+            if value
+              Mixins::RailsAdminModelsHelpers.rails_admin_edit_link(value)
+            end
           end
+
+          read_only true
         end
 
-        read_only true
+        field :conekta_customer_id do
+          read_only true
+        end
+
       end
+
 
       group :login_info do
         active false
