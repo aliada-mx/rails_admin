@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Aliada < User
   include AliadaSupport::DatetimeSupport
   include Mixins::RailsAdminModelsHelpers

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class PaymentProviderChoice < ActiveRecord::Base
   belongs_to :payment_provider, polymorphic: true
   belongs_to :user, inverse_of: :payment_provider_choices

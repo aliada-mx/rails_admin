@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 feature 'AliadasAvailabilityController' do
   include TestingSupport::SchedulesHelper
   
@@ -24,6 +25,7 @@ feature 'AliadasAvailabilityController' do
       Timecop.freeze(starting_datetime)
 
       @available_date = (starting_datetime + 1.day).strftime('%Y-%m-%d')
+      clear_session
     end
 
     after do

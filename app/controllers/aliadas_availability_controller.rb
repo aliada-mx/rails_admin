@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AliadasAvailabilityController < ApplicationController
   include AliadaSupport::DatetimeSupport
   before_filter :set_user

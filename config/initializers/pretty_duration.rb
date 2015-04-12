@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Integer
   def pretty_duration
       parse_string = 

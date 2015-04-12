@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AliadasController < ApplicationController
   
   def confirm
@@ -14,7 +15,7 @@ class AliadasController < ApplicationController
     @service_to_finish = Service.where(id: params[:service], 
                                        aliada_id: @aliada.id).first
     if @service_to_finish.present?
-      @service_to_finish.aliada_reported_begin_time =  ActiveSupport::TimeZone["Mexico City"].parse("#{params[:begin_hour]}:#{params[:begin_min]}")
+      @service_to_finish.aliada_reported_begin_time = ActiveSupport::TimeZone["Mexico City"].parse("#{params[:begin_hour]}:#{params[:begin_min]}")
       @service_to_finish.aliada_reported_end_time = ActiveSupport::TimeZone["Mexico City"].parse("#{params[:end_hour]}:#{params[:end_min]}")
       @service_to_finish.finish
       #@service_to_finish.charge!

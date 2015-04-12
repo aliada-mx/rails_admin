@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 describe 'AvailabilityForCalendar' do
   include TestingSupport::SchedulesHelper
   include AliadaSupport::DatetimeSupport

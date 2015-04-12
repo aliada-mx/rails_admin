@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AvailabilityForCalendar
   include Mixins::AvailabilityFindersMixin
   include AliadaSupport::DatetimeSupport

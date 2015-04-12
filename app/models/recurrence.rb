@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Recurrence < ActiveRecord::Base
   include AliadaSupport::DatetimeSupport
 

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreditsCharger
   attr_reader :payment
   attr_reader :amount

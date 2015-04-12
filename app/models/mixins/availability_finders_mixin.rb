@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Mixins
   # Commonly used methods in our availability finding classes
   module AvailabilityFindersMixin

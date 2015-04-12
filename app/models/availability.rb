@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # Represents a series of unique schedule intervals available by a single or many aliadas
 class Availability
   extend Forwardable

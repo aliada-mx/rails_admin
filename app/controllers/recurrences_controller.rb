@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class RecurrencesController < ApplicationController
   layout 'one_column', only: :show
 

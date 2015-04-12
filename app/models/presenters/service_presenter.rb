@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Presenters
   module ServicePresenter
     include ActionView::Helpers::NumberHelper

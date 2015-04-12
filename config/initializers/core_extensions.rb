@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # config/initializers/core_extensions.rb
 class ActiveRecord::Base
 

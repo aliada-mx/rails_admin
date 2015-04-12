@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateBannedAliadaUsers < ActiveRecord::Migration
   def change
     create_table :banned_aliada_users do |t|

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 feature 'Change address map latitude' do
   include TestingSupport::ServiceControllerHelper
   include TestingSupport::CapybaraHelpers

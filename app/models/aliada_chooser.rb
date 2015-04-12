@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AliadaChooser
   attr_reader :aliadas_availability, :aliadas
   # Encasulates the aliada choosing algorithm

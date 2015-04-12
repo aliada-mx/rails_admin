@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 describe 'Availability' do
   include TestingSupport::SchedulesHelper
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 15:00:00 UTC') } # 4 pm on Mexico City TZ

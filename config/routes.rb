@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 Rails.application.routes.draw do
   get 'aliadadmin', to: redirect('aliadadmin/ticket')
   mount RailsAdmin::Engine => 'aliadadmin', as: 'rails_admin'
@@ -50,17 +51,17 @@ Rails.application.routes.draw do
 
     post 'conekta_card/create', to: 'conekta_cards#create', as: :create_conekta_card
 
+    resources :conekta_cards, only: [ :show, :update ]
   end
 
   post 'aliadas-availability', to: 'aliadas_availability#for_calendar', as: :aliadas_availability
-
 
   devise_scope :aliadas do
     get 'aliadas/servicios/:token', to: 'aliadas#services', as: :aliadas_services
     post 'aliadas/servicios/finish/:token', to: 'aliadas#finish', as: :finish_service
     post 'aliadas/servicios/confirm/:token', to: 'aliadas#confirm', as: :confirm_service
   end
-
+  
   get '#clear_session', to: 'user#clear_session', as: 'clear_session'
 
   resources :schedules

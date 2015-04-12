@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreatePostalCodeZones < ActiveRecord::Migration
   def change
     create_table :postal_code_zones do |t|

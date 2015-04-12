@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 describe 'Recurrence' do
   context 'in utc' do
   

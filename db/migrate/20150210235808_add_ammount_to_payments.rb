@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddAmmountToPayments < ActiveRecord::Migration
   def change
     add_column :payments, :amount, :decimal, precision: 8, scale: 4

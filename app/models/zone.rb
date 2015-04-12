@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Zone < ActiveRecord::Base
   has_many :aliada_zones
   has_many :aliadas, through: :aliada_zones

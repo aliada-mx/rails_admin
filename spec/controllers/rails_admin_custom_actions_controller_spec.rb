@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # -*- coding: utf-8 -*-
 feature 'RailsAdminCustomActionController' do
   let!(:admin){ create(:admin) }
@@ -10,6 +11,7 @@ feature 'RailsAdminCustomActionController' do
         value: '4',
       }
       @update_object_path = Rails.application.routes.url_helpers.update_object_attribute_path('Service', service.id)
+      clear_session
     end
     
     after do

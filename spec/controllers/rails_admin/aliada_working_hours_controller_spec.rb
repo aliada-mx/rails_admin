@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 feature 'AliadaWorkingHourController' do
   include TestingSupport::SchedulesHelper
   

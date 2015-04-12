@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 describe 'ConektaCard' do
   include TestingSupport::SharedExpectations::ConektaCardExpectations
 

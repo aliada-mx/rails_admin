@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Schedule < ActiveRecord::Base
   include Mixins::RailsAdminModelsHelpers
   include AliadaSupport::DatetimeSupport

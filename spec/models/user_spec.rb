@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 describe 'User' do
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 16:00:00') }
   let!(:user){ create(:user) }

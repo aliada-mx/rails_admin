@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Document < ActiveRecord::Base
   belongs_to :aliada, inverse_of: :documents, foreign_key: :user_id
 

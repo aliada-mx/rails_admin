@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 describe 'AliadaChooser' do
   include TestingSupport::SchedulesHelper
 

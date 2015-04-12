@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module TestingSupport
   module SchedulesHelper
     include AliadaSupport::DatetimeSupport

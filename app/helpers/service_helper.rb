@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module ServiceHelper
   # Tries to find one of the user addreses
   # matching the postal code or new address

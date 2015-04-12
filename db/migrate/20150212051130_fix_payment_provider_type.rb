@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class FixPaymentProviderType < ActiveRecord::Migration
   def change
     remove_column :payment_provider_choices, :payment_provider_type, :integer

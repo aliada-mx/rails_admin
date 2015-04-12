@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module TestingSupport
   module DriverHelpers
     def with_rack_test_driver

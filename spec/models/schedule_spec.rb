@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 describe 'Schedule' do
   starting_datetime = Time.zone.parse('01 Jan 2015 13:00:00')
 

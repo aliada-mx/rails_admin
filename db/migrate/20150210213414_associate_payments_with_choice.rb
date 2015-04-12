@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AssociatePaymentsWithChoice < ActiveRecord::Migration
   def change
     remove_column :payments, :user_id, :integer

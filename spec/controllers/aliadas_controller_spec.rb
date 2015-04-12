@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 feature 'AliadasController' do
   
   let!(:conekta_card){ create(:conekta_card) }
@@ -30,8 +31,10 @@ feature 'AliadasController' do
   describe '#finish' do
     it 'saves the billable hours calculated with reported hours' do
       params = {
-        begin_time: starting_datetime,
-        end_time: starting_datetime + 3.hours,
+        begin_hour: starting_datetime.hour,
+        begin_min: 0,
+        end_hour: ( starting_datetime + 3.hours ).hour,
+        end_min: 0,
         service: service.id,
       }
 

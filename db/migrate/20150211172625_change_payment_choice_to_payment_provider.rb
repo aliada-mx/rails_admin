@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ChangePaymentChoiceToPaymentProvider < ActiveRecord::Migration
   def change
     rename_column :payment_choices, :payment_method_type, :payment_provider_type 

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 feature 'ScoresController' do
   include TestingSupport::SchedulesHelper
   

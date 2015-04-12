@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateJoinTablePaymentMethodUser < ActiveRecord::Migration
   def change
     create_join_table :PaymentMethods, :Users, table_name: :payment_choices do |t|

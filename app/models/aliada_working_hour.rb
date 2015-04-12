@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AliadaWorkingHour < Recurrence
   include AliadaSupport::DatetimeSupport
 

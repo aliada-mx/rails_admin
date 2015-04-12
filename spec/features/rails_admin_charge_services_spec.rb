@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 feature 'Charge many services in the admin' do
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
   let(:admin){ create(:admin) }

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateAliadaZones < ActiveRecord::Migration
   def change
     create_table :aliada_zones do |t|
