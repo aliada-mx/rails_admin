@@ -100,7 +100,7 @@ class ConektaCard < ActiveRecord::Base
       payment
     rescue Conekta::Error => exception
       service.create_charge_failed_ticket(user, product.price, exception)
-      Raise exception
+      raise exception
     end
   end
 
