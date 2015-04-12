@@ -168,6 +168,10 @@ class Recurrence < ActiveRecord::Base
     wdays_until_horizon(wday, starting_from: next_day_of_recurrence(starting_after_datetime))
   end
 
+  def wday_hour
+    "#{wday} #{hour}"
+  end
+
   rails_admin do
     label_plural 'recurrencias'
     navigation_label 'Operación'

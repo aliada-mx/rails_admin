@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-# -*- coding: utf-8 -*-
 class Service < ActiveRecord::Base
   include Presenters::ServicePresenter
   include AliadaSupport::DatetimeSupport
