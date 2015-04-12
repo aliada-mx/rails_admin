@@ -180,4 +180,3 @@ aliada.dialogs.succesful_card_change = function(next_path) {
     content: succesful_card_change_template({}),
   });
 };
-

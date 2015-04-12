@@ -19,7 +19,7 @@ class ConektaCard < ActiveRecord::Base
   end
 
   def placeholder_for_form
-    self.exp_year = "20#{ exp_year }" if exp_year.present?
+    self.exp_month = exp_month.to_s.rjust(2, '0') if exp_month.present?
 
     self.last4 = "XXXX XXXX XXXX #{ last4 }" if last4.present?
 

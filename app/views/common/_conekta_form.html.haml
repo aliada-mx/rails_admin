@@ -14,7 +14,7 @@
         %tr
           %td
             %span.expiration-date-field
-              = select_tag nil, options_for_select([*1..12], card_default.exp_month || 1), data: {'conekta' => 'card[exp_month]'}, disabled: read_only
+              = select_tag nil, options_for_select([*1..12].map{|n| n.to_s.rjust(2, '0') }, card_default.exp_month || 1), data: {'conekta' => 'card[exp_month]'}, disabled: read_only
               %span /
               = select_tag nil, options_for_select([*2015..2030], card_default.exp_year || 2015), data: {'conekta' => 'card[exp_year]'}, id: 'conekta_card_exp_year', disabled: read_only
             %p VENCIMIENTO (MM/AA)
