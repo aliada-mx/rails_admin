@@ -54,6 +54,9 @@ Rails.application.routes.draw do
     resources :conekta_cards, only: [ :show, :update ]
   end
 
+  # Convenience shortcut
+  get 'mi-cuenta', to: 'users#user_account', as: :user_account_shortcut
+
   post 'aliadas-availability', to: 'aliadas_availability#for_calendar', as: :aliadas_availability
 
   devise_scope :aliadas do
