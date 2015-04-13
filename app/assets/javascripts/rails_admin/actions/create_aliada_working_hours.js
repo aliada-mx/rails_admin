@@ -59,7 +59,7 @@ $(function(){
         new_recurrences: newRecurrences
       }})
     }).done(function(response){
-      redirect_to(response.url);
+      location.reload(true)
     }).fail(function(response){
       console.log(response);
       alert("Operation failed.");
