@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 
@@ -27,6 +28,7 @@ VCR.configure do |config|
   end
 end
 
+
 RSpec.configure do |config|
 
   # Authentication helpers
@@ -45,10 +47,25 @@ RSpec.configure do |config|
   config.include TestingSupport::DriverHelpers
 
   config.before(:suite) do
+    # Clean database
     DatabaseCleaner.clean_with(:truncation)
+
+    # Use faster transaction strategy
+    DatabaseCleaner.strategy = :transaction
+
+  end
+
+  config.before(:each) do
+    # Track transactions
+    DatabaseCleaner.start
   end
 
   config.after(:each) do
-    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.clean
   end
+
+  config.after(:suite) do
+    DatabaseCleaner.clean
+  end
+
 end

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module AliadaSupport
   module RedirectAfterLogin
     def after_sign_in_path_for(resource)

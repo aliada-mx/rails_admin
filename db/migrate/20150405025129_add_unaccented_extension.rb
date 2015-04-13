@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddUnaccentedExtension < ActiveRecord::Migration
   def up
     execute "create extension unaccent;"

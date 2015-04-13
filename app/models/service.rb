@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- encoding : utf-8 -*-
 class Service < ActiveRecord::Base
   include Presenters::ServicePresenter
   include AliadaSupport::DatetimeSupport
@@ -295,8 +295,11 @@ class Service < ActiveRecord::Base
   end
 
   def in_less_than_24_hours
-    if datetime
-      in_24_hours = Time.zone.now + 24.hours
+    # While creating a service there is no datetime 
+    # and rails admin blows up so we must check
+    now = Time.zone.now
+    if datetime && datetime > now
+      in_24_hours = now + 24.hours
 
       datetime < in_24_hours
     else
@@ -403,7 +406,7 @@ class Service < ActiveRecord::Base
 
       user.send_confirmation_email(service)
       return service
-    end
+    end 
   end
 
   def self.create_initial!(service_params)
@@ -441,6 +444,15 @@ class Service < ActiveRecord::Base
     recurrence.services.not_canceled.ordered_by_datetime.where('datetime > ?', Time.zone.now).first
   end
 
+  def not_canceled?
+    self.status != 'canceled'
+  end
+
+  def user_modified_booking(service_params)
+    datetime != service_params[:datetime] ||
+    estimated_hours != BigDecimal.new(service_params[:estimated_hours]) ||
+    aliada_id != service_params[:aliada_id].to_i
+  end
 
   # We can't use the name 'update' because thats a builtin method
   def update_existing!(service_params)
@@ -455,17 +467,43 @@ class Service < ActiveRecord::Base
 
       if self.in_the_past?
         service_to_edit = next_service
+        needs_rescheduling = service_to_edit.user_modified_booking(service_params)
       else
         service_to_edit = self
       end
+        needs_rescheduling = self.user_modified_booking(service_params)
       service_to_edit.attributes = service_params
 
       service_to_edit.ensure_not_downgrading!
       service_to_edit.set_hours_before_after_service
       ensure_updated_recurrence!
 
-      reschedule!(chosen_aliada_id, service_to_edit) if service_to_edit.needs_rescheduling?
+      if needs_rescheduling
+        reschedule!(chosen_aliada_id, service_to_edit) 
+      elsif recurrent?
+        update_instructions(service_params)
+      end
+
       service_to_edit.save!
+    end
+  end
+
+  def self.instructions_attributes
+    [ :entrance_instructions,          :rooms_hours,            :attention_instructions,
+      :cleaning_supplies_instructions, :equipment_instructions, :garbage_instructions, :special_instructions ]
+  end
+
+  def update_instructions(service_params)
+    recurrence.services.each do |service|
+      service_params.each do |key,value|
+
+        instructions_attributes = Service.instructions_attributes.map(&:to_s)
+
+        if instructions_attributes.include? key
+          service[key] = value
+          service.save!
+        end
+      end
     end
   end
 
@@ -487,13 +525,6 @@ class Service < ActiveRecord::Base
         charge_cancelation_fee!
       end
     end
-  end
-
-  def needs_rescheduling?
-    return estimated_hours_changed? ||
-           datetime_changed? ||
-           service_type_id_changed? ||
-           aliada_id_changed?
   end
 
   # We don't want the users to go from a recurrent to a one time
@@ -664,15 +695,13 @@ class Service < ActiveRecord::Base
 
       field :address_map_link
 
-      field :aliada_link
-
       field :rails_admin_billable_hours_widget do
         virtual?
         formatted_value do
           bindings[:view].render partial: 'rails_admin/main/rails_admin_billable_hours_widget', locals: {field: self, 
-                                                                                        user: bindings[:current_user],
-                                                                                        form: bindings[:form],
-                                                                                        service: bindings[:object]}
+                                                                                                         user: bindings[:current_user],
+                                                                                                         form: bindings[:form],
+                                                                                                         service: bindings[:object]}
           
         end
       end

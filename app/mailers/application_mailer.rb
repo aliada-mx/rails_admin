@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ApplicationMailer < ActionMailer::Base
   default :from => "info@aliada.mx"
 

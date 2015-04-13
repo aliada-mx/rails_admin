@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 feature 'ApplicationController' do
   include TestingSupport::ServiceControllerHelper
   starting_datetime = Time.zone.now.change({hour: 13})

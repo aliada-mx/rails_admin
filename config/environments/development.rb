@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 Rails.application.configure do
 
   ENV["MYSQL_HOST"] = "aliadaweb.cvgrmul6eilx.us-west-2.rds.amazonaws.com"

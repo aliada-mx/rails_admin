@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Ability
   include CanCan::Ability
 
@@ -20,6 +21,8 @@ class Ability
             else
               false
             end
+          elsif action == :user_account
+            true if current_user
           end
         elsif subject_class == Score
           if action == :score_service
@@ -59,9 +62,16 @@ class Ability
           else
             false
           end
+        elsif subject_class == ConektaCard
+          if current_user.admin?
+            true
+          # User controller abilities
+          elsif params.include? :user_id
+            current_user.id == params[:user_id].to_i
+          else
+            false
+          end
         end
-
-
 
       end
     end

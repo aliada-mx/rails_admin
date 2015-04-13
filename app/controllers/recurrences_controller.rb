@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class RecurrencesController < ApplicationController
   layout 'one_column', only: :show
 
@@ -11,7 +12,7 @@ class RecurrencesController < ApplicationController
     @recurrence = Recurrence.find(params[:recurrence_id])
     @base_service = @recurrence.base_service
     @services = @recurrence.services.ordered_by_datetime.in_the_future.select do |service| 
-      service.one_timer_from_recurrent? && !service.canceled?
+      ( service.one_timer_from_recurrent? || service.recurrent? ) && !service.canceled?
     end
   end
 end

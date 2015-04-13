@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 feature 'AliadasAvailabilityController' do
   include TestingSupport::SchedulesHelper
   
@@ -17,12 +18,14 @@ feature 'AliadasAvailabilityController' do
 
   describe 'for_calendar' do
     before do
+      clear_session
       create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada, zones: [zone]})
       create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada_2, zones: [zone]})
 
       Timecop.freeze(starting_datetime)
 
       @available_date = (starting_datetime + 1.day).strftime('%Y-%m-%d')
+      clear_session
     end
 
     after do

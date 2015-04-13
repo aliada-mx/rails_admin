@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AliadaWorkingHour < Recurrence
   include AliadaSupport::DatetimeSupport
 
@@ -7,14 +8,14 @@ class AliadaWorkingHour < Recurrence
 
     activated_recurrences.each do |recurrence|
       awh = AliadaWorkingHour.find_by(aliada_id: aliada_id, hour: recurrence[:hour], weekday: recurrence[:weekday])
-      awh.activate!
+      awh.activate
       # mark future schedules of that weekday and hour as available
       awh.schedules.in_the_future.busy.map(&:enable)
     end
 
     disabled_recurrences.each do |recurrence|
       awh = AliadaWorkingHour.find_by(aliada_id: aliada_id, hour: recurrence[:hour], weekday: recurrence[:weekday])
-      awh.deactivate!
+      awh.deactivate
       # mark future schedules of that weekday and hour as busy 
       awh.schedules.in_the_future.busy_candidate.map(&:get_busy) 
     end

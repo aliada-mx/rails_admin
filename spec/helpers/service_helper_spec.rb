@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 RSpec.describe ServiceHelper, :type => :helper do
   describe 'suggest address' do
     let!(:user) { create(:user) }

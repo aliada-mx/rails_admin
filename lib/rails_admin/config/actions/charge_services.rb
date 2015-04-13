@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'rails_admin/config/actions'
 require 'rails_admin/config/actions/base'
 

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class IncompleteService < ActiveRecord::Base
   belongs_to :service
   belongs_to :service_type

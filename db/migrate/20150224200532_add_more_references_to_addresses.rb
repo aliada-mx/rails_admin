@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddMoreReferencesToAddresses < ActiveRecord::Migration
   def change
     add_column :addresses, :map_zoom, :integer

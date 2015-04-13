@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class User < ActiveRecord::Base
   #Required to enable token authentication
   acts_as_token_authenticatable
@@ -108,6 +109,12 @@ class User < ActiveRecord::Base
     addresses.first
   end
 
+  def create_charge_failed_ticket(user, amount, error)
+    Ticket.create_error(relevant_object: self,
+                        category: 'conekta_charge_failure',
+                        message: "No se pudo realizar cargo de #{amount} a la tarjeta de #{user.first_name} #{user.last_name}. #{error.message_to_purchaser}")
+  end
+
   def default_payment_provider
     payment_provider_choices.default.provider
   end
@@ -177,6 +184,7 @@ class User < ActiveRecord::Base
     label_plural 'usuarios'
 
     edit do
+
       field :user_next_services_path do
         read_only true
 
@@ -187,7 +195,7 @@ class User < ActiveRecord::Base
           view.link_to(user.id, value, target: '_blank')
         end
       end
-      field :role
+
       field :postal_code_number do
         read_only true
       end
@@ -204,7 +212,27 @@ class User < ActiveRecord::Base
 
       field :services
 
-      field :balance
+
+      group :informacion_de_pago do
+
+        field :balance
+
+        field :default_payment_provider do
+          formatted_value do
+            if value
+              Mixins::RailsAdminModelsHelpers.rails_admin_edit_link(value)
+            end
+          end
+
+          read_only true
+        end
+
+        field :conekta_customer_id do
+          read_only true
+        end
+
+      end
+
 
       group :login_info do
         active false
@@ -216,8 +244,6 @@ class User < ActiveRecord::Base
         field :remember_created_at
         field :reset_password_sent_at
       end
-
-      exclude_fields :payment_provider_choices
     end
 
     list do
@@ -264,6 +290,10 @@ class User < ActiveRecord::Base
 
       field :created_at
       field :postal_code_number
+    end
+
+    show do
+      exclude_fields :payment_provider_choices
     end
   end
 end

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateExtraServices < ActiveRecord::Migration
   def change
     create_table :extra_services do |t|

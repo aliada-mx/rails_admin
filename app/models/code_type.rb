@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CodeType < ActiveRecord::Base
   NAMES = [
     ['personal', 'Personal'],

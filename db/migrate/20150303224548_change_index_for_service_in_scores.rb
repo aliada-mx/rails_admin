@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ChangeIndexForServiceInScores < ActiveRecord::Migration
   def change
     remove_index "scores", name: "index_scores_on_service_id"

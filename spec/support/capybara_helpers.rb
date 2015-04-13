@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module TestingSupport
   module CapybaraHelpers
     def fill_hidden_input(element_id, with: '') 

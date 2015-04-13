@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Address < ActiveRecord::Base
   include Presenters::AddressPresenter
   attr_accessor :postal_code_number

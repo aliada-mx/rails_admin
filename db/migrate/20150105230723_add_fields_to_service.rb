@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddFieldsToService < ActiveRecord::Migration
   def change
     add_column :services, :hours, :decimal, precision: 10, scale: 3

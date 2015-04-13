@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module AliadaExceptions
 
   class AvailabilityNotFound < StandardError

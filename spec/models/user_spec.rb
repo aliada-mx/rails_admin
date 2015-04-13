@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 describe 'User' do
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 16:00:00') }
   let!(:user){ create(:user) }
@@ -17,11 +18,15 @@ describe 'User' do
   let!(:other_conekta_card){ create(:conekta_card) }
 
   describe '#past_aliadas' do
+
     before do
       Timecop.freeze(starting_datetime + 1.hour)
+      clear_session
     end
+
     after do
       Timecop.return
+      clear_session
     end
 
     it 'returns the aliadas on the user services' do

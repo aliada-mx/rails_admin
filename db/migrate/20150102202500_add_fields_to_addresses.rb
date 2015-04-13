@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddFieldsToAddresses < ActiveRecord::Migration
   def change
     add_column :addresses, :address,         :text

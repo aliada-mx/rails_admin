@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateCodeTypes < ActiveRecord::Migration
   def change
     create_table :code_types do |t|

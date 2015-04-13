@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddAliadaIds < ActiveRecord::Migration
   def change
     add_column :services, :aliada_id, :integer

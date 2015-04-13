@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class RemoveInstructionsFields < ActiveRecord::Migration
   def change
     remove_column :services, :aliada_entry_instruction, :text

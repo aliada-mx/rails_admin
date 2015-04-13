@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ServicesController < ApplicationController
   layout 'two_columns'
   load_and_authorize_resource
@@ -12,8 +13,6 @@ class ServicesController < ApplicationController
   end
 
   rescue_from Conekta::Error do |exception|
-
-    Raygun.track_exception(exception)
     render json: { status: :error, code: :conekta_error, message: exception.message_to_purchaser}
   end
 

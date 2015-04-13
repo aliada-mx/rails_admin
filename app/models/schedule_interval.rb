@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ScheduleInterval
   #Represents a contiguous block of schedules 
   include ActiveModel::Validations

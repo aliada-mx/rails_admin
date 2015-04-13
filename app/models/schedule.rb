@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Schedule < ActiveRecord::Base
   include Mixins::RailsAdminModelsHelpers
   include AliadaSupport::DatetimeSupport
@@ -67,7 +68,7 @@ class Schedule < ActiveRecord::Base
   }
 
   state_machine :status, :initial => 'available' do
-    transition ['available', 'busy', 'padding'] => 'booked', on: :book
+    transition ['available', 'busy'] => 'booked', on: :book
     transition ['booked', 'busy'] => 'available', on: :enable
     transition ['booked', 'padding'] => 'available', on: :enable_booked
     transition ['available', 'booked'] => 'busy', on: :get_busy
@@ -155,16 +156,14 @@ class Schedule < ActiveRecord::Base
       sort_by :datetime
 
       field :datetime
-      field :status
+      field :status do
+        queryable false
+      end
       field :user_link do
         virtual?
       end
 
-      field :aliada do
-        searchable [{users: :first_name }, {users: :last_name }, {users: :email}, {users: :phone}]
-        queryable true
-        filterable true
-      end
+      field :aliada 
 
       field :service
 

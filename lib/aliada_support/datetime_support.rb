@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module AliadaSupport
   module DatetimeSupport
     def horizon

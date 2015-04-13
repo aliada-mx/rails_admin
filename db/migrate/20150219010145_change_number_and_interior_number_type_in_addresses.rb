@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ChangeNumberAndInteriorNumberTypeInAddresses < ActiveRecord::Migration
   def change
     change_column :addresses, :number, :string

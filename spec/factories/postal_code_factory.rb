@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 FactoryGirl.define do
   factory :postal_code, class: PostalCode do
     sequence(:number){ |n| "#{n}#{n}#{n}#{n}#{n}" }

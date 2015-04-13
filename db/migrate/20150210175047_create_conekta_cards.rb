@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateConektaCards < ActiveRecord::Migration
   def change
     create_table :conekta_cards do |t|

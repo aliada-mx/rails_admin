@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Payment < ActiveRecord::Base
   belongs_to :user
   belongs_to :payment_provider, polymorphic: true

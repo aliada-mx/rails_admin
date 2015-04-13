@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ChangeBillableHoursAndAddEstimatedHoursToServices < ActiveRecord::Migration
   def change
     rename_column :services, :billable_hours, :billed_hours 

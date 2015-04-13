@@ -45,11 +45,11 @@ $(function() {
   aliada.ko = ko.mapping.fromJS(aliada.address_json);
 
   aliada.ko.references_added = ko.computed(function() {
-      return !_.isEmpty(aliada.ko.references_latitude()) && !_.isEmpty(aliada.ko.references_longitude())
-    }),
+    return !_.isEmpty(aliada.ko.references_latitude()) && !_.isEmpty(aliada.ko.references_longitude())
+  });
 
-    // Activates knockout.js
-    ko.applyBindings(aliada.ko);
+  // Activates knockout.js
+  ko.applyBindings(aliada.ko);
 
   // Set variables from the autocomplete
   aliada.geo_autocomplete($street_input[0], function(address) {
@@ -70,7 +70,7 @@ $(function() {
   var map_center_longitude = aliada.ko.map_center_longitude() || aliada.ko.longitude();
 
   var $map_container = $('#map-container');
-  var marker_map = aliada.initialize_map($map_container[0], map_center_latitude, map_center_longitude);
+  var marker_map = aliada.initialize_map($map_container[0], map_center_latitude, map_center_longitude, aliada.ko.map_zoom());
   var map = marker_map.map;
   var marker = marker_map.marker;
 
@@ -92,10 +92,12 @@ $(function() {
     aliada.ko.longitude(marker.position.lng());
   });
 
+  // Load saved reference
   if (aliada.ko.references_added()) {
     references_marker = add_references_marker(map, aliada.ko.references_latitude(), aliada.ko.references_longitude());
   }
 
+  // Add reference
   $('#add_references_marker_button').click(function() {
     // Delete previous
     if (references_marker !== null) {
@@ -105,6 +107,16 @@ $(function() {
     marker_center_longitude = aliada.ko.longitude() || map_center_longitude;
 
     references_marker = add_references_marker(map, marker_center_latitude, marker_center_longitude);
+  });
+
+  // Remove reference
+  $('#remove_references_marker_button').click(function() {
+    // Delete previous
+    if (references_marker !== null) {
+      references_marker.setMap(null);
+    }
+    aliada.ko.references_latitude(null);
+    aliada.ko.references_longitude(null);
   });
 
   // Select on click

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module TestingSupport
   module ServiceControllerHelper
     def fill_new_service_form(service_type, starting_datetime, extra, zone)

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # Register actions
 RailsAdmin::Config::Actions.register(:create_aliada_working_hours, RailsAdmin::Config::Actions::CreateAliadaWorkingHours)
 

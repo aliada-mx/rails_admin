@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ServiceType < ActiveRecord::Base
   NAMES = [
     ['Recurrente','recurrent'],

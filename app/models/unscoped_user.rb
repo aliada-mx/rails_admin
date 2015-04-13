@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class UnscopedUser < User
   scope :with_name_phone_email, -> (query) do
     unaccented = I18n.transliterate(query)

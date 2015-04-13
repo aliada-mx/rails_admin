@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddPreauthorizedToConektaCards < ActiveRecord::Migration
   def change
     add_column :conekta_cards, :preauthorized, :boolean

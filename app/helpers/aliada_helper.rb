@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module AliadaHelper
    def begin_hours_range(service)
      range_begin = (service.tz_aware_datetime - (1).hour).to_i

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 feature 'Redirect after login' do
   let!(:user) { create(:user) }
 

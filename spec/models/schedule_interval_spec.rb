@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 describe 'ScheduleInterval' do
   let(:starting_datetime){ Time.zone.now.change({hour: 13})}
   let(:ending_datetime){ starting_datetime + 5.hour}

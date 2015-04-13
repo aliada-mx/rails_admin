@@ -1,4 +1,4 @@
-aliada.initialize_map = function(container, latitude, longitude){
+aliada.initialize_map = function(container, latitude, longitude, zoom){
   if (_.isUndefined(latitude)){
     var latitude = '19.4007'; // mexico_city_latitude 
   }
@@ -9,7 +9,7 @@ aliada.initialize_map = function(container, latitude, longitude){
   var center = new google.maps.LatLng(latitude, longitude);
 
   var myOptions = {
-      zoom: aliada.default_map_zoom || 16,
+      zoom: aliada.default_map_zoom || zoom || 16,
       center: center,
       mapTypeId: google.maps.MapTypeId.ROADMAP
   };

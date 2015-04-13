@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateJoinTableSchedulesZones < ActiveRecord::Migration
   
   def change

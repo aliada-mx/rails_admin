@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddConektaFieldsToConektaCards < ActiveRecord::Migration
   def change
     rename_column :conekta_cards, :exp_mont, :exp_month

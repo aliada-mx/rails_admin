@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 describe 'AliadaSupport::DatetimeSupport' do
   let(:object) { Object.new }
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 07:00:00') }

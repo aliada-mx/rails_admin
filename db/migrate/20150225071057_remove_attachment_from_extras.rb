@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class RemoveAttachmentFromExtras < ActiveRecord::Migration
   def change
     remove_column :extras, "attachment_file_name"

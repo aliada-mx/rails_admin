@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # State machine fix for rails 4
 # for more info see:
 # http://dev.mensfeld.pl/2014/07/state-machine-gem-and-rails-activemodel-4-1-nomethoderror-protected-method-around_validation-called-for-statemachine/

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 u.services.each do |service|
   service.schedules.each do |schedule|
     if schedule.tz_aware_datetime.hour == 17

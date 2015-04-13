@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ServiceMailer < ApplicationMailer
 include  ActionView::Helpers::DateHelper
 

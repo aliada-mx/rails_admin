@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddSpecialInstructionFieldsToServices < ActiveRecord::Migration
   def change
     add_column :services, :bring_cleaning_products, :boolean

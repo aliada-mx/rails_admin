@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddAmountAndNameToCodeAndRedeemerToCredits < ActiveRecord::Migration
   def change
     add_column :codes, :amount, :decimal, precision: 8, scale: 4

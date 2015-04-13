@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 describe 'Code' do
   let!(:user){ create(:user) }
   let!(:other_user){ create(:user) }

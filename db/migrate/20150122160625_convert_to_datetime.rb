@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ConvertToDatetime < ActiveRecord::Migration
   def change
     #remove_column :services, :date, :date

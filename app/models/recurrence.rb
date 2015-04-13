@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Recurrence < ActiveRecord::Base
   include AliadaSupport::DatetimeSupport
 
@@ -26,6 +27,8 @@ class Recurrence < ActiveRecord::Base
   has_many :schedules
 
   # Scopes
+
+  scope :ordered_by_created_at, -> { order(:created_at) }
   scope :active, -> { where(status: 'active') }
   scope :inactive, -> { where(status: 'inactive') }
 
@@ -165,6 +168,10 @@ class Recurrence < ActiveRecord::Base
   # Starting the next recurrence day how many days we'll provide service until the horizon
   def wdays_count_to_end_of_recurrency(starting_after_datetime)
     wdays_until_horizon(wday, starting_from: next_day_of_recurrence(starting_after_datetime))
+  end
+
+  def wday_hour
+    "#{wday} #{hour}"
   end
 
   rails_admin do

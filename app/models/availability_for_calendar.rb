@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AvailabilityForCalendar
   include Mixins::AvailabilityFindersMixin
   include AliadaSupport::DatetimeSupport
@@ -71,6 +72,9 @@ class AvailabilityForCalendar
 
     clear_not_enough_availabilities
     restore_service_schedules_original_state
+
+    @report.push({message: 'Not found any availability'}) if @aliadas_availability.empty?
+
     @aliadas_availability
   end
 

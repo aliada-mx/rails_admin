@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateIncompleteServices < ActiveRecord::Migration
   def change
     create_table :incomplete_services do |t|

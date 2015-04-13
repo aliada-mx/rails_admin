@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module WeekdayPatch
   # Modify the class including you
   def self.included(base)

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # -*- coding: utf-8 -*-
 feature 'UserController' do
   let!(:conekta_card){ create(:conekta_card)}

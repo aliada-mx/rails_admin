@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class MoveConketaCustomerIdToConektaCard < ActiveRecord::Migration
   def change
     remove_column :users, :conekta_customer_id, :string

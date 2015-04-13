@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class UsersController < ApplicationController
   layout 'one_column'
   load_and_authorize_resource
@@ -43,9 +44,14 @@ class UsersController < ApplicationController
     reset_session
   end
 
+  def user_account
+    redirect_to edit_users_path(current_user.id)
+  end
+
+
   private
     def set_user
-      @user = User.find(params[:user_id])
+      @user = User.find(params[:user_id]) if params[:user_id]
     end
 
     def user_params

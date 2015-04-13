@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ChangeReportedTimesToDatetime < ActiveRecord::Migration
   def up
     change_column :services, :aliada_reported_begin_time, "timestamp USING (datetime::date + aliada_reported_begin_time)"

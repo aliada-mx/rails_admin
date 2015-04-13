@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # Represents a series of unique schedule intervals available by a single or many aliadas
 class Availability
   extend Forwardable
@@ -237,6 +238,7 @@ class Availability
 
       dates_times[date].push({value: time, friendly_time: friendly_time, friendly_datetime: friendly_datetime }) 
       dates_times[date].uniq!
+      dates_times[date].sort_by!{ |date_time| date_time[:value] }
     end
 
     dates_times

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 FactoryGirl.define do
   factory :payment_method, class: PaymentMethod do
     name 'Tarjeta'

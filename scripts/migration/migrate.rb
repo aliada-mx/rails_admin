@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 #!/usr/bin/env ruby
 require_relative "../../config/environment"
 require 'mysql2' 
