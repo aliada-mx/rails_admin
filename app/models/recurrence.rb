@@ -27,6 +27,8 @@ class Recurrence < ActiveRecord::Base
   has_many :schedules
 
   # Scopes
+
+  scope :ordered_by_created_at, -> { order(:created_at) }
   scope :active, -> { where(status: 'active') }
   scope :inactive, -> { where(status: 'inactive') }
 
