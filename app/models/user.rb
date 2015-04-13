@@ -3,6 +3,8 @@ class User < ActiveRecord::Base
   #Required to enable token authentication
   acts_as_token_authenticatable
 
+  has_paper_trail
+
   include Presenters::UserPresenter
   include Mixins::RailsAdminModelsHelpers
   include UsersHelper
