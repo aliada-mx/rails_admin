@@ -19,5 +19,6 @@
 
 .cards{class: canceled_class}
   - @services.each_with_index do |service,index|
+    - service.service_type_id = 3
     = render partial: 'common/service_card', locals: { service: service }
 
