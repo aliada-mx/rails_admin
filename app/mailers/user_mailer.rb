@@ -16,7 +16,7 @@ class UserMailer < ApplicationMailer
     sendgrid_template_mail to: service.user.email, subject: 'Confirmación de tu servicio',
     substitutions:
       {'-user_full_name-' => [ service.user.full_name  ],
-      '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A %d')],
+      '-service_date-' => [(I18n.l service.tz_aware_datetime, format: '%A %d de %B')],
       '-service_time-' => [(I18n.l service.tz_aware_datetime, format: '%I %p')] ,
       '-service_address-' => [service.address.full_address],
       '-service_type_name-' => [service.service_type.display_name],
