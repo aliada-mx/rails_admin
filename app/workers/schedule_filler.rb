@@ -108,13 +108,19 @@ class ScheduleFiller
 
           error = "Aliada's future schedule was not found. Probably, the client's recurrence was not built considering the aliada's recurrence."
           Rails.logger.fatal error
-          raise error
+          Ticket.create_error(relevant_object: user_recurrence,
+                              category: 'schedule_filler_error',
+                              message: error)
+          
+
 
         elsif (schedules.count < user_recurrence.total_hours)
           
           error = "Aliada's schedules count #{schedules.count} didn't match number of user recurrence total hours #{user_recurrence.total_hours}"
           Rails.logger.fatal error
-          raise error
+          Ticket.create_error(relevant_object: user_recurrence,
+                              category: 'schedule_filler_error',
+                              message: error)
           
         end
         
