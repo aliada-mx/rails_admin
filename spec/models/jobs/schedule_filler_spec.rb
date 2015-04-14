@@ -64,7 +64,7 @@ describe 'Schedule Filler' do
       first_service.update_attribute(:created_at, first_service.created_at - 1.day)
       # Empty schedules before the job
       expect(Schedule.in_the_future.count).to be 0
-      ScheduleFiller.perform(false)
+      ScheduleFiller.perform
     end
 
     it 'creates schedules for aliada' do
@@ -93,7 +93,7 @@ describe 'Schedule Filler' do
       other_aliada = create(:aliada)
       # client's recurrence, built without aliada's recurrence
       other_client_recurrence = create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, aliada: other_aliada, user: user, total_hours: total_service_hours)
-      expect{ScheduleFiller.perform(false)}.to raise_error(RuntimeError)
+      expect{ScheduleFiller.perform}.to raise_error(RuntimeError)
     end
   
     it "shows error of client's recurrence without an aliada's recurrence" do
@@ -101,7 +101,7 @@ describe 'Schedule Filler' do
       # client's recurrence, built without aliada's recurrence
       other_client_recurrence = create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, aliada: other_aliada, user: user, total_hours: total_service_hours)
       service = create(:service, aliada: other_aliada, user: user, recurrence: other_client_recurrence, datetime: recurrence_service_datetime, special_instructions: "first service")
-      expect{ScheduleFiller.perform(false)}.to raise_error(RuntimeError)
+      expect{ScheduleFiller.perform}.to raise_error(RuntimeError)
     end
 
   end

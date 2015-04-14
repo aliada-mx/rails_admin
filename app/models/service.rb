@@ -10,7 +10,6 @@ class Service < ActiveRecord::Base
     ['Creado','created'],
     ['Aliada asignada', 'aliada_assigned'],
     ['Sin aliada', 'aliada_missing'],
-    ['En progreso..', 'in-progress'],
     ['Terminado', 'finished'],
     ['Pagado', 'paid'],
     ['Cancelado', 'canceled'],
@@ -72,7 +71,7 @@ class Service < ActiveRecord::Base
     transition 'created' => 'aliada_assigned', :on => :assign
     transition 'created' => 'aliada_missing', :on => :mark_as_missing
     transition ['finished', 'aliada_assigned' ] => 'paid', :on => :pay
-    transition ['created', 'aliada_assigned', 'in-progress'] => 'finished', :on => :finish
+    transition ['created', 'aliada_assigned'] => 'finished', :on => :finish
     transition ['created', 'aliada_assigned', 'finished', 'paid'] => 'canceled', :on => :cancel
 
     after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
@@ -636,6 +635,14 @@ class Service < ActiveRecord::Base
     end
   end
 
+  def schedules_count
+    schedules.count
+  end
+
+  def owed?
+    tickets.where(category: 'conekta_charge_failure').where('classification != ?', 'alert-success').present?
+  end
+
   attr_accessor :rails_admin_billable_hours_widget
   
   rails_admin do
@@ -710,6 +717,9 @@ class Service < ActiveRecord::Base
       field :aliada_reported_begin_time
       field :aliada_reported_end_time
       field :reported_hours
+      field :schedules_count
+      field :estimated_hours
+      field :recurrence
       field :created_at
 
       scopes ['mañana', :todos, :confirmados, :sin_confirmar, :con_horas_reportadas]

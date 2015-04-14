@@ -3,6 +3,8 @@ class User < ActiveRecord::Base
   #Required to enable token authentication
   acts_as_token_authenticatable
 
+  has_paper_trail
+
   include Presenters::UserPresenter
   include Mixins::RailsAdminModelsHelpers
   include UsersHelper
@@ -91,7 +93,7 @@ class User < ActiveRecord::Base
 
     payment = default_payment_provider.charge!(product, self, service)
 
-    if payment.nil?
+    if payment.nil? && !service.owed?
       register_debt(credits_payment.left_to_charge)
     end
     payment

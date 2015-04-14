@@ -29,6 +29,27 @@ namespace :db do
       end
     end
 
+    schedules_without_recurrence = []
+    schedules_fixed = []
+    Schedule.where('recurrence_id IS NULL').in_the_future.each do |schedule|
+      service = schedule.service
+
+      if service.nil?
+        schedules_without_recurrence.push(schedule)
+        next
+      end
+
+      if service.recurrence_id
+        schedule.recurrence_id = service.recurrence_id
+
+        schedule.save!
+        schedules_fixed.push schedule
+      end
+    end
+
+    puts "found #{schedules_without_recurrence.size} schedules_without_recurrence"
+    puts "fixed #{schedules_fixed.size} schedules"
+
     Recurrence.all.each do |recurrence|
       recurrence.services.each do |service|
         service.schedules.each do |schedule|

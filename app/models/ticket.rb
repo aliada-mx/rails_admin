@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-# -*- coding: utf-8 -*-
 class Ticket < ActiveRecord::Base
   CLASSIFICATIONS = {
     'alert-info' => 'Atención',
