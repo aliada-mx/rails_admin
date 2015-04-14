@@ -52,7 +52,18 @@ class Recurrence < ActiveRecord::Base
   end
 
   def next_service
-    services.ordered_by_datetime.where('datetime > ?', Time.zone.now).first
+    candidates = services.ordered_by_datetime.where('datetime > ?', Time.zone.now)
+
+    if candidates.size > 1
+      not_canceled = candidates.select { |service| service.not_canceled? }
+      if not_canceled
+        not_canceled.first
+      else
+        candidates.first
+      end
+    else
+      candidates.first
+    end
   end
 
   def ending_hour
