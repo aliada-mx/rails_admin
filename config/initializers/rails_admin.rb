@@ -28,6 +28,8 @@ RailsAdmin.config do |config|
   ## == PaperTrail ==
   config.audit_with :paper_trail, 'User', 'PaperTrail::Version' # PaperTrail >= 3.0.0
 
+  config.default_items_per_page = 100
+
   config.actions do
     dashboard                     # mandatory
     index                         # mandatory
@@ -50,9 +52,7 @@ RailsAdmin.config do |config|
     end
 
     modify_schedules_batch do
-      visible do
-        bindings[:abstract_model].model.to_s == 'Schedule'
-      end
+      visible true
     end
 
     charge_services do

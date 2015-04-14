@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 Rails.application.routes.draw do
-  get 'aliadadmin', to: redirect('aliadadmin/ticket')
   mount RailsAdmin::Engine => 'aliadadmin', as: 'rails_admin'
 
   scope :rails_admin do

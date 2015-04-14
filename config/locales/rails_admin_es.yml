@@ -238,7 +238,7 @@ es:
         breadcrumb: "%{object_label}"
       charge_services:
         title: "Cobrar servicio"
-        menu: "Cobrar servicios"
+        menu: "Cobrar servicio"
         link: "Cobrar servicio"
         bulk_link: "Cobrar servicios"
       show_in_app:
