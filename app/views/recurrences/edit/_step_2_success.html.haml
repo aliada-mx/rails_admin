@@ -1,0 +1,22 @@
+%section.step_2_success{data: {bind: 'visible: current_step() == 2'}, style: "display: 'none'"}
+  %h1#success-title
+    Instrucciones especiales
+  %p
+    Todos los campos son opcionales.
+  .special-instructions.fields
+    %p
+      %icon.icon-document-text
+      ¿Cómo entrará la aliada a tu casa?
+    %fieldset.radiobuttons.small
+      = label_tag :at_home do
+        = edit_recurrence_form.radio_button :entrance_instructions, 'true', id: :at_home
+        %span Estaré en casa
+      = label_tag :with_guard do
+        = edit_recurrence_form.radio_button :entrance_instructions, 'false', id: :with_guard
+        %span Dejaré las llaves con el guardia/portero
+    = edit_recurrence_form.text_area :garbage_instructions,           placeholder: '¿Dónde depositará la basura?', rows: 1
+    = edit_recurrence_form.text_area :cleaning_supplies_instructions, placeholder: '¿Dónde están los utensilios de limpieza?', rows: 1
+    = edit_recurrence_form.text_area :attention_instructions,         placeholder: 'Poner especial atención a:', rows: 1
+    = edit_recurrence_form.text_area :equipment_instructions,         placeholder: 'Usar un producto o equipo específico para limpiar:', rows: 1
+    = edit_recurrence_form.text_area :forbidden_instructions,         placeholder: 'No limpiar /No tocar:', rows: 1
+    = edit_recurrence_form.text_area :special_instructions,           placeholder: 'Otras instrucciones especiales:', rows: 1

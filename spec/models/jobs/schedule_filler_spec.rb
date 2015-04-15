@@ -14,7 +14,12 @@ describe 'Schedule Filler' do
   let!(:one_time_from_recurrent){ create(:service_type, name: 'one-time-from-recurrent') }
   
   # client's recurrence, built with aliada's recurrence
-  let!(:client_recurrence) { create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: 7, aliada: aliada, user: user, total_hours: total_service_hours, owner: 'user') }
+  let!(:client_recurrence) { create(:recurrence,
+                                    weekday: recurrence_service_datetime.weekday,
+                                    hour: 7,
+                                    aliada: aliada,
+                                    user: user,
+                                    total_hours: total_service_hours) }
 
   # services scheduled for client's schedule
   let!(:first_service){ create(:service, aliada: aliada, user: user, recurrence: client_recurrence, datetime: recurrence_service_datetime + 1.hour , special_instructions: "first service") }
@@ -24,7 +29,7 @@ describe 'Schedule Filler' do
     Timecop.freeze(starting_datetime)
     # Creating 1 hour aliada_working_hours
     (7..(7 + total_available_hours - 1)).each do |i|
-      AliadaWorkingHour.create(weekday: recurrence_service_datetime.weekday, hour: i, aliada: aliada, total_hours: 1, owner: 'aliada', periodicity: 7)
+      AliadaWorkingHour.create(weekday: recurrence_service_datetime.weekday, hour: i, aliada: aliada, total_hours: 1, periodicity: 7)
     end
   end
 

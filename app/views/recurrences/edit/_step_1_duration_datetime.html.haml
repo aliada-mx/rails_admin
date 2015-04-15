@@ -1,0 +1,39 @@
+%section.step_1_duration_datetime{data: {bind: 'visible: current_step() == 1'}}
+  .badge
+    Recurrente
+    =image_tag("recurrence-contrast.png", {:title => 'Servicio recurrente'})
+
+
+  %h1#service_duration
+    Modificar los servicios
+
+    %h3
+      = ensure_plural(@recurrence.weekday_in_spanish)
+      = @recurrence.friendly_time
+ 
+  %h4
+    %icon.calendar
+    Cambia el número de horas
+
+  = render partial: 'common/hours_selector', locals: {form: edit_recurrence_form}
+
+  = render partial: 'common/extras', locals: {form: edit_recurrence_form, collapsable: true}
+
+  %h4#choose-aliada
+    %icon.aliada
+    Elige tu aliada
+  = render partial: 'common/aliadas_selector', locals: {form: edit_recurrence_form}
+
+  %h4#choose-date
+    %icon.icon-calendar
+    Elige el día cuando cambiará la recurrencia
+  = render partial: 'common/calendar'
+
+  %h4
+    %icon.icon-clock
+    Selecciona la hora que más te convenga
+
+  = render partial: 'common/time_selector', locals: {form: edit_recurrence_form}
+
+  = edit_recurrence_form.hidden_field :date, data: {bind: 'value: date'}
+  = edit_recurrence_form.hidden_field :hour, data: {bind: 'value: time'}

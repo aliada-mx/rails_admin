@@ -1,4 +1,6 @@
-= form.select :rooms_hours, options_from_collection_for_select(Setting.hours_space_room.to_a, :hours, :text, @service.estimated_hours_without_extras), class: 'selectpicker'
+- @object = @service || @recurrence
+
+= form.select :rooms_hours, options_from_collection_for_select(Setting.hours_space_room.to_a, :hours, :text, @object.estimated_hours_without_extras), class: 'selectpicker'
 
 = form.hidden_field :estimated_hours, data: {bind: 'value: hours'}
 
@@ -14,7 +16,7 @@
 = append :javascript do
   = javascript_include_tag 'jquery.selectBoxIt'
   :javascript
-    $("#service_rooms_hours").selectBoxIt({
+    $("#service_rooms_hours, #recurrence_rooms_hours").selectBoxIt({
       // Trigger events on original dom element
       aggressiveChange: true,
       autoWidth: false

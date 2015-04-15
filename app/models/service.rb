@@ -3,6 +3,7 @@ class Service < ActiveRecord::Base
   include Presenters::ServicePresenter
   include AliadaSupport::DatetimeSupport
   include Mixins::RailsAdminModelsHelpers
+  include Mixins::ServiceRecurrenceMixin
 
   has_paper_trail
 
@@ -149,17 +150,6 @@ class Service < ActiveRecord::Base
     estimated_hours_with_extras * service_type.price_per_hour
   end
 
-  def extras_hours
-    extras.inject(0){ |hours,extra| hours += extra.hours || 0 }
-  end
-
-  def estimated_hours_without_extras
-    (estimated_hours || 0) - extras_hours
-  end
-
-  def estimated_hours_with_extras
-    (estimated_hours || 0) + extras_hours
-  end
 
   def in_the_past?
     self.datetime_was < Time.zone.now
@@ -488,8 +478,12 @@ class Service < ActiveRecord::Base
   end
 
   def self.instructions_attributes
-    [ :entrance_instructions,          :rooms_hours,            :attention_instructions,
-      :cleaning_supplies_instructions, :equipment_instructions, :garbage_instructions, :special_instructions ]
+    [ :entrance_instructions,
+      :rooms_hours,
+      :attention_instructions,
+      :cleaning_supplies_instructions,
+      :equipment_instructions,
+      :garbage_instructions, :special_instructions ]
   end
 
   def update_instructions(service_params)

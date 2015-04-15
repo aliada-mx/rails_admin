@@ -146,6 +146,15 @@ aliada.dialogs.confirm_recurrent_service_change = function() {
   })
 }
 
+aliada.dialogs.succesful_card_change = function(next_path) {
+  // Preload template
+  var succesful_card_change_template = _.template($('#succesful_card_change_template').html());
+
+  vex.open({
+    content: succesful_card_change_template({}),
+  });
+};
+
 aliada.dialogs.confirm_change_card = function() {
   var confirm_change_card = _.template($('#confirm_change_card_template').html());
 
@@ -171,12 +180,3 @@ aliada.dialogs.confirm_change_card = function() {
     });
   })
 }
-
-aliada.dialogs.succesful_card_change = function(next_path) {
-  // Preload template
-  var succesful_card_change_template = _.template($('#succesful_card_change_template').html());
-
-  vex.open({
-    content: succesful_card_change_template({}),
-  });
-};

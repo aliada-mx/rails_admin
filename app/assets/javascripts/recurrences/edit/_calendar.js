@@ -7,7 +7,7 @@ aliada.services.edit.initialize_calendar_times = function() {
 
     // Reload times
     aliada.ko.times(times || []);
-    aliada.ko.friendly_datetime(dateProperties.friendly_date);
+    aliada.ko.friendly_weekday_hour(dateProperties.friendly_date);
 
     // Reset the time
     aliada.ko.time.reset();
@@ -49,18 +49,17 @@ aliada.services.edit.initialize_calendar_times = function() {
     return new Promise(function(resolve, reject) {
       var availability_options = {
         hours: aliada.ko.hours(),
-        service_type_id: aliada.ko.service_type().id,
+        service_type_id: aliada.recurrence.service_type.id,
         postal_code_number: aliada.user.postal_code_number,
-        aliada_id: aliada.service.aliada_id,
+        aliada_id: aliada.recurrence.aliada_id,
         user_id: aliada.user.id,
-        service_id: aliada.service.id
       };
 
       // Prevent further user interaction to avoid double requests
       aliada.calendar.lock(calendar);
 
       // Reset our summary
-      aliada.ko.friendly_datetime.reset();
+      aliada.ko.friendly_weekday_hour.reset();
 
       // Get data from server
       aliada.calendar.get_dates_times(availability_options)
@@ -92,8 +91,8 @@ aliada.services.edit.initialize_calendar_times = function() {
 
   // Call local update_calendar on demand
   $(document).on('update-calendar', function() {
-    update_calendar()
     highlight('#choose-date');
+    update_calendar()
   })
 
   // Update calendar on page load
@@ -101,9 +100,9 @@ aliada.services.edit.initialize_calendar_times = function() {
     updateMonthYear();
     calendar.chooseDay(aliada.service.day);
 
-    aliada.ko.time(aliada.service.time);
-    aliada.ko.date(aliada.service.date);
-    aliada.ko.friendly_datetime(aliada.service.friendly_datetime);
+    aliada.ko.time(aliada.recurrence.time);
+    aliada.ko.date(aliada.recurrence.date);
+    aliada.ko.friendly_weekday_hour(aliada.recurrence.friendly_weekday_hour);
   });
 
   function updateMonthYear() {

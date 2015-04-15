@@ -6,7 +6,9 @@ class ConektaCard < ActiveRecord::Base
     ActiveRecord::Base.transaction requires_new: true do
       conekta_customer = Conekta::Customer.find(user.conekta_customer_id)
 
-      api_card = conekta_customer.create_card(:token => temporary_token)
+    conekta_card = ConektaCard.create!
+    conekta_card.update_from_api_card(eval(api_card.inspect))
+    conekta_card.preauthorize!(user, object)
 
       conekta_card = ConektaCard.create!
       conekta_card.update_from_api_card(eval(api_card.inspect))
@@ -21,7 +23,7 @@ class ConektaCard < ActiveRecord::Base
   end
 
   def placeholder_for_form
-    self.exp_month = exp_month.to_s.rjust(2, '0') if exp_month.present?
+    self.exp_year = "20#{ exp_year }" if exp_year.present?
 
     self.last4 = "XXXX XXXX XXXX #{ last4 }" if last4.present?
 
@@ -67,7 +69,7 @@ class ConektaCard < ActiveRecord::Base
     rescue Conekta::Error => exception
       Raygun.track_exception(exception)
 
-      object.create_charge_failed_ticket(user, product.price, exception)
+      object.create_charge_failed_ticket(user, product.amount, exception)
       nil
       raise exception
     end
@@ -90,7 +92,7 @@ class ConektaCard < ActiveRecord::Base
     conekta_charge
   end
 
-  def charge!(product, user, service)
+  def charge!(product, user, object)
     begin
       conekta_charge = charge_in_conekta!(product, user)
      
@@ -99,12 +101,12 @@ class ConektaCard < ActiveRecord::Base
       
       payment
     rescue Conekta::Error => exception
-      service.create_charge_failed_ticket(user, product.price, exception)
+      service.create_charge_failed_ticket(user, product.amount, exception)
       raise exception
     end
   end
 
-  def payment_possible?(service)
+  def payment_possible?
     preauthorized?
   end
 
@@ -118,7 +120,6 @@ class ConektaCard < ActiveRecord::Base
     preauthorization = OpenStruct.new({amount: 3,
                                        description: "Pre-autorización de tarjeta #{id}",
                                        id: self.id})
-
     charge!(preauthorization, user, object)
 
     self.preauthorized = true

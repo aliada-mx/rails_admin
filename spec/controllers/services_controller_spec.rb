@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-# -*- coding: utf-8 -*-
 feature 'ServiceController' do
   include TestingSupport::ServiceControllerHelper
   include TestingSupport::SchedulesHelper
@@ -132,7 +131,6 @@ feature 'ServiceController' do
         user = service.user
         
         expect(service.aliada).to be_present
-        expect(recurrence.owner).to eql 'user'
         expect(recurrence.hour).to eql service.datetime.hour
         expect(recurrence.weekday).to eql service.datetime.weekday
         expect(recurrence.aliada).to eql aliada
@@ -558,7 +556,6 @@ feature 'ServiceController' do
           recurrence = service.recurrence
 
           expect_to_have_a_complete_service(service)
-          expect(recurrence.owner).to eql 'user'
           expect(recurrence.hour).to eql service.datetime.hour
           expect(recurrence.weekday).to eql service.datetime.weekday
           expect(recurrence.aliada).to eql aliada
