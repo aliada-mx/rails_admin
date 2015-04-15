@@ -13,6 +13,8 @@ class Service < ActiveRecord::Base
     ['Terminado', 'finished'],
     ['Pagado', 'paid'],
     ['Cancelado', 'canceled'],
+    ['Cancelado a tiempo', 'canceled_in_time'],
+    ['Cancelado a destiempo', 'canceled_out_of_time']
   ]
 
   validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
@@ -73,8 +75,13 @@ class Service < ActiveRecord::Base
     transition 'created' => 'aliada_missing', :on => :mark_as_missing
     transition ['finished', 'aliada_assigned' ] => 'paid', :on => :pay
     transition ['created', 'aliada_assigned'] => 'finished', :on => :finish
-    transition ['created', 'aliada_assigned', 'finished', 'paid'] => 'canceled', :on => :cancel
-
+    
+    #It checks whether the cancelation is in time or not
+    event :cancel do
+      transition all - ['finished', 'paid'] => 'canceled_in_time', :unless => :in_less_than_24_hours
+      transition all - ['finished', 'paid'] => 'canceled_out_of_time'
+    end
+    
     after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
 
     after_transition on: :assign do |service, transition|
@@ -144,6 +151,10 @@ class Service < ActiveRecord::Base
     Ticket.create_error(relevant_object: self,
                         category: 'conekta_charge_failure',
                         message: "No se pudo realizar cargo de #{amount} a la tarjeta de #{user.first_name} #{user.last_name}. #{error.message_to_purchaser}")
+  end
+  
+  def canceled?
+  return (self.canceled_in_time?)||(self.canceled_out_of_time?)
   end
   
   def cost
@@ -333,7 +344,12 @@ class Service < ActiveRecord::Base
   end
 
   def amount_to_bill
-    if bill_by_billable_hours?
+    if self.canceled_in_time?
+      0
+    elsif self.canceled_out_of_time?
+      100
+      
+    elsif bill_by_billable_hours?
 
       amount_by_billable_hours.ceil
 
