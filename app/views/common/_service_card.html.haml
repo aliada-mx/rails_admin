@@ -67,4 +67,7 @@
           .hours #{ seconds_to_hours_minutes_in_spanish service.recurrence.next_service.estimated_hours_with_extras.hours }
         - else
           .hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours_with_extras.hours }
-        %span.cash $#{ ceil_and_strip_insignificat_zeros service.recurrence.next_service.cost } 
+        - if is_recurrent
+          %span.cash $#{ ceil_and_strip_insignificat_zeros service.recurrence.next_service.cost } 
+        - else
+          %span.cash $#{ ceil_and_strip_insignificat_zeros service.cost } 
