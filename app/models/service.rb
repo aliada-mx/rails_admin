@@ -31,6 +31,7 @@ class Service < ActiveRecord::Base
   has_many :extras, through: :extra_services
   has_many :schedules, ->{ order(:datetime ) }
   has_many :tickets, as: :relevant_object
+  has_many :payments, as: :payeable
   has_one :score
 
   # Scopes
