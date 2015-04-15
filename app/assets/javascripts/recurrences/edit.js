@@ -67,8 +67,8 @@ $(document).ready(function() {
   });
 
   // Update calendar on Aliadas change and update aliada_id
-  $('#service_aliada_id').on('change', function() {
-    aliada.service.aliada_id = $(this).find(':selected').val();
+  $('#recurrence_aliada_id').on('change', function() {
+    aliada.recurrence.aliada_id = $(this).find(':selected').val();
 
     update_calendar();
   });
