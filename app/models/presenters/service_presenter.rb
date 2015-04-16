@@ -22,7 +22,7 @@ module Presenters
     end
 
     def name
-      name = "#{I18n.l(datetime, format: :future)}"
+      name = "#{I18n.l(datetime, format: :future)}" if datetime
       name += ", #{address.name}" if address
     end
 
