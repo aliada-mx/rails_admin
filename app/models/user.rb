@@ -53,6 +53,10 @@ class User < ActiveRecord::Base
   def fill_full_name
     self.full_name = "#{first_name.strip} #{last_name.strip}" if first_name.present? && last_name.present?
   end
+
+  def zone
+    default_address.postal_code.zone
+  end
   
   def create_promotional_code code_type
     if self.role == "client"

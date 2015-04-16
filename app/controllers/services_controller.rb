@@ -6,28 +6,6 @@ class ServicesController < ApplicationController
 
   before_filter :set_user
 
-  rescue_from ActiveRecord::RecordInvalid do |invalid|
-
-    Raygun.track_exception(invalid)
-    render json: { status: :error, code: :invalid, message: invalid.message }
-  end
-
-  rescue_from Conekta::Error do |exception|
-    render json: { status: :error, code: :conekta_error, message: exception.message_to_purchaser}
-  end
-
-  rescue_from AliadaExceptions::AvailabilityNotFound do |exception|
-
-    Raygun.track_exception(exception, custom_data: exception)
-    render json: { status: :error, code: :availability_not_found, message: 'Lo sentimos no encontramos disponibilidad :('}
-  end
-
-  rescue_from AliadaExceptions::ServiceDowgradeImpossible do |exception|
-
-    Raygun.track_exception(exception)
-    render json: { status: :error, code: :downgrade_impossible, message: 'Lo sentimos no podemos cambiar a ese tipo de servicio :('}
-  end
-
   include ServiceHelper
 
   def initial
@@ -43,7 +21,7 @@ class ServicesController < ApplicationController
   end
 
   def create_initial
-    service = Service.create_initial!(service_params)
+    service = Service.create_initial!(initial_service_params)
 
     IncompleteService.mark_as_complete(incomplete_service_params,service)
 
@@ -77,7 +55,6 @@ class ServicesController < ApplicationController
     else
       @aliadas = @user.aliadas + [@any_aliada]
     end
-    @is_recurrent = @service.recurrent?
   end
 
   def update
@@ -152,51 +129,62 @@ class ServicesController < ApplicationController
                                        .merge(params[:incomplete_service])
   end
 
+  def permitted_service_params
+    [:zone_id,
+     :bathrooms,
+     :bedrooms,
+     :rooms_hours,
+     {extra_ids: []},
+     :estimated_hours,
+     :room_hours,
+     :special_instructions,
+     :service_type_id,
+     :date,
+     :time,
+     :payment_method_id,
+     :conekta_temporary_token,
+     :aliada_id,
+     :incomplete_service_id,
+     :entrance_instructions,
+     :garbage_instructions,
+     :cleaning_supplies_instructions,
+     :attention_instructions,
+     :equipment_instructions,
+     :forbidden_instructions,
+     :special_instructions]
+  end
+
   def service_params
-      params.require(:service).permit(:zone_id,
-                                      :bathrooms,
-                                      :bedrooms,
-                                      :rooms_hours,
-                                      {extra_ids: []},
-                                      :estimated_hours,
-                                      :room_hours,
-                                      :special_instructions,
-                                      :service_type_id,
-                                      :date,
-                                      :time,
-                                      :payment_method_id,
-                                      :conekta_temporary_token,
-                                      :aliada_id,
-                                      :incomplete_service_id,
-                                      :entrance_instructions,
-                                      :garbage_instructions,
-                                      :cleaning_supplies_instructions,
-                                      :attention_instructions,
-                                      :equipment_instructions,
-                                      :forbidden_instructions,
-                                      :special_instructions,
-                                      user: [
-                                        :first_name,
-                                        :last_name,
-                                        :email,
-                                        :phone,
-                                      ],
-                                      address: [
-                                        :street,
-                                        :interior_number,
-                                        :number,
-                                        :colony,
-                                        :between_streets,
-                                        :latitude,
-                                        :longitude,
-                                        :state,
-                                        :city,
-                                        :references,
-                                        :latitude,
-                                        :longitude,
-                                        :map_zoom,
-                                        :postal_code_number,
-                                      ]).merge({conekta_temporary_token: params[:conekta_temporary_token] })
+    params.require(:service).permit(*permitted_service_params)
+  end
+
+  def 
+
+  def initial_service_params
+    permitted = permitted_service_params + [user: [
+                                              :first_name,
+                                              :last_name,
+                                              :email,
+                                              :phone,
+                                            ],
+                                            address: [
+                                              :street,
+                                              :interior_number,
+                                              :number,
+                                              :colony,
+                                              :between_streets,
+                                              :latitude,
+                                              :longitude,
+                                              :state,
+                                              :city,
+                                              :references,
+                                              :latitude,
+                                              :longitude,
+                                              :map_zoom,
+                                              :postal_code_number,
+                                            ]]
+
+    params.require(:service).permit(*permitted).merge({conekta_temporary_token: params[:conekta_temporary_token] })
                                       
   end
 

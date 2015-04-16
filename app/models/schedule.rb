@@ -24,6 +24,7 @@ class Schedule < ActiveRecord::Base
   belongs_to :aliada, inverse_of: :schedules, foreign_key: :aliada_id
   belongs_to :service, inverse_of: :schedules
   belongs_to :recurrence
+  belongs_to :aliada_working_hour
   has_and_belongs_to_many :zones
 
   # Scopes
@@ -43,7 +44,7 @@ class Schedule < ActiveRecord::Base
   scope :for_booking, ->(zone, starting_datetime) { in_zone(zone).in_or_after_datetime(starting_datetime).ordered_by_aliada_datetime }
   scope :join_users_and_aliadas, -> { joins('INNER JOIN users ON users.id = schedules.user_id OR users.id = schedules.aliada_id') }
   scope :in_weekday, -> (wday) { where('extract(dow from datetime::timestamp) = ?', wday) }
-  scope :in_weekday, -> (hour) { where('extract(hour from datetime::timestamp) = ?', hour) }
+  scope :in_hour, -> (hour) { where('extract(hour from datetime::timestamp) = ?', hour) }
   scope :with_recurrence, -> { where('recurrence_id IS NOT NULL') }
   # scopes for rails admin
   scope :disponible, -> { available }
@@ -142,7 +143,7 @@ class Schedule < ActiveRecord::Base
     end
 
     edit do
-      exclude_fields :versions
+      exclude_fields :versions, :aliada_working_hour
     end
 
     list do

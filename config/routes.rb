@@ -47,7 +47,7 @@ Rails.application.routes.draw do
     post 'servicio/:service_id', to: 'services#update', as: :update_service_post, service_id: /\d+/
 
     get 'recurrencias/:recurrence_id', to: 'recurrences#edit', as: :edit_recurrence, recurrence_id: /\d+/
-    post 'recurrencias/:recurrence_id', to: 'recurrences#edit', as: :update_recurrence, recurrence_id: /\d+/
+    post 'recurrencias/:recurrence_id', to: 'recurrences#update', as: :update_recurrence, recurrence_id: /\d+/
 
     post 'conekta_card/create', to: 'conekta_cards#create', as: :create_conekta_card
 

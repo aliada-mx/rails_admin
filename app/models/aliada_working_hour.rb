@@ -69,16 +69,12 @@ class AliadaWorkingHour < ActiveRecord::Base
 
     recurrence_days.times do |i|
       schedule = Schedule.find_or_initialize_by(aliada_id: self.aliada_id, datetime: starting_datetime)
-      if schedule.new_record?
+      if schedule.new_record? && self.aliada_id
         schedule.zones = self.aliada.zones
-        schedule.recurrence_id = self.id
+        schedule.aliada_working_hour_id = self.id
         schedule.save!
       else
-        if schedule.recurrence_id and schedule.recurrence_id != self.id
-          raise "Schedule #{schedule.id} with current recurrence ID #{schedule.recurrence_id} trying to be updated to ID #{self.id}"
-        else
-          schedule.update_attribute(:recurrence_id, self.id)
-        end
+        schedule.update_attribute(:aliada_working_hour_id, self.id)
       end
       starting_datetime += self.periodicity.days
     end
@@ -86,7 +82,6 @@ class AliadaWorkingHour < ActiveRecord::Base
   end
 
   rails_admin do
-    visible false
     label_plural 'Horas de trabajo disponibles'
     parent Aliada
     navigation_icon 'icon-time'

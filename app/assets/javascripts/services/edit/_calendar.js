@@ -25,23 +25,6 @@ aliada.services.edit.initialize_calendar_times = function() {
     //Mark the current selected 
     $el.addClass("fc-selected-day");
 
-    //Render recurrences
-    if (aliada.ko.is_recurrent_service()) {
-
-      //Get the day and day-of-the-week from the selected element
-      dia = parseInt($el.children('span.fc-date').text());
-      diaSemana = $el.children('span.fc-weekday').text();
-
-      //Select days below the selected date and add class fc-selected-recurrencias
-      $('div.fc-row div').filter(function(index, elemen) {
-        diaEl = parseInt($(elemen).children('span.fc-date').text());
-        diaSemanaEl = $(elemen).children('span.fc-weekday').text();
-
-        return ((diaEl >= dia) && (diaSemanaEl === diaSemana));
-      }).addClass('fc-selected-recurrences-below');
-    }
-
-
     return false;
   };
 
@@ -49,7 +32,6 @@ aliada.services.edit.initialize_calendar_times = function() {
     return new Promise(function(resolve, reject) {
       var availability_options = {
         hours: aliada.ko.hours(),
-        service_type_id: aliada.ko.service_type().id,
         postal_code_number: aliada.user.postal_code_number,
         aliada_id: aliada.service.aliada_id,
         user_id: aliada.user.id,

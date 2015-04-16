@@ -11,19 +11,14 @@ describe 'Schedule Filler' do
   let(:zone){ create(:zone) }
   let(:aliada){ create(:aliada) }
   let(:user){ create(:user) }
-  let!(:one_time_from_recurrent){ create(:service_type, name: 'one-time-from-recurrent') }
-  
   # client's recurrence, built with aliada's recurrence
   let!(:client_recurrence) { create(:recurrence,
                                     weekday: recurrence_service_datetime.weekday,
                                     hour: 7,
+                                    special_instructions: 'some very special sinstructions',
                                     aliada: aliada,
                                     user: user,
                                     total_hours: total_service_hours) }
-
-  # services scheduled for client's schedule
-  let!(:first_service){ create(:service, aliada: aliada, user: user, recurrence: client_recurrence, datetime: recurrence_service_datetime + 1.hour , special_instructions: "first service") }
-  let!(:other_service){ create(:service, aliada: aliada, user: user, recurrence: client_recurrence, datetime: recurrence_service_datetime + 7.day + 1.hour, special_instructions: "last service") }
 
   before do
     Timecop.freeze(starting_datetime)
@@ -37,7 +32,7 @@ describe 'Schedule Filler' do
     Timecop.return
   end
 
-  context '#valid schedule filler in a specific day' do
+  describe 'valid schedule filler in a specific day' do
 
     it 'creates schedules for aliada in a specific day' do
       # Exact number of total, booked and available schedules created
@@ -53,20 +48,18 @@ describe 'Schedule Filler' do
 
       expect(Schedule.booked.where("datetime < ?", Time.zone.now).first.datetime).to eql recurrence_in_the_past
       # Check the service date created for the client's recurrence in the future
-      expect(Service.last.datetime).not_to eql first_service.datetime
       expect(Service.last.datetime).to eql recurrence_in_the_past
 
       # Check that it has been created using the first created service
-      expect(Service.last.special_instructions).to eql first_service.special_instructions
+      expect(Service.last.special_instructions).to eql client_recurrence.special_instructions
 
     end
 
   end
 
-  context '#valid_filled_schedules' do
+  describe 'valid filled schedules' do
 
     before do
-      first_service.update_attribute(:created_at, first_service.created_at - 1.day)
       # Empty schedules before the job
       expect(Schedule.in_the_future.count).to be 0
       ScheduleFiller.perform
@@ -84,31 +77,10 @@ describe 'Schedule Filler' do
       recurrence_in_the_future = today_in_the_future.change(hour: client_recurrence.utc_hour(today_in_the_future))
 
       expect(Schedule.booked.in_the_future.first.datetime).to eql recurrence_in_the_future
-      # Check the service date created for the client's recurrence in the future
-      expect(Service.last.datetime).not_to eql first_service.datetime
-      # Check that it has been created using the first created service
-      expect(Service.last.special_instructions).to eql first_service.special_instructions
+      # Check that it has been created using the recurrence attributes
+      expect(Service.last.special_instructions).to eql client_recurrence.special_instructions
     end
  
   end
 
-  context '#invalid_filled_schedules' do
-
-    it "shows error of client's recurrence without services in it" do
-      other_aliada = create(:aliada)
-      # client's recurrence, built without aliada's recurrence
-      other_client_recurrence = create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, aliada: other_aliada, user: user, total_hours: total_service_hours)
-      expect{ScheduleFiller.perform}.to raise_error(RuntimeError)
-    end
-  
-    it "shows error of client's recurrence without an aliada's recurrence" do
-      other_aliada = create(:aliada)
-      # client's recurrence, built without aliada's recurrence
-      other_client_recurrence = create(:recurrence, weekday: recurrence_service_datetime.weekday, hour: recurrence_service_datetime.hour, aliada: other_aliada, user: user, total_hours: total_service_hours)
-      service = create(:service, aliada: other_aliada, user: user, recurrence: other_client_recurrence, datetime: recurrence_service_datetime, special_instructions: "first service")
-      expect{ScheduleFiller.perform}.to raise_error(RuntimeError)
-    end
-
-  end
-  
 end

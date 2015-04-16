@@ -46,13 +46,9 @@ aliada.recurrence.edit.bind_form_submission = function($form) {
     e.preventDefault();
 
     if(clicked_button == 'cancel_button'){
-      aliada.dialogs.confirm_service_cancel().then(submit)
+      aliada.dialogs.confirm_recurrence_cancel().then(submit)
     }else if(clicked_button == 'update_button'){
-      if(aliada.service.is_recurrent){
-        aliada.dialogs.confirm_recurrent_service_change().then(submit)
-      }else{
-        submit();
-      }
+      aliada.dialogs.confirm_recurrent_service_change().then(submit)
     }
 
     function submit(){

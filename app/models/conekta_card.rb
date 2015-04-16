@@ -1,14 +1,11 @@
 # -*- encoding : utf-8 -*-
-# -*- coding: utf-8 -*-
 class ConektaCard < ActiveRecord::Base
 
   def self.create_for_user!(user, temporary_token, object)
     ActiveRecord::Base.transaction requires_new: true do
       conekta_customer = Conekta::Customer.find(user.conekta_customer_id)
 
-    conekta_card = ConektaCard.create!
-    conekta_card.update_from_api_card(eval(api_card.inspect))
-    conekta_card.preauthorize!(user, object)
+      api_card = conekta_customer.create_card(:token => temporary_token)
 
       conekta_card = ConektaCard.create!
       conekta_card.update_from_api_card(eval(api_card.inspect))
@@ -101,7 +98,7 @@ class ConektaCard < ActiveRecord::Base
       
       payment
     rescue Conekta::Error => exception
-      service.create_charge_failed_ticket(user, product.amount, exception)
+      object.create_charge_failed_ticket(user, product.price, exception)
       raise exception
     end
   end

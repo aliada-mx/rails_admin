@@ -1,8 +1,8 @@
 aliada.recurrence.edit.duration = function(aliada, ko) {
 
   _(aliada.ko).extend({
-    bedrooms: ko.observable(1),
-    bathrooms: ko.observable(1),
+    bedrooms: ko.observable(aliada.recurrence.bedrooms),
+    bathrooms: ko.observable(aliada.recurrence.bathrooms),
     forced_hours: ko.observable(null),
     extras_hours: ko.observable(0),
     cost_per_hour: ko.observable(aliada.cost_per_hour),

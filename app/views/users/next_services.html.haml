@@ -21,12 +21,14 @@
         Todos los #{ensure_plural(recurrence.weekday_in_spanish) }
       .small-letters
         = recurrence.friendly_time
+        con
+        = recurrence.aliada.name
 
       .action-link
         =link_to("Modifcar todas las visitas próximas", edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id), {})
 
     .cards
-      - recurrence.services.in_the_future.not_canceled.each do |service|
+      - recurrence.services.in_the_future.not_canceled.ordered_by_datetime.each do |service|
         = render partial: 'common/service_card', locals: { service: service }
 
 

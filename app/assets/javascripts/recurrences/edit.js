@@ -54,9 +54,6 @@ $(document).ready(function() {
 
   aliada.recurrence.edit.bind_form_submission(aliada.recurrence.edit.$form);
 
-  // Load original state
-  aliada.ko.bedrooms(aliada.service.bedrooms);
-  aliada.ko.bedrooms(aliada.service.bathrooms);
   // Hours selector
   var recurrence_rooms_selector = $("#recurrence_rooms_hours").data("selectBox-selectBoxIt");
   recurrence_rooms_selector.selectOption(aliada.service.hours_without_extras);

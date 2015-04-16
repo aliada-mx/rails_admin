@@ -19,6 +19,7 @@ es:
       service_type: 'tipo de servicio'
       ticket: 'ticket'
       zone: 'zona'
+      zones: 'zonas'
       extra: 'extra'
       incomplete_service: 'registro inconcluso'
     attributes:

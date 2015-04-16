@@ -3,8 +3,8 @@
 aliada.recurrence.edit.datetime_selection = function(aliada, ko) {
     // Select default service type from the form
     _(aliada.ko).extend({
-        friendly_weekday_hour: ko.observable(aliada.recurrence.friendly_weekday_hour).extend({
-            default_value: aliada.recurrence.friendly_weekday_hour
+        friendly_datetime: ko.observable(aliada.recurrence.friendly_datetime).extend({
+            default_value: aliada.recurrence.friendly_datetime
         }),
         dates: ko.observableArray([]),
         date: ko.observable('').extend({
@@ -35,15 +35,11 @@ aliada.recurrence.edit.datetime_selection = function(aliada, ko) {
     });
 
     aliada.ko.summary_weekday_hour = ko.computed(function() {
-        return aliada.ko.friendly_weekday_hour.is_default() ? aliada.ko.friendly_weekday_hour() : "La recurrencia cambiará el "+aliada.ko.friendly_weekday_hour();
+        return aliada.ko.friendly_datetime.is_default() ? aliada.ko.friendly_datetime() : "La recurrencia cambiará el "+aliada.ko.friendly_datetime();
     });
 
     aliada.ko.price = ko.computed(function() {
         return Math.ceil(aliada.ko.hours() * aliada.recurrence.service_type.price_per_hour);
-    });
-
-    aliada.ko.is_recurrent_service = ko.computed(function() {
-        return true
     });
 
     aliada.ko.is_datetime_done = ko.computed(function() {

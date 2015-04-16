@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150414165243) do
+ActiveRecord::Schema.define(version: 20150416215923) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,7 +54,6 @@ ActiveRecord::Schema.define(version: 20150414165243) do
     t.string   "weekday"
     t.integer  "hour"
     t.integer  "total_hours"
-    t.string   "owner"
   end
 
   create_table "aliada_zones", force: true do |t|
@@ -231,7 +230,6 @@ ActiveRecord::Schema.define(version: 20150414165243) do
     t.string   "weekday"
     t.integer  "hour"
     t.integer  "total_hours"
-    t.string   "owner"
     t.integer  "bathrooms"
     t.integer  "bedrooms"
     t.integer  "zone_id"
@@ -256,10 +254,11 @@ ActiveRecord::Schema.define(version: 20150414165243) do
     t.string   "status"
     t.datetime "datetime"
     t.integer  "service_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
     t.integer  "aliada_id"
     t.integer  "recurrence_id"
+    t.integer  "aliada_working_hour_id"
   end
 
   add_index "schedules", ["datetime", "aliada_id"], name: "index_schedules_on_datetime_and_aliada_id", unique: true, using: :btree

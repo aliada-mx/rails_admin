@@ -133,7 +133,7 @@ class AvailabilityForService
             if interval.size > @requested_service_hours
               padding = interval.size.to_i - @requested_service_hours.to_i
 
-              interval[padding * -1..-1].map(&:as_padding)
+              interval[padding * -1..-1].map(&:as_padding) if padding > 0
             end
           end
         end

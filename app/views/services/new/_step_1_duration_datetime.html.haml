@@ -32,3 +32,4 @@
 
   = new_service_form.hidden_field :date, data: {bind: 'value: date'}
   = new_service_form.hidden_field :time, data: {bind: 'value: time'}
+  = new_service_form.hidden_field :zone_id, value: @user.zone.id

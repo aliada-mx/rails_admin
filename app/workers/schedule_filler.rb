@@ -31,7 +31,7 @@ class ScheduleFiller
       begin
         fill_aliadas_availability specific_day
 
-        insert_clients_schedule specific_day, true 
+        insert_clients_schedule specific_day
       rescue Exception => e
         Rails.logger.fatal e 
         Raygun.track_exception(e)
@@ -63,31 +63,15 @@ class ScheduleFiller
 
   # creates service inside aliada's schedule, based on the client's recurrence
   def self.create_service_in_clients_schedule today_in_the_future, user_recurrence 
-
-    # TODO: modify query with status for inactive recurrences
-    base_service = user_recurrence.base_service
-    unless base_service
-
-      error = "No existen servicios para la recurrencia del usuario #{user_recurrence.user.first_name} #{user_recurrence.user.last_name}"
-      Ticket.create_error(relevant_object: user_recurrence,
-                          category: 'schedule_filler_error',
-                          message: error)
-      
-      return nil
-
-      #Rails.logger.fatal error
-      #raise error
-    end
-
     # Compensate UTC 
     beginning_of_user_recurrence = today_in_the_future.change(hour: user_recurrence.utc_hour(today_in_the_future))
 
-    base_service_attributes = base_service.shared_attributes
+    recurrence_shared_attributes = user_recurrence.attributes_shared_with_service
+
     service = Service.find_by(datetime: beginning_of_user_recurrence, user_id: user_recurrence.user_id)
     if not service
-      service = Service.create!(base_service_attributes.merge({datetime: beginning_of_user_recurrence }))
+      service = Service.new(recurrence_shared_attributes.merge({datetime: beginning_of_user_recurrence }))
     end
-    service.service_type = ServiceType.one_time_from_recurrent
     service.save!
     service 
   end

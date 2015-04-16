@@ -7,7 +7,7 @@ aliada.services.edit.initialize_calendar_times = function() {
 
     // Reload times
     aliada.ko.times(times || []);
-    aliada.ko.friendly_weekday_hour(dateProperties.friendly_date);
+    aliada.ko.friendly_datetime(dateProperties.friendly_date);
 
     // Reset the time
     aliada.ko.time.reset();
@@ -25,21 +25,18 @@ aliada.services.edit.initialize_calendar_times = function() {
     //Mark the current selected 
     $el.addClass("fc-selected-day");
 
-    //Render recurrences
-    if (aliada.ko.is_recurrent_service()) {
 
-      //Get the day and day-of-the-week from the selected element
-      dia = parseInt($el.children('span.fc-date').text());
-      diaSemana = $el.children('span.fc-weekday').text();
+    //Get the day and day-of-the-week from the selected element
+    dia = parseInt($el.children('span.fc-date').text());
+    diaSemana = $el.children('span.fc-weekday').text();
 
-      //Select days below the selected date and add class fc-selected-recurrencias
-      $('div.fc-row div').filter(function(index, elemen) {
-        diaEl = parseInt($(elemen).children('span.fc-date').text());
-        diaSemanaEl = $(elemen).children('span.fc-weekday').text();
+    //Select days below the selected date and add class fc-selected-recurrencias
+    $('div.fc-row div').filter(function(index, elemen) {
+      diaEl = parseInt($(elemen).children('span.fc-date').text());
+      diaSemanaEl = $(elemen).children('span.fc-weekday').text();
 
-        return ((diaEl >= dia) && (diaSemanaEl === diaSemana));
-      }).addClass('fc-selected-recurrences-below');
-    }
+      return ((diaEl >= dia) && (diaSemanaEl === diaSemana));
+    }).addClass('fc-selected-recurrences-below');
 
 
     return false;
@@ -53,13 +50,14 @@ aliada.services.edit.initialize_calendar_times = function() {
         postal_code_number: aliada.user.postal_code_number,
         aliada_id: aliada.recurrence.aliada_id,
         user_id: aliada.user.id,
+        recurrence_id: aliada.recurrence.id,
       };
 
       // Prevent further user interaction to avoid double requests
       aliada.calendar.lock(calendar);
 
       // Reset our summary
-      aliada.ko.friendly_weekday_hour.reset();
+      aliada.ko.friendly_datetime.reset();
 
       // Get data from server
       aliada.calendar.get_dates_times(availability_options)
@@ -102,7 +100,7 @@ aliada.services.edit.initialize_calendar_times = function() {
 
     aliada.ko.time(aliada.recurrence.time);
     aliada.ko.date(aliada.recurrence.date);
-    aliada.ko.friendly_weekday_hour(aliada.recurrence.friendly_weekday_hour);
+    aliada.ko.friendly_datetime(aliada.recurrence.friendly_datetime);
   });
 
   function updateMonthYear() {

@@ -9,16 +9,12 @@ module Mixins
       STATUSES
     end
 
-    def name
-      "#{weekday_in_spanish} de #{hour} a #{ending_hour} (#{id})"
-    end
-
     def next_service
       services.ordered_by_datetime.where('datetime > ?', Time.zone.now).first
     end
 
     def ending_hour
-      hour + total_hours
+      hour + estimated_hours + hours_after_service
     end
 
     def weekday_enum
@@ -116,7 +112,11 @@ module Mixins
       time_obj.utc
     end
 
-    # TODO: fix
+    def next_recurrence_with_hour_in_utc
+      utc_hour(next_recurrence_with_hour_now_in_utc)
+    end
+
+    # TODO: to show 
     def next_day_of_recurrence(starting_after_datetime)
       next_day = starting_after_datetime.change(hour: hour)
 

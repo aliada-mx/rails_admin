@@ -18,7 +18,7 @@ class Service < ActiveRecord::Base
 
   validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
   # accessors for forms
-  attr_accessor :postal_code, :payment_method_id, :conekta_temporary_token, :timezone
+  attr_accessor :postal_code, :payment_method_id, :conekta_temporary_token, :timezone, :hour, :weekday
 
   belongs_to :address
   belongs_to :user, inverse_of: :services, foreign_key: :user_id
@@ -36,6 +36,7 @@ class Service < ActiveRecord::Base
 
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
+  scope :in_or_after_datetime, ->(starting_datetime) { where("datetime >= ?", starting_datetime) }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
   scope :from_today_to_the_future, -> { where("datetime >= ?", Time.zone.now.beginning_of_aliadas_day)  }
   scope :not_ids, ->(ids) { where("services.id NOT IN ( ? )", ids) }
@@ -46,6 +47,7 @@ class Service < ActiveRecord::Base
   scope :ordered_by_datetime, -> { order(:datetime) }
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
   scope :join_users_and_aliadas, -> { joins('INNER JOIN users ON users.id = services.user_id OR users.id = services.aliada_id') }
+
   # Rails admin tabs
   scope 'mañana', -> { on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
   scope :todos, -> { }
@@ -82,12 +84,6 @@ class Service < ActiveRecord::Base
 
         service.aliada = aliada
       service.save!
-
-      if service.recurrent?
-        recurrence = service.recurrence
-        recurrence.aliada = aliada if service.recurrent?
-        recurrence.save!
-      end
     end
 
     before_transition on: :cancel do |service, transition|
@@ -115,6 +111,7 @@ class Service < ActiveRecord::Base
   end
 
   # Ask service_type to answer recurrent? method for us
+  delegate :next_service, to: :recurrence
   delegate :recurrent?, to: :service_type
   delegate :one_timer?, to: :service_type
   delegate :one_timer_from_recurrent?, to: :service_type
@@ -180,12 +177,12 @@ class Service < ActiveRecord::Base
   def ensure_updated_recurrence!
     return unless recurrent?
 
-    recurrence_attributes = {user_id: user_id,
-                             periodicity: service_type.periodicity,
-                             total_hours: total_hours,
-                             hour: tz_aware_datetime.hour,
-                             weekday: tz_aware_datetime.weekday }
+    recurrence_attributes = self.shared_attributes.except('service_type_id', 'price', 'recurrence_id')
+    recurrence_attributes.merge!({'periodicity' => service_type.periodicity,
+                                 'hour' => tz_aware_datetime.hour,
+                                 'weekday' => tz_aware_datetime.weekday })
 
+    
     if self.recurrence.blank?
       self.recurrence = Recurrence.create!(recurrence_attributes)
     else
@@ -212,8 +209,25 @@ class Service < ActiveRecord::Base
     estimated_hours + hours_after_service
   end
 
-  def ending_datetime
-    datetime + total_hours.hours
+  def book_one_timer(aliada_id: nil)
+    available_after = starting_datetime_to_book_services
+
+    # TODO create a method to reschedule a one time
+    original_service_type_id = self.service_type_id
+    self.service_type_id = ServiceType.one_time.id
+
+    finder = AvailabilityForService.new(self, available_after, aliada_id: aliada_id)
+    aliadas_availability = finder.find
+    self.service_type_id = original_service_type_id
+
+    raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
+
+    aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
+    
+    self.aliada = aliada_availability.aliada
+    self.save!
+
+    aliada_availability.book(self)
   end
 
   def book_an_aliada(aliada_id: nil)
@@ -226,61 +240,15 @@ class Service < ActiveRecord::Base
     raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
 
     aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
+    
+    self.aliada = aliada_availability.aliada
+    self.save!
 
-    aliada_availability.book_new(self)
+    aliada_availability.book(self)
   end
 
-  def rebook_an_aliada(service_to_edit, aliada_id: nil)
-    available_after = starting_datetime_to_book_services
-
-    if recurrent?
-      # Because the service to edit can be a one timer because we dont want
-      # to edit the service because its in the past
-      recurrent = ServiceType.recurrent
-
-      original_service_type = service_to_edit.service_type
-
-      service_to_edit.service_type = recurrent
-      finder = AvailabilityForService.new(service_to_edit, available_after, aliada_id: aliada_id)
-
-      service_to_edit.service_type = original_service_type
-    else
-      finder = AvailabilityForService.new(service_to_edit, available_after, aliada_id: aliada_id)
-    end
-
-    aliadas_availability = finder.find
-
-    raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
-
-    aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
-
-    if recurrent?
-      aliada_availability.rebook_recurrent(service_to_edit)
-    else
-      aliada_availability.rebook_one_time(service_to_edit)
-    end
-  end
-
-  # Among recurrent services
-  def shared_attributes
-    self.attributes.select { |key, value| [:entrance_instructions, 
-                                           :estimated_hours, 
-                                           :hours_after_service,
-                                           :rooms_hours,
-                                           :address_id,
-                                           :bathrooms,
-                                           :bedrooms,
-                                           :price,
-                                           :recurrence_id,
-                                           :service_type_id,
-                                           :user_id,
-                                           :zone_id,
-                                           :attention_instructions,
-                                           :extra_ids,
-                                           :cleaning_supplies_instructions,
-                                           :equipment_instructions,
-                                           :garbage_instructions,
-                                           :special_instructions].include? key.to_sym  }
+  def should_charge_cancelation_fee
+    in_less_than_24_hours
   end
 
   def in_less_than_24_hours
@@ -383,6 +351,7 @@ class Service < ActiveRecord::Base
       service_params[:datetime] = Service.parse_date_time(service_params)
 
       address = user.default_address
+
       service = Service.new(service_params.except!(:user, :address))
 
       service.address = address
@@ -392,6 +361,7 @@ class Service < ActiveRecord::Base
       service.save!
 
       service.book_an_aliada
+      service.ensure_updated_recurrence!
 
       user.send_confirmation_email(service)
       return service
@@ -429,10 +399,6 @@ class Service < ActiveRecord::Base
     end
   end
 
-  def next_service
-    recurrence.services.not_canceled.ordered_by_datetime.where('datetime > ?', Time.zone.now).first
-  end
-
   def not_canceled?
     self.status != 'canceled'
   end
@@ -441,6 +407,30 @@ class Service < ActiveRecord::Base
     datetime != service_params[:datetime] ||
     estimated_hours != BigDecimal.new(service_params[:estimated_hours]) ||
     aliada_id != service_params[:aliada_id].to_i
+  end
+
+
+    # Among recurrent services
+  def shared_attributes
+    self.attributes.select { |key, value| [:entrance_instructions, 
+                                           :estimated_hours, 
+                                           :hours_after_service,
+                                           :rooms_hours,
+                                           :address_id,
+                                           :bathrooms,
+                                           :bedrooms,
+                                           :price,
+                                           :recurrence_id,
+                                           :service_type_id,
+                                           :user_id,
+                                           :zone_id,
+                                           :aliada_id,
+                                           :attention_instructions,
+                                           :extra_ids,
+                                           :cleaning_supplies_instructions,
+                                           :equipment_instructions,
+                                           :garbage_instructions,
+                                           :special_instructions].include? key.to_sym  }
   end
 
   # We can't use the name 'update' because thats a builtin method
@@ -452,28 +442,17 @@ class Service < ActiveRecord::Base
 
       attributes = service_params.except(:user, :address) # we are editing the service only
       service_params.except!(:aliada_id) if chosen_aliada_id == 0
-      service_params.except!(:service_type_id) if recurrent?
 
-      if self.in_the_past?
-        service_to_edit = next_service
-        needs_rescheduling = service_to_edit.user_modified_booking(service_params)
-      else
-        service_to_edit = self
-      end
-        needs_rescheduling = self.user_modified_booking(service_params)
-      service_to_edit.attributes = service_params
+      needs_rescheduling = self.user_modified_booking(service_params)
 
-      service_to_edit.ensure_not_downgrading!
-      service_to_edit.set_hours_before_after_service
+      self.attributes = service_params
+
+      ensure_not_downgrading!
       ensure_updated_recurrence!
 
-      if needs_rescheduling
-        reschedule!(chosen_aliada_id, service_to_edit) 
-      elsif recurrent?
-        update_instructions(service_params)
-      end
+      reschedule!(chosen_aliada_id) if needs_rescheduling
 
-      service_to_edit.save!
+      self.save!
     end
   end
 
@@ -484,20 +463,6 @@ class Service < ActiveRecord::Base
       :cleaning_supplies_instructions,
       :equipment_instructions,
       :garbage_instructions, :special_instructions ]
-  end
-
-  def update_instructions(service_params)
-    recurrence.services.each do |service|
-      service_params.each do |key,value|
-
-        instructions_attributes = Service.instructions_attributes.map(&:to_s)
-
-        if instructions_attributes.include? key
-          service[key] = value
-          service.save!
-        end
-      end
-    end
   end
 
   # Cancel this service and all related through the recurrence
@@ -533,12 +498,8 @@ class Service < ActiveRecord::Base
     end
   end
 
-  def reschedule!(aliada_id, service_to_edit)
-    if recurrent?
-      previous_services = recurrence.services.in_the_future.not_ids([ self.id, service_to_edit ]).to_a
-    end
-    
-    aliada_availability = rebook_an_aliada(service_to_edit, aliada_id: aliada_id)
+  def reschedule!(aliada_id)
+    aliada_availability = book_one_timer(aliada_id: aliada_id)
 
     # We might have not used some or all those schedules the service had, so enable them back
     aliada_availability.enable_unused_schedules
@@ -546,30 +507,13 @@ class Service < ActiveRecord::Base
     self.hours_after_service = aliada_availability.padding_count
     self.save!
 
-    if recurrent?
-      self.recurrence.update_attributes(total_hours: service_to_edit.total_hours,
-                                        hour: service_to_edit.tz_aware_datetime.hour,
-                                        aliada_id: service_to_edit.aliada_id,
-                                        weekday: service_to_edit.tz_aware_datetime.weekday )
-    end
-
-    # Clear up other services
-    if recurrent?
-      previous_services.map(&:cancel)
-    end
-      
+    ensure_updated_recurrence! if recurrent?
   end
 
   def other_services
     if recurrent?
       recurrence.services.in_the_future.not_ids(self.id)
     end 
-  end
-
-  # To build schedules we must know where do we start
-  # because services are booked at an specific range
-  def requested_schedules
-    ScheduleInterval.build_from_range(datetime, ending_datetime, elements_for_key: estimated_hours, conditions:{ aliada_id: aliada_id })
   end
    
   def service_type_exists
