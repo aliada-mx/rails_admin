@@ -10,8 +10,8 @@ http_interactions:
       User-Agent:
       - Conekta/v1 RubyBindings/0.5.2
       X-Conekta-Client-User-Agent:
-      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.2.0","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"Alejandros-MacBook-Pro-2.local","release":"14.0.0","version":"Darwin
-        Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro5,5"}}'
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
+        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
       Accept:
       - application/vnd.conekta-v1.0.0+json
       Accept-Language:
@@ -22,8 +22,8 @@ http_interactions:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
     status:
-      code: 404
-      message: Not Found
+      code: 422
+      message: Unprocessable Entity
     headers:
       Cache-Control:
       - no-cache
@@ -32,30 +32,33 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Tue, 10 Mar 2015 00:32:17 GMT
+      - Fri, 17 Apr 2015 06:20:58 GMT
       Server:
       - nginx/1.1.19
       Status:
-      - 404 Not Found
+      - 422 Unprocessable Entity
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - ba7461cbd118a67a65738d364e4a4893
+      - b3bb7b8504b70ec2898a867a6d24b41f
       X-Runtime:
-      - '0.031766'
+      - '0.032767'
       Content-Length:
-      - '154'
+      - '148'
       Connection:
       - keep-alive
     body:
-      encoding: UTF-8
-      string: '{"object":"error","type":null,"message":"Object  could not be found.","message_to_purchaser":"El
-        recurso no ha sido encontrado.","param":null,"code":null}'
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJvYmplY3QiOiJlcnJvciIsInR5cGUiOm51bGwsIm1lc3NhZ2UiOiJVbnJl
+        Y29nbml6ZWQgaWQgZm9yIENhcmQuIiwibWVzc2FnZV90b19wdXJjaGFzZXIi
+        OiJIdWJvIHVuIGVycm9yIGRlIHZhbGlkYWNpw7NuLiIsInBhcmFtIjpudWxs
+        LCJjb2RlIjpudWxsfQ==
     http_version: 
-  recorded_at: Tue, 10 Mar 2015 00:31:52 GMT
+  recorded_at: Thu, 01 Jan 2015 13:00:00 GMT
 - request:
     method: post
-    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/customers?cards%5B%5D=&email=guillermo.siliceo@gmail.com&name=Guillermo%20Siliceo&phone=5585519954
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=31500&card=&currency=MXN&description=Servicio%20aliada&details%5Bemail%5D=user-1@aliada.mx&details%5Bname%5D=Test%20User&details%5Bphone%5D=123456&reference_id=1
     body:
       encoding: UTF-8
       string: ''
@@ -75,8 +78,8 @@ http_interactions:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
     status:
-      code: 404
-      message: Not Found
+      code: 422
+      message: Unprocessable Entity
     headers:
       Cache-Control:
       - no-cache
@@ -85,25 +88,28 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Fri, 17 Apr 2015 06:50:39 GMT
+      - Fri, 17 Apr 2015 06:28:02 GMT
       Server:
       - nginx/1.1.19
       Status:
-      - 404 Not Found
+      - 422 Unprocessable Entity
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Request-Id:
-      - fe0942ead203b0e11144c34f8929f551
+      - 9cdedc5f2864481d547d39ec61bc47c9
       X-Runtime:
-      - '0.034699'
+      - '0.032355'
       Content-Length:
-      - '154'
+      - '148'
       Connection:
       - keep-alive
     body:
-      encoding: UTF-8
-      string: '{"object":"error","type":null,"message":"Object  could not be found.","message_to_purchaser":"El
-        recurso no ha sido encontrado.","param":null,"code":null}'
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJvYmplY3QiOiJlcnJvciIsInR5cGUiOm51bGwsIm1lc3NhZ2UiOiJVbnJl
+        Y29nbml6ZWQgaWQgZm9yIENhcmQuIiwibWVzc2FnZV90b19wdXJjaGFzZXIi
+        OiJIdWJvIHVuIGVycm9yIGRlIHZhbGlkYWNpw7NuLiIsInBhcmFtIjpudWxs
+        LCJjb2RlIjpudWxsfQ==
     http_version: 
-  recorded_at: Fri, 17 Apr 2015 06:48:16 GMT
+  recorded_at: Thu, 01 Jan 2015 13:00:00 GMT
 recorded_with: VCR 2.9.3

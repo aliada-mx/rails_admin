@@ -16,7 +16,6 @@
 
 = append :extra_javascript_variables do
   aliada.user.postal_code_number = "#{@user.postal_code_number}";
-  aliada.recurrence.aliada_id = #{@recurrence.aliada_id};
   aliada.recurrence.id = #{@recurrence.id};
   aliada.recurrence.date = '#{@recurrence.weekday}';
   aliada.recurrence.hour = '#{@recurrence.hour}';

@@ -65,10 +65,6 @@ class Ability
         elsif subject_class == ConektaCard
           if current_user.admin?
             true
-          # User objects abilities
-          elsif subject.present? # subject is the user being edited, read, updated...
-            subject.id == current_user.id
-          # User controller abilities
           elsif params.include? :user_id
             current_user.id == params[:user_id].to_i
           else

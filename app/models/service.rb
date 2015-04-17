@@ -391,6 +391,7 @@ class Service < ActiveRecord::Base
       user.save!
 
       service.book_an_aliada
+      service.ensure_updated_recurrence!
 
       user.create_promotional_code code_type
 

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Mixins
   module ServiceRecurrenceMixin
 
@@ -8,7 +9,7 @@ module Mixins
     end
 
     def ending_datetime
-      datetime + estimated_hours.hours + hours_after_service.hours
+      datetime + estimated_hours.hours + hours_after_service.hour
     end
 
     def extras_hours

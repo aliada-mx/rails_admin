@@ -36,4 +36,5 @@
   = render partial: 'common/time_selector', locals: {form: edit_recurrence_form}
 
   = edit_recurrence_form.hidden_field :date, data: {bind: 'value: date'}
-  = edit_recurrence_form.hidden_field :hour, data: {bind: 'value: time'}
+  = edit_recurrence_form.hidden_field :time, data: {bind: 'value: time'}
+  = edit_recurrence_form.hidden_field :aliada_id, data: {bind: 'valueWithInit: aliada_id'}

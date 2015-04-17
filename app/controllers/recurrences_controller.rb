@@ -25,7 +25,7 @@ class RecurrencesController < ApplicationController
       recurrence.cancel_all!
     end
 
-    return render json: { status: :success, next_path: next_services_users_path(@user) }
+    return render json: { status: :success, next_path: next_services_users_path(@user), recurrence_id: recurrence.id }
   end
 
   private

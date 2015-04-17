@@ -107,88 +107,83 @@ class ServicesController < ApplicationController
   end
 
   private
-  def handle_exceptions(&block)
 
-  end
+    def save_incomplete_service
+      @incomplete_service = IncompleteService.find(params[:incomplete_service][:id])
+      @incomplete_service.update_attributes!(incomplete_service_params)
+    end
 
-  def save_incomplete_service
-    @incomplete_service = IncompleteService.find(params[:incomplete_service][:id])
-    @incomplete_service.update_attributes!(incomplete_service_params)
-  end
+    def incomplete_service_params
+        params.require(:service).permit(:bathrooms,
+                                        :bedrooms,
+                                        :estimated_hours,
+                                        :service_type_id,
+                                        :date,
+                                        :time,
+                                        ).merge({extra_ids: params[:service][:extra_ids].to_s })
+                                         .merge(params[:service][:address])
+                                         .merge(params[:service][:user])
+                                         .merge(params[:incomplete_service])
+    end
 
-  def incomplete_service_params
-      params.require(:service).permit(:bathrooms,
-                                      :bedrooms,
-                                      :estimated_hours,
-                                      :service_type_id,
-                                      :date,
-                                      :time,
-                                      ).merge({extra_ids: params[:service][:extra_ids].to_s })
-                                       .merge(params[:service][:address])
-                                       .merge(params[:service][:user])
-                                       .merge(params[:incomplete_service])
-  end
+    def permitted_service_params
+      [:zone_id,
+       :bathrooms,
+       :bedrooms,
+       :rooms_hours,
+       {extra_ids: []},
+       :estimated_hours,
+       :room_hours,
+       :special_instructions,
+       :service_type_id,
+       :date,
+       :time,
+       :payment_method_id,
+       :conekta_temporary_token,
+       :aliada_id,
+       :incomplete_service_id,
+       :entrance_instructions,
+       :garbage_instructions,
+       :cleaning_supplies_instructions,
+       :attention_instructions,
+       :equipment_instructions,
+       :forbidden_instructions,
+       :special_instructions]
+    end
 
-  def permitted_service_params
-    [:zone_id,
-     :bathrooms,
-     :bedrooms,
-     :rooms_hours,
-     {extra_ids: []},
-     :estimated_hours,
-     :room_hours,
-     :special_instructions,
-     :service_type_id,
-     :date,
-     :time,
-     :payment_method_id,
-     :conekta_temporary_token,
-     :aliada_id,
-     :incomplete_service_id,
-     :entrance_instructions,
-     :garbage_instructions,
-     :cleaning_supplies_instructions,
-     :attention_instructions,
-     :equipment_instructions,
-     :forbidden_instructions,
-     :special_instructions]
-  end
+    def service_params
+      params.require(:service).permit(*permitted_service_params)
+    end
 
-  def service_params
-    params.require(:service).permit(*permitted_service_params)
-  end
+    def initial_service_params
+      permitted = permitted_service_params + [user: [
+                                                :first_name,
+                                                :last_name,
+                                                :email,
+                                                :phone,
+                                              ],
+                                              address: [
+                                                :street,
+                                                :interior_number,
+                                                :number,
+                                                :colony,
+                                                :between_streets,
+                                                :latitude,
+                                                :longitude,
+                                                :state,
+                                                :city,
+                                                :references,
+                                                :latitude,
+                                                :longitude,
+                                                :map_zoom,
+                                                :postal_code_number,
+                                              ]]
 
-  def 
+      params.require(:service).permit(*permitted).merge({conekta_temporary_token: params[:conekta_temporary_token] })
+                                        
+    end
 
-  def initial_service_params
-    permitted = permitted_service_params + [user: [
-                                              :first_name,
-                                              :last_name,
-                                              :email,
-                                              :phone,
-                                            ],
-                                            address: [
-                                              :street,
-                                              :interior_number,
-                                              :number,
-                                              :colony,
-                                              :between_streets,
-                                              :latitude,
-                                              :longitude,
-                                              :state,
-                                              :city,
-                                              :references,
-                                              :latitude,
-                                              :longitude,
-                                              :map_zoom,
-                                              :postal_code_number,
-                                            ]]
-
-    params.require(:service).permit(*permitted).merge({conekta_temporary_token: params[:conekta_temporary_token] })
-                                      
-  end
-
-  def set_user
-    @user = User.find(params[:user_id]) if params.include? :user_id
-  end
+    def set_user
+      @user = User.find(params[:user_id]) if params.include? :user_id
+    end
 end

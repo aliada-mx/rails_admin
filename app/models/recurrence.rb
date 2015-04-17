@@ -64,7 +64,7 @@ class Recurrence < ActiveRecord::Base
 
   # Among recurrent services
   def attributes_shared_with_service 
-    self.attributes.select { |key, value| ATTRIBUTES_SHARED_WITH_SERVICE  .include?( key.to_sym )  }
+    self.attributes.select { |key, value| ATTRIBUTES_SHARED_WITH_SERVICE.include?( key.to_sym )  }
   end
 
   # Cancel this service and all related through the recurrence
@@ -80,10 +80,6 @@ class Recurrence < ActiveRecord::Base
     next_service.should_charge_cancelation_fee if next_service.present?
   end
 
-  def next_service
-    services.ordered_by_datetime.where('datetime > ?', Time.zone.now).first
-  end
-
   def charge_cancelation_fee!
     next_service.charge_cancelation_fee!
   end
@@ -94,9 +90,9 @@ class Recurrence < ActiveRecord::Base
 
   def services_to_reschedule
     if datetime and rescheduling_a_recurrence_day
-      services.in_or_after_datetime(self.datetime).to_a
+      services.not_canceled.in_or_after_datetime(datetime.beginning_of_aliadas_day).to_a
     else
-      services.in_the_future.to_a
+      services.not_canceled.in_the_future.to_a
     end
   end
 
@@ -119,7 +115,7 @@ class Recurrence < ActiveRecord::Base
     self.aliada_id       != recurrence_params[:aliada_id]
   end
 
-  def self.timezone
+  def timezone
     'Etc/GMT+6' # No dst changes timezone
   end
 
@@ -127,13 +123,13 @@ class Recurrence < ActiveRecord::Base
     "#{user.first_name} #{weekday_in_spanish} de #{hour} a #{ending_hour} (#{id})"
   end
 
-  def self.timezone_datetime(recurrence_params)
-    ActiveSupport::TimeZone[self.timezone].parse("#{recurrence_params[:date]} #{recurrence_params[:hour]}")
+  def parse_timezone_datetime(recurrence_params)
+    ActiveSupport::TimeZone[self.timezone].parse("#{recurrence_params[:date]} #{recurrence_params[:time]}")
   end
 
   def parse_params(recurrence_params)
-    if recurrence_params['hour'].present? && recurrence_params['date'].present?
-      timezone_datetime = Recurrence.timezone_datetime(recurrence_params)
+    if recurrence_params['time'].present? && recurrence_params['date'].present?
+      timezone_datetime = parse_timezone_datetime(recurrence_params)
 
       recurrence_params[:datetime] = timezone_datetime.utc
       recurrence_params[:weekday] = timezone_datetime.weekday
@@ -205,9 +201,7 @@ class Recurrence < ActiveRecord::Base
 
     available_after = starting_datetime_to_book_services
 
-    finder = AvailabilityForService.new(self, available_after, aliada_id: chosen_aliada_id)
-
-    aliadas_availability = finder.find
+    aliadas_availability = AvailabilityForService.find_aliadas_availability(self, available_after, aliada_id: chosen_aliada_id)
 
     raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
 

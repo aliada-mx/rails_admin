@@ -20,7 +20,7 @@ class AvailabilityForService
 
     # skip aliadas we detected cannot fulfill the service
     # User banned aliadas
-    @aliadas_to_skip =  @service.user.banned_aliadas.map(&:id)
+    @aliadas_to_skip = @service.user.banned_aliadas.map(&:id)
     
     # Recurrence
     if @is_recurrent

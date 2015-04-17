@@ -19,6 +19,7 @@ describe 'Schedule Filler' do
                                     aliada: aliada,
                                     user: user,
                                     total_hours: total_service_hours) }
+  let!(:service_type) { create(:service_type) }
 
   before do
     Timecop.freeze(starting_datetime)

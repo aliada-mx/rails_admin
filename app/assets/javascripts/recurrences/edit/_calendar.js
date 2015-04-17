@@ -48,7 +48,7 @@ aliada.services.edit.initialize_calendar_times = function() {
         hours: aliada.ko.hours(),
         service_type_id: aliada.recurrence.service_type.id,
         postal_code_number: aliada.user.postal_code_number,
-        aliada_id: aliada.recurrence.aliada_id,
+        aliada_id: aliada.ko.aliada_id(),
         user_id: aliada.user.id,
         recurrence_id: aliada.recurrence.id,
       };

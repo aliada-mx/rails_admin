@@ -18,7 +18,7 @@ $(document).ready(function() {
   // KNOCKOUT initialization
   aliada.ko = {
     current_step: ko.observable(1),
-    service_id: ko.observable(''),
+    aliada_id: ko.observable('')
   };
 
   aliada.recurrence.edit.duration(aliada, ko);
@@ -65,7 +65,9 @@ $(document).ready(function() {
 
   // Update calendar on Aliadas change and update aliada_id
   $('#recurrence_aliada_id').on('change', function() {
-    aliada.recurrence.aliada_id = $(this).find(':selected').val();
+    var aliada_id = $(this).find(':selected').val();
+
+    aliada.ko.aliada_id(aliada_id);
 
     update_calendar();
   });
