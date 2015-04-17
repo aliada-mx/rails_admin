@@ -49,11 +49,9 @@ class ScheduleFiller
         #Compensate for UTC 
         beginning_of_recurrence = today_in_the_future.change(hour: aliada_recurrence.utc_hour(today_in_the_future))
 
-        zones = aliada_recurrence.aliada.zones
-          
         if not Schedule.find_by(datetime: beginning_of_recurrence, aliada_id: aliada_recurrence.aliada_id)
 
-          Schedule.create!(datetime: beginning_of_recurrence, aliada_id:  aliada_recurrence.aliada_id, zones: zones, recurrence_id: aliada_recurrence.id)
+          Schedule.create!(datetime: beginning_of_recurrence, aliada_id:  aliada_recurrence.aliada_id, recurrence_id: aliada_recurrence.id)
 
         end
 

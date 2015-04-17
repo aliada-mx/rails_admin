@@ -4,8 +4,8 @@ feature 'ServiceController' do
 
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') } # 7 am Mexico City
   let(:next_day_of_service) { Time.zone.parse('2015-01-08 13:00:00') }
-  let!(:aliada) { create(:aliada) }
   let!(:zone) { create(:zone) }
+  let!(:aliada){ create(:aliada, zones: [zone]) }
   let!(:user) { create(:user) }
   let!(:recurrent_service) { create(:service_type) }
   let!(:recurrence) { create(:recurrence,
@@ -42,8 +42,7 @@ feature 'ServiceController' do
 
       create_recurrent!(starting_datetime, hours: 6,
                                            periodicity: recurrence.periodicity ,
-                                           conditions: {zones: [zone],
-                                                        aliada: aliada,
+                                           conditions: {aliada: aliada,
                                                         recurrence: recurrence,
                                                         service: user_service,
                                                         status: 'booked'})

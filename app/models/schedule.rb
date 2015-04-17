@@ -25,7 +25,6 @@ class Schedule < ActiveRecord::Base
   belongs_to :service, inverse_of: :schedules
   belongs_to :recurrence
   belongs_to :aliada_working_hour
-  has_and_belongs_to_many :zones
 
   # Scopes
   scope :busy_candidate, -> { where(status: ['booked','available']) }
@@ -34,7 +33,9 @@ class Schedule < ActiveRecord::Base
   scope :booked, -> {  where(status: 'booked') }
   scope :padding, -> {  where(status: 'padding') }
   scope :booked_or_padding, -> {  where(status: ['booked', 'padding' ]) }
-  scope :in_zone, -> (zone) { joins(:zones).where("schedules_zones.zone_id = ?", zone.id) }
+  # Add zones to aliadas in specs 
+  # scope :in_zone, -> (zone) { joins(:zones).where("schedules_zones.zone_id = ?", zone.id) }
+  scope :in_zone, -> (zone) { joins(:aliada).joins("INNER JOIN aliada_zones ON aliada_zones.zone_id = #{zone.id} AND aliada_zones.aliada_id = schedules.aliada_id") }
   scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
   scope :in_or_after_datetime, ->(starting_datetime) { where("datetime >= ?", starting_datetime) }
   scope :after_datetime, ->(datetime) { where("datetime > ?", datetime) }
@@ -170,6 +171,8 @@ class Schedule < ActiveRecord::Base
 
       field :recurrence
       field :created_at
+
+      field :zones
 
       scopes [:siguientes, :todos, :reservadas, :disponible]
     end

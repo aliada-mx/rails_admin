@@ -27,9 +27,9 @@ describe 'Availability' do
                                    address: address_1) }
 
   before do
-    @first_interval = create_one_timer!(starting_datetime, hours: 5, conditions: {aliada_id: aliada.id, zones: [zone_1]} )
+    @first_interval = create_one_timer!(starting_datetime, hours: 5, conditions: {aliada_id: aliada.id} )
 
-    @last_interval = create_one_timer!(starting_datetime + 5.hours , hours: 5, conditions: {aliada_id: aliada.id, zones: [zone_1]} )
+    @last_interval = create_one_timer!(starting_datetime + 5.hours , hours: 5, conditions: {aliada_id: aliada.id} )
     @last_schedule = @last_interval.schedules.last
 
     @aliadas_availability = Availability.new
