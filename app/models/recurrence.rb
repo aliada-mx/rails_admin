@@ -89,7 +89,19 @@ class Recurrence < ActiveRecord::Base
   end
 
   def services_to_reschedule
-    self.services.in_or_after_datetime(self.datetime).to_a
+    if datetime and rescheduling_a_recurrence_day
+      services.in_or_after_datetime(self.datetime).to_a
+    else
+      services.in_the_future.to_a
+    end
+  end
+
+  def rescheduling_a_recurrence_day
+    timezone_datetime.weekday == weekday
+  end
+
+  def timezone_datetime
+    datetime.in_time_zone('Etc/GMT+6')
   end
 
   def related_services_ids
