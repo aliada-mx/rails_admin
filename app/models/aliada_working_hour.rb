@@ -85,6 +85,7 @@ class AliadaWorkingHour < ActiveRecord::Base
     label_plural 'Horas de trabajo disponibles'
     parent Aliada
     navigation_icon 'icon-time'
+    visible false
   end
 end
 
