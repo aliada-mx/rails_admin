@@ -223,17 +223,8 @@ class Recurrence < ActiveRecord::Base
     navigation_label 'Operación'
     navigation_icon 'icon-repeat'
 
-    configure :services do
-      associated_collection_scope do 
-        recurrence = bindings[:object]
-        if recurrence.services
-          Proc.new { |scope|
-            # scoping only the unused placeholders and our own placeholders
-            scope.where(recurrence_id: recurrence.id)
-          }
-        end
-      end
-    end
+    exclude_fields :extra_recurrences,  :versions
+
 
     list do
 
