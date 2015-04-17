@@ -4,9 +4,9 @@ feature 'AliadasAvailabilityController' do
   
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
   let(:one_time){ create(:service_type, name: 'one-time') }
-  let(:aliada){ create(:aliada) }
-  let(:aliada_2){ create(:aliada) }
   let(:zone){ create(:zone) }
+  let(:aliada){ create(:aliada, zones: [zone]) }
+  let(:aliada_2){ create(:aliada, zones: [zone]) }
   let(:postal_code){ create(:postal_code, :zoned, zone: zone) }
   let!(:user){ create(:user, 
                       phone: '123456',
@@ -19,8 +19,8 @@ feature 'AliadasAvailabilityController' do
   describe 'for_calendar' do
     before do
       clear_session
-      create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada, zones: [zone]})
-      create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada_2, zones: [zone]})
+      create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada})
+      create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada_2})
 
       Timecop.freeze(starting_datetime)
 
@@ -55,7 +55,6 @@ feature 'AliadasAvailabilityController' do
 
       it 'returns a json with dates times including the passed service availability' do
         create_one_timer!(starting_datetime + 1.day + 4.hour, hours: 1, conditions: {aliada: aliada, 
-                                                                                     zones: [zone],
                                                                                      service: service,
                                                                                      status: 'booked'} )
         login_as(user)
@@ -77,7 +76,7 @@ feature 'AliadasAvailabilityController' do
       before do
         Timecop.freeze(cst_starting_datetime)
 
-        create_one_timer!(cst_starting_datetime + 1.day + 1.hour, hours: 4, conditions: {aliada: aliada_2, zones: [zone]})
+        create_one_timer!(cst_starting_datetime + 1.day + 1.hour, hours: 4, conditions: {aliada: aliada_2})
       end
 
       it 'return the time with -1 hour' do
@@ -96,8 +95,8 @@ feature 'AliadasAvailabilityController' do
 
   describe '#find_availability' do
     before do
-      create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada, zones: [zone]})
-      create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada_2, zones: [zone]})
+      create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada})
+      create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada_2})
 
       Timecop.freeze(starting_datetime)
 

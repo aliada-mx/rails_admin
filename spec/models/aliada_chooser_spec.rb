@@ -7,9 +7,9 @@ describe 'AliadaChooser' do
     let!(:user) { create(:user) }
     let!(:zone_1) { create(:zone) }
     let!(:zone_2) { create(:zone) }
-    let!(:aliada_1) { create(:aliada, created_at: starting_datetime - 3.hours) }
-    let!(:aliada_2) { create(:aliada, created_at: starting_datetime - 2.hours) }
-    let!(:aliada_3) { create(:aliada, created_at: starting_datetime - 1.hour) }
+    let!(:aliada_1) { create(:aliada, created_at: starting_datetime - 3.hours, zones: [zone_1]) }
+    let!(:aliada_2) { create(:aliada, created_at: starting_datetime - 2.hours, zones: [zone_1]) }
+    let!(:aliada_3) { create(:aliada, created_at: starting_datetime - 1.hour, zones: [zone_1]) }
     let!(:one_time_service_type) { create(:service_type, name: 'one-time') }
     let!(:address_1){ create(:address)}
     let!(:service_1){ create(:service,
@@ -24,9 +24,9 @@ describe 'AliadaChooser' do
     before :each do
       Timecop.freeze(starting_datetime)
 
-      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_1.id, zones: [zone_1]})
-      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_2.id, zones: [zone_1]})
-      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_3.id, zones: [zone_1]})
+      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_1.id})
+      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_2.id})
+      create_one_timer!(starting_datetime - 1.hour, hours: 5, conditions: {aliada_id: aliada_3.id})
 
       @aliadas_availability = AvailabilityForService.find_aliadas_availability(service_1, starting_datetime - 1.hour)
     end

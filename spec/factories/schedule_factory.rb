@@ -9,10 +9,6 @@ FactoryGirl.define do
       zone { create(:zone) }
     end
 
-    after :build do |schedule, evaluator|
-      schedule.zones << evaluator.zone
-    end
-
     trait :with_service do
       transient do
         service { create(:service) }

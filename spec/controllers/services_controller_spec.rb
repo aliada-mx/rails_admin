@@ -5,8 +5,8 @@ feature 'ServiceController' do
   include TestingSupport::SharedExpectations::ConektaCardExpectations
 
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') } # 7 am Mexico City
-  let!(:aliada) { create(:aliada) }
   let!(:zone) { create(:zone) }
+  let!(:aliada) { create(:aliada, first_name: 'Aide', zones: [ zone ]) }
   let!(:recurrent_service) { create(:service_type) }
   let!(:one_time_service) { create(:service_type, name: 'one-time') }
   let!(:one_time_from_recurrent) { create(:service_type, name: 'one-time-from-recurrent') }
@@ -29,7 +29,7 @@ feature 'ServiceController' do
     before do
       Timecop.freeze(starting_datetime)
 
-      create_recurrent!(starting_datetime + 1.day, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {zones: [zone], aliada: aliada})
+      create_recurrent!(starting_datetime + 1.day, hours: 5, periodicity: recurrent_service.periodicity ,conditions: {aliada: aliada})
 
       expect(Address.count).to be 0
       expect(Service.count).to be 0
@@ -212,7 +212,7 @@ feature 'ServiceController' do
   end
 
   context 'with a logged in user' do
-    let!(:aliada) { create(:aliada) }
+    let!(:aliada) { create(:aliada, zones: [zone]) }
     let!(:admin){ create(:admin) }
     let!(:user){ create(:user) }
     let!(:address){ create(:address, postal_code: postal_code, user: user) }
@@ -287,8 +287,8 @@ feature 'ServiceController' do
 
       describe '#cancel' do
         before :each do
-          @future_service_interval = create_one_timer!( starting_datetime, hours: 3, conditions: { zones: [zone], aliada: aliada, service: user_service, status: 'booked' } )
-          @previous_service_interval = create_one_timer!( starting_datetime - 1.day, hours: 3, conditions: { zones: [zone], aliada: aliada, service: user_service, status: 'booked' } )
+          @future_service_interval = create_one_timer!( starting_datetime, hours: 3, conditions: { aliada: aliada, service: user_service, status: 'booked' } )
+          @previous_service_interval = create_one_timer!( starting_datetime - 1.day, hours: 3, conditions: { aliada: aliada, service: user_service, status: 'booked' } )
 
           allow_any_instance_of(User).to receive(:aliadas).and_return([aliada])
           allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
@@ -328,7 +328,8 @@ feature 'ServiceController' do
           expect(user_service.reload.cancelation_fee_charged).to be true
         end
 
-        it 'deactivates the recurrences and enables the schedules' do
+        # TODO move to recurrence controller spec
+        xit 'deactivates the recurrences and enables the schedules' do
           recurrence = create(:recurrence)
           service_1 = create(:service, recurrence: recurrence)
           service_2 = create(:service, recurrence: recurrence)
@@ -359,7 +360,7 @@ feature 'ServiceController' do
 
         create_recurrent!(starting_datetime + 1.day,hours: 5,
                                                     periodicity: recurrent_service.periodicity ,
-                                                    conditions: { zones: [zone], aliada: aliada } )  
+                                                    conditions: { aliada: aliada } )  
       end
 
       it 'let the user view the new service page' do

@@ -6,8 +6,8 @@ feature 'Service' do
   let(:timezone){ 'UTC' }
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
   let!(:user) { create(:user) }
-  let!(:aliada) { create(:aliada) }
   let!(:zone) { create(:zone) }
+  let!(:aliada) { create(:aliada, zones: [zone]) }
   let!(:conekta_card){ create(:conekta_card) }
   let!(:recurrence){ create(:recurrence, 
                             weekday: ( starting_datetime + 1.day - 1.hour).weekday,
@@ -35,13 +35,13 @@ feature 'Service' do
 
   before(:each, recurrent: false) do
     # Tomorrow because we never book for the same day
-    create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada, zones: [zone]})
+    create_one_timer!(starting_datetime + 1.day, hours: 4, conditions: {aliada: aliada})
   end
 
   # Create the needed schedules
   before(:each, recurrent: true) do
     # Tomorrow because we never book for the same day
-    create_recurrent!(starting_datetime + 1.day, hours: 4, periodicity: 7, conditions: {aliada: aliada, zones: [zone]})
+    create_recurrent!(starting_datetime + 1.day, hours: 4, periodicity: 7, conditions: {aliada: aliada})
   end
 
   describe '#book_an_aliada' do

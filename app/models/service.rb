@@ -216,8 +216,8 @@ class Service < ActiveRecord::Base
     original_service_type_id = self.service_type_id
     self.service_type_id = ServiceType.one_time.id
 
-    finder = AvailabilityForService.new(self, available_after, aliada_id: aliada_id)
-    aliadas_availability = finder.find
+    aliadas_availability = AvailabilityForService.find_aliadas_availability(self, available_after, aliada_id: aliada_id)
+
     self.service_type_id = original_service_type_id
 
     raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
@@ -233,9 +233,7 @@ class Service < ActiveRecord::Base
   def book_an_aliada(aliada_id: nil)
     available_after = starting_datetime_to_book_services
 
-    finder = AvailabilityForService.new(self, available_after, aliada_id: aliada_id)
-
-    aliadas_availability = finder.find
+    aliadas_availability = AvailabilityForService.find_aliadas_availability(self, available_after, aliada_id: aliada_id)
 
     raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
 
@@ -466,19 +464,9 @@ class Service < ActiveRecord::Base
       :garbage_instructions, :special_instructions ]
   end
 
-  # Cancel this service and all related through the recurrence
   def cancel_all!
     ActiveRecord::Base.transaction do
       cancel
-
-      if recurrent?
-        recurrence.services.in_the_future.each do |service|
-          next if self.id == service.id
-          service.cancel
-        end
-        recurrence.deactivate!
-        recurrence.save!
-      end
 
       if in_less_than_24_hours
         charge_cancelation_fee!

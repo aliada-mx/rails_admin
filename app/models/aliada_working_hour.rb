@@ -69,8 +69,8 @@ class AliadaWorkingHour < ActiveRecord::Base
 
     recurrence_days.times do |i|
       schedule = Schedule.find_or_initialize_by(aliada_id: self.aliada_id, datetime: starting_datetime)
+
       if schedule.new_record? && self.aliada_id
-        schedule.zones = self.aliada.zones
         schedule.aliada_working_hour_id = self.id
         schedule.save!
       else
