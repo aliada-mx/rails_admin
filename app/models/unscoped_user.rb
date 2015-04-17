@@ -13,4 +13,8 @@ class UnscopedUser < User
 
   def self.default_scope
   end
+
+  rails_admin do
+    visible false
+  end
 end

@@ -664,6 +664,8 @@ class Service < ActiveRecord::Base
     end
 
     edit do
+      field :created_at
+
       field :status
       field :datetime
       field :user

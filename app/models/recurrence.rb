@@ -80,6 +80,10 @@ class Recurrence < ActiveRecord::Base
     next_service.should_charge_cancelation_fee if next_service.present?
   end
 
+  def next_service
+    services.ordered_by_datetime.where('datetime > ?', Time.zone.now).first
+  end
+
   def charge_cancelation_fee!
     next_service.charge_cancelation_fee!
   end

@@ -141,9 +141,9 @@ module Mixins
       end
 
       OpenStruct.new({index: i, 
-                     schedule: current_schedule,
-                     type_of_ending: type_of_ending(i),
-                     available_after: available_schedules})
+                      schedule: current_schedule,
+                      type_of_ending: type_of_ending(i),
+                      available_after: available_schedules})
     end
 
     def type_of_ending(index)
@@ -188,6 +188,7 @@ module Mixins
         end
         @last_schedule_index -=1 # we summed a number that's not zero indexed
 
+        break if ending.schedule.nil?
         break if !ending.schedule.available?
         break if @last_schedule_index > ending.index
 

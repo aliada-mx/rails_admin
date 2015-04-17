@@ -10,7 +10,7 @@
               Hola admin #{ @user.name }
           %span.icon.icon-user
           %a{href: edit_users_path(@user), title: 'Mi cuenta', class: 'account-link' }
-            Mi Cuenta
+            = @user.name
           %a{href: new_service_users_path(@user), title: 'Programar nueva visita', class:'action-button-pink size-large'}
             Programar nueva visita
         - else

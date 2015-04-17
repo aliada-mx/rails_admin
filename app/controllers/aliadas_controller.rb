@@ -33,7 +33,7 @@ class AliadasController < ApplicationController
     if @aliada 
       #must implement today or tomorrow after 6pm, etc...
       now = ActiveSupport::TimeZone["Mexico City"].now
-      date_to_show = if now.hour < 19
+      date_to_show = if now.hour < 18
                        ActiveSupport::TimeZone["Mexico City"].today 
                      else
                        ActiveSupport::TimeZone["Mexico City"].today + 1.day
