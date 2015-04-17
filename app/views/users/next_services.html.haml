@@ -7,11 +7,11 @@
         .title
           Solo una vez
 
-    - @one_timers.each do |service|
-      = render partial: 'common/service_card', locals: { service: service }
+    .cards
+      - @one_timers.each_with_index do |service,i|
+        = render partial: 'common/service_card', locals: { service: service }
 
 - @recurrences.each do |recurrence|
-
   .recurrence-header
     .head
       .badge
@@ -27,10 +27,9 @@
       .action-link
         =link_to("Modifcar todas las visitas próximas", edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id), {})
 
-    .cards
-      - recurrence.services.in_the_future.not_canceled.ordered_by_datetime.each do |service|
+    %table.table-cards
+      - recurrence.services_for_user.each do |service|
         = render partial: 'common/service_card', locals: { service: service }
-
 
   -# TODO 
     - if services_count == index + 1

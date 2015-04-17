@@ -211,6 +211,10 @@ class Recurrence < ActiveRecord::Base
 
     aliada_availability.rebook_recurrence(self)
   end
+
+  def services_for_user
+    services.in_the_future.not_canceled.ordered_by_datetime
+  end
    
   # Among recurrent services
 
