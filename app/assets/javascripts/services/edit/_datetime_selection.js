@@ -17,12 +17,10 @@ aliada.services.edit.datetime_selection = function(aliada, ko) {
     time: ko.observable('').extend({
       default_value: null
     }),
-
-    service_type: ko.observable(aliada.service.default_service_type),
   });
 
   aliada.ko.service_type_display_name = ko.computed(function() {
-    return aliada.ko.service_type().display_name;
+    return aliada.service.service_type.display_name;
   });
 
   aliada.ko.hours = ko.computed(function() {
@@ -41,11 +39,7 @@ aliada.services.edit.datetime_selection = function(aliada, ko) {
   });
 
   aliada.ko.price = ko.computed(function() {
-    return Math.ceil(aliada.ko.hours() * aliada.ko.service_type().price_per_hour);
-  });
-
-  aliada.ko.is_recurrent_service = ko.computed(function() {
-    return aliada.ko.service_type().name == 'recurrent';
+    return Math.ceil(aliada.ko.hours() * aliada.service.service_type.price_per_hour);
   });
 
   aliada.ko.is_datetime_done = ko.computed(function() {

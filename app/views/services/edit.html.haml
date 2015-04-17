@@ -1,11 +1,9 @@
 = append(:body_class){ ' edit_service ' }
 
-- service_type_name = @is_recurrent ? 'recurrent' : 'one-time'
-
 = append :navigation do
   = render partial: 'common/inner_navigation'
 
-= form_for @service, url: update_service_post_users_path(@user, @service), method: :post, html: { class: service_type_name, id: 'edit_service_form' } do |edit_service_form|
+= form_for @service, url: update_service_post_users_path(@user, @service), method: :post, html: { class: 'one-time', id: 'edit_service_form' } do |edit_service_form|
   %main
     = render partial: 'services/edit/step_1_duration_datetime', locals: {edit_service_form: edit_service_form}
     = render partial: 'services/edit/step_2_success', locals: {edit_service_form: edit_service_form}
@@ -29,5 +27,5 @@
   aliada.service.bathrooms = #{@service.bathrooms};
   aliada.service.bedrooms = #{@service.bedrooms};
   aliada.service.friendly_datetime = '#{@service.friendly_datetime}';
-  aliada.service.is_recurrent = #{@service.recurrent?};
   aliada.service.default_service_type = #{@service.service_type.to_json.html_safe};
+  ! aliada.service.service_type = #{@service.service_type.to_json};

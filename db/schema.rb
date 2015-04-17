@@ -1,4 +1,4 @@
-# -*- encoding : utf-8 -*-
+# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150409155130) do
+ActiveRecord::Schema.define(version: 20150416215923) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,6 +43,18 @@ ActiveRecord::Schema.define(version: 20150409155130) do
 
   add_index "addresses", ["postal_code_id"], name: "index_addresses_on_postal_code_id", using: :btree
   add_index "addresses", ["user_id"], name: "index_addresses_on_user_id", using: :btree
+
+  create_table "aliada_working_hours", force: true do |t|
+    t.integer  "user_id"
+    t.string   "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "periodicity"
+    t.integer  "aliada_id"
+    t.string   "weekday"
+    t.integer  "hour"
+    t.integer  "total_hours"
+  end
 
   create_table "aliada_zones", force: true do |t|
     t.integer  "aliada_id"
@@ -114,6 +126,13 @@ ActiveRecord::Schema.define(version: 20150409155130) do
   end
 
   add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
+
+  create_table "extra_recurrences", force: true do |t|
+    t.integer  "extra_id"
+    t.integer  "recurrence_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
 
   create_table "extra_services", force: true do |t|
     t.integer  "extra_id"
@@ -194,9 +213,9 @@ ActiveRecord::Schema.define(version: 20150409155130) do
   add_index "payments", ["user_id"], name: "index_payments_on_user_id", using: :btree
 
   create_table "postal_codes", force: true do |t|
-    t.string   "number",     limit: nil
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string   "name"
     t.integer  "zone_id"
   end
@@ -204,14 +223,28 @@ ActiveRecord::Schema.define(version: 20150409155130) do
   create_table "recurrences", force: true do |t|
     t.integer  "user_id"
     t.string   "status"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",                                              null: false
+    t.datetime "updated_at",                                              null: false
     t.integer  "periodicity"
     t.integer  "aliada_id"
     t.string   "weekday"
     t.integer  "hour"
     t.integer  "total_hours"
-    t.string   "owner"
+    t.integer  "bathrooms"
+    t.integer  "bedrooms"
+    t.integer  "zone_id"
+    t.integer  "extra_ids"
+    t.integer  "address_id"
+    t.integer  "rooms_hours"
+    t.decimal  "hours_after_service",            precision: 10, scale: 3
+    t.decimal  "estimated_hours",                precision: 10, scale: 3
+    t.text     "entrance_instructions"
+    t.text     "attention_instructions"
+    t.text     "cleaning_supplies_instructions"
+    t.text     "equipment_instructions"
+    t.text     "garbage_instructions"
+    t.text     "special_instructions"
+    t.text     "forbidden_instructions"
   end
 
   add_index "recurrences", ["user_id"], name: "index_recurrences_on_user_id", using: :btree
@@ -221,10 +254,11 @@ ActiveRecord::Schema.define(version: 20150409155130) do
     t.string   "status"
     t.datetime "datetime"
     t.integer  "service_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
     t.integer  "aliada_id"
     t.integer  "recurrence_id"
+    t.integer  "aliada_working_hour_id"
   end
 
   add_index "schedules", ["datetime", "aliada_id"], name: "index_schedules_on_datetime_and_aliada_id", unique: true, using: :btree
@@ -316,25 +350,25 @@ ActiveRecord::Schema.define(version: 20150409155130) do
   end
 
   create_table "users", force: true do |t|
-    t.string   "role",                   limit: nil
-    t.string   "email",                  limit: nil
-    t.datetime "created_at",                                                               null: false
-    t.datetime "updated_at",                                                               null: false
-    t.string   "phone",                  limit: nil
-    t.string   "encrypted_password",     limit: nil,                         default: "",  null: false
-    t.string   "reset_password_token",   limit: nil
+    t.string   "role"
+    t.string   "email"
+    t.datetime "created_at",                                                   null: false
+    t.datetime "updated_at",                                                   null: false
+    t.string   "phone"
+    t.string   "encrypted_password",                             default: "",  null: false
+    t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                                              default: 0,   null: false
+    t.integer  "sign_in_count",                                  default: 0,   null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.inet     "current_sign_in_ip"
     t.inet     "last_sign_in_ip"
-    t.string   "first_name",             limit: nil
-    t.string   "last_name",              limit: nil
-    t.string   "authentication_token",   limit: nil
-    t.decimal  "balance",                            precision: 7, scale: 2, default: 0.0
+    t.string   "first_name"
+    t.string   "last_name"
     t.string   "conekta_customer_id"
+    t.decimal  "balance",                precision: 7, scale: 2, default: 0.0
+    t.string   "authentication_token"
     t.string   "md5_password"
     t.string   "full_name"
   end
@@ -356,28 +390,36 @@ ActiveRecord::Schema.define(version: 20150409155130) do
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
 
   create_table "zones", force: true do |t|
-    t.string   "name",       limit: nil
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   Foreigner.load
   add_foreign_key "addresses", "postal_codes", name: "fk_rails_176653fe2c"
+  add_foreign_key "addresses", "users", name: "fk_rails_adf64c847b"
 
   add_foreign_key "codes", "code_types", name: "fk_rails_5766f8bb3a"
+  add_foreign_key "codes", "users", name: "fk_rails_0cc1e79270"
 
   add_foreign_key "credits", "codes", name: "fk_rails_f59cb87f20"
   add_foreign_key "credits", "users", name: "fk_rails_a2fdb26281"
 
   add_foreign_key "documents", "users", name: "fk_rails_8492e5f484"
 
+  add_foreign_key "recurrences", "users", name: "fk_rails_6e1c955ffb"
+  add_foreign_key "recurrences", "users", name: "recurrences_user_id_fk"
+
   add_foreign_key "schedules", "services", name: "fk_rails_c759b2308c"
+  add_foreign_key "schedules", "users", name: "fk_rails_46c762044c"
 
   add_foreign_key "scores", "services", name: "scores_service_id_fk"
+  add_foreign_key "scores", "users", name: "fk_rails_a7985791f0"
 
   add_foreign_key "services", "addresses", name: "fk_rails_da43fb23af"
   add_foreign_key "services", "recurrences", name: "fk_rails_b54eadb930"
   add_foreign_key "services", "service_types", name: "fk_rails_b3316839df"
+  add_foreign_key "services", "users", name: "fk_rails_098372802b"
   add_foreign_key "services", "zones", name: "fk_rails_6a9baffb04"
 
 end

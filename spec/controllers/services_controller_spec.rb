@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-# -*- coding: utf-8 -*-
 feature 'ServiceController' do
   include TestingSupport::ServiceControllerHelper
   include TestingSupport::SchedulesHelper
@@ -132,7 +131,6 @@ feature 'ServiceController' do
         user = service.user
         
         expect(service.aliada).to be_present
-        expect(recurrence.owner).to eql 'user'
         expect(recurrence.hour).to eql service.datetime.hour
         expect(recurrence.weekday).to eql service.datetime.weekday
         expect(recurrence.aliada).to eql aliada
@@ -287,158 +285,6 @@ feature 'ServiceController' do
         end
       end
 
-      describe 'editing side effects' do
-        let(:next_day_of_service) { Time.zone.parse('2015-01-08 13:00:00') }
-
-        before do
-          allow_any_instance_of(User).to receive(:aliadas).and_return([aliada])
-          allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
-          allow_any_instance_of(User).to receive(:postal_code_number).and_return(11800)
-        end
-
-        context 'recurrent services' do
-          before do
-            @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
-            Capybara.ignore_hidden_elements = false
-
-            booked_intervals = create_recurrent!(starting_datetime, 
-                                                 hours: 6,
-                                                 periodicity: recurrent_service.periodicity ,
-                                                 conditions: {zones: [zone],
-                                                              aliada: aliada,
-                                                              service: user_service,
-                                                              status: 'booked'})
-
-            available_schedules_intervals = create_recurrent!(starting_datetime + 6.hours, 
-                                                              hours: 1,
-                                                              periodicity: recurrent_service.periodicity ,
-                                                              conditions: {zones: [zone], aliada: aliada})
-
-            visit edit_service_users_path(user_id: user.id, service_id: user_service.id)
-          end
-
-          after do
-            Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
-          end
-
-          it 'doesnt reschedule the service when datetime, estimated or hours change' do
-            expect_any_instance_of(Service).not_to receive(:reschedule!)
-
-            fill_in 'service_special_instructions', with: 'Something different than previous value'
-            fill_in 'service_garbage_instructions', with: 'Something different than previous value'
-
-            click_button 'Guardar cambios'
-          end
-
-          it 'doesnt let you dowgrade to one time service from a recurrent' do
-            expect(user_service).to be_recurrent
-
-            fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
-            fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
-            choose "service_service_type_id_#{one_time_service.id}", disabled: true
-            # Simulate somebody manipulating the form
-            remove_disabled "service_service_type_id_#{one_time_service.id}"
-
-            click_button 'Guardar cambios'
-
-            response = JSON.parse(page.body)
-            expect(response['status']).to eql 'error'
-            expect(response['code']).to eql 'downgrade_impossible'
-          end
-
-          it 'reschedules the service when the estimated hours change' do
-            expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
-
-            fill_hidden_input 'service_estimated_hours', with: '5.0'
-            fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
-            fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
-
-            click_button 'Guardar cambios'
-
-            response = JSON.parse(page.body)
-            expect(response['status']).to_not eql 'error'
-            expect(response['service_id']).to be_present
-
-            service = Service.find(response['service_id'])
-
-            expect(service.estimated_hours).to eql 5
-            expect(service.schedules.count).to eql 13
-            expect(service.schedules.padding.count).to eql 2
-            expect(Schedule.available.count).to eql 1
-          end
-
-          it 'makes available schedules previously booked but not used anymore by the service' do
-            expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
-            expect(Schedule.available.count).to eql 5
-
-            fill_hidden_input 'service_estimated_hours', with: '3.0'
-            fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
-            fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
-
-            click_button 'Guardar cambios'
-
-            response = JSON.parse(page.body)
-            expect(response['status']).to_not eql 'error'
-            expect(response['service_id']).to be_present
-
-            service = Service.find(response['service_id'])
-
-            expect(service.estimated_hours).to eql 3
-            expect(service.schedules.in_or_after_datetime(next_day_of_service).count).to eql 5 
-            expect(service.schedules.padding.count).to eql 2
-            expect(Schedule.available.count).to eql 9
-          end
-
-          it 'changes the recurrence attributes' do
-            expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
-            expect(user_service.recurrence.reload.total_hours).to eql 6
-
-            fill_hidden_input 'service_estimated_hours', with: '5.0'
-            fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
-            fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
-
-            click_button 'Guardar cambios'
-
-            response = JSON.parse(page.body)
-            expect(response['status']).to_not eql 'error'
-            expect(response['service_id']).to be_present
-
-            service = Service.find(response['service_id'])
-
-            expect(service.recurrence.total_hours).to eql 7
-          end
-
-          it 'cancels the previous services and creates new ones' do
-            recurrence = create(:recurrence)
-            service_1 = create(:service, recurrence: recurrence)
-            service_2 = create(:service, recurrence: recurrence)
-
-            user_service.recurrence = recurrence
-            user_service.save!
-
-            fill_hidden_input 'service_estimated_hours', with: '4.0'
-            fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
-            fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
-
-            click_button 'Guardar cambios'
-
-            response = JSON.parse(page.body)
-            expect(response['status']).to_not eql 'error'
-            expect(response['service_id']).to be_present
-            
-            service = Service.find(response['service_id'])
-
-            expect(service_1.reload).to be_canceled
-            expect(service_2.reload).to be_canceled
-            expect(service.recurrence.services.canceled).to include(service_1)
-            expect(service.recurrence.services.canceled).to include(service_2)
-            expect(service.recurrence.services.not_canceled).to include(service)
-            expect(service.recurrence.services.not_canceled.count).to be 4
-            expect(Schedule.booked_or_padding.all? {|s| s.service_id.present? }).to be true
-          end
-        end
-      end
-
       describe '#cancel' do
         before :each do
           @future_service_interval = create_one_timer!( starting_datetime, hours: 3, conditions: { zones: [zone], aliada: aliada, service: user_service, status: 'booked' } )
@@ -558,7 +404,6 @@ feature 'ServiceController' do
           recurrence = service.recurrence
 
           expect_to_have_a_complete_service(service)
-          expect(recurrence.owner).to eql 'user'
           expect(recurrence.hour).to eql service.datetime.hour
           expect(recurrence.weekday).to eql service.datetime.weekday
           expect(recurrence.aliada).to eql aliada

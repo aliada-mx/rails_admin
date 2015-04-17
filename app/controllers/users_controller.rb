@@ -25,11 +25,9 @@ class UsersController < ApplicationController
   end
 
   def next_services
-    recurrent_services = @user.services.recurrent.not_canceled.to_a.uniq { |s| s.recurrence_id }.select { |s| s.recurrence.try(:active?) }
+    @recurrences = @user.recurrences.active.sort_by { |r| r.wday }
 
-    one_timers = @user.services.one_timers.in_the_future.not_canceled.to_a
-
-    @services = ( recurrent_services + one_timers )
+    @one_timers = @user.services.one_timers.in_the_future.not_canceled.to_a
   end
 
   def previous_services

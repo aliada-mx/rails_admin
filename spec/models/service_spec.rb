@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-# -*- coding: utf-8 -*-
 feature 'Service' do
   include TestingSupport::SchedulesHelper
   include AliadaSupport::DatetimeSupport
@@ -16,7 +15,6 @@ feature 'Service' do
                             periodicity: 7) }
   let!(:recurrent_service) { create(:service_type, name: 'recurrent', price_per_hour: 65) }
   let!(:one_time_service) { create(:service_type, name: 'one-time', price_per_hour: 105) }
-  let!(:one_time_from_recurrent) { create(:one_time_from_recurrent) }
   let!(:service){ create(:service,
                          aliada: aliada,
                          user: user,
@@ -156,7 +154,7 @@ feature 'Service' do
 
   describe '#charge_service!' do
 
-    it 'Creates a ticket on Conekta::Error' do
+    it 'Raises an exception if a token is not passed' do
       user.create_payment_provider_choice(conekta_card)
       service.price= 65
       service.status = 'finished'
@@ -170,8 +168,9 @@ feature 'Service' do
       service.save
       conekta_card.token = nil
       conekta_card.save
-      service.charge!
-      expect(Ticket.all.count).to eql 1
+      VCR.use_cassette('failed_conekta_charge', match_requests_on: [:conekta_charge]) do
+        expect{ service.charge! }.to raise_error Conekta::ParameterValidationError
+      end
      
     end
 

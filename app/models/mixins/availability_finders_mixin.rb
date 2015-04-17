@@ -18,9 +18,11 @@ module Mixins
     def load_schedules
       # Pull the schedules from db
       @schedules = Schedule.for_booking(@zone, @available_after)
+
       if @aliada_id.present? && !@aliada_id.zero? # We use 0 to represent any aliada
         @schedules = @schedules.where(aliada_id: @aliada_id)
       end
+
       # Eval the query to avoid multiple queries later on thanks to lazy evaluation
       @schedules.to_a
     end
@@ -254,6 +256,7 @@ module Mixins
         @schedules.each do |schedule|
           next if !services_ids.include? schedule.service_id
 
+          # We save the original status to restore it after we are done
           schedule.original_status = schedule.status.dup
           schedule.status = 'available' if schedule.status == 'booked' || schedule.status == 'padding'
           @previous_service_schedules.push(schedule)

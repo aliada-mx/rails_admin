@@ -123,11 +123,11 @@ aliada.dialogs.confirm_service_cancel = function() {
 };
 
 aliada.dialogs.confirm_recurrent_service_change = function() {
-  var confirm_recurrent_service_change_template  = _.template($('#confirm_recurrent_service_change_template').html());
+  var confirm_recurrence_change_template  = _.template($('#confirm_recurrence_change_template').html());
 
   return new Promise(function(resolve, reject) {
     vex.dialog.confirm({
-      message: confirm_recurrent_service_change_template  ({}),
+      message: confirm_recurrence_change_template({}),
       callback: function(value) {
         if (value == true) {
           resolve(value);
@@ -145,6 +145,15 @@ aliada.dialogs.confirm_recurrent_service_change = function() {
     });
   })
 }
+
+aliada.dialogs.succesful_card_change = function(next_path) {
+  // Preload template
+  var succesful_card_change_template = _.template($('#succesful_card_change_template').html());
+
+  vex.open({
+    content: succesful_card_change_template({}),
+  });
+};
 
 aliada.dialogs.confirm_change_card = function() {
   var confirm_change_card = _.template($('#confirm_change_card_template').html());
@@ -172,11 +181,28 @@ aliada.dialogs.confirm_change_card = function() {
   })
 }
 
-aliada.dialogs.succesful_card_change = function(next_path) {
-  // Preload template
-  var succesful_card_change_template = _.template($('#succesful_card_change_template').html());
+aliada.dialogs.confirm_recurrence_cancel = function() {
+  var cancel_recurrence_template = _.template($('#cancel_recurrence_template').html());
 
-  vex.open({
-    content: succesful_card_change_template({}),
-  });
+  return new Promise(function(resolve, reject) {
+    vex.dialog.confirm({
+      message: cancel_recurrence_template({}),
+      callback: function(value) {
+        if (value == true) {
+          resolve(value);
+        }
+      },
+      buttons: [
+        $.extend({}, vex.dialog.buttons.YES, {
+          text: 'Si',
+          className: 'action-button-gray size-extra-small vex-dialog-ok-button'
+        }), $.extend({}, vex.dialog.buttons.NO, {
+          text: 'No',
+          className: 'action-button-pink size-extra-small vex-dialog-cancel-button',
+        })
+      ],
+    });
+  })
 };
+
+

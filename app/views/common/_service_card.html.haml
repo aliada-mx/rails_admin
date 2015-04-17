@@ -1,42 +1,18 @@
-- is_recurrent = service.recurrent?
-- class_name = is_recurrent ? 'recurrent' : 'one-time'
-
 .service-card-wrapper.col-lg-6
-  .service-card{class: class_name}
+  .service-card.one-time
     .head
-      - if is_recurrent
-        = link_to edit_service_users_path(user_id: service.recurrence.next_service.user.id, service_id: service.id), class: 'action-button size-large' do
-          .badge
-            Recurrente
-            =image_tag("recurrence.png", {:title => 'Servicio recurrente'})
-
       .title
-        - if is_recurrent
-          Todos los #{ensure_plural(service.recurrence.weekday_in_spanish) }
-          .small-letters
-            = service.recurrence.friendly_time
-        - else 
-          = service.friendly_date.capitalize
-          .small-letters
-            = service.friendly_time
-
+        = service.friendly_date.capitalize
+        .small-letters
+          = service.friendly_time
     .body
       %ul.summary
         %li.checked
-          - if is_recurrent
-            Aliada: #{ service.recurrence.aliada.name }
-          - else
-            Aliada: #{ service.aliada.name }
+          Aliada: #{ service.aliada.name }
         %li.checked
-          - if is_recurrent
-            Pago: #{service.recurrence.next_service.user.payment_provider_name}
-          - else
-            Pago: #{service.user.payment_provider_name}
+          Pago: #{service.user.payment_provider_name}
         %li.checked
-          - if is_recurrent
-            Pago: #{service.recurrence.next_service.address.name}
-          - else
-            Dirección: #{service.address.name}
+          Dirección: #{service.address.name}
         %li.checked
           Datos de contacto: #{service.user.contact_data}
     .foot
@@ -47,27 +23,11 @@
           .div
             = service.status_in_spanish
         
-        - if is_recurrent
-          = link_to show_recurrence_services_users_path(user_id: service.user.id, recurrence_id: service.recurrence.id), class: 'action-button size-large' do
-            %span.icon-clock.icon-button
-            Próximos servicios
-
-          = link_to edit_service_users_path(user_id: service.recurrence.next_service.user.id, service_id: service.id), class: 'action-button size-large' do
+        .actions
+          = link_to edit_service_users_path(user_id: service.user.id, service_id: service.id), class: 'action-button size-large' do
             %span.icon-pencil.icon-button
-            Modificar Recurrencia
-
-        - else
-          .actions
-            = link_to edit_service_users_path(user_id: service.user.id, service_id: service.id), class: 'action-button size-large' do
-              %span.icon-pencil.icon-button
-              Modificar servicio
+            Modificar servicio
 
       .numbers
-        - if is_recurrent
-          .hours #{ seconds_to_hours_minutes_in_spanish service.recurrence.next_service.estimated_hours_with_extras.hours }
-        - else
-          .hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours_with_extras.hours }
-        - if is_recurrent
-          %span.cash $#{ ceil_and_strip_insignificat_zeros service.recurrence.next_service.cost } 
-        - else
-          %span.cash $#{ ceil_and_strip_insignificat_zeros service.cost } 
+        .hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours_with_extras.hours }
+        %span.cash $#{ ceil_and_strip_insignificat_zeros service.cost } 

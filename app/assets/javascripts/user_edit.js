@@ -37,7 +37,7 @@ $(function() {
   }
 
   function show_success_dialog() { 
-    aliada.dialogs.succesful_card_change();
+    aliada.dialogs.succesfull_service_changes(response.next_path);
   }
   
 
@@ -52,7 +52,7 @@ $(function() {
     aliada.add_conekta_token_to_form(form, $token_input)
       .then(confirm_card_change)
       .then(add_conekta_card)
-      .then(show_success_dialog)
+      .then()
       .caught(ConektaFailed, function(exception) {
         report_error(exception)
 

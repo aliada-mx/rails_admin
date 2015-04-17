@@ -48,11 +48,7 @@
       = text_field_tag 'promo-code', nil, placeholder: 'código promocional'
 
 = submit_tag 'Guardar cambios', id: 'update_button', name: 'update_button', class: 'action-button-pink size-extra-large', data: {bind: 'css: { disabled: !is_datetime_done() }'}
-
-- if @service.recurrent?
-  = submit_tag 'Cancelar recurrencia', id: 'cancel_button', name: 'cancel_button', class: 'action-button-transparent size-extra-large'
-- else
-  = submit_tag 'Cancelar servicio', id: 'cancel_button', name: 'cancel_button', class: 'action-button-transparent size-extra-large'
+= submit_tag 'Cancelar servicio', id: 'cancel_button', name: 'cancel_button', class: 'action-button-transparent size-extra-large'
 
 .aliada_seal
   = image_tag 'sello-de-garantia.png'

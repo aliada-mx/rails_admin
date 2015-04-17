@@ -5,8 +5,9 @@ FactoryGirl.define do
     hour 7
     periodicity 7
     total_hours 3
-    owner 'user'
     association :aliada, factory: :aliada
+    estimated_hours 3.0
+    association :address, factory: :address
     association :user, factory: :user
   end
 end

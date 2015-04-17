@@ -1,3 +1,17 @@
+// Initialize binding with the value of an input field
+ko.bindingHandlers.valueWithInit = {
+    init: function(element, valueAccessor, allBindingsAccessor, context) {
+        var observable = valueAccessor();
+        var value = element.value;
+
+        observable(value);   
+        
+        ko.bindingHandlers.value.init(element, valueAccessor, allBindingsAccessor, context);
+    },
+    update: ko.bindingHandlers.value.update
+};
+
+//
 // Set the observable($object.data('observable_name'))
 // Asuming the observable and the data have the same name
 ko.bindingHandlers.from_data = {

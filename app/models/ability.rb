@@ -65,14 +65,12 @@ class Ability
         elsif subject_class == ConektaCard
           if current_user.admin?
             true
-          # User controller abilities
           elsif params.include? :user_id
             current_user.id == params[:user_id].to_i
           else
             false
           end
         end
-
       end
     end
   end

@@ -46,8 +46,8 @@ aliada.services.initial.step_4_payment = function(aliada, ko){
 
   $(aliada.services.initial.$form).on('submit', function(e){
     e.preventDefault();
-    aliada.block_ui();
     var $token_input = $('#conekta_temporary_token');
+    aliada.block_ui();
     var form = this;
 
     aliada.add_conekta_token_to_form(form, $token_input)

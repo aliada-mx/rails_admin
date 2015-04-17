@@ -3,12 +3,6 @@ class AliadasAvailabilityController < ApplicationController
   include AliadaSupport::DatetimeSupport
   before_filter :set_user
 
-  rescue_from AliadaExceptions::AvailabilityNotFound do |exception|
-
-    Raygun.track_exception(exception, custom_data: exception.service)
-    render json: { status: :error, code: :availability_not_found, message: 'Lo sentimos no encontramos disponibilidad :('}
-  end
-
   def for_calendar
     # We round up because our whole system depends on round hours
     # and its safer to asume more time than less
@@ -16,12 +10,19 @@ class AliadasAvailabilityController < ApplicationController
 
     aliada_id = params[:aliada_id].to_i if params.include?(:aliada_id) && params[:aliada_id] != '0'
 
-    service_id = params[:service_id].to_i if params.include?(:service_id)
-    if service_id
-      service = @user.services.find(service_id)
+    if params.include?(:service_type_id)
+      service_type = ServiceType.find(params[:service_type_id].to_i)
     end
 
-    service_type = ServiceType.find(params[:service_type_id])
+    if params.include?(:service_id)
+      object = @user.services.find(params[:service_id].to_i)
+      service_type = ServiceType.one_time
+    end
+
+    if params.include?(:recurrence_id)
+      object = @user.recurrences.find(params[:recurrence_id].to_i)
+      service_type = ServiceType.recurrent
+    end
 
     zone = Zone.find_by_postal_code_number(params[:postal_code_number])
     if zone.nil?
@@ -31,18 +32,18 @@ class AliadasAvailabilityController < ApplicationController
 
     available_after = starting_datetime_to_book_services
 
-    availability = find_availability(hours, zone, available_after, aliada_id, service_type, service: service)
+    availability = find_availability(hours, zone, available_after, aliada_id, service_type, object: object)
 
     return render json: { status: :success, dates_times: availability.for_calendario('Mexico City', zone) }
   end
 
   private
-    def find_availability(hours, zone, available_after, aliada_id, service_type, service: nil)
+    def find_availability(hours, zone, available_after, aliada_id, service_type, object: nil)
       AvailabilityForCalendar.find_availability(hours, 
                                                 zone,
                                                 available_after,
                                                 aliada_id: aliada_id,
-                                                service: service,
+                                                service: object,
                                                 recurrent: service_type.recurrent?,
                                                 periodicity: service_type.periodicity)
     end

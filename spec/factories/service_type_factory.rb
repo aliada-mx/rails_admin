@@ -5,8 +5,4 @@ FactoryGirl.define do
     periodicity 7
     price_per_hour 65
   end
-
-  factory :one_time_from_recurrent, parent: :service_type do
-    name 'one-time-from-recurrent'
-  end
 end

@@ -22,7 +22,7 @@ feature 'AliadaWorkingHourController' do
       init_hour = 7 
       # Filling initial monday aliada_working_hours
       (7..(7 + total_available_hours - 1)).each do |i|
-        AliadaWorkingHour.create(weekday: 'monday', hour: i, aliada: aliada, total_hours: 1, owner: 'aliada', periodicity: 7)
+        AliadaWorkingHour.create(weekday: 'monday', hour: i, aliada: aliada, total_hours: 1, periodicity: 7)
       end
       login_as(admin)
     end

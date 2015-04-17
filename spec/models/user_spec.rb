@@ -21,12 +21,10 @@ describe 'User' do
 
     before do
       Timecop.freeze(starting_datetime + 1.hour)
-      clear_session
     end
 
     after do
       Timecop.return
-      clear_session
     end
 
     it 'returns the aliadas on the user services' do
