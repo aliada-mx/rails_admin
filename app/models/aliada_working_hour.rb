@@ -53,8 +53,7 @@ class AliadaWorkingHour < ActiveRecord::Base
     new_recurrences.each do |recurrence|
       aliada = Aliada.find(aliada_id)
 
-      awh = AliadaWorkingHour.find_or_initialize_by(aliada_id: aliada_id, weekday: recurrence[:weekday], hour: recurrence[:hour], periodicity: 7, total_hours: 1, user_id: nil)
-      awh.save!
+      awh = AliadaWorkingHour.find_or_create_by(aliada_id: aliada_id, weekday: recurrence[:weekday], hour: recurrence[:hour], periodicity: 7, total_hours: 1, user_id: nil)
       # fill 30 days of schedules
       awh.create_schedules_until_horizon        
 
