@@ -348,7 +348,7 @@ class Service < ActiveRecord::Base
       0
     elsif self.canceled_out_of_time?
       100
-      
+    #Billable hours has preference over reported hours so Operations can override an aliada  
     elsif bill_by_billable_hours?
 
       amount_by_billable_hours.ceil
