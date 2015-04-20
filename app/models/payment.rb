@@ -23,10 +23,10 @@ class Payment < ActiveRecord::Base
                     api_raw_response: charge_hash.to_json)
   end
 
-  def self.create_from_credit_payment(amount, user, payeable_object)
+  def self.create_from_credit_payment(amount, user)
     Payment.create!(amount: amount, 
                     user: user,
-                    payeable: payeable_object,
+                   # payeable: payeable_object,
                     payment_provider_type: 'User',
                     payment_provider_id: user.id)
   end

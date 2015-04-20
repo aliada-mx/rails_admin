@@ -59,7 +59,7 @@ class ConektaCard < ActiveRecord::Base
     begin
       conekta_charge = charge_in_conekta!(product, user)
      
-      payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
+      payment = Payment.create_from_conekta_charge(conekta_charge,user,self,object)
       payment.pay!
       
       payment
