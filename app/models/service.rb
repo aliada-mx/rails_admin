@@ -53,7 +53,7 @@ class Service < ActiveRecord::Base
   scope :todos, -> { }
   scope :one_timers, -> { where(service_type: ServiceType.one_time ) }
   scope :recurrent, -> { where(service_type: ServiceType.recurrent ) }
-  scope :con_horas_reportadas, -> { where('aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL') }
+  scope :con_horas_reportadas, -> { where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL') }
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
@@ -263,7 +263,9 @@ class Service < ActiveRecord::Base
   end
 
   def reported_hours
-    if bill_by_reported_hours?
+    if bill_by_hours_worked?
+      hours_worked
+    elsif bill_by_reported_hours?
       (self.aliada_reported_end_time - self.aliada_reported_begin_time) / 3600.0
     end
   end
@@ -280,7 +282,11 @@ class Service < ActiveRecord::Base
   end
 
   def bill_by_reported_hours?
-    aliada_reported_begin_time.present? && aliada_reported_end_time.present?
+    ( aliada_reported_begin_time.present? && aliada_reported_end_time.present? ) || hours_worked.present?
+  end
+
+  def bill_by_hours_worked?
+    hours_worked.present?
   end
 
   def bill_by_billable_hours?

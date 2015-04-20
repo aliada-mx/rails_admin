@@ -209,6 +209,12 @@ feature 'Service' do
     
       expect(service.amount_to_bill).to eql 420
     end
+
+    it 'calculates using the worked hours when these are set and the billable_hours are not' do
+      service.hours_worked = 5
+    
+      expect(service.amount_to_bill).to eql 525
+    end
   end
 
   describe '#friendly_total_hours' do
