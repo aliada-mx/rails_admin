@@ -68,7 +68,7 @@ class ConektaCard < ActiveRecord::Base
       Raygun.track_exception(exception)
 
       object.create_charge_failed_ticket(user, product.price, exception)
-      nil
+      Debt.find_or_create_by(user: user, amount: product.price, status: exception, payment_provider: self, payeable: service)
       raise exception
     end
   end
@@ -90,19 +90,7 @@ class ConektaCard < ActiveRecord::Base
     conekta_charge
   end
 
-  def charge!(product, user, service)
-    begin
-      conekta_charge = charge_in_conekta!(product, user)
-     
-      payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
-      payment.pay!
-      
-      payment
-    rescue Conekta::Error => exception
-      service.create_charge_failed_ticket(user, product.price, exception)
-      raise exception
-    end
-  end
+  
 
   def payment_possible?(service)
     preauthorized?

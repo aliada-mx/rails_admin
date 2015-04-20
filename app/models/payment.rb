@@ -12,19 +12,21 @@ class Payment < ActiveRecord::Base
     transition 'unpaid' => 'paid', :on => :pay
   end
 
-  def self.create_from_conekta_charge(charge, user, payment_provider)
+  def self.create_from_conekta_charge(charge, user, payment_provider, payeable_object)
     charge_hash = eval(charge.inspect)
     # Save the whole conekta response for future reference
 
     Payment.create!(amount: charge_hash['amount'] / 100.0, 
                     user: user,
+                    payeable: payeable_object,
                     payment_provider: payment_provider,
                     api_raw_response: charge_hash.to_json)
   end
 
-  def self.create_from_credit_payment(amount, user)
+  def self.create_from_credit_payment(amount, user, payeable_object)
     Payment.create!(amount: amount, 
                     user: user,
+                    payeable: payeable_object,
                     payment_provider_type: 'User',
                     payment_provider_id: user.id)
   end

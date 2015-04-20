@@ -34,6 +34,7 @@ class Service < ActiveRecord::Base
   has_many :schedules, ->{ order(:datetime ) }
   has_many :tickets, as: :relevant_object
   has_many :payments, as: :payeable
+  has_one :debts, as: :payeable
   has_one :score
 
   # Scopes
