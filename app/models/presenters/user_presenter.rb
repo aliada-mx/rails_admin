@@ -60,7 +60,7 @@ module Presenters
     end
 
     def user_next_services_path
-      Rails.application.routes.url_helpers.next_services_users_path(self)
+      Rails.application.routes.url_helpers.next_services_users_path(self) if self.persisted?
     end
   end
 end
