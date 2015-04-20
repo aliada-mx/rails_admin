@@ -9,4 +9,5 @@ $(function(){
 
     $new_service_card_wrapper.find('.service-card').css('height', card_height);
   },100)
+
 })

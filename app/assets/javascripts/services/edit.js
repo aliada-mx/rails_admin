@@ -57,14 +57,6 @@ $(document).ready(function() {
   // Load original state
   aliada.ko.bedrooms(aliada.service.bedrooms);
   aliada.ko.bedrooms(aliada.service.bathrooms);
-  // Hours selector
-  var service_type_selector = $("#service_rooms_hours").data("selectBox-selectBoxIt");
-  service_type_selector.selectOption(aliada.service.hours_without_extras);
-
-  // Update calendar on service type change
-  $('.service_types.radio_buttons').on('change', function(e) {
-    update_calendar();
-  });
 
   // Update calendar on hour change
   aliada.ko.hours.subscribe(function(hours) {

@@ -1,4 +1,6 @@
 = append(:body_class){ ' two-columns ' }
+- if user_signed_in?
+  = append(:title){ " - #{@user.name}" }
 
 = extends :application do
   .container

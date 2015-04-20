@@ -1,23 +1,51 @@
-- services_count = @services.size
 = append(:body_class){ ' next-services ' }
 
-- @services.each_with_index do |service,index|
-  = render partial: 'common/service_card', locals: { service: service }
+- if @one_timers.any?
+  .one-timers-container
+    .one-timers-header
+      .head
+        .title
+          Solo una vez
 
-  - if services_count == index + 1
-    - if services_count % 2 == 0
-      .service-card-wrapper.col-lg-12.new-service-card.horizontal.empty
-        .service-card
-          = link_to new_service_users_path(@user) do
-            Programa una nueva visita
+    .cards
+      - @one_timers.each_with_index do |service,i|
+        = render partial: 'common/service_card', locals: { service: service }
 
-    -else
-      .service-card-wrapper.col-lg-6.new-service-card.vertical.empty
-        .service-card
-          = link_to new_service_users_path(@user) do
-            Programa una nueva visita
+- @recurrences.each do |recurrence|
+  .recurrence-header
+    .head
+      .badge
+        Recurrente
+        =image_tag("recurrence.png", {:title => 'Servicio recurrente'})
+      .title
+        Todos los #{ensure_plural(recurrence.weekday_in_spanish) }
+      .small-letters
+        = recurrence.friendly_time
+        con
+        = recurrence.aliada.name
 
-- if @services.empty?
+      .action-link
+        =link_to("Modifcar todas las visitas próximas", edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id), {})
+
+    %table.table-cards
+      - recurrence.services_for_user.each do |service|
+        = render partial: 'common/service_card', locals: { service: service }
+
+  -# TODO 
+    - if services_count == index + 1
+      - if services_count % 2 == 0
+        .service-card-wrapper.col-lg-12.new-service-card.horizontal.empty
+          .service-card
+            = link_to new_service_users_path(@user) do
+              Programa una nueva visita
+
+      -else
+        .service-card-wrapper.col-lg-6.new-service-card.vertical.empty
+          .service-card
+            = link_to new_service_users_path(@user) do
+              Programa una nueva visita
+
+- if @one_timers.empty? && @recurrences.empty?
   .service-card-wrapper.col-lg-6.new-service-card.vertical.empty
     .service-card
       = link_to new_service_users_path(@user) do

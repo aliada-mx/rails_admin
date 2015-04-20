@@ -1,18 +1,39 @@
 # -*- encoding : utf-8 -*-
 class RecurrencesController < ApplicationController
-  layout 'one_column', only: :show
+  layout 'two_columns'
 
   before_filter :set_user
 
-  def set_user
-    @user = User.find(params[:user_id])
+  def edit
+    @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})
+
+    if current_user.admin?
+      @aliadas = Aliada.all.order(:first_name) + [@any_aliada]
+    else
+      @aliadas = @user.aliadas + [@any_aliada]
+    end
+
+    @recurrence = Recurrence.find(params[:recurrence_id])
   end
 
-  def show
-    @recurrence = Recurrence.find(params[:recurrence_id])
-    @base_service = @recurrence.base_service
-    @services = @recurrence.services.ordered_by_datetime.in_the_future.select do |service| 
-      ( service.one_timer_from_recurrent? || service.recurrent? ) && !service.canceled?
+  def update
+    recurrence = @user.recurrences.find(params[:recurrence_id])
+
+    if params[:update_button]
+      recurrence.update_existing!(recurrence_params)
+    elsif params[:cancel_button]
+      recurrence.cancel_all!
     end
+
+    return render json: { status: :success, next_path: next_services_users_path(@user), recurrence_id: recurrence.id }
   end
+
+  private
+    def recurrence_params
+      params.require(:recurrence).permit(Recurrence::ATTRIBUTES_SHARED_WITH_SERVICE + [ {extra_ids: []} ])
+    end
+
+    def set_user
+      @user = User.find(params[:user_id])
+    end
 end

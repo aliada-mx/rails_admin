@@ -24,35 +24,38 @@
 
 vex.defaultOptions.className = 'vex-theme-plain';
 
-// Catch exceptions with raygun
-Raygun.init(raygun_api_key).attach();
+
+if (aliada.rails_environment != 'development') {
+    // Catch exceptions with raygun
+    Raygun.init(raygun_api_key).attach();
+}
 
 // Config blockUI
-_.extend($.blockUI.defaults.css,{
-  border: 'none',
-  padding: '20px'
+_.extend($.blockUI.defaults.css, {
+    border: 'none',
+    padding: '20px'
 });
 
 // Add csrf token to ajax requests
 add_csrf_token = function(xhr) {
-  xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+    xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
 };
 
 // Enable long stack traces for Bluebird.js
-if(aliada.rails_environment == 'development'){
-  Promise.longStackTraces();
+if (aliada.rails_environment == 'development') {
+    Promise.longStackTraces();
 }
 
 // Configure underscore template interpolation to use {{ variable }}
 _.templateSettings = {
-  evaluate:    /\{\{#([\s\S]+?)\}\}/g,            // {{# console.log("blah") }}
-  interpolate: /\{\{[^#\{]([\s\S]+?)[^\}]\}\}/g,  // {{ title }}
-  escape:      /\{\{\{([\s\S]+?)\}\}\}/g,         // {{{ title }}}
+    evaluate: /\{\{#([\s\S]+?)\}\}/g, // {{# console.log("blah") }}
+    interpolate: /\{\{[^#\{]([\s\S]+?)[^\}]\}\}/g, // {{ title }}
+    escape: /\{\{\{([\s\S]+?)\}\}\}/g, // {{{ title }}}
 };
 
 // Flash messages
-$(function(){
-  $('.message').click(function(){
-    $(this).fadeOut();
-  })
+$(function() {
+    $('.message').click(function() {
+        $(this).fadeOut();
+    })
 })

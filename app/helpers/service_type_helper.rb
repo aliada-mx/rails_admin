@@ -5,6 +5,6 @@ module ServiceTypeHelper
 
     return false if in_initial_service
 
-    service.service_type.present? && ( service.try(:recurrent?) || service.try(:one_timer_from_recurrent?) )
+    service.service_type.present? && ( service.try(:recurrent?) )
   end 
 end

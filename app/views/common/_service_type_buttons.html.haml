@@ -1,12 +1,9 @@
 %fieldset.service_types.radio_buttons.large{class: should_hide(@service) ? 'concealed' : ''}
-  - disabled = disable_one_time ? ServiceType.one_time.id : nil
-
-  = form.collection_radio_buttons :service_type_id, ServiceType.visible.ordered.all, :id, :name, { checked: @service.service_type.try(:id) || ServiceType.recurrent.id, disabled: disabled } do |radio_button_builder|
+  = form.collection_radio_buttons :service_type_id, ServiceType.visible.ordered.all, :id, :name, { checked: @service.service_type.try(:id) || ServiceType.recurrent.id } do |radio_button_builder|
 
     - service_type = radio_button_builder.object
     - name = service_type.name
     - button_background = name == 'recurrent' ? 'green' : 'transparent'
-    - disabled_class = disabled == service_type.id ? 'disabled' : ''
 
     %div{class: "radio-button-container #{name} #{promotional ? '' : 'non-promotional'}"}
       .head
@@ -15,7 +12,7 @@
             %icon.sparks
             MEJOR VALOR
             %icon.sparks
-      = label_tag "service_service_type_id_#{service_type.id}", {data: {bind: "from_data: 'service_type'", service_type: service_type.to_json }, class: disabled_class }  do
+      = label_tag "service_service_type_id_#{service_type.id}", {data: {bind: "from_data: 'service_type'", service_type: service_type.to_json } }  do
         = radio_button_builder.radio_button 
 
         %span{class: "action-button-#{button_background} size-large"}

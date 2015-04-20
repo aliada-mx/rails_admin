@@ -21,22 +21,6 @@ class ScheduleInterval
     @elements_for_key = elements_for_key
   end
 
-  # For service hours padding purposes
-  def free_continuous_hours_in_front(zone)
-    start = @schedules.last.datetime
-    ending = @schedules.last.datetime + 2.hours
-
-    schedules = Schedule.in_zone(zone).after_datetime(start).in_or_before_datetime(ending).for_aliada_id(@aliada_id)
-
-    if schedules.empty?
-      2
-    elsif schedules.size == 1
-      schedules.first.available? ? 2 : 0
-    else
-      ( schedules.select{ |s| s.available? } ).size
-    end
-  end
-
   def beginning_of_interval
     @schedules.first.datetime
   end

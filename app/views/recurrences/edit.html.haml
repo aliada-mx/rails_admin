@@ -1,0 +1,27 @@
+= append(:body_class){ ' edit_recurrence ' }
+
+= append :navigation do
+  = render partial: 'common/inner_navigation'
+
+= form_for @recurrence, url: update_recurrence_users_path(@user, @recurrence), method: :post, html: { class: 'recurrent', id: 'edit_service_form' } do |edit_recurrence_form|
+  %main
+    = render partial: 'recurrences/edit/step_1_duration_datetime', locals: {edit_recurrence_form: edit_recurrence_form}
+    = render partial: 'recurrences/edit/step_2_success', locals: {edit_recurrence_form: edit_recurrence_form}
+
+  %aside
+    = render partial: 'recurrences/edit/summary', locals: {edit_recurrence_form: edit_recurrence_form}
+
+= append :javascript do
+  = javascript_include_tag 'recurrences/edit'
+
+= append :extra_javascript_variables do
+  aliada.user.postal_code_number = "#{@user.postal_code_number}";
+  aliada.recurrence.id = #{@recurrence.id};
+  aliada.recurrence.date = '#{@recurrence.weekday}';
+  aliada.recurrence.hour = '#{@recurrence.hour}';
+  aliada.recurrence.estimated_hours = #{@recurrence.estimated_hours};
+  aliada.recurrence.estimated_hours_without_extras = #{@recurrence.estimated_hours_without_extras};
+  aliada.recurrence.bathrooms = #{@recurrence.bathrooms};
+  aliada.recurrence.bedrooms = #{@recurrence.bedrooms};
+  aliada.recurrence.friendly_datetime = '#{@recurrence.friendly_weekday_hour_in_spanish}';
+  ! aliada.recurrence.service_type = #{ServiceType.recurrent.to_json};

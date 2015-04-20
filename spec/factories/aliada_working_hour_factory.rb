@@ -5,7 +5,6 @@ FactoryGirl.define do
     hour 7
     periodicity 7
     total_hours 3
-    owner 'aliada'
     association :aliada, factory: :aliada
   end
 end

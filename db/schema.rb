@@ -11,7 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20150419222409) do
+=======
+ActiveRecord::Schema.define(version: 20150419154648) do
+>>>>>>> 0d337a9fe1e5879b021c65ec65a1ad29fcd4bb82
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,6 +47,18 @@ ActiveRecord::Schema.define(version: 20150419222409) do
 
   add_index "addresses", ["postal_code_id"], name: "index_addresses_on_postal_code_id", using: :btree
   add_index "addresses", ["user_id"], name: "index_addresses_on_user_id", using: :btree
+
+  create_table "aliada_working_hours", force: true do |t|
+    t.integer  "user_id"
+    t.string   "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "periodicity"
+    t.integer  "aliada_id"
+    t.string   "weekday"
+    t.integer  "hour"
+    t.integer  "total_hours"
+  end
 
   create_table "aliada_zones", force: true do |t|
     t.integer  "aliada_id"
@@ -129,6 +145,13 @@ ActiveRecord::Schema.define(version: 20150419222409) do
   end
 
   add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
+
+  create_table "extra_recurrences", force: true do |t|
+    t.integer  "extra_id"
+    t.integer  "recurrence_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
 
   create_table "extra_services", force: true do |t|
     t.integer  "extra_id"
@@ -222,14 +245,28 @@ ActiveRecord::Schema.define(version: 20150419222409) do
   create_table "recurrences", force: true do |t|
     t.integer  "user_id"
     t.string   "status"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",                                              null: false
+    t.datetime "updated_at",                                              null: false
     t.integer  "periodicity"
     t.integer  "aliada_id"
     t.string   "weekday"
     t.integer  "hour"
     t.integer  "total_hours"
-    t.string   "owner"
+    t.integer  "bathrooms"
+    t.integer  "bedrooms"
+    t.integer  "zone_id"
+    t.integer  "extra_ids"
+    t.integer  "address_id"
+    t.integer  "rooms_hours"
+    t.decimal  "hours_after_service",            precision: 10, scale: 3
+    t.decimal  "estimated_hours",                precision: 10, scale: 3
+    t.text     "entrance_instructions"
+    t.text     "attention_instructions"
+    t.text     "cleaning_supplies_instructions"
+    t.text     "equipment_instructions"
+    t.text     "garbage_instructions"
+    t.text     "special_instructions"
+    t.text     "forbidden_instructions"
   end
 
   add_index "recurrences", ["user_id"], name: "index_recurrences_on_user_id", using: :btree
@@ -239,20 +276,16 @@ ActiveRecord::Schema.define(version: 20150419222409) do
     t.string   "status"
     t.datetime "datetime"
     t.integer  "service_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
     t.integer  "aliada_id"
     t.integer  "recurrence_id"
+    t.integer  "aliada_working_hour_id"
   end
 
   add_index "schedules", ["datetime", "aliada_id"], name: "index_schedules_on_datetime_and_aliada_id", unique: true, using: :btree
   add_index "schedules", ["service_id"], name: "index_schedules_on_service_id", using: :btree
   add_index "schedules", ["user_id"], name: "index_schedules_on_user_id", using: :btree
-
-  create_table "schedules_zones", id: false, force: true do |t|
-    t.integer "schedule_id"
-    t.integer "zone_id"
-  end
 
   create_table "scores", force: true do |t|
     t.integer  "user_id"
@@ -395,6 +428,10 @@ ActiveRecord::Schema.define(version: 20150419222409) do
   add_foreign_key "documents", "users", name: "fk_rails_8492e5f484"
 
   add_foreign_key "recurrences", "users", name: "fk_rails_6e1c955ffb"
+<<<<<<< HEAD
+=======
+  add_foreign_key "recurrences", "users", name: "recurrences_user_id_fk"
+>>>>>>> 0d337a9fe1e5879b021c65ec65a1ad29fcd4bb82
 
   add_foreign_key "schedules", "services", name: "fk_rails_c759b2308c"
   add_foreign_key "schedules", "users", name: "fk_rails_46c762044c"

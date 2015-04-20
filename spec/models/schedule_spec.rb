@@ -4,7 +4,7 @@ describe 'Schedule' do
 
   let!(:service) { create(:service) }
   let!(:zone) { create(:zone) }
-  let!(:aliada) { create(:aliada) }
+  let!(:aliada) { create(:aliada, first_name: 'Aide', zones: [ zone ]) }
   let!(:schedule) { create(:schedule, 
                            datetime: starting_datetime,
                            zone: zone,

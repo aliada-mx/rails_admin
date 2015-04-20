@@ -1,9 +1,11 @@
-= form.select :aliada_id, options_from_collection_for_select(@aliadas, :id, :name, @service.aliada_id), class: 'selectpicker'
+- @object = @service || @recurrence
+
+= form.select :aliada_id, options_from_collection_for_select(@aliadas, :id, :name, @object.aliada_id || 0), class: 'selectpicker'
 
 = append :javascript do
   = javascript_include_tag 'jquery.selectBoxIt'
   :javascript
-    $("#service_aliada_id").selectBoxIt({
+    $("#service_aliada_id, #recurrence_aliada_id").selectBoxIt({
       // Trigger events on original dom element
       aggressiveChange: true,
       autoWidth: false

@@ -1,18 +1,34 @@
 # -*- encoding : utf-8 -*-
 class Recurrence < ActiveRecord::Base
   include AliadaSupport::DatetimeSupport
+  include Mixins::RecurrenceAliadaWorkingHoursMixin
+  include Mixins::ServiceRecurrenceMixin
+
+  ATTRIBUTES_SHARED_WITH_SERVICE = 
+    [:entrance_instructions, 
+     :estimated_hours, 
+     :hours_after_service,
+     :rooms_hours,
+     :address_id,
+     :bathrooms,
+     :bedrooms,
+     :user_id,
+     :zone_id,
+     :time,
+     :date,
+     :datetime,
+     :hour,
+     :attention_instructions,
+     :extra_ids,
+     :aliada_id,
+     :cleaning_supplies_instructions,
+     :equipment_instructions,
+     :forbidden_instructions,
+     :garbage_instructions,
+     :special_instructions]
+
 
   has_paper_trail
-
-  OWNERS = [
-    'aliada',
-    'user'
-  ]
-
-  STATUSES = [
-    ['Activa','active'],
-    ['Inactiva','inactive']
-  ]
 
   validates_presence_of [:weekday, :hour]
   validates :weekday, inclusion: {in: Time.weekdays.map{ |days| days[0] } }
@@ -25,6 +41,9 @@ class Recurrence < ActiveRecord::Base
   belongs_to :zone
   has_many :services, inverse_of: :recurrence 
   has_many :schedules
+  has_many :extra_recurrences
+  has_many :extras, through: :extra_recurrences
+  belongs_to :address
 
   # Scopes
 
@@ -32,168 +51,184 @@ class Recurrence < ActiveRecord::Base
   scope :active, -> { where(status: 'active') }
   scope :inactive, -> { where(status: 'inactive') }
 
-  default_scope { where(owner: 'user') }
-
   state_machine :status, :initial => 'active' do
     transition 'active' => 'inactive', :on => :deactivate
     transition 'inactive' => 'active', :on => :activate
+
+    after_transition on: :deactivate do |recurrence, transition|
+      recurrence.services.in_the_future.each do |service|
+        service.cancel
+      end
+    end
   end
 
-  def status_enum
-    STATUSES
+  # Among recurrent services
+  def attributes_shared_with_service 
+    self.attributes.select { |key, value| ATTRIBUTES_SHARED_WITH_SERVICE.include?( key.to_sym )  }
   end
 
-  def name
-    "#{weekday_in_spanish} de #{hour} a #{ending_hour} (#{id})"
+  # Cancel this service and all related through the recurrence
+  def cancel_all!
+    ActiveRecord::Base.transaction do
+      deactivate
+
+      charge_cancelation_fee! if should_charge_cancelation_fee
+    end
   end
 
-  def base_service
-    services.with_recurrence.ordered_by_created_at.first
+  def should_charge_cancelation_fee
+    next_service.should_charge_cancelation_fee if next_service.present?
+  end
+
+  def charge_cancelation_fee!
+    next_service.charge_cancelation_fee!
   end
 
   def next_service
-    services.ordered_by_datetime.where('datetime > ?', Time.zone.now).first
+    services.not_canceled.ordered_by_datetime.where('datetime > ?', Time.zone.now).first
   end
 
-  def ending_hour
-    hour + total_hours
+  def services_to_reschedule
+    if datetime and rescheduling_a_recurrence_day
+      services.not_canceled.in_or_after_datetime(datetime.beginning_of_aliadas_day).to_a
+    else
+      services.not_canceled.in_the_future.to_a
+    end
   end
 
-  def owner_enum
-    OWNERS
+  def rescheduling_a_recurrence_day
+    timezone_datetime.weekday == weekday
   end
 
-  def weekday_enum
-    Time.weekdays.map {|weekday_trio| [weekday_trio.third, weekday_trio.first]}
+  def timezone_datetime
+    datetime.in_time_zone('Etc/GMT+6')
   end
 
-  def wday
-    Time.weekdays.select{ |day| day[0] == weekday }.first.second
+  def related_services_ids
+    services_to_reschedule.map { |s| s.id }
   end
 
-  def weekday_in_spanish
-    weekday_to_spanish(weekday)
+  def user_modified_booking?(recurrence_params)
+    self.hour            != recurrence_params[:hour] ||
+    self.weekday         != recurrence_params[:weekday] ||
+    self.estimated_hours != recurrence_params[:estimated_hours] ||
+    self.aliada_id       != recurrence_params[:aliada_id]
   end
 
   def timezone
-    'Mexico City'
+    'Etc/GMT+6' # No dst changes timezone
   end
 
-  def in_dst?
-    Time.zone.now.in_time_zone(self.timezone).dst?
+  def name
+    "#{user.first_name} #{weekday_in_spanish} de #{hour} a #{ending_hour} (#{id})"
   end
 
-  def now_in_timezone
-    time_obj = Time.zone.now.in_time_zone(self.timezone)
-    if in_dst?
-      time_obj += 1.hour
-    end
-    time_obj
+  def parse_timezone_datetime(recurrence_params)
+    ActiveSupport::TimeZone[self.timezone].parse("#{recurrence_params[:date]} #{recurrence_params[:time]}")
   end
 
-  def weekday_now
-    time_obj = now_in_timezone
-    time_obj.weekday
-  end
+  def parse_params(recurrence_params)
+    if recurrence_params['time'].present? && recurrence_params['date'].present?
+      timezone_datetime = parse_timezone_datetime(recurrence_params)
 
-  def utc_hour(utc_date)
-    Chronic.time_class= ActiveSupport::TimeZone[self.timezone]
-    time_obj = Chronic.parse("#{utc_date.strftime('%F')} #{self.hour}")
-    if time_obj.dst?
-      time_obj += 1.hour
-    end
-    time_obj.utc.hour
-  end
-
-  def utc_weekday(utc_date)
-    if self.utc_hour(utc_date) <= 23 and self.utc_hour(utc_date) > 6
-      return self.weekday
+      recurrence_params[:datetime] = timezone_datetime.utc
+      recurrence_params[:weekday] = timezone_datetime.weekday
+      recurrence_params[:hour] = timezone_datetime.hour
     else
-      return Time.next_weekday self.wday  
+      # On instructions changes there is no datetime set
+      # TODO make sure the datetime hour and weekday is always passed by the frontend
+      recurrence_params[:hour] = self.hour
+      recurrence_params[:weekday] = self.weekday
+    end
+
+    recurrence_params[:estimated_hours] = BigDecimal.new(recurrence_params[:estimated_hours])
+    recurrence_params[:aliada_id] = recurrence_params[:aliada_id].to_i
+    
+    recurrence_params
+  end
+
+  # We can't use the name 'update' because thats a builtin method
+  def update_existing!(recurrence_params)
+    ActiveRecord::Base.transaction do
+      recurrence_params = parse_params(recurrence_params)
+
+      chosen_aliada_id = recurrence_params[:aliada_id]
+
+      needs_rescheduling = user_modified_booking?(recurrence_params)
+      
+      update_all(recurrence_params)
+
+      reschedule!(chosen_aliada_id) if needs_rescheduling
+
+      save_all!
     end
   end
 
-  def tz_aware_hour(utc_datetime)
-    utc_to_timezone(utc_datetime, self.timezone).hour
-  end
+  def update_all(new_attributes)
+    self.attributes = new_attributes
 
-  def tz_aware_hour(utc_datetime)
-    utc_to_timezone(utc_datetime, self.timezone).weekday
-  end
-
-  def friendly_time
-    text = ""
-    if hour > 13
-      text += "#{ hour - 12 }:00 pm"
-    else
-      text += "#{ hour }:00 am"
+    services_to_reschedule.each do |service|
+      service.attributes = new_attributes
     end
   end
 
-  def next_recurrence_now_in_time_zone
-    if self.weekday == now_in_timezone.weekday
-      return now_in_timezone
-    else
-      next_day = now_in_timezone
-      while self.wday != next_day.wday
-        next_day += 1.day
-      end
-      return next_day
-    end
+  def save_all!
+    self.save
+
+    services.map(&:save!)
   end
 
-  def next_recurrence_with_hour_now_in_time_zone
-    next_recurrence_now_in_time_zone.change(hour: self.hour)
+  def recurrent?
+    true
   end
 
-  def next_recurrence_with_hour_now_in_utc
-    time_obj = next_recurrence_with_hour_now_in_time_zone
-    if time_obj.dst?
-      time_obj += 1.hour
-    end
-    time_obj.utc
+  def reschedule!(chosen_aliada_id)
+    previous_services = services_to_reschedule
+    
+    aliada_availability = book(chosen_aliada_id)
+
+    # We might have not used some or all those schedules the service had, so enable them back
+    aliada_availability.enable_unused_schedules
+
+    self.hours_after_service = aliada_availability.padding_count
+    self.aliada_id = chosen_aliada_id
+    self.save!
+
+    previous_services.map(&:cancel)
   end
 
-  # TODO: fix
-  def next_day_of_recurrence(starting_after_datetime)
-    next_day = starting_after_datetime.change(hour: hour)
+  def book(chosen_aliada_id)
 
-    while next_day.wday != wday
-      next_day += 1.day
-    end
+    available_after = starting_datetime_to_book_services
 
-    next_day
+    aliadas_availability = AvailabilityForService.find_aliadas_availability(self, available_after, aliada_id: chosen_aliada_id)
+
+    raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
+
+    aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
+    self.aliada = aliada_availability.aliada
+    self.save!
+
+    aliada_availability.rebook_recurrence(self)
   end
 
-  # Starting the next recurrence day how many days we'll provide service until the horizon
-  def wdays_count_to_end_of_recurrency(starting_after_datetime)
-    wdays_until_horizon(wday, starting_from: next_day_of_recurrence(starting_after_datetime))
+  def services_for_user
+    services.in_the_future.not_canceled.ordered_by_datetime
   end
+   
+  # Among recurrent services
 
-  def wday_hour
-    "#{wday} #{hour}"
-  end
+  attr_accessor :date
+  attr_accessor :time
+  attr_accessor :datetime
 
   rails_admin do
     label_plural 'recurrencias'
     navigation_label 'Operación'
     navigation_icon 'icon-repeat'
 
-    configure :owner do
-      visible false
-    end
+    exclude_fields :extra_recurrences,  :versions
 
-    configure :services do
-      associated_collection_scope do 
-        recurrence = bindings[:object]
-        if recurrence.services
-          Proc.new { |scope|
-            # scoping only the unused placeholders and our own placeholders
-            scope.where(recurrence_id: recurrence.id)
-          }
-        end
-      end
-    end
 
     list do
 
@@ -213,6 +248,7 @@ class Recurrence < ActiveRecord::Base
       field :aliada
       field :name
       field :total_hours
+      field :special_instructions
     end
   end
 end

@@ -53,6 +53,10 @@ class User < ActiveRecord::Base
   def fill_full_name
     self.full_name = "#{first_name.strip} #{last_name.strip}" if first_name.present? && last_name.present?
   end
+
+  def zone
+    default_address.postal_code.zone
+  end
   
   def create_promotional_code code_type
     if self.role == "client"
@@ -105,6 +109,12 @@ class User < ActiveRecord::Base
 
     # The newest is the default
     PaymentProviderChoice.create!(payment_provider: payment_provider, default: true, user: self)
+  end
+
+  def create_charge_failed_ticket(user, amount, error)
+    Ticket.create_error(relevant_object: self,
+                        category: 'conekta_charge_failure',
+                        message: "No se pudo realizar cargo de #{amount} a la tarjeta de #{user.first_name} #{user.last_name}. #{error.message_to_purchaser}")
   end
 
   def default_address

@@ -34,11 +34,26 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  rescue_from AliadaExceptions::AvailabilityNotFound do |exception|
+    Raygun.track_exception(exception, custom_data: exception)
+    render json: { status: :error, code: :availability_not_found, message: 'Lo sentimos no encontramos disponibilidad :('}
+  end
+
+  rescue_from AliadaExceptions::ServiceDowgradeImpossible do |exception|
+    Raygun.track_exception(exception)
+    render json: { status: :error, code: :downgrade_impossible, message: 'Lo sentimos no podemos cambiar a ese tipo de servicio :('}
+  end
+
   # Exception raised by conekta
   rescue_from Conekta::Error do |exception|
     render json: { status: :warning, sender: :conekta, messages: [exception.message_to_purchaser]}
   end
 
+  rescue_from ActiveRecord::RecordInvalid do |invalid|
+    Raygun.track_exception(invalid)
+    render json: { status: :error, code: :invalid, message: invalid.message }
+  end
+   
   # Force signing in if the user does not have permission
   # to see the admin
   rescue_from CanCan::AccessDenied do |exception|

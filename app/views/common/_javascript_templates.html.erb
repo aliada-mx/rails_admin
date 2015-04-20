@@ -119,32 +119,44 @@
     <script type="text/html" id="cancel_one_time_service_template">
         <div class="dialog-content">
             <h1>
-            <% if @service.recurrent? %>
-                ¿Estás seguro que deseas cancelar todos los servicios de esta recurrencia?
-            <% else %>
                 ¿Estás seguro que deseas cancelar tu servicio?
-            <% end %>
             </h1>
             <p>
-            <% if @service.in_less_than_24_hours %>
+            <% if @service.should_charge_cancelation_fee %>
                 Como faltan menos de 24 horas para el servicio. 
                 Te haremos un cobro de $<%= @too_late_cancelation_fee %> pesos.
                 <br></br>
                 Esto es para compensar a la Aliada que se quedará sin ese servicio.
             <% else %>
-                <% if @service.recurrent? %>
-                    Al confirmar dejarás de recibir a tu Aliada los <%= ensure_plural(@service.weekday_in_spanish) %> a las <%= @service.friendly_time %>
-                <% else %>
-                    Al confirmar dejarás de recibir a tu Aliada el <%= ensure_plural(@service.weekday_in_spanish) %> a las <%= @service.friendly_time %>
-                <% end %>
-                y no podrás hacer un servicio nuevo para esas fechas.
+                Al cancelartu Aliada ya no irá el <%= ensure_plural(@service.weekday_in_spanish) %> a las <%= @service.friendly_time %>
             <% end %>
             </p>
         </div>
     </script>
 <% end %>
 
-<script type="text/html" id="confirm_recurrent_service_change_template">
+<% if @recurrence.present? %>
+    <script type="text/html" id="cancel_recurrence_template">
+        <div class="dialog-content">
+            <h1>
+                ¿Estás seguro que deseas cancelar todos los servicios de esta recurrencia?
+            </h1>
+            <p>
+            <% if @recurrence.should_charge_cancelation_fee %>
+                Como faltan menos de 24 horas para el servicio. 
+                Te haremos un cobro de $<%= @too_late_cancelation_fee %> pesos.
+                <br></br>
+                Esto es para compensar a la Aliada que se quedará sin ese servicio.
+            <% else %>
+                Al confirmar dejarás de recibir a tu Aliada todos los <%= ensure_plural(@recurrence.weekday_in_spanish) %> a las <%= @recurrence.friendly_time %>
+            <% end %>
+            </p>
+        </div>
+    </script>
+<% end %>
+
+
+<script type="text/html" id="confirm_recurrence_change_template">
     <div class="dialog-content">
         <h1>
             ¿Estás seguro que deseas modificar tu servicio recurrente?

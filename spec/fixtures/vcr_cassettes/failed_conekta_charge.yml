@@ -1,0 +1,115 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=31500&card=&currency=MXN&description=Servicio%20aliada&details%5Bemail%5D=user-1@aliada.mx&details%5Bname%5D=Test%20User&details%5Bphone%5D=123456&reference_id=1
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - Conekta/v1 RubyBindings/0.5.2
+      X-Conekta-Client-User-Agent:
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
+        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      Accept:
+      - application/vnd.conekta-v1.0.0+json
+      Accept-Language:
+      - es
+      Content-Length:
+      - '0'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 422
+      message: Unprocessable Entity
+    headers:
+      Cache-Control:
+      - no-cache
+      Conekta-Media-Type:
+      - conekta-v1.0.0; format=json
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 17 Apr 2015 06:20:58 GMT
+      Server:
+      - nginx/1.1.19
+      Status:
+      - 422 Unprocessable Entity
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Request-Id:
+      - b3bb7b8504b70ec2898a867a6d24b41f
+      X-Runtime:
+      - '0.032767'
+      Content-Length:
+      - '148'
+      Connection:
+      - keep-alive
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJvYmplY3QiOiJlcnJvciIsInR5cGUiOm51bGwsIm1lc3NhZ2UiOiJVbnJl
+        Y29nbml6ZWQgaWQgZm9yIENhcmQuIiwibWVzc2FnZV90b19wdXJjaGFzZXIi
+        OiJIdWJvIHVuIGVycm9yIGRlIHZhbGlkYWNpw7NuLiIsInBhcmFtIjpudWxs
+        LCJjb2RlIjpudWxsfQ==
+    http_version: 
+  recorded_at: Thu, 01 Jan 2015 13:00:00 GMT
+- request:
+    method: post
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=31500&card=&currency=MXN&description=Servicio%20aliada&details%5Bemail%5D=user-1@aliada.mx&details%5Bname%5D=Test%20User&details%5Bphone%5D=123456&reference_id=1
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - Conekta/v1 RubyBindings/0.5.2
+      X-Conekta-Client-User-Agent:
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.1.5","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
+        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      Accept:
+      - application/vnd.conekta-v1.0.0+json
+      Accept-Language:
+      - es
+      Content-Length:
+      - '0'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 422
+      message: Unprocessable Entity
+    headers:
+      Cache-Control:
+      - no-cache
+      Conekta-Media-Type:
+      - conekta-v1.0.0; format=json
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 17 Apr 2015 06:28:02 GMT
+      Server:
+      - nginx/1.1.19
+      Status:
+      - 422 Unprocessable Entity
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Request-Id:
+      - 9cdedc5f2864481d547d39ec61bc47c9
+      X-Runtime:
+      - '0.032355'
+      Content-Length:
+      - '148'
+      Connection:
+      - keep-alive
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJvYmplY3QiOiJlcnJvciIsInR5cGUiOm51bGwsIm1lc3NhZ2UiOiJVbnJl
+        Y29nbml6ZWQgaWQgZm9yIENhcmQuIiwibWVzc2FnZV90b19wdXJjaGFzZXIi
+        OiJIdWJvIHVuIGVycm9yIGRlIHZhbGlkYWNpw7NuLiIsInBhcmFtIjpudWxs
+        LCJjb2RlIjpudWxsfQ==
+    http_version: 
+  recorded_at: Thu, 01 Jan 2015 13:00:00 GMT
+recorded_with: VCR 2.9.3
