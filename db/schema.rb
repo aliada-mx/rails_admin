@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150419154648) do
+ActiveRecord::Schema.define(version: 20150420015912) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -320,6 +320,7 @@ ActiveRecord::Schema.define(version: 20150419154648) do
     t.boolean  "confirmed",                                               default: false
     t.decimal  "rooms_hours",                    precision: 10, scale: 3
     t.decimal  "billable_hours",                 precision: 10, scale: 3, default: 0.0
+    t.decimal  "hours_worked"
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree

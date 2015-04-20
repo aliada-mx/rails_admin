@@ -11,11 +11,12 @@ feature 'AliadasController' do
   let!(:one_time_service) { create(:service_type, name: 'one-time') }
   let!(:service){ create(:service,
                          aliada: aliada,
+                         status: 'aliada_assigned',
                          user: user,
                          recurrence: recurrence,
                          zone: zone,
                          service_type: one_time_service,
-                         datetime: starting_datetime, 
+                         datetime: starting_datetime - 1.day, 
                          estimated_hours: 3
                          ) }
   before do
@@ -174,8 +175,21 @@ feature 'AliadasController' do
     end
     
     it 'Shows message if token invalid' do
-      visit  ('aliadas/servicios/'+ user.authentication_token)
+      visit ('aliadas/servicios/'+ user.authentication_token)
       page.has_content?('Ruta invalida')
+    end
+
+    it 'saves the worked hours on a service' do
+      visit ('aliadas/servicios/'+ aliada.authentication_token)
+
+      within "#service_#{service.id}" do
+        select '3'
+        select "30"
+      end
+      click_on('Guardar :)')
+
+      service.reload
+      expect(service.hours_worked).to eql BigDecimal.new('3.5')
     end
   end
 end
