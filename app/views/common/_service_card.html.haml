@@ -5,6 +5,9 @@
         = service.friendly_date.capitalize
         .small-letters
           = service.friendly_time
+        .action-link
+          = link_to edit_service_users_path(service.user, service, cancelar: true), class: 'small-letters' do
+            Cancelar servicio
     .body
       %ul.summary
         %li.checked
@@ -24,7 +27,7 @@
             = service.status_in_spanish
         
         .actions
-          = link_to edit_service_users_path(user_id: service.user.id, service_id: service.id), class: 'action-button size-large' do
+          = link_to edit_service_users_path(service.user, service), class: 'action-button size-large' do
             %span.icon-pencil.icon-button
             Modificar servicio
 

@@ -25,7 +25,10 @@
         = recurrence.aliada.name
 
       .action-link
-        =link_to("Modifcar todas las visitas próximas", edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id), {})
+        %div
+          =link_to("Cancelar todas las visitas próximas", edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id, cancelar: :true), {})
+        %div
+          =link_to("Modifcar todas las visitas próximas", edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id), {})
 
     %table.table-cards
       - recurrence.services_for_user.each do |service|
