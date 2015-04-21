@@ -589,7 +589,7 @@ class Service < ActiveRecord::Base
   end
 
   def owed?
-    tickets.where(category: 'conekta_charge_failure').where('classification != ?', 'alert-success').present?
+    Debt.where(payeable_id: self.id).present?
   end
 
   attr_accessor :rails_admin_billable_hours_widget

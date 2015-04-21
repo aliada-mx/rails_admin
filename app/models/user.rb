@@ -91,6 +91,7 @@ class User < ActiveRecord::Base
   end
 
   def charge!(product, service)
+    binding.pry
     credits_payment = charge_balance(product.amount)
 
     product.amount = credits_payment.left_to_charge
@@ -98,6 +99,11 @@ class User < ActiveRecord::Base
     payment = default_payment_provider.charge!(product, self, service)
 
     if payment.nil? && !service.owed?
+      Debt.find_or_create_by(user: user, 
+                             amount: product.amount, 
+                             status: 'Charge failed', 
+                             payment_provider: self.default_payment_provider, 
+                             payeable: service)
       register_debt(credits_payment.left_to_charge)
     end
     payment

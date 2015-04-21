@@ -68,7 +68,7 @@ class ConektaCard < ActiveRecord::Base
 
 
       object.create_charge_failed_ticket(user, product.amount, exception)
-      Debt.find_or_create_by(user: user, amount: product.amount, status: exception, payment_provider: self, payeable: service)
+      
       raise exception
     end
   end

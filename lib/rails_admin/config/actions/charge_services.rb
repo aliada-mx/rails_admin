@@ -26,7 +26,7 @@ module RailsAdmin
             services = if @object.blank?
                           @objects = list_entries(@model_config, :charge_services)
                         else
-                          [ @object ]
+                          [@object]
                        end
 
             Resque.enqueue(ServiceCharger, services.map(&:id))
