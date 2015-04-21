@@ -63,6 +63,10 @@ class Recurrence < ActiveRecord::Base
     end
   end
 
+  def total_hours
+    estimated_hours + hours_after_service
+  end
+
   # Among recurrent services
   def attributes_shared_with_service 
     self.attributes.select { |key, value| ATTRIBUTES_SHARED_WITH_SERVICE.include?( key.to_sym )  }
