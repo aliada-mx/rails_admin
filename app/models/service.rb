@@ -144,7 +144,7 @@ class Service < ActiveRecord::Base
   end
   
   def cost
-    estimated_hours_with_extras * service_type.price_per_hour
+    estimated_hours * service_type.price_per_hour
   end
 
 
