@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 class RecurrencesController < ApplicationController
   layout 'two_columns'
-  layout 'one_column', only: :deactivated_recurrences
 
   before_filter :set_user
 
@@ -31,6 +30,8 @@ class RecurrencesController < ApplicationController
 
   def deactivated_recurrences
     @recurrences = @user.recurrences.inactive
+
+    render layout: 'one_column'
   end
 
   private
