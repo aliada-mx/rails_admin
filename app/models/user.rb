@@ -215,12 +215,17 @@ class User < ActiveRecord::Base
         end
       end
 
-      field :postal_code_number do
+      field :zone do
         read_only true
         visible do
           value.present?
         end
+
+        pretty_value do
+          value.name
+        end
       end
+
       field :first_name
       field :last_name
       field :email
@@ -316,7 +321,6 @@ class User < ActiveRecord::Base
       end
 
       field :created_at
-      field :postal_code_number
     end
 
     show do
