@@ -4,26 +4,6 @@
 - @services.each_with_index do |service,index|
   = render partial: 'common/service_card', locals: { service: service }
 
-  - if services_count == index + 1
-    - if services_count % 2 == 0
-      .service-card-wrapper.col-lg-12.new-service-card.horizontal.empty
-        .service-card
-          = link_to new_service_users_path(@user) do
-            Programa una nueva visita
-
-    -else
-      .service-card-wrapper.col-lg-6.new-service-card.vertical.empty
-        .service-card
-          = link_to new_service_users_path(@user) do
-            Programa una nueva visita
-
-- if @services.empty?
-  .service-card-wrapper.col-lg-6.new-service-card.vertical.empty
-    .service-card
-      = link_to new_service_users_path(@user) do
-        Programa una nueva visita
-
-
 = append :javascript do
   = javascript_include_tag 'next_services'
 

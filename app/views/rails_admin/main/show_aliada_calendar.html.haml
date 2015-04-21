@@ -1,6 +1,4 @@
 %table.table{id: @aliada.id, class: "aliada-schedule"}
-  - @date_headers =  I18n.t(:"date.day_names")
-  - @days_of_week = (0..6)
   - services = @aliada.current_week_services
   %thead
     %tr

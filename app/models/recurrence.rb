@@ -50,6 +50,7 @@ class Recurrence < ActiveRecord::Base
   scope :ordered_by_created_at, -> { order(:created_at) }
   scope :active, -> { where(status: 'active') }
   scope :inactive, -> { where(status: 'inactive') }
+  scope :join_users_and_aliadas, -> { joins('INNER JOIN users ON users.id = recurrences.user_id OR users.id = recurrences.aliada_id') }
 
   state_machine :status, :initial => 'active' do
     transition 'active' => 'inactive', :on => :deactivate
@@ -234,14 +235,40 @@ class Recurrence < ActiveRecord::Base
           query_without_accents = I18n.transliterate(query)
 
           scope.merge(UnscopedUser.with_name_phone_email(query_without_accents))
+               .merge(Recurrence.join_users_and_aliadas)
         end
       end
 
-      field :user do 
-        searchable [{users: :first_name }, {users: :last_name }, {users: :email}, {users: :phone}]
-        queryable true
-        filterable true
+      field :status do
+        searchable false
       end
+
+      field :weekday do
+        searchable false
+      end
+      field :entrance_instructions do
+        searchable false
+      end
+      field :attention_instructions do
+        searchable     false
+      end
+      field :cleaning_supplies_instructions do
+        searchable     false
+      end
+      field :equipment_instructions do
+        searchable     false
+      end
+      field :garbage_instructions do
+        searchable     false
+      end
+      field :special_instructions do
+        searchable     false
+      end
+      field :forbidden_instructions do
+        searchable     false
+      end
+
+      field :user 
       field :aliada
       field :name
       field :total_hours
