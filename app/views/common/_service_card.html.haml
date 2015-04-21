@@ -1,6 +1,23 @@
 .service-card-wrapper.col-lg-6
   .service-card.one-time
     .head
+      - if current_user.admin?
+        .admin-info
+          %span.icon-help-with-circle
+          .text
+            - if service.canceled?
+              .div
+                Cancelado por
+                = service.who_canceled
+                el
+                = service.canceled_when
+            - else
+              .div
+                Status:
+                = service.status_in_spanish
+            - if service.recurrence_id
+              Recurrencia:
+              = service.recurrence.name
       .title
         = service.friendly_date.capitalize
         .small-letters
@@ -21,19 +38,6 @@
           Datos de contacto: #{service.user.contact_data}
     .foot
       .actions
-        - if current_user.admin?
-          - if service.canceled?
-            .div
-              Cancelador por
-              = service.who_canceled
-              el
-              = service.canceled_when
-          - else
-            .div
-              = service.status_in_spanish
-          - if service.recurrence_id
-            Recurrencia
-            = service.recurrence.name
 
         
         .actions

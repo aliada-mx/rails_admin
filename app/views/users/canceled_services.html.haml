@@ -1,8 +1,13 @@
+
 - services_count = @services.size
 = append(:body_class){ ' next-services ' }
 
-- @services.each_with_index do |service,index|
-  = render partial: 'common/service_card', locals: { service: service }
+Último login del usuario
+= @user.last_login
+
+.cards
+  - @services.each_with_index do |service,index|
+    = render partial: 'common/service_card', locals: { service: service }
 
 = append :javascript do
   = javascript_include_tag 'next_services'

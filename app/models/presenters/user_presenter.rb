@@ -62,5 +62,13 @@ module Presenters
     def user_next_services_path
       Rails.application.routes.url_helpers.next_services_users_path(self) if self.persisted?
     end
+
+    def last_login
+      if last_sign_in_at
+        I18n.l(last_sign_in_at, format: :future)
+      else
+        I18n.l(created_at, format: :future)
+      end
+    end
   end
 end
