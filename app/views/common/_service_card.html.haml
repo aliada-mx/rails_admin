@@ -31,6 +31,9 @@
           - else
             .div
               = service.status_in_spanish
+          - if service.recurrence_id
+            Recurrencia
+            = service.recurrence.name
 
         
         .actions
