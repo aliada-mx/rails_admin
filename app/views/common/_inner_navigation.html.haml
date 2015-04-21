@@ -1,6 +1,12 @@
 %nav.inner
   .inner-top-nav-wrapper.col-lg-12
     %ul.inner-top-nav
+      - if current_user.admin?
+        .admin-info
+          %span.icon-help-with-circle
+          .text
+            %a.action-button-green.size-large{href: canceled_services_users_path(@user)}
+              Servicios cancelados
       %li.actions
         - breadcrumb_class = controller_action_name == 'users-next_services' ? 'active' : ''
         %a.action-button-green.size-large{href: next_services_users_path(@user),class: breadcrumb_class+" "+area(:back_button_action) }
@@ -9,11 +15,6 @@
         - breadcrumb_class = controller_action_name == 'users-previous_services' ? 'active' : ''
         %a.action-button-green.size-large{href: previous_services_users_path(@user),class: breadcrumb_class }
           Historial de visitas
-      -if current_user.admin?
-        %li.actions
-          - breadcrumb_class = controller_action_name == 'users-canceled_services' ? 'active' : ''
-          %a.action-button-green.size-large{href: canceled_services_users_path(@user),class: breadcrumb_class }
-            Servicios Cancelados
       -#
         %li.actions
           %a.action-button-purple.size-large

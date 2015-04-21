@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CleanAliadaWorkingHours < ActiveRecord::Migration
   def change
     AliadaWorkingHour.all.each do |awh|

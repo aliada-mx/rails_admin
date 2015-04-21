@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddIdSequenceToAliadaWorkingHour < ActiveRecord::Migration
   def change
     ActiveRecord::Base.connection.execute("CREATE SEQUENCE aliada_working_hours_id_seq;")

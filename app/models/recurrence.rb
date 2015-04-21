@@ -93,10 +93,6 @@ class Recurrence < ActiveRecord::Base
     services.not_canceled.in_the_future.to_a
   end
 
-  def rescheduling_a_recurrence_day
-    timezone_datetime.weekday == weekday
-  end
-
   def timezone_datetime
     datetime.in_time_zone('Etc/GMT+6')
   end

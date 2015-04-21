@@ -137,8 +137,8 @@ feature 'ServiceController' do
     end
 
     it 'cancels the previous services and creates new ones' do
-      service_1 = create(:service, recurrence: recurrence)
-      service_2 = create(:service, recurrence: recurrence)
+      service_1 = create(:service, recurrence: recurrence, datetime: next_day_of_service)
+      service_2 = create(:service, recurrence: recurrence, datetime: next_day_of_service)
 
       fill_hidden_input 'recurrence_estimated_hours', with: '4.0'
       fill_hidden_input 'recurrence_date', with: starting_datetime.strftime('%Y-%m-%d')

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddAliadaWorkingHoursTable < ActiveRecord::Migration
   def up
     ActiveRecord::Base.connection.execute("CREATE TABLE aliada_working_hours AS SELECT * FROM recurrences;")

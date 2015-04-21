@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CleanAliadasFromRecurrences < ActiveRecord::Migration
   def change
     Recurrence.all.each do |awh|

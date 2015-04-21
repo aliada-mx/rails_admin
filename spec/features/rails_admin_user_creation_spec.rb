@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 feature 'Create users in admin' do
   let!(:admin) { create(:admin) }
 

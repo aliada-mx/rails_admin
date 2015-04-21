@@ -436,6 +436,7 @@ class Service < ActiveRecord::Base
                                            :equipment_instructions,
                                            :garbage_instructions,
                                            :special_instructions].include? key.to_sym  }
+
   end
 
   # We can't use the name 'update' because thats a builtin method

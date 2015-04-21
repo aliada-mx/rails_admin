@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class MigrateOneTimeFromRecurrentToRecurrent < ActiveRecord::Migration
   def change
     one_time_from_recurrent_id = ServiceType.where(name: 'one-time-from-recurrent').first.id

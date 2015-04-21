@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class MarkServicesAsOneTimeFromRecurrent < ActiveRecord::Migration
   def change
     Service.with_recurrence.each do |service|
