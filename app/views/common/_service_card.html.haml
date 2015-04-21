@@ -49,5 +49,5 @@
             Modificar servicio
 
       .numbers
-        .hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours_with_extras.hours }
+        .hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours.hours }
         %span.cash $#{ ceil_and_strip_insignificat_zeros service.cost } 
