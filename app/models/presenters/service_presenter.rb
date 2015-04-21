@@ -63,7 +63,7 @@ module Presenters
     end
 
     def who_canceled
-      if canceled_version
+      if canceled_version and canceled_version.whodunnit
         User.find( canceled_version.whodunnit ).name
       else
         '?'

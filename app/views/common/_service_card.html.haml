@@ -6,18 +6,21 @@
           %span.icon-help-with-circle
           .text
             - if service.canceled?
-              .div
+              %div
                 Cancelado por
                 = service.who_canceled
                 el
                 = service.canceled_when
             - else
-              .div
+              %div
                 Status:
                 = service.status_in_spanish
             - if service.recurrence_id
               Recurrencia:
               = service.recurrence.name
+            %div
+              Creado:
+              = I18n.l(service.created_at, format: :future)
       .title
         = service.friendly_date.capitalize
         .small-letters
