@@ -90,11 +90,7 @@ class Recurrence < ActiveRecord::Base
   end
 
   def services_to_reschedule
-    if datetime and rescheduling_a_recurrence_day
-      services.not_canceled.in_or_after_datetime(datetime.beginning_of_aliadas_day).to_a
-    else
-      services.not_canceled.in_the_future.to_a
-    end
+    services.not_canceled.in_the_future.to_a
   end
 
   def rescheduling_a_recurrence_day
