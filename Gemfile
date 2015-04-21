@@ -83,7 +83,7 @@ gem 'invert'
 
 # ADMIN
 # 
-gem 'rails_admin', github: 'grillermo/rails_admin'
+gem 'rails_admin', github: 'aliada-mx/rails_admin'
 # permissions
 gem 'cancancan'
 
