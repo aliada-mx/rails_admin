@@ -221,8 +221,7 @@ class Recurrence < ActiveRecord::Base
     navigation_label 'Operación'
     navigation_icon 'icon-repeat'
 
-    exclude_fields :extra_recurrences,  :versions
-
+    exclude_fields :extra_recurrences, :extras, :versions
 
     list do
 
