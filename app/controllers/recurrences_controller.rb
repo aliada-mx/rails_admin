@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 class RecurrencesController < ApplicationController
+  load_and_authorize_resource
+
   layout 'two_columns'
 
   before_filter :set_user

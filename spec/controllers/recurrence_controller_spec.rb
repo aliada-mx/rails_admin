@@ -6,12 +6,17 @@ feature 'ServiceController' do
   let(:next_day_of_service) { Time.zone.parse('2015-01-08 13:00:00') }
   let!(:zone) { create(:zone) }
   let!(:aliada){ create(:aliada, zones: [zone]) }
+  let!(:admin) { create(:admin) }
   let!(:user) { create(:user) }
+  let!(:other_user) { create(:user) }
+  let!(:other_recurrence) { create(:recurrence, user: other_user) }
+
   let!(:recurrent_service) { create(:service_type) }
   let!(:recurrence) { create(:recurrence,
                              user: user,
                              zone: zone,
                              estimated_hours: 3,
+                             special_instructions: 'a plain instruction',
                              hours_after_service: 2,
                              aliada: aliada) }
 
@@ -61,6 +66,31 @@ feature 'ServiceController' do
     after do
       Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
       Timecop.return
+    end
+
+    it 'doesnt let other users edit the recurrences' do
+      logout
+      login_as(other_user)
+
+      visit edit_recurrence_users_path(user_id: user.id, recurrence_id: recurrence.id)
+      
+      expect(current_path).to eql root_path
+    end
+    
+    it 'lets an admin edit any user recurrence ' do
+      logout
+      login_as(admin)
+
+      edit_user_recurrence_path = edit_recurrence_users_path(user_id: user.id, recurrence_id: recurrence.id)
+      edit_recurrence_other_users_path = edit_recurrence_users_path(user_id: other_user.id, recurrence_id: other_recurrence.id)
+
+      visit edit_user_recurrence_path 
+
+      expect(current_path).to eql edit_user_recurrence_path 
+
+      visit edit_recurrence_other_users_path 
+
+      expect(current_path).to eql edit_recurrence_other_users_path 
     end
 
     it 'doesnt reschedule the service when datetime, estimated or hours change' do
