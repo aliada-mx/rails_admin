@@ -115,6 +115,21 @@ ActiveRecord::Schema.define(version: 20150422231929) do
   add_index "credits", ["code_id"], name: "index_credits_on_code_id", using: :btree
   add_index "credits", ["user_id"], name: "index_credits_on_user_id", using: :btree
 
+  create_table "debts", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "payment_method_id"
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.decimal  "amount",            precision: 8, scale: 4
+    t.string   "status"
+    t.integer  "payeable_id"
+    t.string   "payeable_type"
+  end
+
+  add_index "debts", ["payeable_id", "payeable_type"], name: "index_debts_on_payeable_id_and_payeable_type", using: :btree
+  add_index "debts", ["payment_method_id"], name: "index_debts_on_payment_method_id", using: :btree
+  add_index "debts", ["user_id"], name: "index_debts_on_user_id", using: :btree
+
   create_table "documents", force: true do |t|
     t.integer  "user_id"
     t.string   "file_file_name"
@@ -209,8 +224,11 @@ ActiveRecord::Schema.define(version: 20150422231929) do
     t.text     "api_raw_response"
     t.integer  "user_id"
     t.string   "payment_provider_type"
+    t.integer  "payeable_id"
+    t.string   "payeable_type"
   end
 
+  add_index "payments", ["payeable_id", "payeable_type"], name: "index_payments_on_payeable_id_and_payeable_type", using: :btree
   add_index "payments", ["user_id"], name: "index_payments_on_user_id", using: :btree
 
   create_table "postal_codes", force: true do |t|
@@ -400,6 +418,9 @@ ActiveRecord::Schema.define(version: 20150422231929) do
 
   add_foreign_key "credits", "codes", name: "fk_rails_f59cb87f20"
   add_foreign_key "credits", "users", name: "fk_rails_a2fdb26281"
+
+  add_foreign_key "debts", "payment_methods", name: "debts_payment_method_id_fk"
+  add_foreign_key "debts", "users", name: "debts_user_id_fk"
 
   add_foreign_key "documents", "users", name: "fk_rails_8492e5f484"
 

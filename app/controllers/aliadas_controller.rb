@@ -21,6 +21,9 @@ class AliadasController < ApplicationController
       hours = hours + (min/60.0)
       
       @service_to_finish.hours_worked = hours
+     # @service_to_finish.aliada_reported_begin_time = ActiveSupport::TimeZone["Mexico City"].parse("#{params[:begin_hour]}:#{params[:begin_min]}")
+     # @service_to_finish.aliada_reported_end_time = ActiveSupport::TimeZone["Mexico City"].parse("#{params[:end_hour]}:#{params[:end_min]}")
+
       @service_to_finish.finish
 
       redirect_to :back

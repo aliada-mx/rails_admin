@@ -8,7 +8,7 @@
       = form_tag((finish_service_path)) do
         %input{:type=>"hidden", :value=>service.id, :name => :service}
         %div
-          ¿Tarde? horas:
+          Duracion horas:
           %select{:name => :hour}
             - (3..10).each do |h|
               %option{:value => h}= h
