@@ -102,8 +102,6 @@ class ScheduleFiller
                               message: error)
         end
         
-        user_recurrence.update_attribute(:total_hours, schedules.count) 
-        
         service = create_service_in_clients_schedule today_in_the_future, user_recurrence
 
         if service
