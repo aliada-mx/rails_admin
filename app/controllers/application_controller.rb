@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
 
   # Exception raised by conekta
   rescue_from Conekta::Error do |exception|
-    render json: { status: :error, sender: :conekta, messages: [exception.message_to_purchaser]}
+    render json: { status: :error, sender: :conekta, message: exception.message_to_purchaser}
   end
 
   rescue_from ActiveRecord::RecordInvalid do |invalid|
