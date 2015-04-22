@@ -70,6 +70,16 @@ class Ability
           else
             false
           end
+        elsif subject_class == Recurrence
+          if current_user.admin?
+            true
+          elsif params.include? :user_id
+            current_user.id == params[:user_id].to_i
+          elsif subject.present? 
+            subject.user.id == current_user.id
+          else
+            false
+          end
         end
       end
     end

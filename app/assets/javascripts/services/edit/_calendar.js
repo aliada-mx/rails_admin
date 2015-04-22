@@ -78,15 +78,17 @@ aliada.services.edit.initialize_calendar_times = function() {
     highlight('#choose-date');
   })
 
-  // Update calendar on page load
-  update_calendar().then(function(calendar) {
-    updateMonthYear();
-    calendar.chooseDay(aliada.service.day);
+  window.setTimeout(function(){
+    // Update calendar on page load
+    update_calendar().then(function(calendar) {
+      updateMonthYear();
+      calendar.chooseDay(aliada.service.day);
 
-    aliada.ko.time(aliada.service.time);
-    aliada.ko.date(aliada.service.date);
-    aliada.ko.friendly_datetime(aliada.service.friendly_datetime);
-  });
+      aliada.ko.time(aliada.service.time);
+      aliada.ko.date(aliada.service.date);
+      aliada.ko.friendly_datetime(aliada.service.friendly_datetime);
+    });
+  }, 0)
 
   function updateMonthYear() {
     var $month = $('#month').html(calendar.getMonthName()),

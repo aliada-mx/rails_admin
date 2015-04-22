@@ -48,6 +48,7 @@ Rails.application.routes.draw do
 
     get 'recurrencias/:recurrence_id', to: 'recurrences#edit', as: :edit_recurrence, recurrence_id: /\d+/
     post 'recurrencias/:recurrence_id', to: 'recurrences#update', as: :update_recurrence, recurrence_id: /\d+/
+    get 'recurrencias-desactivadas', to: 'recurrences#deactivated_recurrences', as: :deactivated_recurrences
 
     post 'conekta_card/create', to: 'conekta_cards#create', as: :create_conekta_card
 

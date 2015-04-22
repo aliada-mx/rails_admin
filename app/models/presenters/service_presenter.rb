@@ -22,8 +22,10 @@ module Presenters
     end
 
     def name
+      name = ""
       name = "#{I18n.l(datetime, format: :future)}" if datetime
       name += ", #{address.name}" if address
+      name += " (#{id})"
     end
 
     def user_link
@@ -58,6 +60,33 @@ module Presenters
 
     def friendly_time
       I18n.l(tz_aware_datetime, format: :friendly_time) if datetime
+    end
+
+    def who_canceled
+      if canceled_version and canceled_version.whodunnit
+        User.find( canceled_version.whodunnit ).name
+      else
+        '?'
+      end
+    end
+
+    def canceled_when
+      if canceled_version
+        canceled_datetime = canceled_version.created_at.in_time_zone("Etc/GMT+6")
+        I18n.l(canceled_datetime, format: :future)
+      else
+        '?'
+      end
+    end
+
+    def canceled_version
+      canceled_version = nil
+      versions.each do |version|
+        if version.changeset.has_key?( 'status' ) && version.changeset['status'].include?( 'canceled' )
+          canceled_version = version
+        end
+      end
+      canceled_version
     end
 
     def friendly_date

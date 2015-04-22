@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 class RecurrencesController < ApplicationController
+  load_and_authorize_resource
+
   layout 'two_columns'
 
   before_filter :set_user
@@ -26,6 +28,12 @@ class RecurrencesController < ApplicationController
     end
 
     return render json: { status: :success, next_path: next_services_users_path(@user), recurrence_id: recurrence.id }
+  end
+
+  def deactivated_recurrences
+    @recurrences = @user.recurrences.inactive
+
+    render layout: 'one_column'
   end
 
   private

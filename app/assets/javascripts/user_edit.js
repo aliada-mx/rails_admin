@@ -20,7 +20,7 @@ $(function() {
               reject(new ConektaFailed(response));
               break;
             case 'warning':
-              reject(new ConektaFailed(response.messages[0]));
+              reject(new ConektaFailed(response.message));
               break;
           }
         },

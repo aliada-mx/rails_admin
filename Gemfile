@@ -1,3 +1,5 @@
+ruby "2.2.2"
+
 source 'https://rubygems.org'
 source 'https://rails-assets.org'
 
@@ -83,7 +85,7 @@ gem 'invert'
 
 # ADMIN
 # 
-gem 'rails_admin', github: 'grillermo/rails_admin'
+gem 'rails_admin', github: 'aliada-mx/rails_admin'
 # permissions
 gem 'cancancan'
 
