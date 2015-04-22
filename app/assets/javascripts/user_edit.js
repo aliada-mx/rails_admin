@@ -17,7 +17,7 @@ $(function() {
               break;
 
             case 'error':
-              reject(new ConektaFailed(response));
+              reject(new ConektaFailed(response.message));
               break;
             case 'warning':
               reject(new ConektaFailed(response.message));
@@ -52,7 +52,6 @@ $(function() {
     aliada.add_conekta_token_to_form(form, $token_input)
       .then(confirm_card_change)
       .then(add_conekta_card)
-      .then()
       .caught(ConektaFailed, function(exception) {
         report_error(exception)
 

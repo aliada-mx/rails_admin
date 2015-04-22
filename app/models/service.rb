@@ -163,7 +163,7 @@ class Service < ActiveRecord::Base
   end
 
   def set_hours_before_after_service
-    self.hours_after_service = Setting.padding_hours_between_services
+    self.hours_after_service ||= Setting.padding_hours_between_services
   end
 
   def self.parse_date_time(params)
