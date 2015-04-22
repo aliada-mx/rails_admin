@@ -483,8 +483,6 @@ class Service < ActiveRecord::Base
 
     # We might have not used some or all those schedules the service had, so enable them back
     aliada_availability.enable_unused_schedules
-
-    ensure_updated_recurrence! if recurrent?
   end
 
   def other_services
