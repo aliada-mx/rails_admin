@@ -225,6 +225,7 @@ class Service < ActiveRecord::Base
     aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
     
     self.aliada = aliada_availability.aliada
+    self.hours_after_service = aliada_availability.padding_count
     self.save!
 
     aliada_availability.book(self)
@@ -446,15 +447,12 @@ class Service < ActiveRecord::Base
       
       service_params['datetime'] = Service.parse_date_time(service_params)
 
-      attributes = service_params.except(:user, :address) # we are editing the service only
       service_params.except!(:aliada_id) if chosen_aliada_id == 0
 
       needs_rescheduling = self.user_modified_booking(service_params)
 
+      # The new atributtes will be used by the availability finders
       self.attributes = service_params
-
-      ensure_not_downgrading!
-      ensure_updated_recurrence!
 
       reschedule!(chosen_aliada_id) if needs_rescheduling
 
@@ -481,27 +479,11 @@ class Service < ActiveRecord::Base
     end
   end
 
-  # We don't want the users to go from a recurrent to a one time
-  # the code doesnt handle that case and the business does not want that
-  def ensure_not_downgrading!
-    if service_type_id_changed?
-      previous_service_type = ServiceType.find(service_type_id_was)
-      current_service_type = ServiceType.find(service_type_id)
-
-      if previous_service_type.recurrent? && current_service_type.one_timer?
-        raise AliadaExceptions::ServiceDowgradeImpossible
-      end
-    end
-  end
-
   def reschedule!(aliada_id)
     aliada_availability = book_one_timer(aliada_id: aliada_id)
 
     # We might have not used some or all those schedules the service had, so enable them back
     aliada_availability.enable_unused_schedules
-
-    self.hours_after_service = aliada_availability.padding_count
-    self.save!
 
     ensure_updated_recurrence! if recurrent?
   end

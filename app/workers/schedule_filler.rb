@@ -42,16 +42,18 @@ class ScheduleFiller
 
   # aliada's recurrences, to build the whole availability
   def self.fill_aliadas_availability today_in_the_future
-    AliadaWorkingHour.active.each do |aliada_recurrence|
+    AliadaWorkingHour.active.each do |awh|
 
-      if today_in_the_future.weekday == aliada_recurrence.utc_weekday(today_in_the_future)
+      if today_in_the_future.weekday == awh.utc_weekday(today_in_the_future)
 
         #Compensate for UTC 
-        beginning_of_recurrence = today_in_the_future.change(hour: aliada_recurrence.utc_hour(today_in_the_future))
+        beginning_of_recurrence = today_in_the_future.change(hour: awh.utc_hour(today_in_the_future))
 
-        if not Schedule.find_by(datetime: beginning_of_recurrence, aliada_id: aliada_recurrence.aliada_id)
+        if not Schedule.find_by(datetime: beginning_of_recurrence, aliada_id: awh.aliada_id)
 
-          Schedule.create(datetime: beginning_of_recurrence, aliada_id:  aliada_recurrence.aliada_id, recurrence_id: aliada_recurrence.id)
+          Schedule.create(datetime: beginning_of_recurrence,
+                          aliada_id:  awh.aliada_id,
+                          aliada_working_hour: awh)
 
         end
       end
@@ -59,7 +61,7 @@ class ScheduleFiller
   end
 
   # creates service inside aliada's schedule, based on the client's recurrence
-  def self.create_service_in_clients_schedule today_in_the_future, user_recurrence 
+  def self.create_service_in_clients_schedule( today_in_the_future, user_recurrence )
     # Compensate UTC 
     beginning_of_user_recurrence = today_in_the_future.change(hour: user_recurrence.utc_hour(today_in_the_future))
 
@@ -76,7 +78,7 @@ class ScheduleFiller
   end
 
   # client's recurrences, to book inside aliada's schedule 
-  def self.insert_clients_schedule today_in_the_future
+  def self.insert_clients_schedule( today_in_the_future )
 
     Recurrence.active.each do |user_recurrence| 
 
@@ -107,7 +109,10 @@ class ScheduleFiller
 
         if service
           # Assign the client to the aliada's schedule
-          ScheduleInterval.new(schedules).book_schedules(aliada_id: user_recurrence.aliada_id, user_id: user_recurrence.user_id, service_id: service.id)
+          ScheduleInterval.new(schedules).book_schedules(aliada_id: user_recurrence.aliada_id,
+                                                         user_id: user_recurrence.user_id,
+                                                         recurrence_id: user_recurrence.id,
+                                                         service_id: service.id)
         end
 
       end
