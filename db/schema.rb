@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150421151852) do
+ActiveRecord::Schema.define(version: 20150422231929) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -205,13 +205,14 @@ ActiveRecord::Schema.define(version: 20150421151852) do
     t.boolean  "disabled"
   end
 
-  create_table "payment_provider_choices", id: false, force: true do |t|
+  create_table "payment_provider_choices", force: true do |t|
     t.integer "payment_provider_id"
     t.integer "user_id"
     t.boolean "default"
     t.string  "payment_provider_type"
   end
 
+  add_index "payment_provider_choices", ["id"], name: "payment_provider_choices_id_key", unique: true, using: :btree
   add_index "payment_provider_choices", ["user_id", "default"], name: "index_payment_provider_choices_on_user_id_and_default", unique: true, where: "(\"default\" = true)", using: :btree
 
   create_table "payments", force: true do |t|
