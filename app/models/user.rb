@@ -56,7 +56,7 @@ class User < ActiveRecord::Base
   end
 
   def zone
-    default_address.postal_code.zone
+    default_address.try(:postal_code).try(:zone)
   end
   
   def create_promotional_code code_type
@@ -221,7 +221,7 @@ class User < ActiveRecord::Base
           value.present?
         end
 
-        pretty_value do
+        formatted_value do
           value.name
         end
       end

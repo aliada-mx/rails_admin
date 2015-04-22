@@ -18,7 +18,8 @@ describe 'Schedule Filler' do
                                     special_instructions: 'some very special sinstructions',
                                     aliada: aliada,
                                     user: user,
-                                    total_hours: total_service_hours) }
+                                    estimated_hours: 3,
+                                    hours_after_service: 0) }
   let!(:service_type) { create(:service_type) }
 
   before do

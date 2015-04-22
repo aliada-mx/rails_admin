@@ -15,7 +15,7 @@ feature 'ServiceController' do
                              hours_after_service: 2,
                              aliada: aliada) }
 
-  let(:user_service){ create(:service, 
+  let!(:user_service){ create(:service, 
                         aliada: aliada,
                         user: user,
                         datetime: next_day_of_service,
@@ -37,6 +37,8 @@ feature 'ServiceController' do
   describe '#edit' do
 
     before do
+      Timecop.freeze(starting_datetime)
+
       @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
       Capybara.ignore_hidden_elements = false
 
@@ -58,6 +60,7 @@ feature 'ServiceController' do
 
     after do
       Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
+      Timecop.return
     end
 
     it 'doesnt reschedule the service when datetime, estimated or hours change' do
@@ -92,9 +95,9 @@ feature 'ServiceController' do
       recurrence = Recurrence.find(response['recurrence_id'])
 
       expect(recurrence.estimated_hours).to eql 5
-      expect(recurrence.schedules.count).to eql 120
+      expect(recurrence.schedules.count).to eql 24
       expect(recurrence.schedules.padding.count).to eql 4
-      expect(Schedule.available.count).to eql 0
+      expect(Schedule.available.count).to eql 6
     end
 
     it 'makes available schedules previously booked but not used anymore by the service' do
@@ -113,9 +116,9 @@ feature 'ServiceController' do
       recurrence = Recurrence.find(response['recurrence_id'])
 
       expect(recurrence.estimated_hours).to eql 3
-      expect(recurrence.schedules.in_or_after_datetime(next_day_of_service).count).to eql 110
+      expect(recurrence.schedules.in_or_after_datetime(next_day_of_service).count).to eql 20
       expect(recurrence.schedules.padding.count).to eql 8
-      expect(Schedule.available.count).to eql 4
+      expect(Schedule.available.count).to eql 10
     end
 
     it 'changes the recurrence attributes' do
@@ -133,7 +136,7 @@ feature 'ServiceController' do
 
       recurrence = Recurrence.find(response['recurrence_id'])
 
-      expect(recurrence.total_hours).to eql 3
+      expect(recurrence.total_hours).to eql 6
     end
 
     it 'cancels the previous services and creates new ones' do
