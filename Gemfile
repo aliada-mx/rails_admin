@@ -1,3 +1,5 @@
+ruby "2.2.2"
+
 source 'https://rubygems.org'
 source 'https://rails-assets.org'
 
