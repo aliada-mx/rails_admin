@@ -83,7 +83,7 @@ class Aliada < User
     services = self.current_week_services
     sum = 0
     services.each do |s|
-      if s.finished? || s.paid?
+      if s.hours_worked
         sum = sum + s.hours_worked
       end
     end
