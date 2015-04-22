@@ -79,6 +79,17 @@ class Aliada < User
     return Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week)
   end
 
+  def current_week_reported_hours
+    services = self.current_week_services
+    sum = 0
+    services.each do |s|
+      if s.finished? || s.paid?
+        sum = sum + s.hours_worked
+      end
+    end
+    return sum
+  end
+  
   def aliada_webapp_link
     aliada_show_webapp_link(self)
   end
