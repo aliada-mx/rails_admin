@@ -263,19 +263,16 @@ class Service < ActiveRecord::Base
   end
 
   def reported_hours
-    if bill_by_reported_hours?
-      if hours_worked.present?
-        hours_worked
-      else
-        (self.aliada_reported_end_time - self.aliada_reported_begin_time) / 3600.0
-      end
+    if bill_by_hours_worked?
+      hours_worked
+    elsif bill_by_reported_hours?
+      (self.aliada_reported_end_time - self.aliada_reported_begin_time) / 3600.0
     end
   end
   
   #calculates the price to be charged for a service
   def amount_by_reported_hours
     amount = reported_hours * service_type.price_per_hour
-   
     if amount > 0 then amount else 0 end
   end
 
@@ -285,6 +282,10 @@ class Service < ActiveRecord::Base
 
   def bill_by_reported_hours?
     (aliada_reported_begin_time.present? && aliada_reported_end_time.present?) || hours_worked.present?
+  end
+
+  def bill_by_hours_worked?
+    hours_worked.present?
   end
 
   def bill_by_billable_hours?

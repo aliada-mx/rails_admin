@@ -1,23 +1,25 @@
 %h2 Servicios por terminar
 - @unfinished_services.each do |service|
-  %h5
-    En: 
-    #{service.user.full_name}
-    %h6= I18n.l service.tz_aware_datetime, format: "%A %e de %B a las %I %P"
-    = form_tag((finish_service_path)) do
-      %input{:type=>"hidden", :value=>service.id, :name => :service}
-      %div
-        ¿Tarde? horas:
-        %select{:name => :hour}
-          - (3..10).each do |h|
-            %option{:value => h}= h
-        minutos:
-        %select{:name => :min}
-          - (0..59).step(5).each do |m|
-            %option{:value => m}= m 
-        %input{  :type => "submit", :name => "Pay", :value => "Guardar :)" }
-    %br
-    %br
+  .service{id: "service_#{service.id}"}
+    %h5
+      En: 
+      #{service.user.full_name}
+      %h6= I18n.l service.tz_aware_datetime, format: "%A %e de %B a las %I %P"
+      = form_tag((finish_service_path)) do
+        %input{:type=>"hidden", :value=>service.id, :name => :service}
+        %div
+          Duracion horas:
+          %select{:name => :hour}
+            - (3..10).each do |h|
+              %option{:value => h}= h
+          minutos:
+          %select{:name => :min}
+            - (0..59).step(5).each do |m|
+              %option{:value => m}= m 
+          %input{  :type => "submit", :name => "Pay", :value => "Guardar :)" }
+      %br
+      %br
+
 %h1 Servicios proximos    
 - @upcoming_services.each do |service|
   %h1=  I18n.l service.tz_aware_datetime, format: "%A %e de %B  a las %I %P"

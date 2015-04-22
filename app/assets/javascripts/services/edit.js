@@ -3,10 +3,12 @@
 //= require jquery.calendario
 //= require jquery.hc-sticky.min
 //= require jquery.pulsate.min
+//= require URI.min
 //
 //= require modules/calendar
 //= require modules/dialogs
 //= require jquery.autogrow-textarea
+//= require modules/open_cancel_dialog_on_page_load
 //
 //= require services/edit/_duration
 //= require services/edit/_datetime_selection
@@ -23,6 +25,8 @@ $(document).ready(function() {
 
   aliada.services.edit.duration(aliada, ko);
   aliada.services.edit.datetime_selection(aliada, ko);
+
+  aliada.open_cancel_dialog_on_page_load();
 
   // Unhilight when a time is chosen
   aliada.ko.time.subscribe(function() {

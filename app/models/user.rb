@@ -48,6 +48,7 @@ class User < ActiveRecord::Base
 
   after_initialize do
     self.balance ||= 0 if self.respond_to? :balance
+    self.role ||= 'client'
   end
 
   def fill_full_name
@@ -128,7 +129,7 @@ class User < ActiveRecord::Base
   end
 
   def default_payment_provider
-    payment_provider_choices.default.provider
+    payment_provider_choices.default.provider if payment_provider_choices.any?
   end
 
   def past_aliadas
@@ -197,19 +198,28 @@ class User < ActiveRecord::Base
 
     edit do
 
+      field :role
       field :user_next_services_path do
         read_only true
+        visible do
+          value.present?
+        end
 
         formatted_value do
           view = bindings[:view]
           user = bindings[:object]
 
-          view.link_to(user.id, value, target: '_blank')
+          if user.persisted?
+            view.link_to(user.id, value, target: '_blank')
+          end
         end
       end
 
       field :postal_code_number do
         read_only true
+        visible do
+          value.present?
+        end
       end
       field :first_name
       field :last_name
@@ -224,14 +234,17 @@ class User < ActiveRecord::Base
 
       field :services
 
-
       group :informacion_de_pago do
 
         field :balance
 
         field :default_payment_provider do
+          visible do
+            value.present?
+          end
+
           formatted_value do
-            if value
+            if value.present?
               Mixins::RailsAdminModelsHelpers.rails_admin_edit_link(value)
             end
           end
@@ -274,7 +287,9 @@ class User < ActiveRecord::Base
           view = bindings[:view]
           user = bindings[:object]
 
-          view.link_to(user.id, value, target: '_blank')
+          if user.persisted?
+            view.link_to(user.id, value, target: '_blank')
+          end
         end
       end
 

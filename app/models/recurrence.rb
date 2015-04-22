@@ -190,10 +190,6 @@ class Recurrence < ActiveRecord::Base
     # We might have not used some or all those schedules the service had, so enable them back
     aliada_availability.enable_unused_schedules
 
-    self.hours_after_service = aliada_availability.padding_count
-    self.aliada_id = chosen_aliada_id
-    self.save!
-
     previous_services.map(&:cancel)
   end
 
@@ -207,6 +203,7 @@ class Recurrence < ActiveRecord::Base
 
     aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
     self.aliada = aliada_availability.aliada
+    self.hours_after_service = aliada_availability.padding_count
     self.save!
 
     aliada_availability.rebook_recurrence(self)
