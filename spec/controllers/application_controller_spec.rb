@@ -37,7 +37,7 @@ feature 'ApplicationController' do
       end
 
       response = JSON.parse(page.body)
-      expect(response['status']).to eql 'warning'
+      expect(response['status']).to eql 'error'
       expect(response['sender']).to eql 'conekta'
       expect(response['messages']).to eql [ "El recurso no ha sido encontrado." ]
     end
