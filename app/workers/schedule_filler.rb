@@ -51,7 +51,8 @@ class ScheduleFiller
 
         if not Schedule.find_by(datetime: beginning_of_recurrence, aliada_id: aliada_recurrence.aliada_id)
 
-          Schedule.create!(datetime: beginning_of_recurrence, aliada_id:  aliada_recurrence.aliada_id, recurrence_id: aliada_recurrence.id)
+          Schedule.create(datetime: beginning_of_recurrence, aliada_id:  aliada_recurrence.aliada_id, recurrence_id: aliada_recurrence.id)
+
 
         end
 
@@ -88,6 +89,7 @@ class ScheduleFiller
 
         schedules = Schedule.where("aliada_id = ? AND datetime >= ? AND datetime < ?", user_recurrence.aliada_id, beginning_datetime, ending_datetime )
         if schedules.count < user_recurrence.total_hours
+          binding.pry
           error = "Servicio no se pudo crear porque las horas totales en la recurrencia del usuario excenden las que se tienen con su aliada. Aliada #{user_recurrence.aliada.first_name} #{user_recurrence.aliada.last_name}, Usuario #{user_recurrence.user.first_name} #{user_recurrence.user.last_name}, horario - #{user_recurrence.weekday} #{user_recurrence.hour}:00 hrs, horas totales #{user_recurrence.total_hours}"
           
           Ticket.create_error(relevant_object: user_recurrence,

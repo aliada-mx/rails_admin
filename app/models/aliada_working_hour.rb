@@ -47,12 +47,10 @@ class AliadaWorkingHour < ActiveRecord::Base
       awh = AliadaWorkingHour.find_by(aliada_id: aliada_id, hour: recurrence[:hour], weekday: recurrence[:weekday])
       awh.deactivate
       # mark future schedules of that weekday and hour as busy 
-      awh.schedules.in_the_future.busy_candidate.map(&:get_busy) 
+      awh.schedules.in_the_future.busy_candidate.destroy_all
     end
 
     new_recurrences.each do |recurrence|
-      aliada = Aliada.find(aliada_id)
-
       awh = AliadaWorkingHour.find_or_create_by(aliada_id: aliada_id, weekday: recurrence[:weekday], hour: recurrence[:hour], periodicity: 7, total_hours: 1, user_id: nil)
       # fill 30 days of schedules
       awh.create_schedules_until_horizon        
