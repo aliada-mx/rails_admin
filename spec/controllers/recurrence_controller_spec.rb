@@ -39,35 +39,38 @@ feature 'ServiceController' do
   let!(:conekta_card_method){ create(:payment_method)}
   let!(:conekta_card){ create(:conekta_card) }
 
+  before do
+    Timecop.freeze(starting_datetime)
+
+    @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
+    Capybara.ignore_hidden_elements = false
+
+    create_recurrent!(starting_datetime, hours: 6,
+                                         periodicity: recurrence.periodicity ,
+                                         conditions: {aliada: aliada,
+                                                      recurrence: recurrence,
+                                                      service: user_service,
+                                                      status: 'booked'})
+
+
+    allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
+    allow_any_instance_of(Recurrence).to receive(:timezone).and_return('UTC')
+
+    login_as(user)
+
+    visit edit_recurrence_users_path(user_id: user.id, recurrence_id: recurrence.id)
+  end
+
+  after do
+    Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
+    Timecop.return
+  end
+
+  it 'enables all the recurrences schedules' do
+
+  end
+
   describe '#edit' do
-
-    before do
-      Timecop.freeze(starting_datetime)
-
-      @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
-      Capybara.ignore_hidden_elements = false
-
-      create_recurrent!(starting_datetime, hours: 6,
-                                           periodicity: recurrence.periodicity ,
-                                           conditions: {aliada: aliada,
-                                                        recurrence: recurrence,
-                                                        service: user_service,
-                                                        status: 'booked'})
-
-
-      allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
-      allow_any_instance_of(Recurrence).to receive(:timezone).and_return('UTC')
-
-      login_as(user)
-
-      visit edit_recurrence_users_path(user_id: user.id, recurrence_id: recurrence.id)
-    end
-
-    after do
-      Capybara.ignore_hidden_elements = @default_capybara_ignore_hidden_elements_value
-      Timecop.return
-    end
-
     it 'doesnt let other users edit the recurrences' do
       logout
       login_as(other_user)
@@ -194,5 +197,14 @@ feature 'ServiceController' do
       expect(Schedule.booked_or_padding.all? {|s| s.service_id.present? }).to be true
     end
     
+  end
+
+  describe '#cancel_all!' do
+
+    it 'enables all the schedules' do
+      click_button 'Cancelar recurrencia'
+
+      expect( recurrence.schedules.all? { |s| s.available? } ).to be true
+    end
   end
 end

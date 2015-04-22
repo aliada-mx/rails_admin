@@ -34,7 +34,7 @@ class Schedule < ActiveRecord::Base
   scope :padding, -> {  where(status: 'padding') }
   scope :booked_or_padding, -> {  where(status: ['booked', 'padding' ]) }
   scope :in_zone, -> (zone) { joins(:aliada).joins("INNER JOIN aliada_zones ON aliada_zones.zone_id = #{zone.id} AND aliada_zones.aliada_id = schedules.aliada_id") }
-  scope :in_the_future, -> { where("datetime >= ?", Time.zone.now) }
+  scope :in_the_future, -> { where("schedules.datetime >= ?", Time.zone.now) }
   scope :in_or_after_datetime, ->(starting_datetime) { where("datetime >= ?", starting_datetime) }
   scope :after_datetime, ->(datetime) { where("datetime > ?", datetime) }
   scope :for_aliada_id, ->(aliada_id) { where("schedules.aliada_id = ?", aliada_id) }

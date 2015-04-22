@@ -53,9 +53,7 @@ class ScheduleFiller
 
           Schedule.create(datetime: beginning_of_recurrence, aliada_id:  aliada_recurrence.aliada_id, recurrence_id: aliada_recurrence.id)
 
-
         end
-
       end
     end
   end
@@ -66,7 +64,8 @@ class ScheduleFiller
     beginning_of_user_recurrence = today_in_the_future.change(hour: user_recurrence.utc_hour(today_in_the_future))
 
     recurrence_shared_attributes = user_recurrence.attributes_shared_with_service
-    recurrence_shared_attributes.merge!({service_type: ServiceType.recurrent})
+    recurrence_shared_attributes.merge!({service_type: ServiceType.recurrent,
+                                         recurrence_id: user_recurrence.id})
 
     service = Service.find_by(datetime: beginning_of_user_recurrence, user_id: user_recurrence.user_id)
     if not service
