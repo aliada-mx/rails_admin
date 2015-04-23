@@ -21,6 +21,9 @@
             %div
               Recurrencia creada
               = I18n.l(recurrence.created_at, format: :future)
+            %div
+              = link_to RailsAdmin::Engine.routes.url_helpers.edit_path('Recurrence', recurrence.id), target: '_blank' do
+                Ver en admin
       .badge
         Recurrente
         =image_tag("recurrence.png", {:title => 'Servicio recurrente'})
