@@ -46,12 +46,16 @@
     %b tel: 
     #{service.user.phone}
   %h5 Entre calles: #{service.address.between_streets}
-  %h5 Baños:  #{service.bathrooms}
-  %h5 Cuartos:   #{service.bedrooms}
+  %h5 Instrucciones:  #{service.special_instructions}
+  %h5 Articulos Limpieza:   #{service.cleaning_supplies_instructions}
+  %h5 Basura: #{service.garbage_instructions}
+  %h5 Atencion a: #{service.attention_instructions}
+  %h5 Limpiar con: #{service.equipment_instructions}
+  %h5 No tocar: #{service.forbidden_instructions}
+  %h5 Otras instrucciones: #{service.special_instructions}
   - if !service.confirmed 
     = form_tag((confirm_service_path)) do
       %input{:type=>"hidden", :value=>service.id, :name => :service}
       %input.action-button-pink{  :type => "submit", :name => "confirmation", :value => "Si voy" }
   %br
   %br
-
