@@ -312,7 +312,7 @@ class Service < ActiveRecord::Base
   end
 
   def charge!
-    return if paid? && canceled?
+    return if paid? && canceled? || amount_to_bill.zero?
 
     ActiveRecord::Base.transaction do
 

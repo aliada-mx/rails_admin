@@ -19,8 +19,8 @@
               Recurrencia:
               = service.recurrence.name
             %div
-              = link_to RailsAdmin::Engine.routes.url_helpers.edit_path('Service', service.id), target: '_blank' do
-                Ver en admin
+              = link_to service.rails_admin_edit_path, target: '_blank' do
+                Editar en admin
             %div
               Creado:
               = I18n.l(service.created_at, format: :future)

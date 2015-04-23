@@ -28,6 +28,10 @@ module Presenters
       name += " (#{id})"
     end
 
+    def rails_admin_edit_path
+      RailsAdmin::Engine.routes.url_helpers.edit_path('Service', self.id)
+    end
+
     def user_link
       rails_admin_edit_link(user)
     end
