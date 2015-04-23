@@ -7,6 +7,7 @@ class Availability
   def_delegator :@store, :keys, :ids
   def_delegator :@store, :has_key?, :has_aliada?
   attr_accessor :store 
+  attr_accessor :schedules 
   attr_accessor :iterable_store 
   attr_accessor :previous_service_schedules
   attr_reader :aliada
