@@ -1,3 +1,4 @@
+%h2= "Esta semana llevas #{@aliada.current_week_reported_hours} horas" 
 %h2 Servicios por terminar
 - @unfinished_services.each do |service|
   .service{id: "service_#{service.id}"}

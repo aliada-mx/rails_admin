@@ -83,6 +83,8 @@ feature 'AliadasController' do
       page.has_content?('Tus servicios')
     end
     
+   
+
     it 'Shows tomorrows services if it is tommorrow' do
       aliada = create(:aliada)
       client = create(:user, phone: '54545454', first_name: 'Juan', last_name:'Perez Tellez')
@@ -176,7 +178,7 @@ feature 'AliadasController' do
     
     it 'Shows message if token invalid' do
       visit ('aliadas/servicios/'+ user.authentication_token)
-      page.has_content?('Ruta invalida')
+      expect(page).to have_content('Ruta invalida')
     end
 
     it 'saves the worked hours on a service' do
@@ -190,6 +192,7 @@ feature 'AliadasController' do
 
       service.reload
       expect(service.hours_worked).to eql BigDecimal.new('3.5')
+      expect(page).to have_content('3.5')
     end
   end
 end
