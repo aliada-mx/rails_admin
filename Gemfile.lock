@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/aliada-mx/rails_admin.git
-  revision: 9455a8ead247c6c467bfc982f2163cbe57af83f8
+  revision: b5cc89a62c9ac3c97539c45876a844e0d94bf57c
   specs:
     rails_admin (0.6.6)
       builder (~> 3.1)
