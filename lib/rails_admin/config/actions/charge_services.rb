@@ -20,6 +20,10 @@ module RailsAdmin
         register_instance_option :pjax? do
           false
         end
+
+        register_instance_option :http_methods do
+          [:post,:get]
+        end
         
         register_instance_option :controller do
           Proc.new do
@@ -28,11 +32,17 @@ module RailsAdmin
                         else
                           [ @object ]
                        end
+            # Force evaluation to avoid multiple queries
+            services.to_a
 
-            Resque.enqueue(ServiceCharger, services.map(&:id))
+            @services_without_amount_to_bill = services.select { |s| s.amount_to_bill.zero? }
+            @services_already_paid = services.select { |s| s.paid? }
 
-            flash[:success] = 'Se han puesto en cola los servicios a cobrar, los erróneos aparecerán como tickets'
-            redirect_to back_or_index
+            @services_to_charge = services.select { |service| not service.paid? and not service.amount_to_bill.zero? }
+
+            Resque.enqueue(ServiceCharger, @services_to_charge.map(&:id))
+
+            render :action => @action.template_name
           end
         end
       end

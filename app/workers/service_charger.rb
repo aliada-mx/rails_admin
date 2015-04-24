@@ -13,7 +13,11 @@ class ServiceCharger
     services_ids.each do |service_id|
       service = Service.find(service_id)
 
-      service.charge!
+      begin
+        service.charge!
+      rescue Conekta::Error, Conekta::ProcessingError => exception
+        service.create_charge_failed_ticket(service.user, service.amount_to_bill, exception)
+      end
     end
   end
 end

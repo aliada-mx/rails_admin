@@ -312,7 +312,7 @@ class Service < ActiveRecord::Base
   end
 
   def charge!
-    return if paid? && canceled?
+    return if paid? && canceled? || amount_to_bill.zero?
 
     ActiveRecord::Base.transaction do
 
@@ -479,10 +479,15 @@ class Service < ActiveRecord::Base
   end
 
   def reschedule!(aliada_id)
+    previous_schedules = self.schedules.in_the_future.to_a
+
     aliada_availability = book_one_timer(aliada_id: aliada_id)
 
     # We might have not used some or all those schedules the service had, so enable them back
-    aliada_availability.enable_unused_schedules
+    current_schedules = aliada_availability.schedules
+
+    unused = previous_schedules - current_schedules
+    unused.map(&:enable_booked)
   end
 
   def other_services

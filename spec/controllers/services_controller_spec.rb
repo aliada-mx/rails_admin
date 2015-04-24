@@ -5,6 +5,7 @@ feature 'ServiceController' do
   include TestingSupport::SharedExpectations::ConektaCardExpectations
 
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') } # 7 am Mexico City
+  let(:next_day_of_service) { Time.zone.parse('2015-01-08 13:00:00') }
   let!(:zone) { create(:zone) }
   let!(:aliada) { create(:aliada, first_name: 'Aide', zones: [ zone ]) }
   let!(:recurrent_service) { create(:service_type) }
@@ -213,6 +214,7 @@ feature 'ServiceController' do
 
   context 'with a logged in user' do
     let!(:aliada) { create(:aliada, zones: [zone]) }
+    let!(:other_aliada) { create(:aliada, zones: [zone]) }
     let!(:admin){ create(:admin) }
     let!(:user){ create(:user) }
     let!(:address){ create(:address, postal_code: postal_code, user: user) }
@@ -237,15 +239,16 @@ feature 'ServiceController' do
     end
 
     describe '#edit' do
-      let!(:recurrence) { create(:recurrence) }
+      let!(:recurrence) { create(:recurrence, estimated_hours: 4) }
 
       let(:user_service){ create(:service, 
                             aliada: aliada,
                             user: user,
                             datetime: starting_datetime,
                             estimated_hours: 4,
+                            hours_after_service: 0,
                             zone: zone,
-                            service_type: recurrent_service,
+                            service_type: one_time_service,
                             recurrence: recurrence) }
       let(:admin_service){ create(:service, 
                                   aliada: aliada,
@@ -344,6 +347,82 @@ feature 'ServiceController' do
           expect(user_service.recurrence.services.all?(&:canceled?)).to be true
           expect(service_1.reload).to be_canceled
           expect(service_1.reload).to be_canceled
+        end
+      end
+
+      describe '#update_existing' do
+
+        context 'with one time service type' do
+
+          before :each do
+            create_one_timer!(next_day_of_service, hours: 6,  conditions: { aliada: aliada,
+                                                                            service: user_service,
+                                                                            status: 'booked' } )
+
+            allow_any_instance_of(User).to receive(:aliadas).and_return([aliada])
+            allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
+            allow_any_instance_of(User).to receive(:postal_code_number).and_return(11800)
+
+            edit_service_path = edit_service_users_path(user_id: user.id, service_id: user_service.id)
+
+            visit edit_service_path
+            
+            expect(page.current_path).to eql edit_service_path
+          end
+
+          it 'reschedules a service when hours or date time change' do
+            expect_any_instance_of(Service).to receive(:reschedule!).and_call_original
+
+            fill_hidden_input 'service_estimated_hours', with: '5.0'
+            fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
+            fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
+
+            click_button 'Guardar cambios'
+
+            response = JSON.parse(page.body)
+            expect(response['status']).to_not eql 'error'
+          end
+
+          it 'doesnt modify the recurrence when editing one timer' do
+            expect(recurrence.estimated_hours).to eql 4
+            expect(user_service.estimated_hours).to eql 4
+
+            fill_hidden_input 'service_estimated_hours', with: '5.0'
+            fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
+            fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
+
+            click_button 'Guardar cambios'
+
+            response = JSON.parse(page.body)
+            expect(response['status']).to_not eql 'error'
+            expect(response['service_id']).to be_present
+
+            service = Service.find(response['service_id'])
+
+            expect(user_service).to eql service
+            expect(service.estimated_hours).to eql 5
+            expect(recurrence.estimated_hours).to eql 4
+          end
+
+          it 'enables the unused schedules' do
+            expect(Schedule.booked.count).to eql 6
+
+            fill_hidden_input 'service_estimated_hours', with: '3.0'
+            fill_hidden_input 'service_date', with: next_day_of_service.strftime('%Y-%m-%d')
+            fill_hidden_input 'service_time', with: next_day_of_service.strftime('%H:%M')
+
+            click_button 'Guardar cambios'
+
+            response = JSON.parse(page.body)
+            expect(response['status']).to_not eql 'error'
+            expect(response['service_id']).to be_present
+
+            service = Service.find(response['service_id'])
+
+            expect(service.schedules.in_or_after_datetime(next_day_of_service).count).to eql 5
+            expect(service.schedules.padding.count).to eql 2
+            expect(Schedule.available.count).to eql 1
+          end
         end
       end
     end

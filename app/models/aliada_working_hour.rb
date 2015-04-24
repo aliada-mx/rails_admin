@@ -46,7 +46,7 @@ class AliadaWorkingHour < ActiveRecord::Base
     disabled_recurrences.each do |recurrence|
       awh = AliadaWorkingHour.find_by(aliada_id: aliada_id, hour: recurrence[:hour], weekday: recurrence[:weekday])
       awh.deactivate
-      # mark future schedules of that weekday and hour as busy 
+      # delete future schedules
       awh.schedules.in_the_future.busy_candidate.destroy_all
     end
 
@@ -72,7 +72,7 @@ class AliadaWorkingHour < ActiveRecord::Base
         schedule.aliada_working_hour_id = self.id
         schedule.save!
       else
-        schedule.update_attribute(:aliada_working_hour_id, self.id)
+        schedule.aliada_working_hour_id = self.id
       end
       starting_datetime += self.periodicity.days
     end

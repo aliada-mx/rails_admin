@@ -1,0 +1,34 @@
+.charge_services.col-lg-12
+  %div.table-responsive.working_hours_table
+    %table.table
+      %thead
+        %tr
+          %th 
+            Servicios a cobrar
+          %th
+            Servicios ya cobrados
+          %th
+            Servicios sin horas cobrables
+      %tbody
+      - rows_number = [ @services_without_amount_to_bill.size, @services_already_paid.size, @services_to_charge.size ].max
+      - rows_number.times do |i|
+        %tr 
+          %td
+            - service = @services_to_charge.fetch(i, nil)
+            - if service
+              = link_to service.rails_admin_edit_path, target: '_blank' do
+                = service.name
+              $#{ service.amount_to_bill }
+          %td
+            - service = @services_already_paid.fetch(i, nil)
+            - if service
+              = link_to service.rails_admin_edit_path, target: '_blank' do
+                = service.name
+              $#{ service.amount_to_bill }
+
+              
+          %td
+            - service = @services_without_amount_to_bill.fetch(i, nil)
+            - if service
+              = link_to service.rails_admin_edit_path, target: '_blank' do
+                = service.name

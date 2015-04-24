@@ -19,6 +19,9 @@
               Recurrencia:
               = service.recurrence.name
             %div
+              = link_to service.rails_admin_edit_path, target: '_blank' do
+                Editar en admin
+            %div
               Creado:
               = I18n.l(service.created_at, format: :future)
       .title
