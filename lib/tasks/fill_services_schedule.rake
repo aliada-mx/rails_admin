@@ -4,17 +4,14 @@ namespace :db do
     puts 'checking aliadas schedules'
     missing_schedules = []
 
+    schedules_in_other_service = Hash.new{ |h,k| h[k] = [] }
+    schedules_corrected = []
 
     ActiveRecord::Base.transaction do
-      recurrence = Recurrence.find 2935
-
-      schedules_in_other_service = Hash.new{ |h,k| h[k] = [] }
-      schedules_corrected = []
-      recurrence.services.not_canceled.in_the_future.each do |service|
-        if service.schedules.count < service.total_hours
+      Service.not_canceled.in_the_future.each do |service|
+        if service.schedules.count < service.estimated_hours
           beginning = service.datetime
-          total_hours = service.total_hours.hours
-          ending = ( service.datetime + total_hours ).beginning_of_hour
+          ending = ( service.datetime + service.estimated_hours.hours + service.hours_after_service ).beginning_of_hour
 
           if ending.hour == 3 # 9 pm in mexico city
             ending -= 1
