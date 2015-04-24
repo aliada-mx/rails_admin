@@ -203,7 +203,7 @@ class Recurrence < ActiveRecord::Base
     self.hours_after_service = aliada_availability.padding_count
     self.save!
 
-    aliada_availability.rebook_recurrence(self)
+    aliada_availability.book_recurrence(self)
   end
 
   def services_for_user

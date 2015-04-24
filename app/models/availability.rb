@@ -120,7 +120,7 @@ class Availability
                                      recurrence_id: recurrence_id) # the recurrence_id can be nil for one-time services
   end
 
-  def rebook_recurrence(recurrence)
+  def book_recurrence(recurrence)
     shared_attributes = recurrence.attributes_shared_with_service
     shared_attributes.merge!({ 'service_type' => ServiceType.recurrent,
                                'recurrence_id' => recurrence.id })

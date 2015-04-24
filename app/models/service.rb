@@ -485,7 +485,6 @@ class Service < ActiveRecord::Base
 
     # We might have not used some or all those schedules the service had, so enable them back
     current_schedules = aliada_availability.schedules
-
     unused = previous_schedules - current_schedules
     unused.map(&:enable_booked)
   end
