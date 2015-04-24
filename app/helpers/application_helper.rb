@@ -21,4 +21,8 @@ module ApplicationHelper
   def in_dst?
     Time.zone.now.in_time_zone('Mexico City').dst?
   end
+
+  def in_time_zone_formatted(datetime)
+    I18n.l(datetime.in_time_zone('Etc/GMT+6'), format: :future)
+  end
 end

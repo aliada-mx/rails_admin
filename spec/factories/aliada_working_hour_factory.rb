@@ -4,7 +4,6 @@ FactoryGirl.define do
     weekday 'monday'
     hour 7
     periodicity 7
-    total_hours 3
     association :aliada, factory: :aliada
   end
 end

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class RemoveOwnerFrom < ActiveRecord::Migration
   def change
     remove_column :recurrences, :owner

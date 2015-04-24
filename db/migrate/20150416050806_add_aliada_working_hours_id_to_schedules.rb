@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddAliadaWorkingHoursIdToSchedules < ActiveRecord::Migration
   def change
     add_column :schedules, :aliada_working_hour_id, :integer

@@ -23,7 +23,9 @@
       - @services.each do |service|
         %tr
           %td
-            = l service.datetime, format: :short
+            = l service.tz_aware_datetime, format: :short
+            - if current_user.admin?
+              = service.tz_aware_datetime.weekday
           %td
             - if service.paid?
               = service.billed_hours

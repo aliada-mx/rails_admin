@@ -9,11 +9,16 @@
         - breadcrumb_class = controller_action_name == 'users-previous_services' ? 'active' : ''
         %a.action-button-green.size-large{href: previous_services_users_path(@user),class: breadcrumb_class }
           Historial de visitas
-      -if current_user.admin?
-        %li.actions
-          - breadcrumb_class = controller_action_name == 'users-canceled_services' ? 'active' : ''
-          %a.action-button-green.size-large{href: canceled_services_users_path(@user),class: breadcrumb_class }
-            Servicios Cancelados
+
+      %li.actions
+        - if current_user.admin?
+          .admin-info
+            %span.icon-help-with-circle
+            .text
+              %a.action-button-green.size-large{href: canceled_services_users_path(@user)}
+                Servicios cancelados
+              %a.action-button-green.size-large{href: deactivated_recurrences_users_path(@user)}
+                Recurrencas desactivadas
       -#
         %li.actions
           %a.action-button-purple.size-large

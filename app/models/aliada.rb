@@ -23,6 +23,12 @@ class Aliada < User
   # must have services.datetime >= Time.zone.now.beginning_of_day
   scope :for_booking, ->(aliadas_ids) {where(id: aliadas_ids).eager_load(:services).eager_load(:zones)}
 
+  after_initialize do
+    if new_record?
+      self.role = 'aliada'
+    end
+  end
+
   # We override the default_scope class method so the user default scope from
   # which we inherited does not override ours
   def self.default_scope 
@@ -73,6 +79,17 @@ class Aliada < User
     return Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week)
   end
 
+  def current_week_reported_hours
+    services = self.current_week_services
+    sum = 0
+    services.each do |s|
+      if s.hours_worked
+        sum = sum + s.hours_worked
+      end
+    end
+    return sum
+  end
+  
   def aliada_webapp_link
     aliada_show_webapp_link(self)
   end
@@ -122,7 +139,9 @@ class Aliada < User
     end
 
     edit do
-      field :role
+      field :role do
+        read_only true
+      end
       field :first_name
       field :last_name
       field :email

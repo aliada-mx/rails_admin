@@ -63,7 +63,7 @@ class ConektaCard < ActiveRecord::Base
       payment.pay!
       
       payment
-    rescue Conekta::Error => exception
+    rescue Conekta::Error, Conekta::ProcessingError => exception
       Raygun.track_exception(exception)
 
 

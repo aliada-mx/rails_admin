@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class FillRecurrenceMissingFields < ActiveRecord::Migration
   def change
     ActiveRecord::Base.transaction do

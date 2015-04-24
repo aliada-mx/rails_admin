@@ -29,6 +29,7 @@ module RailsAdmin
         register_instance_option :controller do
           Proc.new do
             @aliada = @object
+
             @date_headers =  I18n.t(:"date.day_names")
             @days_of_week = (0..6)
             # redirect_to back_or_index

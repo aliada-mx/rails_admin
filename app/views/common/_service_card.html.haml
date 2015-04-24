@@ -1,10 +1,37 @@
 .service-card-wrapper.col-lg-6
   .service-card.one-time
     .head
+      - if current_user.admin?
+        .admin-info
+          %span.icon-help-with-circle
+          .text
+            - if service.canceled?
+              %div
+                Cancelado por
+                = service.who_canceled
+                el
+                = service.canceled_when
+            - else
+              %div
+                Status:
+                = service.status_in_spanish
+            - if service.recurrence_id
+              Recurrencia:
+              = service.recurrence.name
+            %div
+              = link_to service.rails_admin_edit_path, target: '_blank' do
+                Editar en admin
+            %div
+              Creado:
+              = I18n.l(service.created_at, format: :future)
       .title
         = service.friendly_date.capitalize
         .small-letters
           = service.friendly_time
+        .action-link
+          - unless service.canceled?
+            = link_to edit_service_users_path(service.user, service, cancelar: true), class: 'small-letters' do
+              Cancelar servicio
     .body
       %ul.summary
         %li.checked
@@ -17,17 +44,13 @@
           Datos de contacto: #{service.user.contact_data}
     .foot
       .actions
-        - if current_user.admin?
-          .div
-            = service.id
-          .div
-            = service.status_in_spanish
+
         
         .actions
-          = link_to edit_service_users_path(user_id: service.user.id, service_id: service.id), class: 'action-button size-large' do
+          = link_to edit_service_users_path(service.user, service), class: 'action-button size-large' do
             %span.icon-pencil.icon-button
             Modificar servicio
 
       .numbers
-        .hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours_with_extras.hours }
+        .hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours.hours }
         %span.cash $#{ ceil_and_strip_insignificat_zeros service.cost } 

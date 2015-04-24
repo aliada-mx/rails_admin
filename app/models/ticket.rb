@@ -24,8 +24,9 @@ class Ticket < ActiveRecord::Base
 
   # Rails admin scopes
   CATEGORIES.each do |category, description|
-    scope description, -> { where(category: category) }
+    scope description, -> { where(category: category).where('classification != ?', 'alert-success') }
   end
+
   scope :sin_resolver, -> { where("classification != ?", 'alert-success') }
   scope :resueltos, -> { where(classification: 'alert-success') }
 
@@ -106,6 +107,8 @@ class Ticket < ActiveRecord::Base
     list do
 
       scopes [ :sin_resolver ] + CATEGORIES.values + [ :resueltos ]
+
+      exclude_fields :id, :action_needed
     end
   end
 end

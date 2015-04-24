@@ -18,7 +18,8 @@ describe 'Schedule Filler' do
                                     special_instructions: 'some very special sinstructions',
                                     aliada: aliada,
                                     user: user,
-                                    total_hours: total_service_hours) }
+                                    estimated_hours: 3,
+                                    hours_after_service: 0) }
   let!(:service_type) { create(:service_type) }
 
   before do
@@ -43,6 +44,7 @@ describe 'Schedule Filler' do
       expect(Schedule.where("datetime < ?", Time.zone.now).count).to be total_available_hours
       expect(Schedule.available.where("datetime < ?", Time.zone.now).count).to be (total_available_hours - total_service_hours)
       expect(Schedule.booked.where("datetime < ?", Time.zone.now).count).to be total_service_hours
+      expect(Schedule.booked.first.recurrence).to eql client_recurrence
 
       #Compensate for UTC 
       recurrence_in_the_past = specific_day.change(hour: client_recurrence.utc_hour(specific_day))
@@ -53,7 +55,6 @@ describe 'Schedule Filler' do
 
       # Check that it has been created using the first created service
       expect(Service.last.special_instructions).to eql client_recurrence.special_instructions
-
     end
 
   end

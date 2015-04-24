@@ -3,14 +3,18 @@
 //= require jquery.calendario
 //= require jquery.hc-sticky.min
 //= require jquery.pulsate.min
+//= require URI.min
 //
 //= require modules/calendar
 //= require modules/dialogs
 //= require jquery.autogrow-textarea
+//= require modules/open_cancel_dialog_on_page_load
 //
 //= require recurrences/edit/_duration
 //= require recurrences/edit/_datetime_selection
 //= require recurrences/edit/_form_submission
+//
+
 $(document).ready(function() {
 
   aliada.recurrence.edit.$form = $('#edit_service_form');
@@ -23,6 +27,8 @@ $(document).ready(function() {
 
   aliada.recurrence.edit.duration(aliada, ko);
   aliada.recurrence.edit.datetime_selection(aliada, ko);
+
+  aliada.open_cancel_dialog_on_page_load();
 
   // Unhilight when a time is chosen
   aliada.ko.time.subscribe(function() {

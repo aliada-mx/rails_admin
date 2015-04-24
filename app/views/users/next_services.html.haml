@@ -14,6 +14,16 @@
 - @recurrences.each do |recurrence|
   .recurrence-header
     .head
+      - if current_user.admin?
+        .admin-info
+          %span.icon-help-with-circle
+          .text
+            %div
+              Recurrencia creada
+              = I18n.l(recurrence.created_at, format: :future)
+            %div
+              = link_to RailsAdmin::Engine.routes.url_helpers.edit_path('Recurrence', recurrence.id), target: '_blank' do
+                Ver en admin
       .badge
         Recurrente
         =image_tag("recurrence.png", {:title => 'Servicio recurrente'})
@@ -25,7 +35,11 @@
         = recurrence.aliada.name
 
       .action-link
-        =link_to("Modifcar todas las visitas próximas", edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id), {})
+        %div
+          =link_to("Cancelar todas las visitas próximas", edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id, cancelar: :true), {})
+        %div
+          =link_to("Modifcar todas las visitas próximas", edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id), {})
+
 
     %table.table-cards
       - recurrence.services_for_user.each do |service|

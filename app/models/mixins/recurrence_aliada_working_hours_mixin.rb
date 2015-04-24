@@ -80,6 +80,8 @@ module Mixins
       text = ""
       if hour > 13
         text += "#{ hour - 12 }:00 pm"
+      elsif hour == 12
+        text += "12:00 pm"
       else
         text += "#{ hour }:00 am"
       end

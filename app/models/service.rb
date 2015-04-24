@@ -157,7 +157,7 @@ class Service < ActiveRecord::Base
   end
   
   def cost
-    estimated_hours_with_extras * service_type.price_per_hour
+    estimated_hours * service_type.price_per_hour
   end
 
 
@@ -176,7 +176,7 @@ class Service < ActiveRecord::Base
   end
 
   def set_hours_before_after_service
-    self.hours_after_service = Setting.padding_hours_between_services
+    self.hours_after_service ||= Setting.padding_hours_between_services
   end
 
   def self.parse_date_time(params)
@@ -238,6 +238,7 @@ class Service < ActiveRecord::Base
     aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
     
     self.aliada = aliada_availability.aliada
+    self.hours_after_service = aliada_availability.padding_count
     self.save!
 
     aliada_availability.book(self)
@@ -276,19 +277,16 @@ class Service < ActiveRecord::Base
   end
 
   def reported_hours
-    if bill_by_reported_hours?
-      if hours_worked.present?
-        hours_worked
-      else
-        (self.aliada_reported_end_time - self.aliada_reported_begin_time) / 3600.0
-      end
+    if bill_by_hours_worked?
+      hours_worked
+    elsif bill_by_reported_hours?
+      (self.aliada_reported_end_time - self.aliada_reported_begin_time) / 3600.0
     end
   end
   
   #calculates the price to be charged for a service
   def amount_by_reported_hours
     amount = reported_hours * service_type.price_per_hour
-   
     if amount > 0 then amount else 0 end
   end
 
@@ -298,6 +296,10 @@ class Service < ActiveRecord::Base
 
   def bill_by_reported_hours?
     (aliada_reported_begin_time.present? && aliada_reported_end_time.present?) || hours_worked.present?
+  end
+
+  def bill_by_hours_worked?
+    hours_worked.present?
   end
 
   def bill_by_billable_hours?
@@ -328,7 +330,7 @@ class Service < ActiveRecord::Base
   end
 
   def charge!
-    return if paid? && canceled?
+    return if paid? && canceled? || amount_to_bill.zero?
 
     ActiveRecord::Base.transaction do
 
@@ -452,6 +454,7 @@ class Service < ActiveRecord::Base
                                            :equipment_instructions,
                                            :garbage_instructions,
                                            :special_instructions].include? key.to_sym  }
+
   end
 
   # We can't use the name 'update' because thats a builtin method
@@ -461,15 +464,12 @@ class Service < ActiveRecord::Base
       
       service_params['datetime'] = Service.parse_date_time(service_params)
 
-      attributes = service_params.except(:user, :address) # we are editing the service only
       service_params.except!(:aliada_id) if chosen_aliada_id == 0
 
       needs_rescheduling = self.user_modified_booking(service_params)
 
+      # The new atributtes will be used by the availability finders
       self.attributes = service_params
-
-      ensure_not_downgrading!
-      ensure_updated_recurrence!
 
       reschedule!(chosen_aliada_id) if needs_rescheduling
 
@@ -496,29 +496,16 @@ class Service < ActiveRecord::Base
     end
   end
 
-  # We don't want the users to go from a recurrent to a one time
-  # the code doesnt handle that case and the business does not want that
-  def ensure_not_downgrading!
-    if service_type_id_changed?
-      previous_service_type = ServiceType.find(service_type_id_was)
-      current_service_type = ServiceType.find(service_type_id)
-
-      if previous_service_type.recurrent? && current_service_type.one_timer?
-        raise AliadaExceptions::ServiceDowgradeImpossible
-      end
-    end
-  end
-
   def reschedule!(aliada_id)
+    previous_schedules = self.schedules.in_the_future.to_a
+
     aliada_availability = book_one_timer(aliada_id: aliada_id)
 
     # We might have not used some or all those schedules the service had, so enable them back
-    aliada_availability.enable_unused_schedules
+    current_schedules = aliada_availability.schedules
 
-    self.hours_after_service = aliada_availability.padding_count
-    self.save!
-
-    ensure_updated_recurrence! if recurrent?
+    unused = previous_schedules - current_schedules
+    unused.map(&:enable_booked)
   end
 
   def other_services

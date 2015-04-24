@@ -61,5 +61,11 @@ namespace :db do
         end
       end
     end
+
+
+    Schedule.all.where("schedules.datetime >= ?", Time.zone.now).joins(:service).where('services.recurrence_id IS NOT null').each do |schedule|
+      schedule.recurrence_id = schedule.service.recurrence_id
+      schedule.save!
+    end
   end
 end

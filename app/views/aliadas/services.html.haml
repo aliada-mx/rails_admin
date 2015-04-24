@@ -1,23 +1,26 @@
+%h2= "Esta semana llevas #{@aliada.current_week_reported_hours} horas" 
 %h2 Servicios por terminar
 - @unfinished_services.each do |service|
-  %h5
-    En: 
-    #{service.user.full_name}
-    %h6= I18n.l service.tz_aware_datetime, format: "%A %e de %B a las %I %P"
-    = form_tag((finish_service_path)) do
-      %input{:type=>"hidden", :value=>service.id, :name => :service}
-      %div
-        ¿Tarde? horas:
-        %select{:name => :hour}
-          - (3..10).each do |h|
-            %option{:value => h}= h
-        minutos:
-        %select{:name => :min}
-          - (0..59).step(5).each do |m|
-            %option{:value => m}= m 
-        %input{  :type => "submit", :name => "Pay", :value => "Guardar :)" }
-    %br
-    %br
+  .service{id: "service_#{service.id}"}
+    %h5
+      En: 
+      #{service.user.full_name}
+      %h6= I18n.l service.tz_aware_datetime, format: "%A %e de %B a las %I %P"
+      = form_tag((finish_service_path)) do
+        %input{:type=>"hidden", :value=>service.id, :name => :service}
+        %div
+          Duracion horas:
+          %select{:name => :hour}
+            - (3..10).each do |h|
+              %option{:value => h}= h
+          minutos:
+          %select{:name => :min}
+            - (0..59).step(5).each do |m|
+              %option{:value => m}= m 
+          %input{  :type => "submit", :name => "Pay", :value => "Guardar :)" }
+      %br
+      %br
+
 %h1 Servicios proximos    
 - @upcoming_services.each do |service|
   %h1=  I18n.l service.tz_aware_datetime, format: "%A %e de %B  a las %I %P"
@@ -43,12 +46,16 @@
     %b tel: 
     #{service.user.phone}
   %h5 Entre calles: #{service.address.between_streets}
-  %h5 Baños:  #{service.bathrooms}
-  %h5 Cuartos:   #{service.bedrooms}
+  %h5 Instrucciones:  #{service.special_instructions}
+  %h5 Articulos Limpieza:   #{service.cleaning_supplies_instructions}
+  %h5 Basura: #{service.garbage_instructions}
+  %h5 Atencion a: #{service.attention_instructions}
+  %h5 Limpiar con: #{service.equipment_instructions}
+  %h5 No tocar: #{service.forbidden_instructions}
+  %h5 Otras instrucciones: #{service.special_instructions}
   - if !service.confirmed 
     = form_tag((confirm_service_path)) do
       %input{:type=>"hidden", :value=>service.id, :name => :service}
       %input.action-button-pink{  :type => "submit", :name => "confirmation", :value => "Si voy" }
   %br
   %br
-

@@ -14,6 +14,16 @@ $(function(){
     window.location.replace(url);
   }
 
+  
+  $('.toggle-checkboxes').click(function(){
+    var day = $(this).attr('id')
+    var $checkboxes_for_that_day = $('.'+day).find('input[type=checkbox]')
+
+    $checkboxes_for_that_day.each(function(){
+      $(this).click();
+    })
+  })
+
   saveRecurrences = function(){
     // Activate
     $(".inactive-recurrence:checkbox:checked").each(function(){
@@ -62,7 +72,7 @@ $(function(){
       location.reload(true)
     }).fail(function(response){
       console.log(response);
-      alert("Operation failed.");
+      alert("Hubo un problema "+response);
     });
 
   };

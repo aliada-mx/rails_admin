@@ -50,6 +50,7 @@ class Recurrence < ActiveRecord::Base
   scope :ordered_by_created_at, -> { order(:created_at) }
   scope :active, -> { where(status: 'active') }
   scope :inactive, -> { where(status: 'inactive') }
+  scope :join_users_and_aliadas, -> { joins('INNER JOIN users ON users.id = recurrences.user_id OR users.id = recurrences.aliada_id') }
 
   state_machine :status, :initial => 'active' do
     transition 'active' => 'inactive', :on => :deactivate
@@ -60,6 +61,10 @@ class Recurrence < ActiveRecord::Base
         service.cancel
       end
     end
+  end
+
+  def total_hours
+    estimated_hours + hours_after_service
   end
 
   # Among recurrent services
@@ -89,15 +94,7 @@ class Recurrence < ActiveRecord::Base
   end
 
   def services_to_reschedule
-    if datetime and rescheduling_a_recurrence_day
-      services.not_canceled.in_or_after_datetime(datetime.beginning_of_aliadas_day).to_a
-    else
-      services.not_canceled.in_the_future.to_a
-    end
-  end
-
-  def rescheduling_a_recurrence_day
-    timezone_datetime.weekday == weekday
+    services.not_canceled.in_the_future.to_a
   end
 
   def timezone_datetime
@@ -190,10 +187,6 @@ class Recurrence < ActiveRecord::Base
     # We might have not used some or all those schedules the service had, so enable them back
     aliada_availability.enable_unused_schedules
 
-    self.hours_after_service = aliada_availability.padding_count
-    self.aliada_id = chosen_aliada_id
-    self.save!
-
     previous_services.map(&:cancel)
   end
 
@@ -207,6 +200,7 @@ class Recurrence < ActiveRecord::Base
 
     aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
     self.aliada = aliada_availability.aliada
+    self.hours_after_service = aliada_availability.padding_count
     self.save!
 
     aliada_availability.rebook_recurrence(self)
@@ -215,7 +209,7 @@ class Recurrence < ActiveRecord::Base
   def services_for_user
     services.in_the_future.not_canceled.ordered_by_datetime
   end
-   
+
   # Among recurrent services
 
   attr_accessor :date
@@ -227,8 +221,7 @@ class Recurrence < ActiveRecord::Base
     navigation_label 'Operación'
     navigation_icon 'icon-repeat'
 
-    exclude_fields :extra_recurrences,  :versions
-
+    exclude_fields :extra_recurrences, :extras, :versions
 
     list do
 
@@ -237,14 +230,40 @@ class Recurrence < ActiveRecord::Base
           query_without_accents = I18n.transliterate(query)
 
           scope.merge(UnscopedUser.with_name_phone_email(query_without_accents))
+               .merge(Recurrence.join_users_and_aliadas)
         end
       end
 
-      field :user do 
-        searchable [{users: :first_name }, {users: :last_name }, {users: :email}, {users: :phone}]
-        queryable true
-        filterable true
+      field :status do
+        searchable false
       end
+
+      field :weekday do
+        searchable false
+      end
+      field :entrance_instructions do
+        searchable false
+      end
+      field :attention_instructions do
+        searchable     false
+      end
+      field :cleaning_supplies_instructions do
+        searchable     false
+      end
+      field :equipment_instructions do
+        searchable     false
+      end
+      field :garbage_instructions do
+        searchable     false
+      end
+      field :special_instructions do
+        searchable     false
+      end
+      field :forbidden_instructions do
+        searchable     false
+      end
+
+      field :user 
       field :aliada
       field :name
       field :total_hours
