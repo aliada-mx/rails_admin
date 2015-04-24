@@ -97,12 +97,6 @@ class ScheduleFiller
                               category: 'schedule_filler_error',
                               message: error)
           next
-        elsif schedules.count < user_recurrence.total_hours
-          error = "Las #{schedules.count} horas de servicio de la aliada no concuerdan con las horas totales de la recurrencia #{user_recurrence.total_hours}"
-          Rails.logger.fatal error
-          Ticket.create_error(relevant_object: user_recurrence,
-                              category: 'schedule_filler_error',
-                              message: error)
         end
         
         service = create_service_in_clients_schedule today_in_the_future, user_recurrence
