@@ -4,15 +4,22 @@ class Debt < ActiveRecord::Base
   def charge!
     #When charging debt, we must ensure the service status is set to paid
     #We pass the user charge! the service owed, this abstraction probably 
-    #needs refactoring
-    self.user.charge!(self.amount, self.payeable)
+    #needs refactoring so it truly enables charging any payeable entity
+    #however if we passed the debt as payeable,
+    # then it would keep generating debt endlessly
+    charge = self.user.charge!(self.amount, self.payeable)
     
-    #if succesful
-    self.payeable.finish
-    #else do nothing
+    if charge
+    self.payeable.pay
+    end
+      
   end
-
-  ###Pending implement a paid? method so we can quickly determine the debts missing collection
+  
+  
+  def paid?
+    self.payeable.paid?
+  end
+ 
 
   rails_admin do
     label_plural 'Deudas'

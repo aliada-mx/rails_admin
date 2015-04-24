@@ -66,10 +66,16 @@ class ConektaCard < ActiveRecord::Base
     rescue Conekta::Error, Conekta::ProcessingError => exception
       Raygun.track_exception(exception)
 
-
+       Debt.find_or_create_by(user_id: user.id, 
+                             amount: product.amount, 
+                             status: 'Charge failed', 
+                             payment_provider_choice_id: self.id, 
+                             payeable_id: object.id,
+                             payeable_type: object.class.name)
       object.create_charge_failed_ticket(user, product.amount, exception)
-      
-      raise exception
+      nil
+      #Exception commented out to ensure rollback of transaction does not occur
+      #raise exception
     end
   end
 
