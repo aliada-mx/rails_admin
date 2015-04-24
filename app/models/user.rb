@@ -91,7 +91,6 @@ class User < ActiveRecord::Base
   end
 
   def charge!(product, service)
-    binding.pry
     credits_payment = charge_balance(product.amount)
 
     product.amount = credits_payment.left_to_charge
