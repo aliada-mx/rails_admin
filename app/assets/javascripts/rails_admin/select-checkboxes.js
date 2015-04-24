@@ -1,6 +1,7 @@
 $(function() {
   bind_selectable = function() {
     $('tbody').selectable({
+      cancel: '.not-checkbox',
       filter: 'input',
       distance: 1,
       selected: function(event, ui) {
