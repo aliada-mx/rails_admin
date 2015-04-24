@@ -32,7 +32,7 @@ class Service < ActiveRecord::Base
   has_many :extras, through: :extra_services
   has_many :schedules, ->{ order(:datetime ) }
   has_many :tickets, as: :relevant_object
-  has_one :score
+  has_many :scores, -> { order(:updated_at) }
 
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
