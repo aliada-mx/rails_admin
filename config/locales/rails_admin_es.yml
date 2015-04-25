@@ -36,6 +36,10 @@ es:
         services: 'servicios'
         schedules: 'horas de servicio'
         role: 'rol'
+        hours_after_service: 'horas de colchón'
+        estimated_hours: 'horas estimadas'
+        weekday_hour_in_spanish: 'Día y hora'
+        total_hours: 'estimadas + horas de colchón'
       address: &address_attributes
         user: usuario
         postal_code: código postal
@@ -116,15 +120,14 @@ es:
         periodicity: periodicidad
         weekday: día de la semana
         hour: hora
-        total_hours: horas totales
         zone: zona
         type: tipo
       aliada_working_hour:
+        <<: *common_attributes
         user: usuario
         periodicity: periodicidad
         weekday: día de la semana
         hour: hora
-        total_hours: horas totales
         zone: zona
         type: tipo
       schedule:
