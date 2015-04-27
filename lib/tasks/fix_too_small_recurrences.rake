@@ -29,16 +29,15 @@ namespace :db do
                    failed.push recurrence
                end 
             end
-
-            failed.each do |recurrence|
-                puts "https://aliada.mx/perfil/#{recurrence.user.id}/visitas-proximas" 
-                puts "weekday #{ recurrence.weekday }" 
-                puts "\n" 
-            end
-
-            puts "fixed #{fixed}"
-            puts "failed #{failed}"
-            raise ActiveRecord::Rollback
         end
+
+        failed.each do |recurrence|
+            puts "https://aliada.mx/perfil/#{recurrence.user.id}/visitas-proximas" 
+            puts "weekday #{ recurrence.weekday }" 
+            puts "\n" 
+        end
+
+        puts "fixed #{fixed}"
+        puts "failed #{failed}"
     end
 end
