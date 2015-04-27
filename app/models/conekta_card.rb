@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class ConektaCard < ActiveRecord::Base
+class ConektaCard < PaymentProvider
 
   def self.create_for_user!(user, temporary_token, object)
     ActiveRecord::Base.transaction requires_new: true do

@@ -104,12 +104,7 @@ class User < ActiveRecord::Base
       raise e
     ensure
         if payment.nil? && !service.owed?
-          Debt.find_or_create_by(user_id: self.id, 
-                                 amount: product.amount, 
-                                 status: "Charge failed #{e}", 
-                                 payment_provider_choice_id: self.id, 
-                                 payeable_id: service.id,
-                                 payeable_type: service.class.name)
+          default_payment_provider.register_payment_failure(product,self,service,e)
           register_debt(credits_payment.left_to_charge)
         end
     end

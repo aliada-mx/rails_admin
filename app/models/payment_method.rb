@@ -7,6 +7,8 @@ class PaymentMethod < ActiveRecord::Base
     payment_provider_type.constantize
   end
 
+  
+  
   rails_admin do
     label_plural 'métodos de pago'
     navigation_label 'Contenidos'
