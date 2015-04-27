@@ -1,38 +1,43 @@
 namespace :db do
-  desc "Fix too small recurrences"
-  task :fix_too_small_recurrences => :environment do
+    desc "Fix too small recurrences"
+    task :fix_too_small_recurrences => :environment do
 
-    broken_recurrences = []
-    ok_recurrences = Hash.new{ |h,k| h[k] = {} }
+        ActiveRecord::Base.transaction do
+            broken_recurrences = []
 
-    User.all.each do |user|
+            Recurrence.active.all.each do |recurrence|
+                if recurrence.services_for_user.count <= 3
+                    broken_recurrences.push recurrence
+                end
+            end
 
-      recurrent_services = user.services.recurrent.not_canceled.to_a.uniq { |s| s.recurrence_id }.select { |s| s.recurrence.try(:active?) }
-      
-      recurrent_services.each do |service|
-        next_service = service.recurrence.next_service
+            puts "there are #{broken_recurrences.size} incomplete recurrences"
 
-        if next_service.nil?
-          broken_recurrences.push(service.recurrence)
-        elsif service.recurrence.active? && service.not_canceled?
-          ok_recurrences[user.id][service.recurrence.wday_hour] = service.recurrence
+            failed = []
+            fixed = 0
+            broken_recurrences.each do |recurrence|
+               begin
+                   puts "before fixing there are #{recurrence.services_for_user.count} services_for_user"
+                   next_recurrence_datetime = recurrence.next_recurrence_with_hour_now_in_utc
+                   puts "next_recurrence_datetime #{next_recurrence_datetime.weekday} weekday (#{recurrence.weekday})#{next_recurrence_datetime.hour} hour #{recurrence.hour}"
+                   recurrence.datetime = next_recurrence_datetime 
+                   recurrence.reschedule!(recurrence.aliada_id)
+                   puts "recurrence #{recurrence.id} services count #{recurrence.services_for_user.count} recurrence aliada_id #{recurrence.aliada_id} services aliadas id #{recurrence.services_for_user.map { |s| s.aliada_id }}"
+                   fixed +=1
+               rescue AliadaExceptions::AvailabilityNotFound
+                   failed.push recurrence
+               end 
+            end
+
+            failed.each do |recurrence|
+                puts "https://aliada.mx/perfil/#{recurrence.user.id}/visitas-proximas" 
+                puts "weekday #{ recurrence.weekday }" 
+                binding.pry
+            end
+
+            puts "fixed #{fixed}"
+            puts "failed #{failed}"
+            raise ActiveRecord::Rollback
         end
-
-      end
     end
-
-    puts "there are #{broken_recurrences.count} broken_recurrences"
-
-    puts "reasining recurrence to services in broken recurrences"
-
-    broken_recurrences.each do |recurrence|
-      recurrence.services.each do |service|
-        ok_recurrence = ok_recurrences[service.user.id][service.wday_hour]
-
-        service.recurrence = ok_recurrence
-        service.save!
-      end
-    end
-
-  end
 end
