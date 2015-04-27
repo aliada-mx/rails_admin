@@ -67,6 +67,7 @@ class ScheduleFiller
 
     recurrence_shared_attributes = user_recurrence.attributes_shared_with_service
     recurrence_shared_attributes.merge!({service_type: ServiceType.recurrent,
+                                         status: 'aliada_assigned',
                                          recurrence_id: user_recurrence.id})
 
     service = Service.find_by(datetime: beginning_of_user_recurrence, user_id: user_recurrence.user_id)
@@ -96,12 +97,6 @@ class ScheduleFiller
                               category: 'schedule_filler_error',
                               message: error)
           next
-        elsif schedules.count < user_recurrence.total_hours
-          error = "Las #{schedules.count} horas de servicio de la aliada no concuerdan con las horas totales de la recurrencia #{user_recurrence.total_hours}"
-          Rails.logger.fatal error
-          Ticket.create_error(relevant_object: user_recurrence,
-                              category: 'schedule_filler_error',
-                              message: error)
         end
         
         service = create_service_in_clients_schedule today_in_the_future, user_recurrence

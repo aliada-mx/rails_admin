@@ -38,28 +38,16 @@
           %td
             = "$#{ service.cost }"
 
-          - if service.score
-            %td.rating
+          %td.rating{class: service.finished? || service.paid? ? '' : 'disabled' }
+            = form_tag score_service_users_path(@user, service), :id => "service_#{service.id}" do
               - ((5..1).first).downto((5..1).last).each do |i|
-                - if i == service.score.value.to_i
-                  = radio_button_tag :value, i, false, class: "checked"
+                - if service.score_value && service.score_value >= i
+                  = radio_button_tag :value, i, false, onclick: "submitRating(#{service.id}, #{i})", class: "checked"
                 - else
-                  = radio_button_tag :value, i, false, class: "disabled" 
+                  = radio_button_tag :value, i, false, onclick: "submitRating(#{service.id}, #{i})", class: "unchecked"
                 %span
-          - else
-            %td.rating{class: service.finished? ? '' : 'disabled' }
-              = form_tag score_service_users_path(@user, service), :id => "service_#{service.id}" do
-                = radio_button_tag :value, 5, false, onclick: "submitRating(#{service.id}, 5)", class: "unchecked", id: "#{service.id}_5" 
-                %span
-                = radio_button_tag :value, 4, false, onclick: "submitRating(#{service.id}, 4)", class: "unchecked", id: "#{service.id}_4"
-                %span
-                = radio_button_tag :value, 3, false, onclick: "submitRating(#{service.id}, 3)", class: "unchecked", id: "#{service.id}_3"
-                %span
-                = radio_button_tag :value, 2, false, onclick: "submitRating(#{service.id}, 2)", class: "unchecked", id: "#{service.id}_2"
-                %span
-                = radio_button_tag :value, 1, false, onclick: "submitRating(#{service.id}, 1)", class: "unchecked", id: "#{service.id}_1"
-                %span
-                = hidden_field_tag :service_id, service.id
+
+              = hidden_field_tag :service_id, service.id
 
 = append :javascript do
   = javascript_include_tag 'previous_services'

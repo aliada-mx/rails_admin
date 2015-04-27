@@ -5,9 +5,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :initialize_js_variables
   before_filter :set_default_user
-
   before_filter :set_admin_timezone
-
 
   def set_admin_timezone
     return if Rails.env == 'test'

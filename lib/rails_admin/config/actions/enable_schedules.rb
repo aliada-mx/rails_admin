@@ -23,15 +23,10 @@ module RailsAdmin
         
         register_instance_option :controller do
           Proc.new do
-            @objects = list_entries(@model_config, :enable_schedules)
+            @schedules = list_entries(@model_config, :enable_schedules)
 
-            @objects.map do |schedule|
-              schedule.status = 'available'
-              schedule.service_id = nil
-              schedule.user_id = nil
-              schedule.recurrence_id = nil
-              schedule.save!
-            end
+            @schedules.map(&:enable_booked)
+
             flash[:success] = 'Se han habilitado las horas de servicio'
             redirect_to back_or_index
           end

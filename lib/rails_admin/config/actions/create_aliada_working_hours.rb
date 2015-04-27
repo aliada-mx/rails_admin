@@ -32,7 +32,7 @@ module RailsAdmin
             if request.post? and params[:recurrences]
 
               activated_recurrences = params[:recurrences][:activated_recurrences] ? params[:recurrences][:activated_recurrences] : []
-              disabled_recurrences =  params[:recurrences][:disabled_recurrences] ? params[:recurrences][:disabled_recurrences] : []
+              disabled_recurrences = params[:recurrences][:disabled_recurrences] ? params[:recurrences][:disabled_recurrences] : []
               new_recurrences = params[:recurrences][:new_recurrences] ? params[:recurrences][:new_recurrences] : []
 
               AliadaWorkingHour.update_from_admin params[:id], activated_recurrences, disabled_recurrences, new_recurrences

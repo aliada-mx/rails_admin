@@ -180,6 +180,10 @@ module Presenters
     def wday_hour
       "#{tz_aware_datetime.wday} #{tz_aware_datetime.hour}" 
     end
+
+    def score_value
+      scores.last.try(:value).try(:to_i)
+    end
   end
 end
 

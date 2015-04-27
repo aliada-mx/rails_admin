@@ -104,9 +104,11 @@ describe 'User' do
         end
 
         it 'leaves the user balance negative' do
+          
           user.charge!(@product, service)
 
           expect(user.balance).to eql( -200 )
+          expect(Debt.all.count).to eql(1)
         end
       end
 
