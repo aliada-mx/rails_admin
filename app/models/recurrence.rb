@@ -282,5 +282,9 @@ class Recurrence < ActiveRecord::Base
       field :hour
 
     end
+
+    edit do
+      exclude_fields :extra_recurrences, :extras, :versions
+    end
   end
 end
