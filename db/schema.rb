@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150424013656) do
+ActiveRecord::Schema.define(version: 20150424171813) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -292,7 +292,6 @@ ActiveRecord::Schema.define(version: 20150424013656) do
     t.integer  "service_id"
   end
 
-  add_index "scores", ["service_id"], name: "index_scores_on_service_id", unique: true, using: :btree
   add_index "scores", ["user_id"], name: "index_scores_on_user_id", using: :btree
 
   create_table "service_types", force: true do |t|

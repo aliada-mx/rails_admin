@@ -76,7 +76,7 @@ class Aliada < User
 
   def current_week_services
     today = ActiveSupport::TimeZone["Mexico City"].today
-    return Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week)
+    return Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week.advance(:days => 1))
   end
 
   def current_week_reported_hours

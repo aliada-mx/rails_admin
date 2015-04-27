@@ -36,7 +36,7 @@ feature 'ScoresController' do
       expect(response["aliada_id"]).to be service.aliada_id
     end
 
-    it 'returns an error due to duplicate rating on a service' do
+    it 'allows it to score again' do
       login_as(user)
 
       with_rack_test_driver do
@@ -44,8 +44,8 @@ feature 'ScoresController' do
         page.driver.submit :post, score_service_users_path(user, service), {value: 3.0}
       end
 
-      expect(page.status_code).to be 500
-      expect(Score.count).to be 1
+      expect(page.status_code).to be 200
+      expect(Score.count).to be 2
     end
 
     it 'should create a rating as an admin' do

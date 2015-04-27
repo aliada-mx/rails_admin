@@ -16,16 +16,18 @@ class AliadasController < ApplicationController
                                        aliada_id: @aliada.id).first
     if @service_to_finish.present?
 
-      hours = params[:hour].to_i
-      min = params[:min].to_i
-      hours = hours + (min/60.0)
-      
-      @service_to_finish.hours_worked = hours
-     # @service_to_finish.aliada_reported_begin_time = ActiveSupport::TimeZone["Mexico City"].parse("#{params[:begin_hour]}:#{params[:begin_min]}")
-     # @service_to_finish.aliada_reported_end_time = ActiveSupport::TimeZone["Mexico City"].parse("#{params[:end_hour]}:#{params[:end_min]}")
-
-      @service_to_finish.finish
-
+      if params[:hour] == 'cancelado'
+        @service_to_finish.cancel 
+      else
+        hours = params[:hour].to_i
+        min = params[:min].to_i
+        hours = hours + (min/60.0)
+        
+        @service_to_finish.hours_worked = hours
+        #@service_to_finish.aliada_reported_begin_time = ActiveSupport::TimeZone["Mexico City"].parse("#{params[:begin_hour]}:#{params[:begin_min]}")
+        #@service_to_finish.aliada_reported_end_time = ActiveSupport::TimeZone["Mexico City"].parse("#{params[:end_hour]}:#{params[:end_min]}")
+        @service_to_finish.finish
+      end
       redirect_to :back
     else
       render text: 'Ruta invalida, ponte  en contacto con aliada' 

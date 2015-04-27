@@ -34,9 +34,12 @@ class Service < ActiveRecord::Base
   has_many :extras, through: :extra_services
   has_many :schedules, ->{ order(:datetime ) }
   has_many :tickets, as: :relevant_object
+
   has_many :payments, as: :payeable
   has_one :debts, as: :payeable
-  has_one :score
+
+  has_many :scores, -> { order(:updated_at) }
+
 
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
@@ -503,7 +506,6 @@ class Service < ActiveRecord::Base
 
     # We might have not used some or all those schedules the service had, so enable them back
     current_schedules = aliada_availability.schedules
-
     unused = previous_schedules - current_schedules
     unused.map(&:enable_booked)
   end

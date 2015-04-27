@@ -78,7 +78,7 @@ module Mixins
 
     def friendly_time
       text = ""
-      if hour > 13
+      if hour >= 13
         text += "#{ hour - 12 }:00 pm"
       elsif hour == 12
         text += "12:00 pm"

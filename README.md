@@ -9,9 +9,9 @@ The recommended way to run the app is in a contained gemset using rvm.
     ```
     https://rvm.io/rvm/install
     ```
-2. Install ruby 2.1.5
+2. Install ruby 2.2.2
     ```
-    rvm install 2.1.5
+    rvm install 2.2.2
     ```
 3. Create a gemset
     ```
@@ -33,9 +33,10 @@ The recommended way to run the app is in a contained gemset using rvm.
     ```
     aliada_development
     ```
-8. Run migrations
+8. Install the dev-ops scripts
+9. Download the production dtabase.
     ```
-    bundle exec rake db:migrate
+    refresh_db
     ``` 
 
 ### To run the app
