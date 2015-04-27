@@ -23,6 +23,7 @@ namespace :db do
                    recurrence.datetime = next_recurrence_datetime 
                    recurrence.reschedule!(recurrence.aliada_id)
                    puts "recurrence #{recurrence.id} services count #{recurrence.services_for_user.count} recurrence aliada_id #{recurrence.aliada_id} services aliadas id #{recurrence.services_for_user.map { |s| s.aliada_id }}"
+                   puts "\n" 
                    fixed +=1
                rescue AliadaExceptions::AvailabilityNotFound
                    failed.push recurrence
@@ -32,7 +33,7 @@ namespace :db do
             failed.each do |recurrence|
                 puts "https://aliada.mx/perfil/#{recurrence.user.id}/visitas-proximas" 
                 puts "weekday #{ recurrence.weekday }" 
-                binding.pry
+                puts "\n" 
             end
 
             puts "fixed #{fixed}"
