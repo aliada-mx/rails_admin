@@ -45,8 +45,8 @@ class Service < ActiveRecord::Base
   scope :from_today_to_the_future, -> { where("datetime >= ?", Time.zone.now.beginning_of_aliadas_day)  }
   scope :not_ids, ->(ids) { where("services.id NOT IN ( ? )", ids) }
   scope :on_day, -> (datetime) { where('datetime >= ?', datetime.beginning_of_day).where('datetime <= ?', datetime.end_of_day) } 
-  scope :canceled, -> { where('services.status = ?', 'canceled') }
-  scope :not_canceled, -> { where('services.status != ?', 'canceled') }
+  scope :canceled, -> { where("services.status = 'canceled_in_time' OR services.status = 'canceled_out_of_time'", 'canceled') }
+  scope :not_canceled, -> { where("services.status != 'canceled_in_time' AND services.status != 'canceled_out_of_time'") }
   scope :ordered_by_created_at, -> { order(:created_at) }
   scope :ordered_by_datetime, -> { order(:datetime) }
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }

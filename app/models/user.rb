@@ -96,11 +96,22 @@ class User < ActiveRecord::Base
 
     product.amount = credits_payment.left_to_charge
     #binding.pry
-    payment = default_payment_provider.charge!(product, self, service)
-    #binding.pry
-    if payment.nil? && !service.owed?
-     
-      register_debt(credits_payment.left_to_charge)
+    begin
+      failed = false
+      payment = default_payment_provider.charge!(product, self, service)
+    rescue Conekta::Error, Conekta::ProcessingError => e
+      failed = true
+      raise e
+    ensure
+        if payment.nil? && !service.owed?
+          Debt.find_or_create_by(user_id: self.id, 
+                                 amount: product.amount, 
+                                 status: "Charge failed #{e}", 
+                                 payment_provider_choice_id: self.id, 
+                                 payeable_id: service.id,
+                                 payeable_type: service.class.name)
+          register_debt(credits_payment.left_to_charge)
+        end
     end
     payment
   end

@@ -45,6 +45,7 @@ class AliadasController < ApplicationController
                        ActiveSupport::TimeZone["Mexico City"].today + 1.day
                      end
      
+      #pulls unfinished services from the database, so we only present the worked services to the aliada
       @unfinished_services = Service.joins(:user).where(aliada_id: @aliada.id, status: 'aliada_assigned').where("datetime <= ?", now.utc)
       @upcoming_services = Service.joins(:address).order('datetime ASC').where(aliada_id: @aliada.id, :datetime => date_to_show.beginning_of_day..date_to_show.end_of_day).not_canceled.joins(:user) 
     else
