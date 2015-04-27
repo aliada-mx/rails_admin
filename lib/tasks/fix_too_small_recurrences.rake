@@ -2,6 +2,8 @@ namespace :db do
     desc "Fix too small recurrences"
     task :fix_too_small_recurrences => :environment do
 
+        failed = []
+        fixed = 0
         ActiveRecord::Base.transaction do
             broken_recurrences = []
 
@@ -13,8 +15,6 @@ namespace :db do
 
             puts "there are #{broken_recurrences.size} incomplete recurrences"
 
-            failed = []
-            fixed = 0
             broken_recurrences.each do |recurrence|
                begin
                    puts "before fixing there are #{recurrence.services_for_user.count} services_for_user"
