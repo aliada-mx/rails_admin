@@ -16,7 +16,7 @@ describe 'AliadaSupport::DatetimeSupport' do
   describe 'all_wdays_until_horizon' do
     it 'returns a valid count of all the weekdays of january 2015' do
       wdays = object.all_wdays_until_horizon(starting_datetime)
-      expect(wdays).to eql [4, 4, 4, 4, 5, 5, 4]
+      expect(wdays).to eql [4, 4, 4, 4, 4, 4, 4]
     end
   end
 end

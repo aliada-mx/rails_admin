@@ -45,9 +45,9 @@ feature 'ServiceController' do
     @default_capybara_ignore_hidden_elements_value = Capybara.ignore_hidden_elements
     Capybara.ignore_hidden_elements = false
 
-    create_recurrent!(starting_datetime, hours: 6,
-                                         periodicity: recurrence.periodicity ,
-                                         conditions: {aliada: aliada,
+    create_recurrent!(next_day_of_service, hours: 6,
+                                           periodicity: recurrence.periodicity ,
+                                           conditions: {aliada: aliada,
                                                       recurrence: recurrence,
                                                       service: user_service,
                                                       status: 'booked'})
@@ -130,7 +130,7 @@ feature 'ServiceController' do
       expect(recurrence.estimated_hours).to eql 5
       expect(recurrence.schedules.count).to eql 24
       expect(recurrence.schedules.padding.count).to eql 4
-      expect(Schedule.available.count).to eql 6
+      expect(Schedule.available.count).to eql 0
     end
 
     it 'makes available schedules previously booked but not used anymore by the service' do
@@ -151,7 +151,7 @@ feature 'ServiceController' do
       expect(recurrence.estimated_hours).to eql 3
       expect(recurrence.schedules.in_or_after_datetime(next_day_of_service).count).to eql 20
       expect(recurrence.schedules.padding.count).to eql 8
-      expect(Schedule.available.count).to eql 10
+      expect(Schedule.available.count).to eql 4
     end
 
     it 'changes the recurrence attributes' do
