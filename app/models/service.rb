@@ -167,11 +167,7 @@ class Service < ActiveRecord::Base
   end
 
   def self.parse_date_time(params)
-    datetime = ActiveSupport::TimeZone[self.timezone].parse("#{params[:date]} #{params[:time]}")
-    if datetime.dst?
-      datetime += 1.hour
-    end
-    datetime
+    ActiveSupport::TimeZone['Etc/GMT+6'].parse("#{params[:date]} #{params[:time]}")
   end
 
   def ensure_updated_recurrence!
@@ -353,6 +349,7 @@ class Service < ActiveRecord::Base
   def self.create_new!(service_params, user)
     ActiveRecord::Base.transaction do
       service_params[:datetime] = Service.parse_date_time(service_params)
+      chosen_aliada_id = service_params[:aliada_id].to_i
 
       address = user.default_address
 
@@ -364,7 +361,7 @@ class Service < ActiveRecord::Base
 
       service.save!
 
-      service.book_an_aliada
+      service.book_an_aliada(aliada_id: chosen_aliada_id)
       service.ensure_updated_recurrence!
 
       user.send_confirmation_email(service)
