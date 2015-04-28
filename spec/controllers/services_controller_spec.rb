@@ -63,7 +63,7 @@ feature 'ServiceController' do
     context 'Skipping the payment logic' do
       before :each do
         expect(User.where('role != ?', 'aliada').count).to be 0
-        expect(Schedule.available.count).to be 25
+        expect(Schedule.available.count).to be 20
         expect(CodeType.where(name: 'personal').count).to be 1
 
         allow_any_instance_of(User).to receive(:create_payment_provider!).and_return(nil)
@@ -110,7 +110,7 @@ feature 'ServiceController' do
         service = Service.first
         expect(service).to be_present
         expect(service.service_type_id).to eql one_time_service.id
-        expect(Schedule.available.count).to be 20
+        expect(Schedule.available.count).to be 15
         expect(Schedule.booked.count).to be 3
         expect(Schedule.padding.count).to be 2
       end
@@ -144,8 +144,8 @@ feature 'ServiceController' do
 
         expect(service.service_type_id).to eql recurrent_service.id
         expect(Schedule.available.count).to be 0
-        expect(Schedule.booked.count).to be 15
-        expect(Schedule.padding.count).to be 10
+        expect(Schedule.booked.count).to be 12
+        expect(Schedule.padding.count).to be 8
       end
 
       it 'logs in ithe new user' do

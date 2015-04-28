@@ -34,29 +34,45 @@ class AliadaWorkingHour < ActiveRecord::Base
     transition 'inactive' => 'active', :on => :activate
   end
 
-  def self.update_from_admin aliada_id, activated_recurrences, disabled_recurrences, new_recurrences
+  def self.update_from_admin(aliada_id, activated_recurrences, disabled_recurrences, new_recurrences)
+    activated_recurrences.uniq!
+    disabled_recurrences.uniq!
+    new_recurrences.uniq!
 
-    activated_recurrences.each do |recurrence|
-      awh = AliadaWorkingHour.find_by(aliada_id: aliada_id, hour: recurrence[:hour], weekday: recurrence[:weekday])
-      awh.activate
-      # mark future schedules of that weekday and hour as available
-      schedules = awh.create_schedules_until_horizon        
-      schedules.select { |s| s.busy? }.map(&:enable)
-    end
+    AliadaWorkingHour.mass_activate(aliada_id, activated_recurrences)
 
-    disabled_recurrences.each do |recurrence|
-      awh = AliadaWorkingHour.find_by(aliada_id: aliada_id, hour: recurrence[:hour], weekday: recurrence[:weekday])
-      awh.deactivate
-      # delete future schedules
-      awh.schedules.in_the_future.busy_candidate.destroy_all
-    end
+    AliadaWorkingHour.mass_disable(aliada_id, disabled_recurrences)
 
+    AliadaWorkingHour.mass_create(aliada_id, new_recurrences)
+  end
+
+  def self.mass_create(aliada_id, new_recurrences)
     new_recurrences.each do |recurrence|
       awh = AliadaWorkingHour.find_or_create_by(aliada_id: aliada_id, weekday: recurrence[:weekday], hour: recurrence[:hour], periodicity: 7, total_hours: 1, user_id: nil)
       # fill 30 days of schedules
       awh.create_schedules_until_horizon        
     end
+  end
 
+  def self.mass_activate(aliada_id, activated_recurrences)
+    activated_recurrences.each do |recurrence|
+      awh = AliadaWorkingHour.find_by(aliada_id: aliada_id, hour: recurrence[:hour], weekday: recurrence[:weekday])
+      awh.activate
+      awh.save!
+      # mark future schedules of that weekday and hour as available
+      schedules = awh.create_schedules_until_horizon
+      schedules.select { |s| s.busy? }.map(&:enable)
+    end
+  end
+
+  def self.mass_disable(aliada_id, disabled_recurrences)
+    disabled_recurrences.each do |recurrence|
+      awh = AliadaWorkingHour.find_by(aliada_id: aliada_id, hour: recurrence[:hour], weekday: recurrence[:weekday])
+      awh.deactivate
+      awh.save!
+      # delete future schedules
+      awh.schedules.in_the_future.busy_candidate.destroy_all
+    end
   end
 
   def create_schedules_until_horizon
@@ -76,6 +92,7 @@ class AliadaWorkingHour < ActiveRecord::Base
         schedule.aliada_working_hour_id = self.id
       end
       schedules.push(schedule)
+
       starting_datetime += self.periodicity.days
     end
 

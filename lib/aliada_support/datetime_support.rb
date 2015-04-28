@@ -8,17 +8,10 @@ module AliadaSupport
     # How many 'thursdays' until horizon
     # without counting today because we can't book today
     def wdays_until_horizon(wday, starting_from: Time.zone.now)
-      count = 0
-
-      Time.iterate_in_days_steps(starting_from, horizon).each do |day|
-        count +=1 if day.wday == wday && day < horizon.beginning_of_day
-      end
-
-      count
+      4
     end
 
-    # A memoized version that stores all the times week day is 
-    # going to repeat before the horizon
+    # A memoized version that stores all the times week day is going to repeat before the horizon
     def all_wdays_until_horizon(starting_from)
       wdays = [0,1,2,3,4,5,6]
       @all_wdays ||= wdays.map { |wday| wdays_until_horizon(wday, starting_from: starting_from) }

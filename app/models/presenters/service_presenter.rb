@@ -2,6 +2,7 @@
 module Presenters
   module ServicePresenter
     include ActionView::Helpers::NumberHelper
+    include AliadaSupport::DatetimeSupport
 
     def status_enum
       Service::STATUSES
@@ -12,13 +13,7 @@ module Presenters
     end
 
     def tz_aware_datetime
-      if datetime
-        _datetime = datetime.in_time_zone(timezone)
-        if _datetime.dst?
-          _datetime -= 1.hour
-        end
-        _datetime
-      end
+      utc_to_timezone(datetime, timezone) if datetime
     end
 
     def name

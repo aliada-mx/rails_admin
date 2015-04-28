@@ -1,10 +1,8 @@
 # -*- encoding : utf-8 -*-
 describe 'Schedule Filler' do
-  include SchedulesHelper 
-
   # Preconditions:
   let(:starting_datetime){ Time.zone.parse('09 Apr 2015 00:00:00') }
-  let(:recurrence_service_datetime) { Time.zone.parse('12 Apr 2015 13:00:00') }
+  let(:recurrence_service_datetime) { Time.zone.parse('10 Apr 2015 13:00:00') }
   total_available_hours = 8
   total_service_hours = 3
   # aliada recurrence
@@ -38,7 +36,7 @@ describe 'Schedule Filler' do
 
     it 'creates schedules for aliada in a specific day' do
       # Exact number of total, booked and available schedules created
-      specific_day = Time.zone.parse('05 Apr 2015 00:00:00')
+      specific_day = Time.zone.parse('03 Apr 2015 00:00:00')
       ScheduleFiller.fill_schedule_for_specific_day specific_day
 
       expect(Schedule.where("datetime < ?", Time.zone.now).count).to be total_available_hours
