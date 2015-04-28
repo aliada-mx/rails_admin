@@ -4,7 +4,7 @@ class Payment < ActiveRecord::Base
   belongs_to :payment_provider, polymorphic: true
 
   # We limit the polymorphism to valid payment providers classes
-  validates :payment_provider_type, inclusion: {in: Setting.payment_providers.map{ |pairs| pairs[1] } }
+  validates :payment_provider_type, inclusion: { in: Setting.payment_providers.map{ |pairs| pairs[1] } }
   validates_presence_of :user
 
   # State machine

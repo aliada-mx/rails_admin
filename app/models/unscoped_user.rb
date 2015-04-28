@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 class UnscopedUser < User
   scope :with_name_phone_email, -> (query) do
+    query.strip!
     unaccented = I18n.transliterate(query)
     query = "%#{unaccented .downcase}%"
     
