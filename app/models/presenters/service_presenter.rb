@@ -13,7 +13,7 @@ module Presenters
     end
 
     def tz_aware_datetime
-      utc_to_timezone(datetime, timezone) if datetime
+      datetime.in_time_zone('Etc/GMT+6')
     end
 
     def name
