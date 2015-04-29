@@ -9,9 +9,9 @@ namespace :db do
 
     ActiveRecord::Base.transaction do
       Service.not_canceled.in_the_future.each do |service|
-        if service.schedules.count < service.estimated_hours
+        if service.schedules.count < service.total_hours
           beginning = service.datetime
-          ending = ( service.datetime + service.estimated_hours.hours + service.hours_after_service ).beginning_of_hour
+          ending = ( service.datetime + service.total_hours.hours ).beginning_of_hour
 
           if ending.hour == 3 # 9 pm in mexico city
             ending -= 1
@@ -19,6 +19,7 @@ namespace :db do
 
           aliada_id = service.aliada_id
              
+          puts "for service with datetime #{service.datetime} #{service.id}"
           Time.iterate_in_hour_steps(beginning, ending).each do |datetime|
             schedule = Schedule.find_by(aliada_id: aliada_id, datetime: datetime)
 
@@ -27,8 +28,7 @@ namespace :db do
                 schedules_in_other_service[service.id].push schedule
                 next
               else
-                puts "https://aliada.mx/aliadadmin/service/#{service.id}"
-                puts "https://aliada.mx/aliadadmin/schedule/#{schedule.id}"
+                puts "adding schedule #{schedule.datetime} #{schedule.id}"
 
                 schedule.service_id = service.id
                 schedule.user_id = service.user_id
@@ -39,6 +39,8 @@ namespace :db do
               end
             end
           end
+          puts "\n"
+
         end
       end
 
