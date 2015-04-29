@@ -1,51 +1,67 @@
 namespace :db do
   desc "Fill services schedules"
   task :fill_services_schedules => :environment do
+
     puts 'checking aliadas schedules'
     missing_schedules = []
 
-    schedules_in_other_service = Hash.new{ |h,k| h[k] = [] }
-    schedules_corrected = []
+    SCHEDULES_IN_OTHER_SERVICE = Hash.new{ |h,k| h[k] = [] }
+    SCHEDULES_CORRECTED = []
+
+    def correct_service_schedules(beginning, ending, service, status)
+      Time.iterate_in_hour_steps(beginning, ending).each do |datetime|
+        schedule = Schedule.find_by(aliada_id: service.aliada_id, datetime: datetime)
+
+        if schedule 
+          if schedule.service_id && service.id != schedule.service_id
+            SCHEDULES_IN_OTHER_SERVICE[service.id].push schedule
+            next
+          else
+            puts "setting schedule #{status} #{schedule.datetime} #{schedule.id}"
+            if schedule.status != status ||
+               schedule.service_id != service.id ||
+               schedule.recurrence_id != service.recurrence_id ||
+               schedule.user_id != service.user_id
+
+              SCHEDULES_CORRECTED.push(schedule)
+            end
+
+            schedule.service_id = service.id
+            schedule.user_id = service.user_id
+            schedule.recurrence_id = service.recurrence_id
+            schedule.status = status
+            schedule.save!
+          end
+        end
+      end
+    end
 
     ActiveRecord::Base.transaction do
       Service.not_canceled.in_the_future.each do |service|
-        if service.schedules.count < service.total_hours
-          beginning = service.datetime
-          ending = ( service.datetime + service.total_hours.hours ).beginning_of_hour
+        # booked hours first
+        booked_beginning = service.datetime
+        booked_ending = ( service.datetime + service.estimated_hours.hours ).beginning_of_hour
 
-          if ending.hour == 3 # 9 pm in mexico city
-            ending -= 1
-          end
-
-          aliada_id = service.aliada_id
-             
-          puts "for service with datetime #{service.datetime} #{service.id}"
-          Time.iterate_in_hour_steps(beginning, ending).each do |datetime|
-            schedule = Schedule.find_by(aliada_id: aliada_id, datetime: datetime)
-
-            if schedule 
-              if schedule.service_id && service.id != schedule.service_id
-                schedules_in_other_service[service.id].push schedule
-                next
-              else
-                puts "adding schedule #{schedule.datetime} #{schedule.id}"
-
-                schedule.service_id = service.id
-                schedule.user_id = service.user_id
-                schedule.recurrence_id = service.recurrence_id
-                schedule.status = 'booked'
-                schedule.save!
-                schedules_corrected.push(schedule)
-              end
-            end
-          end
-          puts "\n"
-
+        if booked_ending.hour == 3 # 9 pm in mexico city
+          booked_ending -= 1
         end
+
+        puts "for service with datetime #{service.datetime} #{service.id}"
+        correct_service_schedules(booked_beginning, booked_ending, service, 'booked')
+
+        # Padding hours
+        padding_beginning = booked_ending
+        padding_ending = padding_beginning + service.hours_after_service.hours
+
+        if padding_ending.hour == 3 # 9 pm in mexico city
+          padding_ending -= 1
+        end
+
+        correct_service_schedules(padding_beginning, padding_ending, service, 'padding')
       end
 
-      puts "#{schedules_corrected.size} schedules corrected "
-      puts "#{schedules_in_other_service.size} schedules_in_other_service "
+      puts "#{CHEDULES_CORRECTED.size} schedules corrected "
+      puts "#{SCHEDULES_IN_OTHER_SERVICE.size} schedules_in_other_service "
     end
 
 
