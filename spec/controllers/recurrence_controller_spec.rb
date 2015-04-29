@@ -9,7 +9,7 @@ feature 'ServiceController' do
   let!(:admin) { create(:admin) }
   let!(:user) { create(:user) }
   let!(:other_user) { create(:user) }
-  let!(:other_recurrence) { create(:recurrence, user: other_user) }
+  let!(:other_recurrence) { create(:recurrence, user: other_user, aliada: aliada) }
 
   let!(:recurrent_service) { create(:service_type) }
   let!(:recurrence) { create(:recurrence,
@@ -196,7 +196,38 @@ feature 'ServiceController' do
 
       expect(Schedule.booked_or_padding.all? {|s| s.service_id.present? }).to be true
     end
-    
+
+    context 'with two aliadas' do
+      let!(:aliada2){ create(:aliada, zones: [zone]) }
+
+      before do
+        create_recurrent!(next_day_of_service, hours: 6,
+                                               periodicity: recurrence.periodicity ,
+                                               conditions: {aliada: aliada2,
+                                                            status: 'available'})
+
+        allow_any_instance_of(User).to receive(:aliadas).and_return([aliada2])
+
+        visit edit_recurrence_users_path(user_id: user.id, recurrence_id: recurrence.id)
+      end
+
+      it 'switches aliada' do
+        fill_hidden_input 'recurrence_aliada_id', with: aliada2.id
+        fill_hidden_input 'recurrence_date', with: starting_datetime.strftime('%Y-%m-%d')
+        fill_hidden_input 'recurrence_time', with: starting_datetime.strftime('%H:%M')
+
+        click_button 'Guardar cambios'
+
+        response = JSON.parse(page.body)
+        expect(response['status']).to_not eql 'error'
+        expect(response['recurrence_id']).to be_present
+        
+        recurrence = Recurrence.find(response['recurrence_id'])
+
+        expect(recurrence.aliada_id).to be aliada2.id
+        expect(Schedule.where(aliada_id: aliada.id).all?{ |s| s.available? }).to be true
+      end
+    end
   end
 
   describe '#cancel_all!' do

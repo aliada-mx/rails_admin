@@ -132,8 +132,8 @@ feature 'ServiceController' do
         user = service.user
         
         expect(service.aliada).to be_present
-        expect(recurrence.hour).to eql service.datetime.hour
-        expect(recurrence.weekday).to eql service.datetime.weekday
+        expect(recurrence.hour).to eql service.tz_aware_datetime.hour
+        expect(recurrence.weekday).to eql service.tz_aware_datetime.weekday
         expect(recurrence.aliada).to eql aliada
         expect(recurrence.user).to eql user
 
@@ -148,7 +148,7 @@ feature 'ServiceController' do
         expect(Schedule.padding.count).to be 8
       end
 
-      it 'logs in ithe new user' do
+      it 'logs in the new user' do
         fill_initial_service_form(conekta_card_method, one_time_service, starting_datetime + 1.day, extra_1, zone)
 
         click_button 'Confirmar visita'
@@ -429,6 +429,7 @@ feature 'ServiceController' do
 
     describe '#new' do
       let(:new_service_path) { new_service_users_path(user) }
+      let!(:aliada2) { create(:aliada, zones: [zone]) }
 
       before do
         expect(Service.count).to eql 0
@@ -440,6 +441,10 @@ feature 'ServiceController' do
         create_recurrent!(starting_datetime + 1.day,hours: 5,
                                                     periodicity: recurrent_service.periodicity ,
                                                     conditions: { aliada: aliada } )  
+
+        create_recurrent!(starting_datetime + 1.day,hours: 5,
+                                                    periodicity: recurrent_service.periodicity ,
+                                                    conditions: { aliada: aliada2 } )  
       end
 
       it 'let the user view the new service page' do
@@ -452,7 +457,7 @@ feature 'ServiceController' do
         it 'lets the user create a new service' do
           visit new_service_path
 
-          fill_new_service_form(one_time_service, starting_datetime + 1.day, extra_1, zone)
+          fill_new_service_form(one_time_service, next_day_of_service + 1.day, extra_1, zone)
 
           click_button 'Confirmar visita'
 
@@ -464,13 +469,34 @@ feature 'ServiceController' do
 
           expect_to_have_a_complete_service(service)
         end
+
+        it 'lets the user choose an aliada for a new service' do
+          allow_any_instance_of(User).to receive(:aliadas).and_return([aliada2])
+
+          visit new_service_path
+
+          fill_new_service_form(one_time_service, next_day_of_service + 1.day, extra_1, zone)
+
+          select aliada2.email
+
+          click_button 'Confirmar visita'
+
+          response = JSON.parse(page.body)
+          expect(response['status']).to_not eql 'error'
+          expect(response['service_id']).to be_present
+
+          service = Service.find(response['service_id'].to_i)
+
+          expect_to_have_a_complete_service(service)
+          expect(service.aliada_id).to be aliada2.id
+        end
       end
 
       context 'recurrent service' do
         it 'lets the user create a new service' do
           visit new_service_path
 
-          fill_new_service_form(recurrent_service, starting_datetime + 1.day, extra_1, zone)
+          fill_new_service_form(recurrent_service, next_day_of_service + 1.day, extra_1, zone)
 
           click_button 'Confirmar visita'
 
@@ -484,8 +510,8 @@ feature 'ServiceController' do
           recurrence = service.recurrence
 
           expect_to_have_a_complete_service(service)
-          expect(recurrence.hour).to eql service.datetime.hour
-          expect(recurrence.weekday).to eql service.datetime.weekday
+          expect(recurrence.hour).to eql service.tz_aware_datetime.hour
+          expect(recurrence.weekday).to eql service.tz_aware_datetime.weekday
           expect(recurrence.aliada).to eql aliada
           expect(recurrence.user).to eql user
         end

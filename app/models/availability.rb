@@ -4,7 +4,7 @@ class Availability
   extend Forwardable
 
   def_delegators :@store, :[], :delete, :has_key?, :empty?, :present?, :each, :first, :second, :blank?
-  def_delegator :@store, :keys, :ids
+  def_delegator :@store, :keys, :aliadas_ids
   def_delegator :@store, :has_key?, :has_aliada?
   attr_accessor :store 
   attr_accessor :schedules 
