@@ -78,7 +78,7 @@ aliada.services.edit.initialize_calendar_times = function() {
     highlight('#choose-date');
   })
 
-  window.setTimeout(function(){
+  window.setTimeout(function() {
     // Update calendar on page load
     update_calendar().then(function(calendar) {
       updateMonthYear();
@@ -92,7 +92,7 @@ aliada.services.edit.initialize_calendar_times = function() {
 
   function updateMonthYear() {
     var $month = $('#month').html(calendar.getMonthName()),
-        $year = $('#year').html(calendar.getYear());
+      $year = $('#year').html(calendar.getYear());
 
     $month.html(calendar.getMonthName());
     $year.html(calendar.getYear());
