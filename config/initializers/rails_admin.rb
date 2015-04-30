@@ -2,8 +2,6 @@
 # Register actions
 RailsAdmin::Config::Actions.register(:create_aliada_working_hours, RailsAdmin::Config::Actions::CreateAliadaWorkingHours)
 
-RailsAdmin::Config::Fields::Types::register(:show_aliada_calendar, RailsAdmin::Config::Actions::ShowAliadaCalendar)
-
 RailsAdmin::Config::Fields::Types::register(:show_aliada_schedule, RailsAdmin::Config::Actions::ShowAliadaSchedule)
 
 RailsAdmin::Config::Actions.register(:modify_schedules_batch, RailsAdmin::Config::Actions::ModifySchedulesBatch)
@@ -47,12 +45,6 @@ RailsAdmin.config do |config|
       end
     end
     
-    show_aliada_calendar do
-      visible do
-        bindings[:abstract_model].model.to_s == 'Aliada'
-      end
-    end
-
     show_aliada_schedule do
       visible do
         bindings[:abstract_model].model.to_s == 'Aliada'
