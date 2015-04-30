@@ -291,6 +291,11 @@ es:
         menu: "Cobrar servicio"
         title: "Cobrar servicio"
         breadcrumb: "Cobrar servicio"
+      show_aliada_schedule:
+        menu: "Semana de la aliada"
+        title: "Semana de la aliada"
+        breadcrumb: "Semana de la aliada"
+        bulk_link: "Semana de la aliada"
       show_aliada_calendar:
         menu: "Semana de la aliada"
         title: "Semana de la aliada"

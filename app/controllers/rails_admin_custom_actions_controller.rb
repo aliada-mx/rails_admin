@@ -16,4 +16,10 @@ class RailsAdminCustomActionsController < ApplicationController
 
     render json: { status: :success, object: object.to_json }
   end
+
+  def get_aliada_schedule
+    aliada_id = params[:aliada_id]
+    aliada = Aliada.find_by_id( aliada_id );
+    render :json => aliada.current_week_services.as_json(:only => [:id, :estimated_hours, :hours_after_service, :user_id, :datetime, :recurrence_id, :service_type_id], :include => { :user => { :only => :full_name } })
+  end
 end

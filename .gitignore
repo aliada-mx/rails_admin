@@ -31,3 +31,5 @@ profiles/
 *.swo
 *.*~
 *~
+
+.DS_Store
