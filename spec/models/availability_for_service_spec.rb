@@ -179,17 +179,17 @@ describe 'AvailabilityForService' do
         expect(aliada_1_availability.size).to be 1
         expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
         expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 4.hours
-        expect(aliada_1_availability.schedules_intervals.size).to be 5
+        expect(aliada_1_availability.schedules_intervals.size).to be 4
 
         expect(aliada_2_availability.size).to be 1
         expect(aliada_2_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
         expect(aliada_2_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 4.hours
-        expect(aliada_2_availability.schedules_intervals.size).to be 5
+        expect(aliada_2_availability.schedules_intervals.size).to be 4
 
         expect(aliada_3_availability.size).to be 1
         expect(aliada_3_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
         expect(aliada_3_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 4.hours
-        expect(aliada_3_availability.schedules_intervals.size).to be 5
+        expect(aliada_3_availability.schedules_intervals.size).to be 4
       end
 
       it 'doesnt find availability when the available schedules have holes in the continuity' do
@@ -204,12 +204,12 @@ describe 'AvailabilityForService' do
 
         expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
         expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 4.hours
-        expect(aliada_1_availability.schedules_intervals.size).to be 5
+        expect(aliada_1_availability.schedules_intervals.size).to be 4
 
         expect(aliadas_availability[aliada_2.id]).to be_blank
 
         expect(aliada_3_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
-        expect(aliada_3_availability.schedules_intervals.size).to be 5
+        expect(aliada_3_availability.schedules_intervals.size).to be 4
       end
 
       it 'doesnt find an available datetime when the requested hour happens before the available schedules' do
@@ -290,11 +290,11 @@ describe 'AvailabilityForService' do
 
         expect(aliada_1_availability.size).to be 1
         expect(aliada_1_availability.schedules.first.datetime).to eql starting_datetime
-        expect(aliada_1_availability.schedules_intervals.size).to be 5
+        expect(aliada_1_availability.schedules_intervals.size).to be 4
 
         expect(aliada_2_availability.size).to be 1
         expect(aliada_2_availability.schedules.first.datetime).to eql starting_datetime
-        expect(aliada_2_availability.schedules_intervals.size).to be 5
+        expect(aliada_2_availability.schedules_intervals.size).to be 4
 
         expect(aliadas_availability[aliada_3]).to be_blank
       end

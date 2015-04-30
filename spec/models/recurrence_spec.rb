@@ -28,8 +28,8 @@ describe 'Recurrence' do
     describe '#wdays_count_to_end_of_recurrency' do
       it 'returns 5 for the number of thursdays on january 2015' do
         expect(starting_datetime).to eql Time.zone.parse('01 Jan 2015 13:00:00')
-        expect(Setting.time_horizon_days).to be 30
-        expect(recurrence.wdays_count_to_end_of_recurrency(starting_datetime)).to be 5
+        expect(Setting.time_horizon_days).to be 28
+        expect(recurrence.wdays_count_to_end_of_recurrency(starting_datetime)).to be 4
       end
     end
 

@@ -118,17 +118,17 @@ describe 'AvailabilityForCalendar' do
         aliadas_availability = @finder.find
 
         expect(aliadas_availability.size).to be 2
-        expect(aliadas_availability.schedules_intervals.size).to be 30
-        expect(aliadas_availability.schedules.size).to be 120
+        expect(aliadas_availability.schedules_intervals.size).to be 24
+        expect(aliadas_availability.schedules.size).to be 96
 
         aliada_1_availability = aliadas_availability.for_aliada(aliada)
         aliada_2_availability = aliadas_availability.for_aliada(aliada_2)
 
-        expect(aliada_1_availability.schedules_intervals.size).to be 15
+        expect(aliada_1_availability.schedules_intervals.size).to be 12
         expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
         
         expect(aliada_2_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime + 4.hour
-        expect(aliada_2_availability.schedules_intervals.size).to be 15
+        expect(aliada_2_availability.schedules_intervals.size).to be 12
       end
 
       it 'doesnt find availability when the available schedules have holes in the continuity' do
@@ -169,20 +169,20 @@ describe 'AvailabilityForCalendar' do
         aliadas_availability = finder.find
 
         expect(aliadas_availability.size).to be 3
-        expect(aliadas_availability.schedules_intervals.size).to be 30
+        expect(aliadas_availability.schedules_intervals.size).to be 24
 
         aliada_1_availability = aliadas_availability.for_aliada(aliada)
         aliada_2_availability = aliadas_availability.for_aliada(aliada_2)
         aliada_3_availability = aliadas_availability.for_aliada(aliada_3)
 
         expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime
-        expect(aliada_1_availability.schedules_intervals.size).to be 10
+        expect(aliada_1_availability.schedules_intervals.size).to be 8
         
         expect(aliada_2_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime + 4.hour
-        expect(aliada_2_availability.schedules_intervals.size).to be 10
+        expect(aliada_2_availability.schedules_intervals.size).to be 8
 
         expect(aliada_3_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime + 4.hour
-        expect(aliada_3_availability.schedules_intervals.size).to be 10
+        expect(aliada_3_availability.schedules_intervals.size).to be 8
 
         expect(aliada_3_availability.schedules.map(&:datetime).sort).to eql aliada_2_availability.schedules.map(&:datetime).sort
       end
@@ -194,14 +194,14 @@ describe 'AvailabilityForCalendar' do
         aliadas_availability = finder.find
         
         expect(aliadas_availability.size).to be 2
-        expect(aliadas_availability.schedules_intervals.size).to be 30
+        expect(aliadas_availability.schedules_intervals.size).to be 24
 
         aliada_1_availability = aliadas_availability.for_aliada(aliada)
         aliada_2_availability = aliadas_availability.for_aliada(aliada_2)
 
-        expect(aliada_1_availability.schedules_intervals.size).to be 20
+        expect(aliada_1_availability.schedules_intervals.size).to be 16
         
-        expect(aliada_2_availability.schedules_intervals.size).to be 10
+        expect(aliada_2_availability.schedules_intervals.size).to be 8
       end
     end
 
@@ -317,11 +317,11 @@ describe 'AvailabilityForCalendar' do
 
           aliada_1_availability = availability.for_aliada(aliada)
 
-          expect(aliada_1_availability.schedules_intervals.size).to be 5
+          expect(aliada_1_availability.schedules_intervals.size).to be 4
 
           expect(aliada_1_availability.schedules_intervals.first.beginning_of_interval).to eql starting_datetime + 3.hours
           expect(aliada_1_availability.schedules_intervals.first.ending_of_interval).to eql starting_datetime + 6.hours
-          expect(aliada_1_availability.schedules_intervals.map(&:size)).to eql [4,4,4,4,4]
+          expect(aliada_1_availability.schedules_intervals.map(&:size)).to eql [4,4,4,4]
         end
       end
 

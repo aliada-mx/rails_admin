@@ -59,7 +59,7 @@ feature 'Service' do
 
     it 'allows it to mark recurrent service schedules´ as booked', recurrent: true do
       available_schedules = Schedule.for_booking(zone, starting_datetime_to_book_services).available
-      expect(available_schedules.count).to be 20
+      expect(available_schedules.count).to be 16
       expect(Schedule.booked.count).to be 0
 
       service.service_type = recurrent_service
@@ -67,8 +67,8 @@ feature 'Service' do
 
       service.book_an_aliada
 
-      expect(Schedule.booked.count).to be 15
-      expect(Schedule.padding.count).to be 5
+      expect(Schedule.booked.count).to be 12
+      expect(Schedule.padding.count).to be 4
       expect(available_schedules.count).to be 0
     end
   end

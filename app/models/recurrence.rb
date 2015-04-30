@@ -199,6 +199,7 @@ class Recurrence < ActiveRecord::Base
     raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
 
     aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
+
     self.aliada = aliada_availability.aliada
     self.hours_after_service = aliada_availability.padding_count
     self.save!
