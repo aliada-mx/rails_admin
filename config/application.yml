@@ -5,7 +5,7 @@ defaults: &defaults
   businessday_hours: 14 # Make sure to update this if you update the beginning_of_aliadas_day and end_of_aliadas_day
   show_tomorrow_services_cutoff: 1 # UTC hour 1 or Mexico City 7 after which the aliadas services list will show tomorrow's services 
   hours_after_service: 1 # Minimal amount of time after a service is done needed for each aliada
-  time_horizon_days: 30 # How far in the future we build schedules and look for datetime data
+  time_horizon_days: 28 # How far in the future we build schedules and look for datetime data
   payment_providers: [
     ['Tarjeta con Conekta', 'ConektaCard'], 
     ['Pago con créditos', 'User'], 

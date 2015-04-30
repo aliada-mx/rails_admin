@@ -25,7 +25,7 @@ module RailsAdmin
           Proc.new do
             @schedules = list_entries(@model_config, :enable_schedules)
 
-            @schedules.map(&:enable_booked)
+            @schedules.map(&:enable)
 
             flash[:success] = 'Se han habilitado las horas de servicio'
             redirect_to back_or_index

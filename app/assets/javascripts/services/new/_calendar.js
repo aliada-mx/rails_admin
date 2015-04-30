@@ -55,9 +55,8 @@ aliada.services.new.initialize_calendar_times = function() {
         service_type_id: aliada.ko.service_type().id,
         postal_code_number: aliada.user.postal_code_number,
         user_id: aliada.user.id,
-        aliada_id: aliada.service.aliada_id
+        aliada_id: aliada.service.aliada_id,
       };
-
 
       // Prevent further user interaction to avoid double requests
       aliada.calendar.lock(calendar);

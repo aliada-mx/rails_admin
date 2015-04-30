@@ -1,6 +1,9 @@
 # -*- encoding : utf-8 -*-
 class Recurrence < ActiveRecord::Base
   include AliadaSupport::DatetimeSupport
+  
+  include Presenters::RecurrencePresenter
+
   include Mixins::RecurrenceAliadaWorkingHoursMixin
   include Mixins::ServiceRecurrenceMixin
 
@@ -116,9 +119,6 @@ class Recurrence < ActiveRecord::Base
     'Etc/GMT+6' # No dst changes timezone
   end
 
-  def name
-    "#{user.first_name} #{weekday_in_spanish} de #{hour} a #{ending_hour} (#{id})"
-  end
 
   def parse_timezone_datetime(recurrence_params)
     ActiveSupport::TimeZone[self.timezone].parse("#{recurrence_params[:date]} #{recurrence_params[:time]}")
@@ -199,6 +199,7 @@ class Recurrence < ActiveRecord::Base
     raise AliadaExceptions::AvailabilityNotFound if aliadas_availability.empty?
 
     aliada_availability = AliadaChooser.choose_availability(aliadas_availability, self)
+
     self.aliada = aliada_availability.aliada
     self.hours_after_service = aliada_availability.padding_count
     self.save!
@@ -221,7 +222,6 @@ class Recurrence < ActiveRecord::Base
     navigation_label 'Operación'
     navigation_icon 'icon-repeat'
 
-    exclude_fields :extra_recurrences, :extras, :versions
 
     list do
 
@@ -234,13 +234,26 @@ class Recurrence < ActiveRecord::Base
         end
       end
 
+      field :id
+
+      field :aliada
+      field :user 
+
+      field :weekday_hour_in_spanish
+
       field :status do
         searchable false
       end
 
-      field :weekday do
-        searchable false
+      field :total_hours do
+        virtual?
       end
+
+
+
+      field :special_instructions
+
+
       field :entrance_instructions do
         searchable false
       end
@@ -263,11 +276,16 @@ class Recurrence < ActiveRecord::Base
         searchable     false
       end
 
-      field :user 
-      field :aliada
-      field :name
-      field :total_hours
-      field :special_instructions
+      field :weekday do
+        searchable false
+      end
+
+      field :hour
+
+    end
+
+    edit do
+      exclude_fields :extra_recurrences, :extras, :versions
     end
   end
 end

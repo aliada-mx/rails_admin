@@ -8,8 +8,6 @@ class AliadaChooser
   def initialize(aliadas_availability, service)
     @aliadas_availability = aliadas_availability  
     @service = service
-
-    @user_past_aliadas_ids = service.user.past_aliadas.map(&:id)
   end
 
   def choose!
@@ -29,7 +27,7 @@ class AliadaChooser
     end
 
     def load_aliadas
-      aliadas_ids = @aliadas_availability.ids
+      aliadas_ids = @aliadas_availability.aliadas_ids
       @aliadas = Aliada.for_booking(aliadas_ids).to_a
     end
 

@@ -32,7 +32,6 @@ module TestingSupport
 
       fill_hidden_input 'service_date', with: starting_datetime.strftime('%Y-%m-%d')
       fill_hidden_input 'service_time', with: starting_datetime.strftime('%H:%M')
-
     end
 
     def fill_user_fields

@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
   has_many :redeemed_credits, :foreign_key => "redeemer_id", :class_name => "Credit"
   has_one :code
   has_many :services, ->{ order(:datetime) }, inverse_of: :user, foreign_key: :user_id
-  has_many :addresses
+  has_many :addresses, inverse_of: :user
   has_many :schedules, inverse_of: :user, foreign_key: :user_id
   has_and_belongs_to_many :banned_aliadas,
                           class_name: 'Aliada',
@@ -215,16 +215,7 @@ class User < ActiveRecord::Base
         end
       end
 
-      field :zone do
-        read_only true
-        visible do
-          value.present?
-        end
-
-        formatted_value do
-          value.name
-        end
-      end
+      field :addresses
 
       field :first_name
       field :last_name
