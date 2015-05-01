@@ -1,7 +1,9 @@
 //= require modules/dialogs
 //= require base
+//= require jquery.tablesorter.js
 
 $(function(){
+  $('.table').tablesorter();
 
   submitRating = function(service_id, value){
     var form = $('#service_'+service_id);

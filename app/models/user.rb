@@ -29,6 +29,7 @@ class User < ActiveRecord::Base
                           association_foreign_key: :aliada_id
 
   has_many :payment_provider_choices, -> { order('payment_provider_id DESC') }, inverse_of: :user
+  has_many :debts
 
 
   # Include default devise modules. Others available are:
@@ -47,7 +48,7 @@ class User < ActiveRecord::Base
   validates_length_of :password, within: Devise.password_length, allow_blank: true
 
   after_initialize do
-    self.balance ||= 0 if self.respond_to? :balance
+    self.credits ||= 0 if self.respond_to? :credits
     self.role ||= 'client'
   end
 
@@ -81,32 +82,37 @@ class User < ActiveRecord::Base
     create_payment_provider_choice(payment_provider)
   end
 
-  def charge_balance(amount)
-    credits_charger = CreditsCharger.new(amount, self)
-    credits_charger.charge!
+  def charge_points(amount, service)
+    points_charger = PointsCharger.new(amount, self, service)
+    points_charger.charge!
   end
 
-  def register_debt(debt)
-    self.balance -= debt
-    self.save!
+  def register_debt(product, service)
+    default_payment_provider.register_debt(product,self,service)
+  end
+
+  def balance
+    amount_owed.present? ? points - amount_owed : 0
+  end
+
+  def amount_owed
+    debts.inject(0) do |amount, debt|
+      amount += debt.amount unless debt.paid?
+    end
   end
 
   def charge!(product, service)
-    credits_payment = charge_balance(product.amount)
+    points_payment = charge_points(product.amount, service)
 
-    product.amount = credits_payment.left_to_charge
-    #binding.pry
+    product.amount = points_payment.left_to_charge
     begin
-      failed = false
       payment = default_payment_provider.charge!(product, self, service)
     rescue Conekta::Error, Conekta::ProcessingError => e
-      failed = true
       raise e
     ensure
-        if payment.nil? && !service.owed?
-          default_payment_provider.register_payment_failure(product,self,service,e)
-          register_debt(credits_payment.left_to_charge)
-        end
+      if payment.nil? && !service.owed?
+        register_debt(product, service)
+      end
     end
     payment
   end
@@ -135,8 +141,12 @@ class User < ActiveRecord::Base
                         message: "No se pudo realizar cargo de #{amount} a la tarjeta de #{user.first_name} #{user.last_name}. #{error.message_to_purchaser}")
   end
 
+  def default_payment_provider_choice
+    payment_provider_choices.default
+  end
+
   def default_payment_provider
-    payment_provider_choices.default.provider if payment_provider_choices.any?
+    default_payment_provider_choice.provider if payment_provider_choices.any?
   end
 
   def past_aliadas
@@ -239,7 +249,9 @@ class User < ActiveRecord::Base
 
       group :informacion_de_pago do
 
-        field :balance
+        field :balance do
+          virtual? 
+        end
 
         field :default_payment_provider do
           visible do

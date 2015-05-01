@@ -31,7 +31,7 @@ class UsersController < ApplicationController
   end
 
   def previous_services
-    @services = User.find(params[:user_id]).services.in_the_past.not_canceled
+    @services = User.find(params[:user_id]).services.in_the_past.where('status NOT IN (?)',[:canceled_in_time, :canceled])
   end
 
   def canceled_services

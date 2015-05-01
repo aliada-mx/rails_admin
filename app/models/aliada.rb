@@ -109,7 +109,7 @@ class Aliada < User
       read_only
     end
 
-    configure :balance do
+    configure :points do
       visible false
     end
 

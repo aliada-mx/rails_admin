@@ -38,6 +38,10 @@ namespace :db do
 
     ActiveRecord::Base.transaction do
       Service.not_canceled.in_the_future.each do |service|
+
+        next unless service.schedules.count < service.total_hours
+        puts "found service with #{service.schedules.count} schedules count and total hours #{service.total_hours}"
+
         # booked hours first
         booked_beginning = service.datetime
         booked_ending = ( service.datetime + service.estimated_hours.hours ).beginning_of_hour
@@ -60,7 +64,7 @@ namespace :db do
         correct_service_schedules(padding_beginning, padding_ending, service, 'padding')
       end
 
-      puts "#{CHEDULES_CORRECTED.size} schedules corrected "
+      puts "#{SCHEDULES_CORRECTED.size} schedules corrected "
       puts "#{SCHEDULES_IN_OTHER_SERVICE.size} schedules_in_other_service "
     end
 

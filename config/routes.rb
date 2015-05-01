@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   mount RailsAdmin::Engine => 'aliadadmin', as: 'rails_admin'
 
   scope :rails_admin do
-    post 'update_object_attribute/:object_class/:object_id', to: 'rails_admin_custom_actions#update_object_attribute', as: :update_object_attribute
+    post 'add_billable_hours_to_service/:service_id', to: 'rails_admin_custom_actions#add_billable_hours_to_service', as: :add_billable_hours_to_service
   end
 
   root to: 'static_pages#home'
