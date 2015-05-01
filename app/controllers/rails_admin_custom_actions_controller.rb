@@ -2,18 +2,13 @@
 class RailsAdminCustomActionsController < ApplicationController
   authorize_resource
 
-  def update_object_attribute
-    # Dinamically build object
-    object_class = params[:object_class].constantize
-    object_id = params[:object_id]
+  def add_billable_hours_to_service
+    service = Service.find(params[:service_id])
 
-    object = object_class.find(object_id)
+    service.billable_hours = params[:value]
+    service.finish
+    service.save
 
-    attribute = params[:attribute_name]
-    value = params[:value]
-
-    object.update_attribute(attribute, value)
-
-    render json: { status: :success, object: object.to_json }
+    render json: { status: :success, object: service.to_json }
   end
 end

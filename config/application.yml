@@ -11,6 +11,9 @@ defaults: &defaults
     ['Pago con créditos', 'User'], 
     ['Método de pago de prueba', 'TestPaymentMethod'], 
   ]
+  payables: [
+    ['Servicio', 'Service'],
+  ]
   #
   # Careful while editing the text here as it determines looks on the frontend
   hours_space_room: [

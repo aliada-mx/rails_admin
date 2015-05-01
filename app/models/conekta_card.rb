@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class ConektaCard < ActiveRecord::Base
+class ConektaCard < PaymentProvider
 
   def self.create_for_user!(user, temporary_token, object)
     ActiveRecord::Base.transaction requires_new: true do
@@ -59,15 +59,16 @@ class ConektaCard < ActiveRecord::Base
     begin
       conekta_charge = charge_in_conekta!(product, user)
      
-      payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
+      payment = Payment.create_from_conekta_charge(conekta_charge,user,self,object)
       payment.pay!
       
       payment
     rescue Conekta::Error, Conekta::ProcessingError => exception
       Raygun.track_exception(exception)
 
+      
       object.create_charge_failed_ticket(user, product.amount, exception)
-      nil
+      
       raise exception
     end
   end
@@ -89,19 +90,7 @@ class ConektaCard < ActiveRecord::Base
     conekta_charge
   end
 
-  def charge!(product, user, object)
-    begin
-      conekta_charge = charge_in_conekta!(product, user)
-     
-      payment = Payment.create_from_conekta_charge(conekta_charge,user,self)
-      payment.pay!
-      
-      payment
-    rescue Conekta::Error => exception
-      object.create_charge_failed_ticket(user, product.price, exception)
-      raise exception
-    end
-  end
+
 
   def payment_possible?
     preauthorized?

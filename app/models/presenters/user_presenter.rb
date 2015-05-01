@@ -70,5 +70,19 @@ module Presenters
         I18n.l(created_at, format: :future)
       end
     end
+
+    def list_points_history
+      versions.select do |version|
+        version.changeset.has_key?('balance')
+      end
+    end
+
+    def list_balance_changes
+      string = list_points_history.collect do |version|
+        whodunnit = User.find(version.whodunnit) if version.whodunnit
+        "era: #{ version.changeset['balance'].first } es: #{ version.changeset['balance'].last } #{whodunnit.name}" if version.changeset['balance']
+      end.join(', ')
+      string
+    end
   end
 end

@@ -5,16 +5,11 @@ $(function(){
     var $container = $(this).parent('.rails_admin_billable_hours_widget');
     var $amount_to_bill = $container.find('.amount_to_bill .amount')
     
-    var submit_data = {
-      attribute_name: $container.find('.attribute_name').data().attributename,
-      value: $input.val(),
-    }
-
     var path = $container.find('.update_path').data().updatepath;
 
     $.ajax({
       url: path,
-      data: submit_data,
+      data: {value:  $input.val() },
       dataType: 'json',
       type: 'POST',
       success: function(response){
