@@ -24,6 +24,7 @@ feature 'Service' do
                          service_type: one_time_service,
                          datetime: starting_datetime + 1.day,
                          estimated_hours: 3) }
+
   before do
     Timecop.freeze(starting_datetime)
     allow_any_instance_of(Service).to receive(:timezone).and_return(timezone)
@@ -245,6 +246,33 @@ feature 'Service' do
 
       expect(service.recurrence.hour).to be 7
       expect(service.recurrence.weekday).to eql 'friday'
+    end
+  end
+
+  describe 'cancel' do
+    let!(:schedule){ create(:schedule, service: service,
+                                       status: 'booked',
+                                       datetime: starting_datetime)}
+
+    it 'cancels the service out of time' do
+      service.cancel
+
+      expect( service ).to be_canceled_out_of_time
+    end
+
+    it 'cancels the service in time' do
+      Timecop.travel(starting_datetime - 1.hour)
+      service.cancel
+
+      expect( service ).to be_canceled_in_time
+    end
+
+    it 'enables the schedules' do
+      service.cancel
+
+      schedule.reload
+      expect(schedule.service_id).to be_nil
+      expect(schedule).to be_available
     end
   end
 end

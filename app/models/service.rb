@@ -34,12 +34,9 @@ class Service < ActiveRecord::Base
   has_many :extras, through: :extra_services
   has_many :schedules, ->{ order(:datetime ) }
   has_many :tickets, as: :relevant_object
-
   has_many :payments, as: :payeable
-
   has_many :scores, -> { order(:updated_at) }
   has_many :debts
-
 
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
@@ -87,11 +84,8 @@ class Service < ActiveRecord::Base
     transition ['finished', 'aliada_assigned' ] => 'paid', :on => :pay
     transition ['created', 'aliada_assigned'] => 'finished', :on => :finish
     
-    #It checks whether the cancelation is in time or not
-    event :cancel do
-      transition all - ['finished', 'paid'] => 'canceled_in_time', :unless => :should_charge_cancelation_fee
-      transition all - ['finished', 'paid'] => 'canceled_out_of_time'
-    end
+    transition (all - ['finished', 'paid']) => 'canceled_in_time', :on => :cancel_in_time
+    transition (all - ['finished', 'paid']) => 'canceled_out_of_time', :on => :cancel_out_of_time
     
     after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
 
@@ -102,7 +96,7 @@ class Service < ActiveRecord::Base
       service.save!
     end
 
-    before_transition on: :cancel do |service, transition|
+    before_transition on: [ :cancel_in_time, :cancel_out_of_time ] do |service, transition|
       service.enable_schedules!
     end
 
@@ -161,6 +155,14 @@ class Service < ActiveRecord::Base
   
   def canceled?
     return self.canceled_in_time? || self.canceled_out_of_time? || self.status == 'canceled'
+  end
+
+  def cancel
+    if should_charge_cancelation_fee
+      cancel_out_of_time
+    else
+      cancel_in_time
+    end
   end
   
   def cost
@@ -282,7 +284,7 @@ class Service < ActiveRecord::Base
     if datetime && datetime > now
       in_24_hours = now + 24.hours
 
-      datetime < in_24_hours
+      datetime <= in_24_hours
     else
       false
     end

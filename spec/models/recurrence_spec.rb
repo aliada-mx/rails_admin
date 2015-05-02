@@ -1,13 +1,16 @@
 # -*- encoding : utf-8 -*-
 describe 'Recurrence' do
+  let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
+
+  let(:aliada){ create(:aliada) }
+  let(:recurrence) { build(:recurrence, weekday: starting_datetime.weekday, hour: starting_datetime.hour ) }
+  let!(:service) { create(:service, estimated_hours: 3,
+                                    hours_after_service: 2,
+                                    datetime: starting_datetime,
+                                    recurrence: recurrence) }
+  let(:schedule) { build(:schedule, recurrence: recurrence, service: service) }
+
   context 'in utc' do
-  
-    let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
-
-    let(:aliada){ create(:aliada) }
-    let(:recurrence) { build(:recurrence, weekday: starting_datetime.weekday, hour: starting_datetime.hour ) }
-    let(:service) { build(:service, estimated_hours: 3, hours_after_service: 2) }
-
     before do
       Timecop.freeze(starting_datetime)
       6.times do |i|
@@ -32,7 +35,6 @@ describe 'Recurrence' do
         expect(recurrence.wdays_count_to_end_of_recurrency(starting_datetime)).to be 4
       end
     end
-
   end
 
   context 'mexico city cst to dst change' do
@@ -70,11 +72,8 @@ describe 'Recurrence' do
           expect(cst_recurrence.utc_weekday(cst_starting_datetime)).to eql 'saturday' 
           expect(cst_day_change_recurrence.utc_weekday(cst_starting_datetime)).to eql 'sunday' 
         end
-        
       end
-
     end
-    
   end
 
   context 'recurrence cst to dst change' do
@@ -113,9 +112,28 @@ describe 'Recurrence' do
           expect(cst_recurrence.next_recurrence_with_hour_now_in_utc.weekday).to eql 'saturday' 
           expect(cst_day_change_recurrence.next_recurrence_with_hour_now_in_utc.weekday).to eql 'sunday' 
         end
-        
       end
-
     end 
+  end
+
+  describe 'deactivate' do
+    before do
+      Timecop.freeze(starting_datetime)
+
+      recurrence.deactivate
+    end
+
+    after do
+      Timecop.return
+    end
+
+    it 'should cancel all associated services' do
+      service.reload
+      expect(service).to be_canceled
+    end
+
+    it 'should enable all associated schedules' do
+      expect(schedule).to be_available
+    end
   end
 end
