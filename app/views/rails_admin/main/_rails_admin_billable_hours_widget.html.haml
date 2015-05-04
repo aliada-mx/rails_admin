@@ -1,9 +1,7 @@
-- update_path = Rails.application.routes.url_helpers.update_object_attribute_path('Service', service.id)
+- update_path = Rails.application.routes.url_helpers.add_billable_hours_to_service_path(service.id)
 
 .rails_admin_billable_hours_widget
   .update_path{ data: {updatePath: "#{update_path}" } }
-
-  .attribute_name{ data:  {attributeName: 'billable_hours' } }
 
   - if service.paid?
     .amount_to_bill

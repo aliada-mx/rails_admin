@@ -31,7 +31,6 @@
 @import 'modules/conekta_form'
 @import 'modules/messages'
 @import 'modules/navigation'
-@import 'modules/service_history'
 
 // Modal
 @import 'vex'
@@ -109,6 +108,10 @@ h4
   clear: both
   height: 0
 
+.underline
+  text-decoration: underline
+  color: $green
+
 icon
   width: 20px
   height: 20px
@@ -185,9 +188,13 @@ footer
 
     span
       display: inline-block
-      vertical-align: middle
+      vertical-align: -3px
       +rem(font-size, 4rem)
       +rem(margin-right, 0.5rem)
+
+    .hours
+      display: block
+      
 
     p
       display: inline-block

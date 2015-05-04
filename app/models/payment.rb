@@ -2,7 +2,7 @@
 class Payment < ActiveRecord::Base
   belongs_to :user
   belongs_to :payment_provider, polymorphic: true
-
+  belongs_to :payeable, polymorphic: true
   # We limit the polymorphism to valid payment providers classes
   validates :payment_provider_type, inclusion: { in: Setting.payment_providers.map{ |pairs| pairs[1] } }
   validates_presence_of :user
@@ -12,21 +12,22 @@ class Payment < ActiveRecord::Base
     transition 'unpaid' => 'paid', :on => :pay
   end
 
-  def self.create_from_conekta_charge(charge, user, payment_provider)
+  def self.create_from_conekta_charge(charge, user, payment_provider, payable_object)
     charge_hash = eval(charge.inspect)
     # Save the whole conekta response for future reference
 
     Payment.create!(amount: charge_hash['amount'] / 100.0, 
                     user: user,
+                    payeable: payable_object,
                     payment_provider: payment_provider,
                     api_raw_response: charge_hash.to_json)
   end
 
-  def self.create_from_credit_payment(amount, user)
+  def self.create_from_credit_payment(amount, user, payable_object)
     Payment.create!(amount: amount, 
                     user: user,
-                    payment_provider_type: 'User',
-                    payment_provider_id: user.id)
+                    payeable: payable_object,
+                    payment_provider: user)
   end
 
   def provider

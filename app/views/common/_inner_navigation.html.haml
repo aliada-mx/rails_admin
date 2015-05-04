@@ -28,7 +28,13 @@
     .balance-section
       .label
         Balance
-        -#
+        %span.balance-summary
           %span.icon-help-with-circle
+          .text
+            %div
+            = link_to previous_services_users_path(@user) do
+              Adeudado en servicios -$#{ @user.amount_owed }
+            %div
+              Créditos $#{ @user.points }
       .balance{class: @user.balance < 0 ? 'negative' : ''}
         $#{@user.balance}

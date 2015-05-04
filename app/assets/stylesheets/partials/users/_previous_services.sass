@@ -1,4 +1,57 @@
+@import 'common/variables'
 @import 'common/mixins'
+@import "compass/css3/opacity"
+
 
 body.previous-services.one-column
   +sticky-footer
+
+.service_history
+  background-color: $white
+
+.service_history_header
+  +rem(margin, 2rem)
+  text-align: center
+  font-weight: bold
+
+.service_history_table
+  table
+    thead
+      th
+        color: $light_gray
+        +rem(font-size, $smallish-font)
+        cursor: pointer
+        &:after
+          +arrow(down) 
+    tbody
+      tr
+        td.warning
+          color: $error
+
+#hide
+  display:none
+
+.rating
+  
+  text-align: left
+  direction: rtl 
+
+  input
+    position: absolute
+    +opacity(0)
+    cursor: pointer
+    width: 2rem
+    height: 2rem
+  
+  span
+    width: 2rem
+    height: 2rem
+    line-height: 2rem
+    padding: .5rem 1.1rem 0
+    background: image-url('stars.png') 
+
+  input.unchecked:hover ~ span
+    background: image-url('star-full.png')
+
+  input.checked ~ span
+    background: image-url('star-full.png')

@@ -11,12 +11,16 @@ defaults: &defaults
     ['Pago con créditos', 'User'], 
     ['Método de pago de prueba', 'TestPaymentMethod'], 
   ]
+  payables: [
+    ['Servicio', 'Service'],
+  ]
   #
   # Careful while editing the text here as it determines looks on the frontend
   hours_space_room: [
     { hours: 3.0,   text: '<b>3h</b>     ~55m²'},
     { hours: 3.5, text: '<b>3.5h</b>  ~90m²'},
     { hours: 4.0, text: '<b>4h</b>     ~120m²'},
+    { hours: 4.5, text: '<b>4.h</b>     ~135m²'},
     { hours: 5.0, text: '<b>5h</b>     ~150m²'},
     { hours: 5.5,   text: '<b>5.5h</b>     ~165m²'},
     { hours: 6.0,   text: '<b>6h</b>     ~+180m²'}  

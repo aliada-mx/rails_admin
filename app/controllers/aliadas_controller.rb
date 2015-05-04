@@ -21,9 +21,6 @@ class AliadasController < ApplicationController
       hours = hours + (min/60.0)
       
       @service_to_finish.hours_worked = hours
-     # @service_to_finish.aliada_reported_begin_time = ActiveSupport::TimeZone["Mexico City"].parse("#{params[:begin_hour]}:#{params[:begin_min]}")
-     # @service_to_finish.aliada_reported_end_time = ActiveSupport::TimeZone["Mexico City"].parse("#{params[:end_hour]}:#{params[:end_min]}")
-
       @service_to_finish.finish
 
       redirect_to :back
@@ -45,6 +42,7 @@ class AliadasController < ApplicationController
                        ActiveSupport::TimeZone["Mexico City"].today + 1.day
                      end
      
+      #pulls unfinished services from the database, so we only present the worked services to the aliada
       @unfinished_services = Service.joins(:user).where(aliada_id: @aliada.id, status: 'aliada_assigned').where("datetime <= ?", now.utc)
       @upcoming_services = Service.joins(:address).order('datetime ASC').where(aliada_id: @aliada.id, :datetime => date_to_show.beginning_of_day..date_to_show.end_of_day).not_canceled.joins(:user) 
     else
