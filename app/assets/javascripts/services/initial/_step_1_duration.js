@@ -44,6 +44,10 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
     var $selected = $(this).find(':selected');
     var hours = $selected.val();
     aliada.ko.forced_hours(parseFloat(hours));
+      
+      mixpanel.track("IS-Service Hours Selected by Area", {
+	  "hours": hours
+      });
 
     // hide the alternative way of choosing hours
     $('.bathroom-bedrooms-container').slideUp();
@@ -58,7 +62,11 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
       var extra_items = _.map($(this).find(':checked'), function(checkbox){
         return "+" + $(checkbox).siblings('label').find('h4').text();
       });
-
+      console.log(extra_items);
+      mixpanel.track("IS-Selected Items Changed", {
+	  "items": extra_items,
+	  "hours": extras_hours
+      });
       aliada.ko.extra_items(extra_items);
       aliada.ko.extras_hours(extras_hours);
   });
