@@ -251,6 +251,12 @@ class User < ActiveRecord::Base
 
         field :balance do
           virtual? 
+          read_only true
+          help 'Creditos menos deuda'
+        end
+
+        field :points do
+          label 'Creditos'
         end
 
         field :default_payment_provider do

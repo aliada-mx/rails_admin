@@ -7,6 +7,8 @@ class Payment < ActiveRecord::Base
   validates :payment_provider_type, inclusion: { in: Setting.payment_providers.map{ |pairs| pairs[1] } }
   validates_presence_of :user
 
+  scope :conekta_payments, -> { where(payment_provider_type: 'ConektaCard') }
+
   # State machine
   state_machine :status, :initial => 'unpaid' do
     transition 'unpaid' => 'paid', :on => :pay
@@ -32,6 +34,14 @@ class Payment < ActiveRecord::Base
 
   def provider
     payment_provider
+  end
+
+  def parsed_raw_response
+    JSON.parse(api_raw_response)
+  end
+
+  def conekta_id
+    parsed_raw_response['id']
   end
 
   rails_admin do

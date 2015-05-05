@@ -13,6 +13,8 @@
           %th Estado
           %th Costo 
           %th Calificación
+          - if current_user.admin?
+            %th Admin
       %tbody
         - if @services.empty?
           %tr
@@ -21,7 +23,7 @@
                 Aun no has recibido tu primer servicio :)
 
         - @services.each do |service|
-          %tr{class: service.owed? ? 'warning' : '', id: "793_#{service.id}"  }
+          %tr{class: service.owed? ? 'warning' : '', id: "service_#{service.id}"  }
             %td
               = l service.tz_aware_datetime, format: :short
               - if current_user.admin?
@@ -51,6 +53,17 @@
                   %span
 
                 = hidden_field_tag :service_id, service.id
+
+            %td
+              .admin-info
+                %span.icon-help-with-circle
+                .text
+                  - if service.conekta_payment_url
+                    %div
+                      = link_to 'Cobro', service.conekta_payment_url
+                  %div
+                    = link_to service.rails_admin_edit_path, target: '_blank' do
+                      Editar
 
 = append :javascript do
   = javascript_include_tag 'previous_services'
