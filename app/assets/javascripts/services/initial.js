@@ -127,6 +127,9 @@ $(document).ready(function() {
         
       // Next if we are not on the last step
       var next_step = current_step === 5 ? current_step : current_step + 1;
+       mixpanel.track("IS-Next Step Loaded", {
+	  "step": next_step
+      });
 
       aliada.ko.current_step(next_step);
   });
@@ -135,7 +138,17 @@ $(document).ready(function() {
   aliada.ko.current_step.subscribe(function(new_step){
     $.event.trigger({type: 'entering_step_'+new_step});
   });
+    
+    //Mixpanel LOG DATE TIME changes
+    aliada.ko.time.subscribe(function(time){
+	mixpanel.track("IS-New Datetime Selected", {
+	    "hour": aliada.ko.time(),
+            "day": aliada.ko.date(),
+	    "service_type": aliada.ko.service_type().name
+	});
+    });
 
+    
   // Broadcast the leaving a step event
   aliada.ko.current_step.subscribe(function(current_step){
     $.event.trigger({type: 'leaving_step_'+current_step});
