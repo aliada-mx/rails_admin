@@ -170,6 +170,8 @@ class Service < ActiveRecord::Base
       amount_to_bill
     elsif owed?
       amount_owed
+    elsif paid?
+      billed_hours * service_type.price_per_hour
     else
       estimated_hours * service_type.price_per_hour
     end
