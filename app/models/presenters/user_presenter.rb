@@ -2,6 +2,10 @@
 module Presenters
   module UserPresenter
 
+    def rails_admin_edit_user_path
+      RailsAdmin::Engine.routes.url_helpers.edit_path('User', self.id)
+    end
+
     def role_enum
       User::ROLES.map{ |role| [ role[1],role[0] ] }
     end
@@ -18,6 +22,7 @@ module Presenters
     def next_service_link
       rails_admin_edit_link( next_service ) if next_service
     end
+
 
     def name
       return full_name if full_name.present?
