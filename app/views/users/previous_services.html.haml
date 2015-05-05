@@ -60,7 +60,7 @@
                 .text
                   - if service.conekta_payment_url
                     %div
-                      = link_to 'Cobro', conekta_payment_url
+                      = link_to 'Cobro', service.conekta_payment_url
                   %div
                     = link_to service.rails_admin_edit_path, target: '_blank' do
                       Editar

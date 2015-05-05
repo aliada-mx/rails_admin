@@ -1,5 +1,3 @@
-
-
 namespace :db do
   desc "Associate payments services"
   task :associate_payments_services => :environment do
