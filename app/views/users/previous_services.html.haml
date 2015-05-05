@@ -54,16 +54,17 @@
 
                 = hidden_field_tag :service_id, service.id
 
-            %td
-              .admin-info
-                %span.icon-help-with-circle
-                .text
-                  - if service.conekta_payment_url
+            - if current_user.admin?
+              %td
+                .admin-info
+                  %span.icon-help-with-circle
+                  .text
+                    - if service.conekta_payment_url
+                      %div
+                        = link_to 'Cobro', service.conekta_payment_url
                     %div
-                      = link_to 'Cobro', service.conekta_payment_url
-                  %div
-                    = link_to service.rails_admin_edit_path, target: '_blank' do
-                      Editar
+                      = link_to service.rails_admin_edit_path, target: '_blank' do
+                        Editar
 
 = append :javascript do
   = javascript_include_tag 'previous_services'
