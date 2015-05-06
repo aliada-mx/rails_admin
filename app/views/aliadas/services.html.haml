@@ -11,7 +11,6 @@
         %div
           Duracion horas:
           %select{:name => :hour}
-            %option{:value => 'cancelado'} Cancelado
             - (3..10).each do |h|
               %option{:value => h}= h
           minutos:

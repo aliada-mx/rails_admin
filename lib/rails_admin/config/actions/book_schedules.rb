@@ -27,6 +27,9 @@ module RailsAdmin
 
             @objects.map do |schedule|
               schedule.status = 'booked'
+              schedule.service_id = nil
+              schedule.recurrence_id = nil
+              schedule.user_id = nil
               schedule.save!
             end
             flash[:success] = 'Se han reservado las horas de servicio'

@@ -2,6 +2,7 @@
 module Presenters
   module ServicePresenter
     include ActionView::Helpers::NumberHelper
+    include AliadaSupport::DatetimeSupport
 
     def status_enum
       Service::STATUSES
@@ -11,14 +12,16 @@ module Presenters
       Hash[*status_enum.flatten].to_h.invert[status]
     end
 
-    def tz_aware_datetime
-      if datetime
-        _datetime = datetime.in_time_zone(timezone)
-        if _datetime.dst?
-          _datetime -= 1.hour
-        end
-        _datetime
+    def status_for_history
+      if owed?
+        canceled? ? 'Cancelación tardía' : 'Adeudado' 
+      else
+        status_in_spanish
       end
+    end
+
+    def tz_aware_datetime
+      datetime.in_time_zone('Etc/GMT+6')
     end
 
     def name
@@ -183,6 +186,13 @@ module Presenters
 
     def score_value
       scores.last.try(:value).try(:to_i)
+    end
+
+    def conekta_payment_url
+      if payments.conekta_payments.any?
+        conekta_id = payments.conekta_payments.first.conekta_id
+        "https://admin.conekta.io/?ref=conekta-docs#charges.charge?id=#{ conekta_id }"
+      end
     end
   end
 end

@@ -122,15 +122,19 @@ aliada.services.initial.step_2_personal_info = function(aliada, ko){
     });
 
     google.maps.event.addListener(marker, 'mouseup', function(){
-      aliada.ko.latitude(marker.position.lat());
-      aliada.ko.longitude(marker.position.lng());
+	aliada.ko.latitude(marker.position.lat());
+	aliada.ko.longitude(marker.position.lng());
+	mixpanel.track("IS-Map Marker moved", {
+	    "lat": marker.position.lat(),  
+            "lng": marker.position.lng()
+	});
     });
 
     var update_map_center = function(latitude,longitude){
-      var center = new google.maps.LatLng(latitude, longitude);
+	var center = new google.maps.LatLng(latitude, longitude);
 
-      marker.setPosition(center);
-      map.panTo(center);
+	marker.setPosition(center);
+	map.panTo(center);
     }
 
     // Select on click

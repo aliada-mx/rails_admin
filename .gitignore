@@ -31,3 +31,6 @@ profiles/
 *.swo
 *.*~
 *~
+
+# rbenv ruby version
+.ruby-version

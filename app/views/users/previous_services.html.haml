@@ -10,44 +10,61 @@
           %th Fecha
           %th Duración 
           %th Aliada Asignada
-          %th Status 
+          %th Estado
           %th Costo 
           %th Calificación
+          - if current_user.admin?
+            %th Admin
       %tbody
-      - if @services.empty?
-        %tr
-          %td
-            %p.center
-              Aun no has recibido tu primer servicio :)
+        - if @services.empty?
+          %tr
+            %td
+              %p.center
+                Aun no has recibido tu primer servicio :)
 
-      - @services.each do |service|
-        %tr
-          %td
-            = l service.tz_aware_datetime, format: :short
-            - if current_user.admin?
-              = service.tz_aware_datetime.weekday
-          %td
-            - if service.paid?
-              = service.billed_hours
-            - else
-              = "#{ number_to_human service.estimated_hours } hrs estimadas"
-          %td
-            = "#{service.aliada.first_name} #{service.aliada.last_name}"
-          %td
-            = service.status_in_spanish
-          %td
-            = "$#{ service.cost }"
-
-          %td.rating{class: service.finished? || service.paid? ? '' : 'disabled' }
-            = form_tag score_service_users_path(@user, service), :id => "service_#{service.id}" do
-              - ((5..1).first).downto((5..1).last).each do |i|
-                - if service.score_value && service.score_value >= i
-                  = radio_button_tag :value, i, false, onclick: "submitRating(#{service.id}, #{i})", class: "checked"
+        - @services.each do |service|
+          %tr{class: service.owed? ? 'warning' : '', id: "service_#{service.id}"  }
+            %td
+              = l service.tz_aware_datetime, format: :short
+              - if current_user.admin?
+                = service.tz_aware_datetime.weekday
+            %td
+              - if service.paid?
+                = service.billed_hours
+              - else
+                - if service.finished?
+                  = "#{ number_to_human service.billable_hours } hrs trabajadas"
                 - else
-                  = radio_button_tag :value, i, false, onclick: "submitRating(#{service.id}, #{i})", class: "unchecked"
-                %span
+                  = "#{ number_to_human service.estimated_hours } hrs estimadas"
+            %td
+              = "#{service.aliada.first_name} #{service.aliada.last_name}"
+            %td{class: service.owed? ? 'warning' : ''  }
+              = service.status_for_history
+            %td
+              = "$#{ service.cost }"
 
-              = hidden_field_tag :service_id, service.id
+            %td.rating{class: service.finished? || service.paid? ? '' : 'disabled' }
+              = form_tag score_service_users_path(@user, service), :id => "service_#{service.id}" do
+                - ((5..1).first).downto((5..1).last).each do |i|
+                  - if service.score_value && service.score_value >= i
+                    = radio_button_tag :value, i, false, onclick: "submitRating(#{service.id}, #{i})", class: "checked"
+                  - else
+                    = radio_button_tag :value, i, false, onclick: "submitRating(#{service.id}, #{i})", class: "unchecked"
+                  %span
+
+                = hidden_field_tag :service_id, service.id
+
+            - if current_user.admin?
+              %td
+                .admin-info
+                  %span.icon-help-with-circle
+                  .text
+                    - if service.conekta_payment_url
+                      %div
+                        = link_to 'Cobro', service.conekta_payment_url
+                    %div
+                      = link_to service.rails_admin_edit_path, target: '_blank' do
+                        Editar
 
 = append :javascript do
   = javascript_include_tag 'previous_services'

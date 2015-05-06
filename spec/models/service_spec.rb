@@ -24,6 +24,7 @@ feature 'Service' do
                          service_type: one_time_service,
                          datetime: starting_datetime + 1.day,
                          estimated_hours: 3) }
+
   before do
     Timecop.freeze(starting_datetime)
     allow_any_instance_of(Service).to receive(:timezone).and_return(timezone)
@@ -59,7 +60,7 @@ feature 'Service' do
 
     it 'allows it to mark recurrent service schedules´ as booked', recurrent: true do
       available_schedules = Schedule.for_booking(zone, starting_datetime_to_book_services).available
-      expect(available_schedules.count).to be 20
+      expect(available_schedules.count).to be 16
       expect(Schedule.booked.count).to be 0
 
       service.service_type = recurrent_service
@@ -67,8 +68,8 @@ feature 'Service' do
 
       service.book_an_aliada
 
-      expect(Schedule.booked.count).to be 15
-      expect(Schedule.padding.count).to be 5
+      expect(Schedule.booked.count).to be 12
+      expect(Schedule.padding.count).to be 4
       expect(available_schedules.count).to be 0
     end
   end
@@ -245,6 +246,33 @@ feature 'Service' do
 
       expect(service.recurrence.hour).to be 7
       expect(service.recurrence.weekday).to eql 'friday'
+    end
+  end
+
+  describe 'cancel' do
+    let!(:schedule){ create(:schedule, service: service,
+                                       status: 'booked',
+                                       datetime: starting_datetime)}
+
+    it 'cancels the service out of time' do
+      service.cancel
+
+      expect( service ).to be_canceled_out_of_time
+    end
+
+    it 'cancels the service in time' do
+      Timecop.travel(starting_datetime - 1.hour)
+      service.cancel
+
+      expect( service ).to be_canceled_in_time
+    end
+
+    it 'enables the schedules' do
+      service.cancel
+
+      schedule.reload
+      expect(schedule.service_id).to be_nil
+      expect(schedule).to be_available
     end
   end
 end

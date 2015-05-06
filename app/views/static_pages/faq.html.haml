@@ -61,7 +61,10 @@
       %h4 Servicios que ofrecen las aliadas
       .preguntas
         %p.pregunta ¿Qué está incluido en el servicio?
-        %p Nuestros servicios principales son limpieza general (barrer, trapear, sacudir, etc.), lavado y planchado de ropa. El detalle de los servicios incluidos se puede consultar en nuestro checklist de limpieza.
+        %p 
+          Nuestros servicios principales son limpieza general (barrer, trapear, sacudir, etc.), lavado y planchado de ropa. El detalle de los servicios incluidos se puede consultar en 
+          %span.underline
+            #{ link_to 'nuestro checklist de limpieza.', 'https://s3-us-west-1.amazonaws.com/aliada-cdn/checklist-de-limpieza-aliada.pdf' }
       .preguntas
         %p.pregunta ¿Tienen servicio de planta?
         %p Por el momento las aliadas sólo ofrecen servicios por hora.

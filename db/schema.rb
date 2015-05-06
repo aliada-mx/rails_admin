@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150424171813) do
+ActiveRecord::Schema.define(version: 20150501190637) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -117,16 +117,15 @@ ActiveRecord::Schema.define(version: 20150424171813) do
 
   create_table "debts", force: true do |t|
     t.integer  "user_id"
-    t.datetime "created_at",                                         null: false
-    t.datetime "updated_at",                                         null: false
-    t.decimal  "amount",                     precision: 8, scale: 4
-    t.string   "status"
-    t.integer  "payeable_id"
-    t.string   "payeable_type"
+    t.datetime "created_at",                                           null: false
+    t.datetime "updated_at",                                           null: false
+    t.decimal  "amount",                       precision: 8, scale: 4
+    t.string   "category"
     t.integer  "payment_provider_choice_id"
+    t.integer  "service_id"
+    t.string   "payment_provider_choice_type"
   end
 
-  add_index "debts", ["payeable_id", "payeable_type"], name: "index_debts_on_payeable_id_and_payeable_type", using: :btree
   add_index "debts", ["user_id"], name: "index_debts_on_user_id", using: :btree
 
   create_table "documents", force: true do |t|
@@ -225,6 +224,7 @@ ActiveRecord::Schema.define(version: 20150424171813) do
     t.string   "payment_provider_type"
     t.integer  "payeable_id"
     t.string   "payeable_type"
+    t.integer  "service_id"
   end
 
   add_index "payments", ["payeable_id", "payeable_type"], name: "index_payments_on_payeable_id_and_payeable_type", using: :btree
@@ -379,7 +379,7 @@ ActiveRecord::Schema.define(version: 20150424171813) do
     t.string   "first_name"
     t.string   "last_name"
     t.string   "conekta_customer_id"
-    t.decimal  "balance",                precision: 7, scale: 2, default: 0.0
+    t.decimal  "points",                 precision: 7, scale: 2, default: 0.0
     t.string   "authentication_token"
     t.string   "md5_password"
     t.string   "full_name"

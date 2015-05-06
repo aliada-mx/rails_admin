@@ -20,7 +20,7 @@ class ApplicationMailer < ActionMailer::Base
     headers['X-SMTPAPI'] = header.to_json
 
 
-    return if Rails.env == 'development' || Rails.env == 'test'
+    # return if Rails.env == 'development' || Rails.env == 'test'
 
     mail(subject: subject ,  to:[ to ])
 

@@ -34,12 +34,9 @@ class Service < ActiveRecord::Base
   has_many :extras, through: :extra_services
   has_many :schedules, ->{ order(:datetime ) }
   has_many :tickets, as: :relevant_object
-
   has_many :payments, as: :payeable
-  has_one :debts, as: :payeable
-
   has_many :scores, -> { order(:updated_at) }
-
+  has_many :debts
 
   # Scopes
   scope :in_the_past, -> { where("datetime < ?", Time.zone.now) }
@@ -49,7 +46,7 @@ class Service < ActiveRecord::Base
   scope :not_ids, ->(ids) { where("services.id NOT IN ( ? )", ids) }
   scope :on_day, -> (datetime) { where('datetime >= ?', datetime.beginning_of_day).where('datetime <= ?', datetime.end_of_day) } 
   scope :canceled, -> { where("services.status = 'canceled_in_time' OR services.status = 'canceled_out_of_time'", 'canceled') }
-  scope :not_canceled, -> { where("services.status != 'canceled_in_time' AND services.status != 'canceled_out_of_time'") }
+  scope :not_canceled, -> { where("services.status != 'canceled_in_time' AND services.status != 'canceled_out_of_time' AND services.status != 'canceled'") }
   scope :ordered_by_created_at, -> { order(:created_at) }
   scope :ordered_by_datetime, -> { order(:datetime) }
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
@@ -61,6 +58,10 @@ class Service < ActiveRecord::Base
   scope :one_timers, -> { where(service_type: ServiceType.one_time ) }
   scope :recurrent, -> { where(service_type: ServiceType.recurrent ) }
   scope :con_horas_reportadas, -> { where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL') }
+  scope :cobro_fallido, -> { joins(:tickets).where('tickets.relevant_object_type = ?','Service')
+                                            .where('tickets.relevant_object_id = services.id') 
+                                            .where('services.status != ?','paid') 
+                                            .where('tickets.category = ?','conekta_charge_failure') }
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
@@ -83,11 +84,8 @@ class Service < ActiveRecord::Base
     transition ['finished', 'aliada_assigned' ] => 'paid', :on => :pay
     transition ['created', 'aliada_assigned'] => 'finished', :on => :finish
     
-    #It checks whether the cancelation is in time or not
-    event :cancel do
-      transition all - ['finished', 'paid'] => 'canceled_in_time', :unless => :in_less_than_24_hours
-      transition all - ['finished', 'paid'] => 'canceled_out_of_time'
-    end
+    transition (all - ['finished', 'paid']) => 'canceled_in_time', :on => :cancel_in_time
+    transition (all - ['finished', 'paid']) => 'canceled_out_of_time', :on => :cancel_out_of_time
     
     after_transition :on => :mark_as_missing, :do => :create_aliada_missing_ticket
 
@@ -98,7 +96,7 @@ class Service < ActiveRecord::Base
       service.save!
     end
 
-    before_transition on: :cancel do |service, transition|
+    before_transition on: [ :cancel_in_time, :cancel_out_of_time ] do |service, transition|
       service.enable_schedules!
     end
 
@@ -156,13 +154,28 @@ class Service < ActiveRecord::Base
   end
   
   def canceled?
-  return (self.canceled_in_time?)||(self.canceled_out_of_time?)
+    return self.canceled_in_time? || self.canceled_out_of_time? || self.status == 'canceled'
+  end
+
+  def cancel
+    if should_charge_cancelation_fee
+      cancel_out_of_time
+    else
+      cancel_in_time
+    end
   end
   
   def cost
-    estimated_hours * service_type.price_per_hour
+    if finished?
+      amount_to_bill
+    elsif owed?
+      amount_owed
+    elsif paid?
+      billed_hours * service_type.price_per_hour
+    else
+      estimated_hours * service_type.price_per_hour
+    end
   end
-
 
   def in_the_past?
     self.datetime_was < Time.zone.now
@@ -273,7 +286,7 @@ class Service < ActiveRecord::Base
     if datetime && datetime > now
       in_24_hours = now + 24.hours
 
-      datetime < in_24_hours
+      datetime <= in_24_hours
     else
       false
     end
@@ -333,13 +346,14 @@ class Service < ActiveRecord::Base
   end
 
   def charge!
-    return if paid? && canceled? || amount_to_bill.zero?
+    return if paid? || canceled? || amount_to_bill.zero?
 
     ActiveRecord::Base.transaction do
 
       amount = amount_to_bill
       product = OpenStruct.new({amount: amount,
                                 description: 'Servicio aliada',
+                                category: 'service',
                                 id: id})
       
       payment = user.charge!(product, self)
@@ -357,10 +371,9 @@ class Service < ActiveRecord::Base
   def charge_cancelation_fee!
     return if self.cancelation_fee_charged
 
-    amount = Setting.too_late_cancelation_fee
-
-    cancelation_fee = OpenStruct.new({amount: amount,
-                                      description: "Cancelación tardía del servicio del #{friendly_datetime} en aliada.mx",
+    cancelation_fee = OpenStruct.new({amount: Setting.too_late_cancelation_fee,
+                                      description: "Cancelación tardía del servicio del #{friendly_datetime} con #{aliada.name}",
+                                      category: 'cancelation_fee',
                                       id: self.id})
 
     payment = user.charge!(cancelation_fee , self)
@@ -374,6 +387,7 @@ class Service < ActiveRecord::Base
   def self.create_new!(service_params, user)
     ActiveRecord::Base.transaction do
       service_params[:datetime] = Service.parse_date_time(service_params)
+      chosen_aliada_id = service_params[:aliada_id].to_i
 
       address = user.default_address
 
@@ -385,7 +399,7 @@ class Service < ActiveRecord::Base
 
       service.save!
 
-      service.book_an_aliada
+      service.book_an_aliada(aliada_id: chosen_aliada_id)
       service.ensure_updated_recurrence!
 
       user.send_confirmation_email(service)
@@ -493,7 +507,7 @@ class Service < ActiveRecord::Base
     ActiveRecord::Base.transaction do
       cancel
 
-      if in_less_than_24_hours
+      if should_charge_cancelation_fee
         charge_cancelation_fee!
       end
     end
@@ -578,7 +592,13 @@ class Service < ActiveRecord::Base
   end
 
   def owed?
-    Debt.where(payeable_id: self.id).present?
+    debts.any? { |debt| !debt.paid? }
+  end
+
+  def amount_owed
+    debts.inject(0) do |amount, debt|
+      amount += debt.amount unless debt.paid?
+    end
   end
 
   attr_accessor :rails_admin_billable_hours_widget
@@ -660,7 +680,7 @@ class Service < ActiveRecord::Base
       field :recurrence
       field :created_at
 
-      scopes ['mañana', :todos, :confirmados, :sin_confirmar, :con_horas_reportadas]
+      scopes ['mañana', :todos, :confirmados, :sin_confirmar, :con_horas_reportadas, :cobro_fallido]
     end
 
     edit do

@@ -18,7 +18,6 @@ class PaymentProviderChoice < ActiveRecord::Base
     payment_provider
   end
   
-  
   rails_admin do
     visible false
   end

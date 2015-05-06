@@ -4,35 +4,44 @@ class Payment < ActiveRecord::Base
   belongs_to :payment_provider, polymorphic: true
   belongs_to :payeable, polymorphic: true
   # We limit the polymorphism to valid payment providers classes
-  validates :payment_provider_type, inclusion: {in: Setting.payment_providers.map{ |pairs| pairs[1] } }
+  validates :payment_provider_type, inclusion: { in: Setting.payment_providers.map{ |pairs| pairs[1] } }
   validates_presence_of :user
+
+  scope :conekta_payments, -> { where(payment_provider_type: 'ConektaCard') }
 
   # State machine
   state_machine :status, :initial => 'unpaid' do
     transition 'unpaid' => 'paid', :on => :pay
   end
 
-  def self.create_from_conekta_charge(charge, user, payment_provider, payeable_object)
+  def self.create_from_conekta_charge(charge, user, payment_provider, payable_object)
     charge_hash = eval(charge.inspect)
     # Save the whole conekta response for future reference
 
     Payment.create!(amount: charge_hash['amount'] / 100.0, 
                     user: user,
-                    payeable: payeable_object,
+                    payeable: payable_object,
                     payment_provider: payment_provider,
                     api_raw_response: charge_hash.to_json)
   end
 
-  def self.create_from_credit_payment(amount, user)
+  def self.create_from_credit_payment(amount, user, payable_object)
     Payment.create!(amount: amount, 
                     user: user,
-                   # payeable: payeable_object,
-                    payment_provider_type: 'User',
-                    payment_provider_id: user.id)
+                    payeable: payable_object,
+                    payment_provider: user)
   end
 
   def provider
     payment_provider
+  end
+
+  def parsed_raw_response
+    JSON.parse(api_raw_response)
+  end
+
+  def conekta_id
+    parsed_raw_response['id']
   end
 
   rails_admin do
