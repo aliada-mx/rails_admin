@@ -15,7 +15,7 @@
           .recruitment-intro__content
             %h1 ¡Únete a Aliada y mejora tu vida!
             %p Obten más y mejores trabajos como profesional de la limpieza con Aliada.
-            %a{href: '#', class: 'button button--purple button--large'} ¡Aplica Ahora!
+            = link_to '¡Aplica Ahora!', :recruitment_signup, class: 'button button--purple button--large'
 
 .recruitment-benefits
   .container
@@ -92,7 +92,7 @@
         = image_tag "green-lady-icon.png"
         %h2 ¿Lista para unirte a la familia Aliada?
         %p Para empezar haz click en el siguiente boton.
-        %a{href: '#', class: 'button button--purple button--large'} ¡Aplica Ahora!
+        = link_to '¡Aplica Ahora!', :recruitment_signup, class: 'button button--purple button--large'
         %span o llámanos al (55) 4170 8032
 
 .press-highlights

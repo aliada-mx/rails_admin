@@ -2,36 +2,39 @@
   .container
     .main-footer__top
       .row
-        .col-lg-4.main-footer__top-section
-          = link_to image_tag('logo-white.png'), '/'
-          .call-us
-            .call-us__phone
-              = image_tag 'phone-white-sm.png'
-              %h3 (55) 4170 8032
-            .call-us__hours
-              %p
-                Horario de atención:
-                %br/
-                Lunes a Viernes de 10:00 a 18:00 hrs.
-        .col-lg-4.main-footer__top-section
-          .main-footer__links-list
-            %span Aliada
-            %ul
-              %li= link_to '¿Cómo funciona?', :how_it_works
-              %li= link_to 'Precios', :prices
-              %li= link_to 'Preguntas frecuentes', :faq
-              %li= link_to 'Blog', 'https://aliadamx.wordpress.com/', target: '_blank'
-        .col-lg-4.main-footer__top-section
-          .main-footer__recruitment-cta
-            %h2 ¿Eres profesional de la limpieza?
-            %p Envia tu solicitud para unirte a Aliada.
-            = link_to 'Únete a Aliada', :recruitment, class: 'button button--purple button--medium'
+        .col-lg-4.col-md-4.col-sm-4
+          .main-footer__top-section
+            = link_to image_tag('logo-white.png'), '/'
+            .call-us
+              .call-us__phone
+                = image_tag 'phone-white-sm.png'
+                %h3 (55) 4170 8032
+              .call-us__hours
+                %p
+                  Horario de atención:
+                  %br/
+                  Lunes a Viernes de 10:00 a 18:00 hrs.
+        .col-lg-4.col-md-4.col-sm-4
+          .main-footer__top-section
+            .main-footer__links-list
+              %span Aliada
+              %ul
+                %li= link_to '¿Cómo funciona?', :how_it_works
+                %li= link_to 'Precios', :prices
+                %li= link_to 'Preguntas frecuentes', :faq
+                %li= link_to 'Blog', 'https://aliadamx.wordpress.com/', target: '_blank'
+        .col-lg-4.col-md-4.col-sm-4
+          .main-footer__top-section
+            .main-footer__recruitment-cta
+              %h2 ¿Eres profesional de la limpieza?
+              %p Envia tu solicitud para unirte a Aliada.
+              = link_to 'Únete a Aliada', :recruitment, class: 'button button--purple button--medium'
     .main-footer__bottom
       .main-footer__legal
         .main-footer__legal__links
           = link_to 'Términos y condiciones', :terms
           = link_to 'Política de privacidad', :privacy
-        %span 2015 Aliada. Todos los derechos reservados.
+        %span= "#{Time.now.year} Aliada. Todos los derechos reservados."
       .main-footer__social
         = link_to image_tag('social/facebook.png'), 'https://facebook.com/aliadamx', target: '_blank'
         = link_to image_tag('social/twitter.png'), 'https://twitter.com/aliadamx', target: '_blank'
