@@ -17,21 +17,93 @@
             %p Obten más y mejores trabajos como profesional de la limpieza con Aliada.
             %a{href: '#', class: 'button button--purple button--large'} ¡Aplica Ahora!
 
-.recruitment-features
+.recruitment-benefits
   .container
     .row
       .col-lg-12
-        %h1 ¿Cómo te podemos ayudar?
+        .recruitment-benefits__header
+          %h2 ¿Cómo te podemos ayudar?
     .row
-      .col-lg-4
-        %h3 Flexibilidad
-        %p Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia.
-      .col-lg-4
-        %h3 Flexibilidad
-        %p Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia.
-      .col-lg-4
-        %h3 Flexibilidad
-        %p Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia.
+      .col-lg-4.col-md-4.col-sm-4
+        .recruitment-benefits__item
+          .recruitment-benefits__item__icon
+            = image_tag 'recruitment/benefit-calendar.png'
+          %h3 Flexibilidad
+          %p Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia.
+      .col-lg-4.col-md-4.col-sm-4
+        .recruitment-benefits__item
+          .recruitment-benefits__item__icon
+            = image_tag 'recruitment/benefit-money.png'
+          %h3 Gran Paga
+          %p Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia.
+      .col-lg-4.col-md-4.col-sm-4
+        .recruitment-benefits__item
+          .recruitment-benefits__item__icon
+            = image_tag 'recruitment/benefit-near-you.png'
+          %h3 Cerca de tu casa
+          %p Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia.
 
+.recruitment-mission
+  .container
+    .recruitment-mission__header
+      .row
+        .col-lg-12
+          %h2 En Aliada tú eres lo más importante
+    .recruitment-mission__bullets
+      .row
+        .col-lg-4.col-lg-offset-2.col-md-4.col-md-offset-2.col-sm-5.col-sm-offset-1
+          %ul.recruitment-mission__bullets__list
+            %li
+              .recruitment-mission__bullets__checkmark
+                = image_tag "recruitment/pink-circled-check.png"
+              %p Tú decides las zonas donde trabajas
+            %li
+              .recruitment-mission__bullets__checkmark
+                = image_tag "recruitment/pink-circled-check.png"
+              %p Tú decides el horario de trabajo
+            %li
+              .recruitment-mission__bullets__checkmark
+                = image_tag "recruitment/pink-circled-check.png"
+              %p Tú decides con que clientes trabajar
+        .col-lg-4.col-md-4.col-sm-5
+          %ul.recruitment-mission__bullets__list
+            %li
+              .recruitment-mission__bullets__checkmark
+                = image_tag "recruitment/pink-circled-check.png"
+              %p Tú decides cuánto quieres ganar
+            %li
+              .recruitment-mission__bullets__checkmark
+                = image_tag "recruitment/pink-circled-check.png"
+              %p Tú recibes el pago de tus servicios cada semana
+            %li
+              .recruitment-mission__bullets__checkmark
+                = image_tag "recruitment/pink-circled-check.png"
+              %p Formaras parte del mejor servicio de limpieza del pais
+    .recruitment-mission__video
+      .row
+        .col-lg-12
+          .recruitment-mission__video__holder
+            %iframe{src: "https://www.youtube.com/embed/jYxHFo1dyvw", frameborder: "0", allowfullscreen: true}
+
+.recruitment-footer-cta
+  .container
+    .row
+      .col-lg-12
+        = image_tag "green-lady-icon.png"
+        %h2 ¿Lista para unirte a la familia Aliada?
+        %p Para empezar haz click en el siguiente boton.
+        %a{href: '#', class: 'button button--purple button--large'} ¡Aplica Ahora!
+        %span o llámanos al (55) 4170 8032
+
+.press-highlights
+  .container
+    .row
+      .col-lg-12
+        = image_tag 'press-logos/excelsior.png', class: 'press-highlights__item'
+        = image_tag 'press-logos/milenio.png', class: 'press-highlights__item'
+        = image_tag 'press-logos/cnn-expansion.png', class: 'press-highlights__item'
+        = image_tag 'press-logos/reforma.png', class: 'press-highlights__item'
+        = image_tag 'press-logos/chilango.png', class: 'press-highlights__item'
+        = image_tag 'press-logos/ibero-90.9.png', class: 'press-highlights__item'
 
 = render partial: "common/footer"

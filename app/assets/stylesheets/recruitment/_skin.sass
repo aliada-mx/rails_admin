@@ -1,15 +1,26 @@
 @import compass
 @import common/variables
 
+.recruitment-section-title
+  font-size: 28px
+  color: #4A4A4A
+
+.recruitment-section-paragraph
+  font:
+    size: 16px
+    weight: 100
+  color: #8E8E8E
+
 .recruitment-top
-  background: $yellow
-  // +background-image(linear-gradient(120deg, #2ac363, #cd8c14, #9c4cc2))
+  +background-image(linear-gradient(120deg, $yellow, tint($yellow, 10%)))
 
 .recruitment-header
+
   &--inner
     border-bottom: 1px solid tint($yellow, 15%)
 
 .recruitment-intro
+
   &__content
     h1
       color: $white
@@ -31,3 +42,60 @@
     +max-screen($screen-sm-min)
       text-align: center
       border-bottom: 1px solid tint($yellow, 15%)
+
+.recruitment-benefits
+
+  &__header
+    text-align: center
+
+    h2
+      @extend .recruitment-section-title
+
+  &__item
+    text-align: center
+
+    h3
+      color: $green
+      font-size: 22px
+
+    p
+      @extend .recruitment-section-paragraph
+
+.recruitment-mission
+  background: #F0EDE9
+
+  &__header
+    text-align: center
+    +max-screen($screen-sm-min)
+      text-align: left
+
+    h2
+      @extend .recruitment-section-title
+
+  &__bullets
+
+    &__list p
+      font:
+        size: 16px
+        weight: 100
+
+  &__video
+
+    iframe
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .1)
+
+.recruitment-footer-cta
+  text-align: center
+
+  h2
+    @extend .recruitment-section-title
+
+  p
+    @extend .recruitment-section-paragraph
+
+  span
+    text-align: center
+    font-weight: 100
+
+.press-highlights
+  text-align: center
