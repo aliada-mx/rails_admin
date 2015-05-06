@@ -21,6 +21,9 @@ class StaticPagesController < ApplicationController
   def recruitment
   end
 
+  def recruitment_signup
+  end
+
   def pattern_dictionary
   end
 end

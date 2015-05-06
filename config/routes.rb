@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   get 'privacidad', to: 'static_pages#privacy', as: :privacy
   get 'patrones', to: 'static_pages#pattern_dictionary'
   get 'reclutamiento', to: 'static_pages#recruitment', as: :recruitment
+  get 'reclutamiento/unete', to: 'static_pages#recruitment_signup', as: :recruitment_signup
 
   devise_for :users, path: '', path_names: {
     sign_in: :login,
