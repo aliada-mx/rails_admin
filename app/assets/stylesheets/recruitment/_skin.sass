@@ -1,0 +1,33 @@
+@import compass
+@import common/variables
+
+.recruitment-top
+  background: $yellow
+  // +background-image(linear-gradient(120deg, #2ac363, #cd8c14, #9c4cc2))
+
+.recruitment-header
+  &--inner
+    border-bottom: 1px solid tint($yellow, 15%)
+
+.recruitment-intro
+  &__content
+    h1
+      color: $white
+      font:
+        size: 52px
+        weight: 800
+      line-height: 65px
+
+    p
+      font:
+        size: 18px
+        weight: 500
+      color: $white
+
+    +max-screen($screen-sm-min)
+      text-align: center
+
+  &__lady
+    +max-screen($screen-sm-min)
+      text-align: center
+      border-bottom: 1px solid tint($yellow, 15%)

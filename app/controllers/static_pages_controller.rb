@@ -18,6 +18,9 @@ class StaticPagesController < ApplicationController
   def privacy
   end
 
+  def recruitment
+  end
+
   def pattern_dictionary
   end
 end

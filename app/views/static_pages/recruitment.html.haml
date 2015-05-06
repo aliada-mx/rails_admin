@@ -1,0 +1,37 @@
+.recruitment-top
+  %header.recruitment-header
+    .container
+      .row
+        .col-lg-12
+          .recruitment-header--inner
+            .brand
+              = link_to image_tag('logo-shadowed.png', class: 'logo'), '/'
+  .recruitment-intro
+    .container
+      .row
+        .recruitment-intro__lady
+          = image_tag 'recruitment/aliada-lady.png'
+        .col-lg-6.col-md-6.col-sm-7
+          .recruitment-intro__content
+            %h1 ¡Únete a Aliada y mejora tu vida!
+            %p Obten más y mejores trabajos como profesional de la limpieza con Aliada.
+            %a{href: '#', class: 'button button--purple button--large'} ¡Aplica Ahora!
+
+.recruitment-features
+  .container
+    .row
+      .col-lg-12
+        %h1 ¿Cómo te podemos ayudar?
+    .row
+      .col-lg-4
+        %h3 Flexibilidad
+        %p Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia.
+      .col-lg-4
+        %h3 Flexibilidad
+        %p Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia.
+      .col-lg-4
+        %h3 Flexibilidad
+        %p Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia.
+
+
+= render partial: "common/footer"
