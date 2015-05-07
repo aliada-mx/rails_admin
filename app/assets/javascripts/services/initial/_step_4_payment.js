@@ -13,18 +13,21 @@ aliada.services.initial.step_4_payment = function(aliada, ko){
           switch(response.status){
             case 'success':
               resolve(response);
+	      mixpanel.track('IS-Service Confirmed',{"response": response});
+	      facebookPixelTrackConversion();
               break;
 
             case 'error':
               reject(new ServiceCreationFailed(response));
+	      mixpanel.track('IS-Service Creation Failed',{"response": response});
               break;
           }
         },
         error: function(response){
           reject(new PlatformError(response));
+	  mixpanel.track('IS-Platform Error',{"response": response});
         }
       });
-
     });
 
   }

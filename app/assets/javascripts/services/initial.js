@@ -11,6 +11,7 @@
 //= require services/initial/_step_4_payment
 //= require services/initial/_step_5_success
 //= require services/initial/_live_feedback
+//= require services/initial/_fb_tracking
 
 $(document).ready(function() {
   aliada.services.initial.$form = $('#new_service');
