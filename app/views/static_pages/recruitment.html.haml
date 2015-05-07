@@ -9,13 +9,13 @@
   .recruitment-intro
     .container
       .row
-        .recruitment-intro__lady
-          = image_tag 'recruitment/aliada-lady.png'
         .col-lg-6.col-md-6.col-sm-7
           .recruitment-intro__content
             %h1 ¡Únete a Aliada y mejora tu vida!
             %p Obten más y mejores trabajos como profesional de la limpieza con Aliada.
             = link_to '¡Aplica Ahora!', :recruitment_signup, class: 'button button--purple button--large'
+        .recruitment-intro__lady
+          = image_tag 'recruitment/aliada-lady.png'
 
 .recruitment-benefits
   .container
@@ -100,10 +100,15 @@
     .row
       .col-lg-12
         = image_tag 'press-logos/excelsior.png', class: 'press-highlights__item'
-        = image_tag 'press-logos/milenio.png', class: 'press-highlights__item'
-        = image_tag 'press-logos/cnn-expansion.png', class: 'press-highlights__item'
-        = image_tag 'press-logos/reforma.png', class: 'press-highlights__item'
-        = image_tag 'press-logos/chilango.png', class: 'press-highlights__item'
-        = image_tag 'press-logos/ibero-90.9.png', class: 'press-highlights__item'
+        = link_to 'http://www.milenio.com/tendencias/Aliada-mx-plataforma_empleadas_domesticas-start_up_mexicano-Rodolfo_Corcuera_0_446355612.html', class: 'press-highlights__item', target: '_blank' do
+          = image_tag 'press-logos/milenio.png'
+        = link_to 'http://mexico.cnn.com/tecnologia/2014/11/26/contrata-servicios-de-limpieza-del-hogar-con-un-solo-clic', class: 'press-highlights__item', target: '_blank' do
+          = image_tag 'press-logos/cnn-expansion.png'
+        = link_to 'http://www.reforma.com/aplicacioneslibre/preacceso/articulo/default.aspx?id=393875&v=2&urlredirect=http://www.reforma.com/aplicaciones/articulo/default.aspx?id=393875&v=2', class: 'press-highlights__item', target: '_blank' do
+          = image_tag 'press-logos/reforma.png'
+        = link_to 'http://www.chilango.com/general/nota/2014/11/19/aliadas-mx-le-quita-el-polvo-a-tu-casa', class: 'press-highlights__item', target: '_blank' do
+          = image_tag 'press-logos/chilango.png'
+        = link_to 'http://www.mixcloud.com/Zigma090/zigma-opini%C3%B3n-p%C3%BAblica-25-de-noviembre-de-2014/', class: 'press-highlights__item', target: '_blank' do
+          = image_tag 'press-logos/ibero-90.9.png'
 
 = render partial: "common/footer"

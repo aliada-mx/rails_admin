@@ -1,5 +1,11 @@
 @import common/media-queries
 
+// Recruitment Landing
+.recruitment-form
+  background: $white
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .08)
+  border-radius: 3px
+
 .recruitment-header
   &--inner
     padding: 25px 0
@@ -31,19 +37,17 @@
       max-width: 100%
 
     +max-screen($screen-sm-min)
-      width: 60%
       margin: 0 auto
       position: relative
       right: auto
       padding:
-        top: 30px
         right: 30px
         left: 30px
 
 .recruitment-benefits
   padding:
     top: 60px
-    bottom: 30px
+    bottom: 50px
 
   &__header
     margin-bottom: 60px
@@ -113,3 +117,27 @@
   &__item
     display: inline-block
     margin: 10px 15px
+
+// Recruitment Signup
+.recruitment-signup
+  padding: 60px 0
+
+  &__header
+    margin-bottom: 30px
+    +clearfix
+
+    .icon
+      float: left
+
+    .desc
+      padding-left: 70px
+
+      h1
+        margin-bottom: 10px
+
+    +max-screen($screen-sm-min)
+      .icon
+        float: none
+
+      .desc
+        padding-left: 0
