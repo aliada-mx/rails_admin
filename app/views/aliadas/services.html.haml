@@ -11,7 +11,7 @@
         %div
           Duracion horas:
           %select{:name => :hour}
-            - (3..10).each do |h|
+            - (0..10).each do |h|
               %option{:value => h}= h
           minutos:
           %select{:name => :min}

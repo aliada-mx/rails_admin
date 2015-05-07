@@ -44,12 +44,12 @@
               = "$#{ service.cost }"
 
             %td.rating{class: service.finished? || service.paid? ? '' : 'disabled' }
-              = form_tag score_service_users_path(@user, service), :id => "service_#{service.id}" do
+              = form_tag score_service_users_path(@user, service), class: "score_service" do
                 - ((5..1).first).downto((5..1).last).each do |i|
                   - if service.score_value && service.score_value >= i
-                    = radio_button_tag :value, i, false, onclick: "submitRating(#{service.id}, #{i})", class: "checked"
+                    = radio_button_tag :value, i, false, class: "checked", data: {service_id: service.id}
                   - else
-                    = radio_button_tag :value, i, false, onclick: "submitRating(#{service.id}, #{i})", class: "unchecked"
+                    = radio_button_tag :value, i, false, class: "unchecked", data: {service_id: service.id}
                   %span
 
                 = hidden_field_tag :service_id, service.id
