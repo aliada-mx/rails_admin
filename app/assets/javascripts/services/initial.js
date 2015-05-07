@@ -23,12 +23,12 @@ $(document).ready(function() {
     form_action: ko.observable(create_initial_service_path)
   };
 
-  aliada.ko.is_valid_step = ko.computed(function(){
+  aliada.ko.is_valid_step = ko.computed(function() {
     // Register as a dependency
     // so it runs everytime a step changes
     step = aliada.ko.current_step();
 
-    if(step == 4){
+    if (step == 4) {
       return ko.validatedObservable(aliada.ko).isValid() && aliada.ko.tos_accepted();
     }
 
@@ -42,20 +42,20 @@ $(document).ready(function() {
   aliada.services.initial.step_4_payment(aliada, ko);
   aliada.services.initial.step_5_success(aliada, ko);
 
-  aliada.ko.next_button_text = ko.computed(function(){
-    switch(aliada.ko.current_step()){
+  aliada.ko.next_button_text = ko.computed(function() {
+    switch (aliada.ko.current_step()) {
       case 1:
         return 'Siguiente'
       case 2:
         return aliada.ko.is_valid_step() ? 'Siguiente' : 'Confirma tu dirección'
       case 3:
-        if ( aliada.ko.is_valid_step()  ){
+        if (aliada.ko.is_valid_step()) {
           return 'Siguiente'
-        }else{
+        } else {
           string = 'Escoge'
-          if(aliada.ko.date.is_default()){
+          if (aliada.ko.date.is_default()) {
             string += ' día';
-          }else if(aliada.ko.time.is_default()){
+          } else if (aliada.ko.time.is_default()) {
             string += ' hora';
           }
           return string;
@@ -67,9 +67,9 @@ $(document).ready(function() {
     }
   });
 
-  aliada.ko.are_fields_editable = function(fields){
+  aliada.ko.are_fields_editable = function(fields) {
     var current_step = aliada.ko.current_step();
-    switch(fields){
+    switch (fields) {
       case 'hours':
         return current_step > 1 && current_step < 5;
       case "address":
@@ -92,75 +92,78 @@ $(document).ready(function() {
 
   // Activates knockout.js
   ko.applyBindings(aliada.ko);
-  
+
   // Handle next step
-  $('#next_button').on('click',function(e){
-      e.preventDefault();
-      var current_step = aliada.ko.current_step();
+  $('#next_button').on('click', function(e) {
+    e.preventDefault();
+    var current_step = aliada.ko.current_step();
 
-      // Only invalid user info stops the process on step 2
-      switch(current_step){
-        case 2:
-          if(!aliada.ko.is_valid_step()){
-            // Trigger ko validation to provide feedback of erronous fields
-            _.each(aliada.step_2_required_fields, function(element){
-              aliada.ko[element].valueHasMutated();
-            });
-            return;
-          };
-        case 3:
-          if(!aliada.ko.is_valid_step()){
-            return;
-          };
-          
-      }
-
-      switch(current_step ){
-        case 4:
-          aliada.services.initial.$form.submit();
+    // Only invalid user info stops the process on step 2
+    switch (current_step) {
+      case 2:
+        if (!aliada.ko.is_valid_step()) {
+          // Trigger ko validation to provide feedback of erronous fields
+          _.each(aliada.step_2_required_fields, function(element) {
+            aliada.ko[element].valueHasMutated();
+          });
           return;
-        case 5:
-          aliada.services.initial.$form.submit();
+        };
+      case 3:
+        if (!aliada.ko.is_valid_step()) {
           return;
-        default:
-          break;
-      }
-        
-      // Next if we are not on the last step
-      var next_step = current_step === 5 ? current_step : current_step + 1;
-       mixpanel.track("IS-Next Step Loaded", {
-	  "step": next_step
-      });
+        };
 
-      aliada.ko.current_step(next_step);
+    }
+
+    switch (current_step) {
+      case 4:
+        aliada.services.initial.$form.submit();
+        return;
+      case 5:
+        aliada.services.initial.$form.submit();
+        return;
+      default:
+        break;
+    }
+
+    // Next if we are not on the last step
+    var next_step = current_step === 5 ? current_step : current_step + 1;
+    mixpanel.track("IS-Next Step Loaded", {
+      "step": next_step
+    });
+
+    aliada.ko.current_step(next_step);
   });
 
   // Broadcast the entered a step event
-  aliada.ko.current_step.subscribe(function(new_step){
-    $.event.trigger({type: 'entering_step_'+new_step});
-  });
-    
-    //Mixpanel LOG DATE TIME changes
-    aliada.ko.time.subscribe(function(time){
-	mixpanel.track("IS-New Datetime Selected", {
-	    "hour": aliada.ko.time(),
-            "day": aliada.ko.date(),
-	    "service_type": aliada.ko.service_type().name
-	});
+  aliada.ko.current_step.subscribe(function(new_step) {
+    $.event.trigger({
+      type: 'entering_step_' + new_step
     });
+  });
 
-    
+  //Mixpanel LOG DATE TIME changes
+  aliada.ko.time.subscribe(function(time) {
+    mixpanel.track("IS-New Datetime Selected", {
+      "hour": aliada.ko.time(),
+      "day": aliada.ko.date(),
+      "service_type": aliada.ko.service_type().name
+    });
+  });
+
+
   // Broadcast the leaving a step event
-  aliada.ko.current_step.subscribe(function(current_step){
-    $.event.trigger({type: 'leaving_step_'+current_step});
+  aliada.ko.current_step.subscribe(function(current_step) {
+    $.event.trigger({
+      type: 'leaving_step_' + current_step
+    });
   }, aliada.ko, "beforeChange");
 
   aliada.services.initial.live_feedback(aliada.services.initial.$form)
 
   // When a user begins to type the validation error is gone
-  aliada.services.initial.$form.find('input').on('click', function(){
+  aliada.services.initial.$form.find('input').on('click', function() {
     $(this).removeClass('error');
   });
-  
-});
 
+});

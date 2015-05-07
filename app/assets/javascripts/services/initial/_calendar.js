@@ -10,8 +10,8 @@ aliada.services.initial.initialize_calendar_times = function() {
 
     // Set the date
     aliada.ko.date(dateProperties.strdate);
-    
-      
+
+
     // Broadcast the change so live_feedback can report it
     aliada.services.initial.$form.trigger('change');
 
@@ -49,7 +49,7 @@ aliada.services.initial.initialize_calendar_times = function() {
   };
 
   function update_calendar() {
-    return new Promise(function(resolve, reject){
+    return new Promise(function(resolve, reject) {
       var availability_options = {
         hours: aliada.ko.hours(),
         service_type_id: aliada.ko.service_type().id,
@@ -91,7 +91,7 @@ aliada.services.initial.initialize_calendar_times = function() {
     on_day_click: on_calendar_day_click
   });
 
-  function go_to_next_month(){
+  function go_to_next_month() {
     $('#next').click();
   };
 
@@ -99,9 +99,7 @@ aliada.services.initial.initialize_calendar_times = function() {
   // becase thats when we have a postal code to ask for the availability
   $(document).on('leaving_step_2', function() {
     if (_.isNumber(aliada.ko.postal_code_number())) {
-      update_calendar().then(function(calendar){
-        go_to_next_month()
-      });
+      update_calendar()
     }
   });
 
