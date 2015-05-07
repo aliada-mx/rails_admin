@@ -58,10 +58,8 @@ class Service < ActiveRecord::Base
   scope :one_timers, -> { where(service_type: ServiceType.one_time ) }
   scope :recurrent, -> { where(service_type: ServiceType.recurrent ) }
   scope :con_horas_reportadas, -> { where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL') }
-  scope :cobro_fallido, -> { joins(:tickets).where('tickets.relevant_object_type = ?','Service')
-                                            .where('tickets.relevant_object_id = services.id') 
-                                            .where('services.status != ?','paid') 
-                                            .where('tickets.category = ?','conekta_charge_failure') }
+  scope :cobro_fallido, -> { joins(:debts).where('debts.service_id = services.id')
+                                          .where('services.status != ?','paid') }
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
@@ -170,6 +168,8 @@ class Service < ActiveRecord::Base
       amount_to_bill
     elsif owed?
       amount_owed
+    elsif paid?
+      billed_hours * service_type.price_per_hour
     else
       estimated_hours * service_type.price_per_hour
     end

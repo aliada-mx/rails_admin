@@ -1,0 +1,21 @@
+%section.header-section-wrapper
+  .gray-navigation
+    = render partial: "common/public_navigation"
+
+.recruitment-signup
+  .container
+    .row
+      .col-lg-10.col-lg-offset-1.col-md-10.col-md-offset-1
+        .row
+          .col-lg-8.col-md-8.col-sm-8
+            .recruitment-signup__header
+              .icon
+                = image_tag("aliada-icon-primary.png", alt: "")
+              .desc
+                %h1 ¿Lista para ser Aliada?
+                %p Por favor llena el siguiente formulario. Y muy pronto contaras con todos los beneficios de ser una Alida.
+        .recruitment-form
+          %iframe{src: "https://aliada.wufoo.com/embed/zlt8x0y01nkkhk/", frameborder: "0", height: "2420", width: "100%"}
+
+
+= render partial: "common/footer"

@@ -35,6 +35,12 @@ $(function(){
         aliada.ko.bedrooms(new_bedrooms)
         break;
     }
+      
+      mixpanel.track("IS-Service Hours Selected by BathBedRooms", {
+	  "bathrooms": new_bathrooms,
+	  "bedrooms": new_bedrooms
+      });
+
 
   })
 });

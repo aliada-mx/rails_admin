@@ -1,0 +1,114 @@
+.recruitment-top
+  %header.recruitment-header
+    .container
+      .row
+        .col-lg-12
+          .recruitment-header--inner
+            .brand
+              = link_to image_tag('logo-white.png'), '/'
+  .recruitment-intro
+    .container
+      .row
+        .col-lg-6.col-md-6.col-sm-7
+          .recruitment-intro__content
+            %h1 ¡Únete a Aliada y mejora tu vida!
+            %p Obten más y mejores trabajos como profesional de la limpieza con Aliada.
+            = link_to '¡Aplica Ahora!', :recruitment_signup, class: 'button button--purple button--large'
+        .recruitment-intro__lady
+          = image_tag 'recruitment/aliada-lady.png'
+
+.recruitment-benefits
+  .container
+    .row
+      .col-lg-12
+        .recruitment-benefits__header
+          %h2 ¿Cómo te podemos ayudar?
+    .row
+      .col-lg-4.col-md-4.col-sm-4
+        .recruitment-benefits__item
+          .recruitment-benefits__item__icon
+            = image_tag 'recruitment/benefit-calendar.png'
+          %h3 Flexibilidad
+          %p Tu eliges los horarios en los que quieres recibir servicios. Organiza tus horas de trabajo como tu quieras.
+      .col-lg-4.col-md-4.col-sm-4
+        .recruitment-benefits__item
+          .recruitment-benefits__item__icon
+            = image_tag 'recruitment/benefit-money.png'
+          %h3 Gran Paga
+          %p Accede a miles de clientes con pago por hora. No trabajes horas interminables por un precio fijo. ¡Recibe un pago justo por hora!
+      .col-lg-4.col-md-4.col-sm-4
+        .recruitment-benefits__item
+          .recruitment-benefits__item__icon
+            = image_tag 'recruitment/benefit-near-you.png'
+          %h3 Cerca de tu casa
+          %p No te transportes horas para llegar a tu trabajo. Elige clientes cerca de tu casa y pasa mas tiempo con tu familia.
+
+.recruitment-mission
+  .container
+    .recruitment-mission__header
+      .row
+        .col-lg-12
+          %h2 En Aliada tú eres lo más importante
+    .recruitment-mission__bullets
+      .row
+        .col-lg-4.col-lg-offset-2.col-md-4.col-md-offset-2.col-sm-5.col-sm-offset-1
+          %ul.recruitment-mission__bullets__list
+            %li
+              .recruitment-mission__bullets__checkmark
+                = image_tag "recruitment/pink-circled-check.png"
+              %p Tú decides las zonas donde trabajas
+            %li
+              .recruitment-mission__bullets__checkmark
+                = image_tag "recruitment/pink-circled-check.png"
+              %p Tú decides el horario de trabajo
+            %li
+              .recruitment-mission__bullets__checkmark
+                = image_tag "recruitment/pink-circled-check.png"
+              %p Tú decides con que clientes trabajar
+        .col-lg-4.col-md-4.col-sm-5
+          %ul.recruitment-mission__bullets__list
+            %li
+              .recruitment-mission__bullets__checkmark
+                = image_tag "recruitment/pink-circled-check.png"
+              %p Tú decides cuánto quieres ganar
+            %li
+              .recruitment-mission__bullets__checkmark
+                = image_tag "recruitment/pink-circled-check.png"
+              %p Tú recibes el pago de tus servicios cada semana
+            %li
+              .recruitment-mission__bullets__checkmark
+                = image_tag "recruitment/pink-circled-check.png"
+              %p Formaras parte del mejor servicio de limpieza del pais
+    .recruitment-mission__video
+      .row
+        .col-lg-12
+          .recruitment-mission__video__holder
+            %iframe{src: "https://www.youtube.com/embed/jYxHFo1dyvw", frameborder: "0", allowfullscreen: true}
+
+.recruitment-footer-cta
+  .container
+    .row
+      .col-lg-12
+        = image_tag "green-lady-icon.png"
+        %h2 ¿Lista para unirte a la familia Aliada?
+        %p Para empezar haz click en el siguiente boton.
+        = link_to '¡Aplica Ahora!', :recruitment_signup, class: 'button button--purple button--large'
+        %span o llámanos al (55) 4170 8032
+
+.press-highlights
+  .container
+    .row
+      .col-lg-12
+        = image_tag 'press-logos/excelsior.png', class: 'press-highlights__item'
+        = link_to 'http://www.milenio.com/tendencias/Aliada-mx-plataforma_empleadas_domesticas-start_up_mexicano-Rodolfo_Corcuera_0_446355612.html', class: 'press-highlights__item', target: '_blank' do
+          = image_tag 'press-logos/milenio.png'
+        = link_to 'http://mexico.cnn.com/tecnologia/2014/11/26/contrata-servicios-de-limpieza-del-hogar-con-un-solo-clic', class: 'press-highlights__item', target: '_blank' do
+          = image_tag 'press-logos/cnn-expansion.png'
+        = link_to 'http://www.reforma.com/aplicacioneslibre/preacceso/articulo/default.aspx?id=393875&v=2&urlredirect=http://www.reforma.com/aplicaciones/articulo/default.aspx?id=393875&v=2', class: 'press-highlights__item', target: '_blank' do
+          = image_tag 'press-logos/reforma.png'
+        = link_to 'http://www.chilango.com/general/nota/2014/11/19/aliadas-mx-le-quita-el-polvo-a-tu-casa', class: 'press-highlights__item', target: '_blank' do
+          = image_tag 'press-logos/chilango.png'
+        = link_to 'http://www.mixcloud.com/Zigma090/zigma-opini%C3%B3n-p%C3%BAblica-25-de-noviembre-de-2014/', class: 'press-highlights__item', target: '_blank' do
+          = image_tag 'press-logos/ibero-90.9.png'
+
+= render partial: "common/footer"

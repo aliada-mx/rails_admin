@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   get 'terminos', to: 'static_pages#terms', as: :terms
   get 'privacidad', to: 'static_pages#privacy', as: :privacy
   get 'patrones', to: 'static_pages#pattern_dictionary'
+  get 'reclutamiento', to: 'static_pages#recruitment', as: :recruitment
+  get 'reclutamiento/registro', to: 'static_pages#recruitment_signup', as: :recruitment_signup
 
   devise_for :users, path: '', path_names: {
     sign_in: :login,
@@ -67,7 +69,7 @@ Rails.application.routes.draw do
     post 'aliadas/servicios/finish/:token', to: 'aliadas#finish', as: :finish_service
     post 'aliadas/servicios/confirm/:token', to: 'aliadas#confirm', as: :confirm_service
   end
-  
+
   get '#clear_session', to: 'user#clear_session', as: 'clear_session'
 
   resources :schedules

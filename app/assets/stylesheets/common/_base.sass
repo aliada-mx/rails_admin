@@ -32,6 +32,18 @@
 @import 'modules/messages'
 @import 'modules/navigation'
 
+// Footer
+@import 'footer/skeleton'
+@import 'footer/skin'
+
+// Buttons
+@import 'buttons/skeleton'
+@import 'buttons/skin'
+
+// Recruitment
+@import 'recruitment/skeleton'
+@import 'recruitment/skin'
+
 // Modal
 @import 'vex'
 @import 'vex-theme-aliada'
@@ -100,7 +112,7 @@ h4
   +rem(font-size, $medium-font)
   +rem(line-height, $medium-font)
 
-.clearfix:after 
+.clearfix:after
   visibility: hidden
   display: block
   font-size: 0
@@ -149,56 +161,6 @@ icon
 p.medium
   +rem(font-size, $medium-font)
 
-footer
-  background-color: $darkest-gray
-  background-image: image-url('black_mosaic.png')
-  color: white
-  +rem(padding, 5.5rem 0)
-  +rem(font-size, 1.4rem)
-  height: $footer-height
-  position: relative
-
-  .bottom-nav
-    ul
-      margin: 0
-      padding: 0
-
-      li
-        a
-          color: white
-        &.iconized
-          position: relative
-          left: -23px
-  ul.social-links
-    text-align: center
-    +rem(margin-top, 2rem)
-    +rem(padding-top, 1rem)
-    li
-      display: inline-block
-      margin: 0 5px
-      a
-        color: white
-      icon
-        vertical-align: -2px
-        &.icon-facebook
-          vertical-align: -0px
-
-
-  .call-us
-
-    span
-      display: inline-block
-      vertical-align: -3px
-      +rem(font-size, 4rem)
-      +rem(margin-right, 0.5rem)
-
-    .hours
-      display: block
-      
-
-    p
-      display: inline-block
-
 .concealed
   display: none
 
@@ -238,7 +200,7 @@ footer
 
 iframe[src*="conekta"]
   display: none
-  
+
 
 .wrapper
   max-width: 960px

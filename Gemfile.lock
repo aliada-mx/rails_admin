@@ -124,6 +124,7 @@ GEM
       sys-uname
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
+    curb (0.8.8)
     database_cleaner (1.4.1)
     debug_inspector (0.0.2)
     devise (3.4.1)
@@ -462,6 +463,7 @@ DEPENDENCIES
   coffee-rails (~> 4.1.0)
   compass-rails
   conekta
+  curb
   database_cleaner
   devise
   erb2haml

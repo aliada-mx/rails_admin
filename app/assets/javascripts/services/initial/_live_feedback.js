@@ -18,7 +18,13 @@ aliada.services.initial.live_feedback = function($form){
           aliada.dialogs.email_already_exists(email);
           aliada.ko.email(''); // Delete it to invalidate the form
           $form.find('#service_user_email').select();
-        }
+        } else {
+	    mixpanel.identify(aliada.ko.email());
+	    mixpanel.people.set({
+	  "$email": aliada.ko.email()
+      });
+
+	}
       },
       error: function(response){
         aliada.dialogs.platform_error('No se pudo verificar el código postal');
@@ -32,11 +38,20 @@ aliada.services.initial.live_feedback = function($form){
       success: function(response){
         if (response.status == 'error'){
           var postal_code_number = aliada.ko.postal_code_number();
-
+	    mixpanel.track("IS-Postal Code Missing", {
+		"$postal_code": aliada.ko.postal_code_number()                  
+	    });
           aliada.dialogs.postal_code_number_missing(postal_code_number);
           aliada.ko.current_step(2);
           $form.find('#service_address_postal_code_number').select();
-        }
+        }else{
+	     mixpanel.track("IS-Postal Code Succesfully Inputed", {
+		"$postal_code": aliada.ko.postal_code_number()                  
+	    });
+	    mixpanel.people.set({
+		"$postal_code": aliada.ko.postal_code_number()                  
+	    });
+	}
       },
       error: function(response){
         reject(new PlatformError(response));

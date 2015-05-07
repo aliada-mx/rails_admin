@@ -53,7 +53,8 @@ gem 'chronic'
 gem 'heroku-deflater'
 # Serve fonts with correct headers
 gem 'font_assets'
-# 
+# CURL interface
+gem 'curb'
  
 # EXCEPTIONS
 #

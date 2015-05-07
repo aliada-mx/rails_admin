@@ -187,6 +187,13 @@ module Presenters
     def score_value
       scores.last.try(:value).try(:to_i)
     end
+
+    def conekta_payment_url
+      if payments.conekta_payments.any?
+        conekta_id = payments.conekta_payments.first.conekta_id
+        "https://admin.conekta.io/?ref=conekta-docs#charges.charge?id=#{ conekta_id }"
+      end
+    end
   end
 end
 
