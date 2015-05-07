@@ -12,7 +12,6 @@ aliada.services.initial.step_4_payment = function(aliada, ko){
         success: function(response){
           switch(response.status){
             case 'success':
-              facebookPixelTrackConversion();
 	      mixpanel.track('IS-Service Confirmed',{"response": response});
 	      resolve(response);
               break;
