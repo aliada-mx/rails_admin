@@ -1,10 +1,6 @@
 @import 'common/variables'
 @import 'common/mixins'
-@import "compass/css3/opacity"
-
-
-body.previous-services.one-column
-  +sticky-footer
+@import 'compass/css3/opacity'
 
 .service_history
   background-color: $white
@@ -22,7 +18,7 @@ body.previous-services.one-column
         +rem(font-size, $smallish-font)
         cursor: pointer
         &:after
-          +arrow(down) 
+          +arrow(down)
     tbody
       tr
         td.warning
@@ -32,9 +28,9 @@ body.previous-services.one-column
   display:none
 
 .rating
-  
+
   text-align: left
-  direction: rtl 
+  direction: rtl
 
   input
     position: absolute
@@ -42,13 +38,13 @@ body.previous-services.one-column
     cursor: pointer
     width: 2rem
     height: 2rem
-  
+
   span
     width: 2rem
     height: 2rem
     line-height: 2rem
     padding: .5rem 1.1rem 0
-    background: image-url('stars.png') 
+    background: image-url('stars.png')
 
   input.unchecked:hover ~ span
     background: image-url('star-full.png')
