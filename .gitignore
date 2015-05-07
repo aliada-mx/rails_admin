@@ -24,6 +24,7 @@ profiles/
 \#*#
 
 # Local temp files
+.DS_Store
 /.sass-cache
 *.swp
 *.swn

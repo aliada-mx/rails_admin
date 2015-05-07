@@ -1,0 +1,146 @@
+@import common/variables
+@import common/media-queries
+@import compass
+@import bootstrap/variables
+
+// Recruitment Landing
+.recruitment-form
+  background: $white
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .08)
+  border-radius: 3px
+
+.recruitment-header
+  &--inner
+    padding: 25px 0
+
+.recruitment-intro
+
+  .row
+    position: relative
+
+  &__content
+    padding:
+      top: 120px
+      bottom: 80px
+
+    .button
+      margin-top: 15px
+
+    +max-screen($screen-sm-min)
+      padding:
+        top: 30px
+        bottom: 40px
+
+  &__lady
+    position: absolute
+    right: 70px
+    bottom: 0
+
+    img
+      max-width: 100%
+
+    +max-screen($screen-sm-min)
+      margin: 0 auto
+      position: relative
+      right: auto
+      padding:
+        right: 30px
+        left: 30px
+
+.recruitment-benefits
+  padding:
+    top: 60px
+    bottom: 50px
+
+  &__header
+    margin-bottom: 60px
+
+  &__item
+    padding-bottom: 40px
+
+    h3
+      margin-bottom: 5px
+
+    &__icon
+      height: 68px
+      margin-bottom: 10px
+
+.recruitment-mission
+  padding: 70px 0
+
+  &__header
+    margin-bottom: 25px
+
+  &__bullets
+    margin-bottom: 40px
+
+    &__list
+
+      li
+        margin-bottom: 15px
+        +clearfix
+
+      p
+        padding-left: 35px
+
+    &__checkmark
+      float: left
+      margin-right: 5px
+
+  &__video
+
+    &__holder
+      position: relative
+      width: 100%
+      height: 0
+      padding-bottom: 56.25%
+
+    iframe
+      position: absolute
+      top: 0
+      left: 0
+      width: 100%
+      height: 100%
+
+.recruitment-footer-cta
+  padding:
+    top: 50px
+    bottom: 65px
+
+  p
+    margin-bottom: 15px
+
+  span
+    margin-top: 10px
+    display: block
+
+.press-highlights
+  padding: 20px 0
+
+  &__item
+    display: inline-block
+    margin: 10px 15px
+
+// Recruitment Signup
+.recruitment-signup
+  padding: 60px 0
+
+  &__header
+    margin-bottom: 30px
+    +clearfix
+
+    .icon
+      float: left
+
+    .desc
+      padding-left: 70px
+
+      h1
+        margin-bottom: 10px
+
+    +max-screen($screen-sm-min)
+      .icon
+        float: none
+
+      .desc
+        padding-left: 0
