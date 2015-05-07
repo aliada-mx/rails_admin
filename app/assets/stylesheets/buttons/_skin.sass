@@ -1,0 +1,29 @@
+@import common/variables
+@import compass
+
+.button
+  font-size: 15px
+  line-height: 30px
+  border-radius: 3px
+  border: 1px solid transparent
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .08), inset 0 -2px 0 rgba(0, 0, 0, .05)
+
+  &:hover
+    text-decoration: none
+
+  &--large
+    font-size: 18px
+    line-height: 50px
+
+  &--medium
+    font-size: 15px
+    line-height: 35px
+
+  &--purple
+    color: $white
+    background: $purple
+    border-color: shade($purple, 10%)
+
+    &:hover
+      color: $white
+      background: tint($purple, 5%)
