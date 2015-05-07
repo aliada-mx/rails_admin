@@ -710,6 +710,11 @@ class Service < ActiveRecord::Base
         field :hours_after_service
         field :rooms_hours
         field :schedules
+
+        field :hours_worked do
+          label 'Horas trabajadas'
+          help 'Reportadas por la aliada'
+        end
       end
 
       field :tickets
