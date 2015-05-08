@@ -25,7 +25,7 @@ class Aliada < User
   scope :for_booking, ->(aliadas_ids) {where(id: aliadas_ids).eager_load(:services).eager_load(:zones)}
   # For rails admin
   #
-  scope :todas, -> { joins(:scores).group('users.id') }
+  # scope :todas, -> { joins(:scores).group('users.id') }
 
   after_initialize do
     if new_record?
@@ -55,9 +55,9 @@ class Aliada < User
     service.zone == closest_service.zone ? 1 : 0
   end
 
-  def average_score
-    scores.average(:value)
-  end
+  # def average_score
+  #   scores.average(:value)
+  # end
 
   def services_on_day(datetime)
     services.on_day(datetime)
@@ -140,19 +140,19 @@ class Aliada < User
         filterable false
       end
       field :aliada_webapp_link
-      field :average_score do
-        sortable "AVG(scores.value)"
+      # field :average_score do
+      #   sortable "AVG(scores.value)"
 
-        formatted_value do
-          value.round(2) if value
-        end
-      end
+      #   formatted_value do
+      #     value.round(2) if value
+      #   end
+      # end
 
-      field :services_worked do
-        virtual?
-      end
+      # field :services_worked do
+      #   virtual?
+      # end
 
-      scopes [:todas]
+      # scopes [:todas]
     end
 
     edit do
