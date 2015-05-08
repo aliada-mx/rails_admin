@@ -45,7 +45,7 @@ feature 'ScoresController' do
       end
 
       expect(page.status_code).to be 200
-      expect(Score.count).to be 2
+      expect(Score.count).to be 1
     end
 
     it 'should create a rating as an admin' do
@@ -75,7 +75,5 @@ feature 'ScoresController' do
 
       expect(Score.count).to be 0
     end
-
   end
-
 end

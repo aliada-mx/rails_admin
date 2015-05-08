@@ -86,6 +86,9 @@ es:
         next_service_link: 'Siguiente servicio'
         aliada_working_hours: 'Horas de trabajo'
         documents: documentos
+        average_score: 'Calificación promedio'
+        friendly_average_score: 'Calificación promedio'
+        services_worked: 'Servicios trabajados'
       service_type:
         <<: *common_attributes
         periodicity: periodicidad

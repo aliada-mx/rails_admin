@@ -2,6 +2,7 @@
 class Aliada < User
   include AliadaSupport::DatetimeSupport
   include Mixins::RailsAdminModelsHelpers
+  include Presenters::AliadaPresenter
 
   has_many :aliada_zones
   has_many :zones, through: :aliada_zones
@@ -22,6 +23,9 @@ class Aliada < User
   # TODO optimize to get all aliadas even those without services but the ones with services 
   # must have services.datetime >= Time.zone.now.beginning_of_day
   scope :for_booking, ->(aliadas_ids) {where(id: aliadas_ids).eager_load(:services).eager_load(:zones)}
+  # For rails admin
+  #
+  scope :todas, -> { joins('FULL OUTER JOIN scores on users.id = scores.aliada_id').group('users.id') }
 
   after_initialize do
     if new_record?
@@ -51,7 +55,7 @@ class Aliada < User
     service.zone == closest_service.zone ? 1 : 0
   end
 
-  def average_score
+  def gverage_score
     scores.average(:value)
   end
 
@@ -76,7 +80,7 @@ class Aliada < User
 
   def current_week_services
     today = ActiveSupport::TimeZone["Mexico City"].today
-    return Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week.advance(:days => 1))
+    Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week.advance(:days => 1)).not_canceled
   end
 
   def current_week_reported_hours
@@ -136,6 +140,19 @@ class Aliada < User
         filterable false
       end
       field :aliada_webapp_link
+      field :average_score do
+        sortable "AVG(scores.value)"
+
+        formatted_value do
+          value.round(2) if value
+        end
+      end
+
+      field :services_worked do
+        virtual?
+      end
+
+      scopes [:todas]
     end
 
     edit do

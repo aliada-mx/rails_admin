@@ -46,6 +46,7 @@ class Service < ActiveRecord::Base
   scope :not_ids, ->(ids) { where("services.id NOT IN ( ? )", ids) }
   scope :on_day, -> (datetime) { where('datetime >= ?', datetime.beginning_of_day).where('datetime <= ?', datetime.end_of_day) } 
   scope :canceled, -> { where("services.status = 'canceled_in_time' OR services.status = 'canceled_out_of_time'", 'canceled') }
+  scope :finished, -> { where("services.status = 'finished'") }
   scope :not_canceled, -> { where("services.status != 'canceled_in_time' AND services.status != 'canceled_out_of_time' AND services.status != 'canceled'") }
   scope :ordered_by_created_at, -> { order(:created_at) }
   scope :ordered_by_datetime, -> { order(:datetime) }
@@ -60,6 +61,7 @@ class Service < ActiveRecord::Base
   scope :con_horas_reportadas, -> { where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL') }
   scope :cobro_fallido, -> { joins(:debts).where('debts.service_id = services.id')
                                           .where('services.status != ?','paid') }
+
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
@@ -502,12 +504,10 @@ class Service < ActiveRecord::Base
   end
 
   def cancel_all!
-    ActiveRecord::Base.transaction do
-      cancel
+    cancel
 
-      if should_charge_cancelation_fee
-        charge_cancelation_fee!
-      end
+    if should_charge_cancelation_fee
+      charge_cancelation_fee!
     end
   end
 
@@ -710,6 +710,11 @@ class Service < ActiveRecord::Base
         field :hours_after_service
         field :rooms_hours
         field :schedules
+
+        field :hours_worked do
+          label 'Horas trabajadas'
+          help 'Reportadas por la aliada'
+        end
       end
 
       field :tickets
