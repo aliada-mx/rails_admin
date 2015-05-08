@@ -234,6 +234,13 @@ class User < ActiveRecord::Base
 
       field :addresses
 
+      field :zone do
+        formatted_value do
+          value.name if value
+        end
+        read_only true
+      end
+
       field :first_name
       field :last_name
       field :email
