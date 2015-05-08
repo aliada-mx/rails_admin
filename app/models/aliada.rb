@@ -25,7 +25,7 @@ class Aliada < User
   scope :for_booking, ->(aliadas_ids) {where(id: aliadas_ids).eager_load(:services).eager_load(:zones)}
   # For rails admin
   #
-  scope :todas, -> { includes(:scores).group('users.id') }
+  scope :todas, -> { joins('FULL OUTER JOIN scores on users.id = scores.aliada_id').group('users.id') }
 
   after_initialize do
     if new_record?
@@ -55,7 +55,7 @@ class Aliada < User
     service.zone == closest_service.zone ? 1 : 0
   end
 
-  def average_score
+  def gverage_score
     scores.average(:value)
   end
 
