@@ -504,12 +504,10 @@ class Service < ActiveRecord::Base
   end
 
   def cancel_all!
-    ActiveRecord::Base.transaction do
-      cancel
+    cancel
 
-      if should_charge_cancelation_fee
-        charge_cancelation_fee!
-      end
+    if should_charge_cancelation_fee
+      charge_cancelation_fee!
     end
   end
 

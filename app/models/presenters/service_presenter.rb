@@ -194,6 +194,19 @@ module Presenters
         "https://admin.conekta.io/?ref=conekta-docs#charges.charge?id=#{ conekta_id }"
       end
     end
+
+    def description
+      if owed?
+        "Servicio adeudado de aliada.mx #{id}"
+      else
+        "Servicio #{id} aliada"
+      end
+    end
+
+    # Category for debts
+    def category
+      'service'
+    end
   end
 end
 
