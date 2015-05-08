@@ -29,12 +29,18 @@ $(document).ready(function() {
   aliada.open_cancel_dialog_on_page_load();
 
   // Unhilight when a time is chosen
-  aliada.ko.time.subscribe(function() {
+  aliada.ko.time.subscribe(function(new_time) {
     if (!aliada.ko.time.is_default()) {
       unhighlight('#choose-time');
     }
+      mixpanel.track("MS-New Datetime Selected", {
+	  "hour": aliada.ko.time(),
+	  "day": aliada.ko.date(),
+	  "service_id": aliada.ko.service_id()
+      });
   });
-
+    
+    
   // Unhilight when a date is chosen
   aliada.ko.date.subscribe(function() {
     if (!aliada.ko.date.is_default()) {
@@ -70,7 +76,9 @@ $(document).ready(function() {
   // Update calendar on Aliadas change and update aliada_id
   $('#service_aliada_id').on('change', function() {
     aliada.service.aliada_id = $(this).find(':selected').val();
-
+      mixpanel.track("MS-Aliada Changed", {
+      "aliada_id": aliada.service.aliada_id
+    });
     update_calendar();
   });
 
