@@ -11,16 +11,20 @@ class PaypalCharge < ActiveRecord::Base
     payer_id = paypal_response[:PayerID]
     service = Service.find paypal_response[:service_id]
 
-    payment_request, request = build_paypal_requests(service)
+    begin
+      payment_request, request = build_paypal_requests(service)
 
-    response = request.checkout!(
-      token,
-      payer_id,
-      payment_request
-    )
+      response = request.checkout!(
+        token,
+        payer_id,
+        payment_request
+      )
 
-    # inspect this attribute for more details
-    first_payment = response.payment_info.first
+      # inspect this attribute for more details
+      first_payment = response.payment_info.first
+    rescue Paypal::Exception::APIError => exception
+      Raygun.track_exception(exception)
+    end
 
     return PaypalCharge.create!(
       ack: first_payment.ack,

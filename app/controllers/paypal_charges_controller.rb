@@ -21,7 +21,7 @@ class PaypalChargesController < ApplicationController
     if params[:subaction] == 'paypal_success'
       paypal_charge = PaypalCharge.create_from_paypal_response(params)
 
-      if paypal_charge.paid?
+      if paypal_charge && paypal_charge.paid?
         service = paypal_charge.service
 
         payment = Payment.create_from_paypal_charge(service, paypal_charge) 
@@ -29,6 +29,8 @@ class PaypalChargesController < ApplicationController
         payment.pay
         service.pay
         redirect_to previous_services_users_url(@user, subaction: :paypal_success, service_paid_id: service.id)
+      else
+        redirect_to previous_services_users_url(@user, subaction: :paypal_cancelation)
       end
 
     elsif params[:subaction] == 'paypal_cancelation'
