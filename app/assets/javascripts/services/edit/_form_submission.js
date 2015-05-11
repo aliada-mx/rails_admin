@@ -9,15 +9,18 @@ aliada.services.edit.bind_form_submission = function($form) {
           switch (response.status) {
             case 'success':
               resolve(response);
+	      mixpanel.track('MS-Service Confirmed',{"response": response});
               break;
 
             case 'error':
               reject(new ServiceCreationFailed(response));
+	      mixpanel.track('MS-Service Modification Failed',{"response": response});
               break;
           }
         },
         error: function(response) {
-          reject(new PlatformError(response));
+            reject(new PlatformError(response));
+	    mixpanel.track('MS-Platform Error',{"response": response});
         }
       });
 
