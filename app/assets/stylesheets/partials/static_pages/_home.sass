@@ -1,7 +1,7 @@
-@import 'common/variables'
-
-@import 'common/mixins'
-@import "compass/css3/text-shadow"
+@import compass
+@import common/variables
+@import common/mixins
+@import compass/css3/text-shadow
 
 body.home
   display: table
@@ -22,7 +22,7 @@ body.home
     h3
       width: 100%
       display: block
-      text-align: center 
+      text-align: center
       +rem(font-size, $extra-large-font)
       +rem(margin, 4rem auto)
 
@@ -66,19 +66,31 @@ body.home
             font-weight: 600
 
   .search-section-wrapper
-    background: url("home-header-background.jpg") no-repeat center center
+    background: url("/video/home-cleaning-poster.jpg") no-repeat center center
     background-size: cover
     background-color: white
     box-sizing: border-box
     position: relative
     height: 750px
 
+    .white-navigation
+      z-index: 5
+      position: relative
+
+      .action-button-gray
+        background: $green
+        border-color: shade($green, 20%)
+
+        &:hover
+          background: tint($green, 10%)
 
     .search-container
       +rem(margin, 10rem 0)
       +rem(padding, 1.5rem 0)
       vertical-align: middle
       width: 100%
+      z-index: 5
+      position: relative
 
       .search-slogan-container
         +rem(margin, 0 0 10rem)
@@ -122,6 +134,30 @@ body.home
         .action-button-container
           width: 300px
           display: inline-block
+
+    .video-holder
+      position: absolute
+      top: 0
+      left: 0
+      width: 100%
+      height: 100%
+      overflow: hidden
+
+      .black-screen
+        position: absolute
+        z-index: 4
+        width: 100%
+        height: 100%
+        background: #000
+        +opacity(.2)
+
+      video
+        position: absolute
+        min-width: 100%
+        min-height: 100%
+        left: 50%
+        margin-left: -50%
+        pointer-events: none
 
   .media-section-wrapper
     background-color: $lightest-gray
