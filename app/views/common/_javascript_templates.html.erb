@@ -185,3 +185,45 @@
         </p>
     </div>
 </script>
+
+<% if @service_paid %>
+    <script type="text/html" id="paypal_success_template">
+        <div>
+            <h1>
+                Pago procesado con éxito
+            </h1>
+            <p>
+                Hemos procesado tu pago exitosamente en Paypal, por el servicio del <i> <%= l(@service_paid.tz_aware_datetime, format: :short) %> </i> con <i> <%= @service_paid.aliada.name %> </i> gracias por usar Aliada.
+            </p>
+        </div>
+    </script>
+<% end %>
+
+<script type="text/html" id="paypal_cancelation_template">
+    <div>
+        <h1>
+            Lo sentimos, no pudimos procesar tu pago en paypal
+        </h1>
+        <p>
+            Algo salió mal al pagar en Paypal
+            <br>
+            ¿Necesitas ayuda? Llámanos al (55) 4170 8032
+        </p>
+
+    </div>
+</script>
+
+<script type="text/html" id="pay_debt_template">
+    <div>
+        <h1>
+            Paga el servicio adeudado
+        </h1>
+        <div class="paypal-button-container pay-button" data-provider="paypal_express" data-service_id="{{ service_id }}">
+            <%= image_tag 'payment-paypal-unchecked.png', class: 'logo' %>
+            <p class='amount'>
+                ${{ amount }} pesos
+            </p>
+            <%= image_tag 'boton_paypal.gif', class: 'button' %>
+        </div>
+    </div>
+</script>

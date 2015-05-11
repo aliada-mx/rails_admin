@@ -9,6 +9,7 @@ defaults: &defaults
   payment_providers: [
     ['Tarjeta con Conekta', 'ConektaCard'], 
     ['Pago con créditos', 'User'], 
+    ['Paypal Express', 'PaypalCharge'], 
     ['Método de pago de prueba', 'TestPaymentMethod'], 
   ]
   payables: [
@@ -51,14 +52,18 @@ defaults: &defaults
   mixpanel_token: 'a077a5bab6d9c2ba3962df3d3cecb246'
   mixpanel_api_key: 'f5c77e9ee327a233b73cc33e384512e3'
   mixpanel_api_secret: '6e7c48e609c2bae83c6aac30c548006b'
+
+  paypal_sandbox: false
     
 development:
   <<: *defaults
-  host: 'localhost:3000'
+  host: 'aliada.ngrok.com'
+  paypal_sandbox: true
 
 test:
   <<: *defaults
   host: 'localhost:3000'
+  paypal_sandbox: true
 
 production:
   host: 'aliada.mx'

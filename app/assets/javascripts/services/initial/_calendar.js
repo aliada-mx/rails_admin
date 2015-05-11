@@ -11,7 +11,6 @@ aliada.services.initial.initialize_calendar_times = function() {
     // Set the date
     aliada.ko.date(dateProperties.strdate);
 
-
     // Broadcast the change so live_feedback can report it
     aliada.services.initial.$form.trigger('change');
 

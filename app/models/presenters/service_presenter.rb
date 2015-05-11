@@ -12,14 +12,6 @@ module Presenters
       Hash[*status_enum.flatten].to_h.invert[status]
     end
 
-    def status_for_history
-      if owed?
-        canceled? ? 'Cancelación tardía' : 'Adeudado' 
-      else
-        status_in_spanish
-      end
-    end
-
     def tz_aware_datetime
       datetime.in_time_zone('Etc/GMT+6')
     end

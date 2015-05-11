@@ -58,6 +58,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.3.8)
     arel (5.0.1.20140414130214)
+    attr_required (1.0.0)
     autoprefixer-rails (5.1.11)
       execjs
       json
@@ -136,6 +137,8 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
     docile (1.1.5)
+    domain_name (0.5.24)
+      unf (>= 0.0.5, < 1.0.0)
     em-websocket (0.5.1)
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
@@ -197,6 +200,8 @@ GEM
       haml (~> 4.0.0)
       nokogiri (~> 1.6.0)
       ruby_parser (~> 3.5)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
     http_parser.rb (0.6.0)
     httparty (0.13.3)
       json (~> 1.8)
@@ -249,6 +254,7 @@ GEM
     nested_form (0.3.2)
     nestive (0.6.0)
       rails (>= 3.0.0)
+    netrc (0.10.3)
     newrelic_rpm (3.11.2.286)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
@@ -266,6 +272,10 @@ GEM
       activesupport (>= 3.0.0)
       cocaine (~> 0.5.3)
       mime-types
+    paypal-express (0.8.1)
+      activesupport (>= 2.3)
+      attr_required (>= 0.0.5)
+      rest-client
     pg (0.18.1)
     pry (0.10.1)
       coderay (~> 1.1.0)
@@ -350,6 +360,10 @@ GEM
       rspec-core (>= 3.0.0)
       rspec-expectations (>= 3.0.0)
       rspec-mocks (>= 3.0.0)
+    rest-client (1.8.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
     rspec (3.0.0)
       rspec-core (~> 3.0.0)
       rspec-expectations (~> 3.0.0)
@@ -431,6 +445,9 @@ GEM
     uglifier (2.7.1)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.1)
     unicorn (4.8.3)
       kgio (~> 2.6)
       rack
@@ -492,6 +509,7 @@ DEPENDENCIES
   nyan-cat-formatter
   paper_trail (~> 4.0.0.beta)
   paperclip
+  paypal-express
   pg
   pry-rails
   pry-rescue
