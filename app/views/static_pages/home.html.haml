@@ -26,6 +26,12 @@
             = link_to initial_service_path, {class: 'action-button-pink size-extra-large'} do
               Pide tu primer aliada
 
+  .video-holder
+    .black-screen
+    %video{controls: false, autoplay: true, loop: true, poster: '/video/home-cleaning-poster.jpg'}
+      %source{src: '/video/home-cleaning.mp4', type: 'video/mp4'}
+      %source{src: '/video/home-cleaning.ogv', type: 'video/ogg'}
+      %source{src: '/video/home-cleaning.webm', type: 'video/webm'}
 
 %section.media-section-wrapper
   .container
@@ -48,16 +54,16 @@
           Es muy sencillo
         .col-lg-4.step
           =image_tag("paso-1.png", :title => 'Recibe la misma aliada en las visitas recurrentes')
-          %p.why-description 
+          %p.why-description
             %h2
               Pide
-            En menos de un minuto pide una Aliada. 
+            En menos de un minuto pide una Aliada.
             %br
             Dinos dónde estás y a qué hora necesitas el servicio.*
 
         .col-lg-4.step
           =image_tag("paso-2.png", :title => 'Recibe la misma aliada en las visitas recurrentes')
-          %p.why-description 
+          %p.why-description
             %h2
               Recibe
             Una Aliada llegará puntualmente a tu casa.
@@ -67,11 +73,11 @@
 
         .col-lg-4.step
           =image_tag("paso-3.png", :title => 'Recibe la misma aliada en las visitas recurrentes')
-          %p.why-description 
+          %p.why-description
             %h2
               Relájate
             El cobro se hará hasta que esté todo como a ti te gusta.
-              
+
     .row
       .call-to-action-wrapper
         = link_to initial_service_path, {class: 'action-button-pink size-extra-large'} do
@@ -166,7 +172,7 @@
   .container
     .row.call-to-action-wrapper
       .payment-description.col-lg-6
-        %p 
+        %p
           ¿Listo para programar tu visita?
       .call-to-action-container
         = link_to initial_service_path, {class: 'action-button-pink size-large'} do
