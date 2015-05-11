@@ -23,7 +23,9 @@ aliada.services.edit.duration = function(aliada, ko) {
     var $selected = $(this).find(':selected');
     var hours = $selected.val();
     aliada.ko.forced_hours(parseFloat(hours));
-
+      mixpanel.track("MS-Service Hours Selected by Area", {
+	  "hours": hours
+      });
     // hide the alternative way of choosing hours
     $('.bathroom-bedrooms-container').slideUp();
   }).trigger('change'); // Trigger on load
@@ -35,5 +37,9 @@ aliada.services.edit.duration = function(aliada, ko) {
     }, 0)
 
     aliada.ko.extras_hours(extras_hours);
+      mixpanel.track("MS-Selected Items Changed", {
+	  "items": extra_items,
+	  "hours": extras_hours
+      });
   }).trigger('change');
 }
