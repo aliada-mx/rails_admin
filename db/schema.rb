@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150501190637) do
+ActiveRecord::Schema.define(version: 20150511223453) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -229,6 +229,28 @@ ActiveRecord::Schema.define(version: 20150501190637) do
 
   add_index "payments", ["payeable_id", "payeable_type"], name: "index_payments_on_payeable_id_and_payeable_type", using: :btree
   add_index "payments", ["user_id"], name: "index_payments_on_user_id", using: :btree
+
+  create_table "paypal_charges", force: true do |t|
+    t.string   "ack"
+    t.decimal  "amount",           precision: 10, scale: 3
+    t.decimal  "fee",              precision: 10, scale: 3
+    t.datetime "order_time"
+    t.string   "payment_status"
+    t.string   "payment_type"
+    t.string   "receipt_id"
+    t.string   "transaction_id"
+    t.string   "transaction_type"
+    t.integer  "user_id"
+    t.string   "payable_type"
+    t.integer  "payable_id"
+    t.text     "api_raw_response"
+  end
+
+  create_table "paypal_ipns", force: true do |t|
+    t.text     "api_raw_response"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "postal_codes", force: true do |t|
     t.string   "number"

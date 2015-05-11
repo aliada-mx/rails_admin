@@ -12,6 +12,7 @@ class AliadasController < ApplicationController
   
   def finish
     @aliada = Aliada.find_by(authentication_token: params[:token])
+
     @service_to_finish = Service.where(id: params[:service], 
                                        aliada_id: @aliada.id).first
     if @service_to_finish.present?

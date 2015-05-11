@@ -11,18 +11,7 @@ class ApplicationController < ActionController::Base
     return if Rails.env == 'test'
 
     if in_admin_controller?
-      if params[:action] == 'edit' && request.method == 'POST'
-        model_name = params[:model_name]
-
-        params[model_name][:in_rails_admin] = true
-      end
-
-      if in_dst?
-        Time.zone = "Etc/GMT+6"
-
-      else
-        Time.zone = "Mexico City"
-      end
+      Time.zone = "Etc/GMT+6"
     else
       Time.zone = "UTC"
     end

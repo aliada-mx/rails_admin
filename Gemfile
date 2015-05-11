@@ -55,6 +55,8 @@ gem 'heroku-deflater'
 gem 'font_assets'
 # CURL interface
 gem 'curb'
+# Paypal
+gem 'paypal-express'
  
 # EXCEPTIONS
 #

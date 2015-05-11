@@ -205,4 +205,55 @@ aliada.dialogs.confirm_recurrence_cancel = function() {
   })
 };
 
+aliada.dialogs.confirm_recurrence_cancel = function() {
+  var cancel_recurrence_template = _.template($('#cancel_recurrence_template').html());
 
+  return new Promise(function(resolve, reject) {
+    vex.dialog.confirm({
+      message: cancel_recurrence_template({}),
+      callback: function(value) {
+        if (value == true) {
+          resolve(value);
+        }
+      },
+      buttons: [
+        $.extend({}, vex.dialog.buttons.YES, {
+          text: 'Si',
+          className: 'action-button-gray size-extra-small vex-dialog-ok-button'
+        }), $.extend({}, vex.dialog.buttons.NO, {
+          text: 'No',
+          className: 'action-button-pink size-extra-small vex-dialog-cancel-button',
+        })
+      ],
+    });
+  })
+};
+
+aliada.dialogs.paypal_success = function(next_path) {
+  // Preload template
+  var paypal_success_template = _.template($('#paypal_success_template').html());
+
+  vex.open({
+    content: paypal_success_template({}),
+  });
+};
+
+aliada.dialogs.paypal_cancelation = function(next_path) {
+  // Preload template
+  var paypal_cancelation_template = _.template($('#paypal_cancelation_template').html());
+
+  vex.open({
+    content: paypal_cancelation_template({}),
+  });
+};
+
+aliada.dialogs.pay_debt = function(values){
+  // Preload template
+  var choose_payment_provider_template = _.template($('#pay_debt_template').html());
+
+  vex.open({
+    content: choose_payment_provider_template(values),
+    className: 'pay_debt_dialog vex vex-theme-plain',
+    afterOpen: values.afterOpen
+  });
+}
