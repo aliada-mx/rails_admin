@@ -26,6 +26,11 @@ class PaypalCharge < ActiveRecord::Base
       Raygun.track_exception(exception)
     end
 
+    if first_payment.nil?
+      puts response
+      return nil
+    end
+
     return PaypalCharge.create!(
       ack: first_payment.ack,
       amount: first_payment.amount.total,
