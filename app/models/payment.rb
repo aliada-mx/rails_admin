@@ -82,6 +82,8 @@ class Payment < ActiveRecord::Base
       field :user
       field :amount
       field :payeable
+
+      include_fields :user, :amount, :status
     end
   end
 end
