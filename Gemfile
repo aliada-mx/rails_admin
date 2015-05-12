@@ -97,7 +97,7 @@ gem 'migration_data'
 gem 'smtpapi'
 
 # TRACKING
-gem 'mixpanel'
+gem 'mixpanel-ruby'
 
 group :development, :test do
   gem 'guard-rspec', require: false

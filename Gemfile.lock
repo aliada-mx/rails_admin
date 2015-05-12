@@ -142,7 +142,6 @@ GEM
     erb2haml (0.1.5)
       html2haml
     erubis (2.7.0)
-    escape (0.0.4)
     eventmachine (1.0.7)
     execjs (2.5.2)
     factory_girl (4.5.0)
@@ -240,10 +239,7 @@ GEM
     mime-types (2.4.3)
     mini_portile (0.6.2)
     minitest (5.6.0)
-    mixpanel (4.1.1)
-      escape
-      json
-      rack
+    mixpanel-ruby (2.1.0)
     mono_logger (1.1.0)
     multi_json (1.11.0)
     multi_xml (0.5.5)
@@ -488,7 +484,7 @@ DEPENDENCIES
   launchy
   lograge
   migration_data
-  mixpanel
+  mixpanel-ruby
   mysql2
   nestive
   newrelic_rpm

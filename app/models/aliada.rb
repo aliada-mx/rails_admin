@@ -99,7 +99,9 @@ class Aliada < User
   end
 
   def track_webapp_view(request)
-    mixpanel = Mixpanel::Tracker.new Setting.mixpanel_token, { async: true, env:  {
+    tracker = Mixpanel::Tracker.new(Setting.mixpanel_token)
+
+    options = { async: true, env:  {
       'HTTP_USER_AGENT' => request.env['HTTP_USER_AGENT'],
       'REMOTE_ADDR' => request.env['REMOTE_ADDR'],
       'HTTP_X_FORWARDED_FOR' => request.env['HTTP_X_FORWARDED_FOR'],
@@ -107,7 +109,7 @@ class Aliada < User
       'environment' => Rails.env,
     }}
 
-    mixpanel.track 'aliada viewed webapp', { aliada_id: self.id, aliada_name: self.name }
+    tracker.track(self.name, 'aliada viewed webapp', options)
   end
 
   rails_admin do
