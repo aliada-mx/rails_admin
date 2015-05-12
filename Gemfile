@@ -94,8 +94,10 @@ gem 'cancancan'
 gem 'migration_data'
 
 # MAILING
-#
 gem 'smtpapi'
+
+# TRACKING
+gem 'mixpanel'
 
 group :development, :test do
   gem 'guard-rspec', require: false
