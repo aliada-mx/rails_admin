@@ -53,7 +53,7 @@ class UserMailer < ApplicationMailer
     score_service_url = score_service_users_url(service.user, service)
     
     if service.bill_by_reported_hours?
-      service_worked_hours_text = "Ella nos dijo que trabajó de #{service.friendly_aliada_reported_end_time} a #{service.friendly_aliada_reported_begin_time}"
+      service_worked_hours_text = "Horas reportadas de #{service.friendly_aliada_reported_begin_time} #{service.friendly_aliada_reported_end_time}"
     else
       service_worked_hours_text = ""
     end
