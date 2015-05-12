@@ -59,6 +59,6 @@ aliada.services.new.bind_form_submission = function($form){
                         })
                         .finally(function(){
                           aliada.unblock_ui();
-                        })
+                        });
   });
 }

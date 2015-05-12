@@ -99,6 +99,8 @@ class Aliada < User
   end
 
   def track_webapp_view(request)
+    return if Rails.env == 'test'
+
     tracker = Mixpanel::Tracker.new(Setting.mixpanel_token)
     agent = Agent.new request.env['HTTP_USER_AGENT']
 

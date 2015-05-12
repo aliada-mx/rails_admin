@@ -25,6 +25,9 @@
       tr
         td.warning
           color: $error
+        td
+          .action-button-pink
+            +rem(padding, 0.3rem 0.5rem) 
 
 #hide
   display:none
@@ -53,3 +56,21 @@
 
   input.checked ~ span
     background: image-url('star-full.png')
+
+.paypal-button-container
+  border: 2px solid $light_gray
+  width: 200px
+  height: 200px
+  padding: 20px
+  margin: 0 auto
+  cursor: pointer
+  .amount
+    +rem(font-size, $large-font)
+  .button
+    margin-top: 20px
+    
+
+body > div.vex.pay_debt_dialog.vex-theme-plain > div.vex-content
+  width: 450px
+  left: 40%
+

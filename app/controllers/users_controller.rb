@@ -31,11 +31,12 @@ class UsersController < ApplicationController
   end
 
   def previous_services
-    @services = User.find(params[:user_id]).services.in_the_past.where('status NOT IN (?)',[:canceled_in_time, :canceled])
+    @service_paid = Service.find(params[:service_paid_id]) if params[:service_paid_id]
+    @services = @user.services.in_the_past.where('status NOT IN (?)',[:canceled_in_time, :canceled])
   end
 
   def canceled_services
-    @services = User.find(params[:user_id]).services.canceled
+    @services = @user.services.canceled
   end
 
   def clear_session
