@@ -9,18 +9,16 @@
     .service.service__yellow{id: "service_#{service.id}"}
       %p= I18n.l service.tz_aware_datetime, format: "%A %e de %B a las %I %P"
       %h5= service.user.full_name
+      %p ¿Cuanto tiempo duro el servicio?
       = form_tag finish_service_path do
         %input{type: 'hidden', value: service.id, name: :service}
-        %div
-          Duracion horas:
-          %select{:name => :hour}
-            - (0..10).each do |h|
-              %option{:value => h}= h
-          minutos:
-          %select{:name => :min}
-            - (0..59).step(5).each do |m|
-              %option{:value => m}= m
-          %input{  :type => "submit", :name => "Pay", :value => "Guardar :)" }
+        %select{name: :hour}
+          - (1..10).each do |hour|
+            %option{value: hour}= pluralize(hour, 'Hora', 'Horas')
+        %select{name: :min}
+          - (5..59).step(5).each do |minute|
+            %option{value: minute}= pluralize(minute, 'Minuto', 'Minutos')
+        %input{type: 'submit', name: 'Pay', value: 'Guardar'}
 
 %h1 Servicios proximos
 - @upcoming_services.each do |service|
