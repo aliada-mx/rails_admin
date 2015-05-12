@@ -67,6 +67,18 @@ class Payment < ActiveRecord::Base
     end
 
     list do
+      search_scope do
+        Proc.new do |scope, query|
+          query_without_accents = I18n.transliterate(query)
+
+          scope.joins(:user).merge(UnscopedUser.with_name_phone_email(query_without_accents))
+        end
+      end
+
+      field :status do
+        queryable false
+      end
+
       include_fields :user, :amount, :status
     end
   end
