@@ -53,19 +53,18 @@ class Service < ActiveRecord::Base
   scope :ordered_by_datetime, -> { order(:datetime) }
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
   scope :join_users_and_aliadas, -> { joins('INNER JOIN users ON users.id = services.user_id OR users.id = services.aliada_id') }
-  scope :join_users, -> { joins(:user) }
 
   # Rails admin tabs
-  scope 'mañana', -> { join_users.on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
-  scope :todos, -> { join_users }
-  scope :one_timers, -> { join_users.where(service_type: ServiceType.one_time ) }
-  scope :recurrent, -> { join_users.where(service_type: ServiceType.recurrent ) }
-  scope :con_horas_reportadas, -> { join_users.where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL') }
-  scope :cobro_fallido, -> { join_users.joins(:debts).where('debts.service_id = services.id')
+  scope 'mañana', -> { on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
+  scope :todos, -> { }
+  scope :one_timers, -> { where(service_type: ServiceType.one_time ) }
+  scope :recurrent, -> { where(service_type: ServiceType.recurrent ) }
+  scope :con_horas_reportadas, -> { where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL') }
+  scope :cobro_fallido, -> { joins(:debts).where('debts.service_id = services.id')
                                           .where('services.status != ?','paid') }
 
-  scope :confirmados, -> { join_users.where('services.confirmed IS TRUE') }
-  scope :sin_confirmar, -> { join_users.where('services.confirmed IS NOT TRUE') }
+  scope :confirmados, -> { where('services.confirmed IS TRUE') }
+  scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
 
   # Validations
   validate :datetime_is_hour_o_clock
@@ -652,7 +651,6 @@ class Service < ActiveRecord::Base
 
       field :user_link do
         virtual?
-        sortable ('users.first_name')
       end
 
       field :datetime
