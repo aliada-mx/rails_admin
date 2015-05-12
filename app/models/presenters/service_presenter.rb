@@ -81,7 +81,7 @@ module Presenters
     def canceled_version
       canceled_version = nil
       versions.each do |version|
-        if version.changeset.has_key?( 'status' ) && version.changeset['status'].include?( 'canceled' )
+        if version.object_changes.include?( 'canceled' )
           canceled_version = version
         end
       end

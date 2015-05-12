@@ -133,7 +133,7 @@ class Service < ActiveRecord::Base
   end
 
   def self.timezone
-    'Mexico City'
+    'Etc/GMT+6'
   end
 
   def timezone_offset_seconds
@@ -197,11 +197,7 @@ class Service < ActiveRecord::Base
   end
 
   def self.parse_date_time(params)
-    datetime = ActiveSupport::TimeZone[self.timezone].parse("#{params[:date]} #{params[:time]}")
-    if datetime.dst?
-      datetime += 1.hour
-    end
-    datetime
+    ActiveSupport::TimeZone[self.timezone].parse("#{params[:date]} #{params[:time]}")
   end
 
   def ensure_updated_recurrence!
