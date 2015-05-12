@@ -29,6 +29,7 @@ class PaypalCharge < ActiveRecord::Base
     if first_payment.nil?
       puts 'oh noes'
       puts response.inspect
+      puts paypal_response
       return nil
     end
 
