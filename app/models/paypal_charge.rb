@@ -23,9 +23,9 @@ class PaypalCharge < ActiveRecord::Base
       # inspect this attribute for more details
       first_payment = response.payment_info.first
     rescue Paypal::Exception::APIError => exception
-      puts e.message # => 'PayPal API Error'
-      puts e.response # => Paypal::Exception::APIError::Response
-      puts e.response.details # => Array of Paypal::Exception::APIError::Response::Detail. This includes error details for each payment request.
+      puts exception.message # => 'PayPal API Error'
+      puts exception.response # => Paypal::Exception::APIError::Response
+      puts exception.response.details # => Array of Paypal::Exception::APIError::Response::Detail. This includes error details for each payment request.
 
       Raygun.track_exception(exception)
     end
