@@ -1,14 +1,46 @@
-%div.container
+%div.container.full_width
  %div.page-header
+  %div#popup
+   %p Hola
+  %div#legend
+   %div.recurrent{:data => {:schedule => "recurrent"}}
+    %span
+    %p Recurrente
+   %div.one_time{:data => {:schedule => "one_time"}}
+    %span
+    %p Solo un Servicio
+   %div.padding{:data => {:schedule => "padding"}}
+    %span
+    %p Hora Colchon
   %div#SchedulesApp
 :css
-  #SchedulesApp td { min-height: 30px; padding: 0 1px; margin: 0; }
-  #SchedulesApp td div{ display: block; text-align: center; }
-  #SchedulesApp td div span{ display: block; height: 30px; vertical-align: middle;}
+  .container.full_width{ width: 100% !important; }
+  #popup{ position: absolute; width: 180px; height: 40px; background-color: rgba(255, 200, 66, 0.8); border-radius: 5px; padding: 5px 10px; }
+  #popup p{ color:#333; text-align: center; }
+  #legend { float: right; }
+  #legend div{ float: left; margin: 0 5px; cursor: pointer; }
+  #legend div:hover p{ text-decoration: underline; }
+  #legend div span{ display: inline-block; width: 10px; height: 10px; margin: 5px; }
+  #legend div.recurrent span{ background: rgba(150, 120, 210, 0.5); }
+  #legend div.one_time span{ background: rgba(0, 196, 179, 0.5); }
+  #legend div.padding span{ background: rgba(234, 240, 241, 1); }
+  #legend div p{ float: right; }
+  #legend div.no_schedule p{ text-decoration: line-through; color: #ddd; }
+  #SchedulesApp { clear: both; }
+  #SchedulesApp table { width: 100%; }
+  #SchedulesApp table thead th { text-align: center; }
+  #SchedulesApp td { min-height: 50px; padding: 0 1px; margin: 0; }
+  #SchedulesApp td div{  display: table; width: 100%; }
+  #SchedulesApp td div span{ text-align: center; display: table-cell; height: 50px; vertical-align: middle; width: 100%;}
+  #SchedulesApp td div:hover{ }
+  #SchedulesApp .day_cell { width: 14%; }
+  #SchedulesApp .test { border: 1px solid #f00; background: #f00; opacity: 0.5; }
+  #SchedulesApp .test2 { border: 1px solid #ff0; }
   .recurrent.active{ background: rgba(150, 120, 210, 0.5); }
   .one_time.active{ background: rgba(0, 196, 179, 0.5); }
   .padding.active{ background: rgba(234, 240, 241, 1); }
-= javascript_include_tag 'https://fb.me/react-0.13.2.js'
+= javascript_include_tag 'react'
+= javascript_include_tag 'react-addons'
 = javascript_include_tag 'moment'
 = javascript_include_tag 'underscore'
 :javascript

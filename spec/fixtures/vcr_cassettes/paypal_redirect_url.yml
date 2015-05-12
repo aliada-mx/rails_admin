@@ -1,0 +1,91 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api-3t.paypal.com/nvp
+    body:
+      encoding: US-ASCII
+      string: USER=info-facilitator_api1.aliada.mx&PWD=MV9G7EALB8RCAAU6&SIGNATURE=AFcWxV21C7fd0v3bYYYRCpSSRl31AjwMqHVrIeMxI0WXKyrloxpo3NHi&SUBJECT=&VERSION=88.0&RETURNURL=http%3A%2F%2Fwww.example.com%2Fperfil%2F1%2Fhistorial%3Fsubaction%3Dpaypal_success&CANCELURL=http%3A%2F%2Fwww.example.com%2Fperfil%2F1%2Fhistorial%3Fsubaction%3Dpaypal_cancelation&REQCONFIRMSHIPPING=0&NOSHIPPING=1&ALLOWNOTE=0&PAYMENTREQUEST_0_AMT=195.00&PAYMENTREQUEST_0_TAXAMT=0.00&PAYMENTREQUEST_0_SHIPPINGAMT=0.00&PAYMENTREQUEST_0_CURRENCYCODE=MXN&PAYMENTREQUEST_0_DESC=Servicio%20aliada&METHOD=SetExpressCheckout
+    headers:
+      Accept:
+      - "*/*; q=0.5, application/xml"
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '573'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 06 May 2015 22:19:23 GMT
+      Server:
+      - Apache
+      Connection:
+      - close
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      - max-age=0, no-cache, no-store, must-revalidate
+      Pragma:
+      - no-cache
+      - no-cache
+      Content-Length:
+      - '234'
+      Set-Cookie:
+      - X-PP-SILOVER=; Expires=Thu, 01 Jan 1970 00:00:01 GMT
+      - X-PP-SILOVER=name%3DLIVE6.API.1%26silo_version%3D880%26app%3Dappdispatcher_apit%26TIME%3D1804814933;
+        domain=.paypal.com; path=/; Secure; HttpOnly
+      Content-Type:
+      - text/plain; charset=utf-8
+    body:
+      encoding: UTF-8
+      string: TIMESTAMP=2015%2d05%2d06T22%3a19%3a23Z&CORRELATIONID=b527b230334d3&ACK=Failure&VERSION=88%2e0&BUILD=16566018&L_ERRORCODE0=10002&L_SHORTMESSAGE0=Security%20error&L_LONGMESSAGE0=Security%20header%20is%20not%20valid&L_SEVERITYCODE0=Error
+    http_version: 
+  recorded_at: Wed, 06 May 2015 22:19:48 GMT
+- request:
+    method: post
+    uri: https://api-3t.sandbox.paypal.com/nvp
+    body:
+      encoding: US-ASCII
+      string: USER=info-facilitator_api1.aliada.mx&PWD=MV9G7EALB8RCAAU6&SIGNATURE=AFcWxV21C7fd0v3bYYYRCpSSRl31AjwMqHVrIeMxI0WXKyrloxpo3NHi&SUBJECT=&VERSION=88.0&RETURNURL=http%3A%2F%2Fwww.example.com%2Fperfil%2F1%2Fhistorial%3Fsubaction%3Dpaypal_success&CANCELURL=http%3A%2F%2Fwww.example.com%2Fperfil%2F1%2Fhistorial%3Fsubaction%3Dpaypal_cancelation&REQCONFIRMSHIPPING=0&NOSHIPPING=1&ALLOWNOTE=0&PAYMENTREQUEST_0_AMT=195.00&PAYMENTREQUEST_0_TAXAMT=0.00&PAYMENTREQUEST_0_SHIPPINGAMT=0.00&PAYMENTREQUEST_0_CURRENCYCODE=MXN&PAYMENTREQUEST_0_DESC=Servicio%20aliada&METHOD=SetExpressCheckout
+    headers:
+      Accept:
+      - "*/*; q=0.5, application/xml"
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '573'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 06 May 2015 22:43:50 GMT
+      Server:
+      - Apache
+      Connection:
+      - close
+      Content-Length:
+      - '137'
+      Set-Cookie:
+      - X-PP-SILOVER=; Expires=Thu, 01 Jan 1970 00:00:01 GMT
+      - X-PP-SILOVER=name%3DSANDBOX3.API.1%26silo_version%3D880%26app%3Dappdispatcher_apit%26TIME%3D647580245;
+        domain=.paypal.com; path=/; Secure; HttpOnly
+      Content-Type:
+      - text/plain; charset=utf-8
+    body:
+      encoding: UTF-8
+      string: TOKEN=EC%2d6YK043870V422270N&TIMESTAMP=2015%2d05%2d06T22%3a43%3a50Z&CORRELATIONID=d2b4f478672af&ACK=Success&VERSION=88%2e0&BUILD=16566018
+    http_version: 
+  recorded_at: Wed, 06 May 2015 22:44:15 GMT
+recorded_with: VCR 2.9.3

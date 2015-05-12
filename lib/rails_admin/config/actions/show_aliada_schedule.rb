@@ -18,7 +18,7 @@ module RailsAdmin
 
         register_instance_option :link_icon do
           # Escoger uno bonito de http://getbootstrap.com/2.3.2/base-css.html#icons
-          'icon-time'
+          'icon-calendar'
         end
 
         # Might cause random bugs if enabled

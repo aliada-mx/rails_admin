@@ -31,15 +31,23 @@
             %td
               - if service.paid?
                 = service.billed_hours
+                hrs trabajadas
               - else
                 - if service.finished?
                   = "#{ number_to_human service.billable_hours } hrs trabajadas"
                 - else
                   = "#{ number_to_human service.estimated_hours } hrs estimadas"
+
             %td
               = "#{service.aliada.first_name} #{service.aliada.last_name}"
+
             %td{class: service.owed? ? 'warning' : ''  }
-              = service.status_for_history
+              - if service.owed?
+                %span.action-button-pink.open-payment-dialog{data: {service_id: service.id, amount: service.cost }}
+                  #{ service.canceled? ? 'Cancelación tardía' : 'Por Pagar'  }
+              - else
+                = service.status_in_spanish
+
             %td
               = "$#{ service.cost }"
 

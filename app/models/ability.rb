@@ -80,6 +80,14 @@ class Ability
           else
             false
           end
+        elsif subject_class == PaypalCharge
+          if current_user.admin?
+            true
+          elsif params.include? :user_id
+            current_user.id == params[:user_id].to_i
+          else
+            false
+          end
         end
       end
     end

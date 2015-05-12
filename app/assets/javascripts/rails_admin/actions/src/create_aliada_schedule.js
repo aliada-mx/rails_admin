@@ -1,4 +1,5 @@
-var state_chaged = 'Hola';
+var cx = React.addons.classSet;
+
 var SchedulesApp = React.createClass({
   getInitialState: function () {
     return { schedules: this.props.schedules };
@@ -21,6 +22,7 @@ var SchedulesApp = React.createClass({
           if( schedule.service_type_id === 2){
             $('.'+class_name).find('.one_time').addClass('active').append('<span>'+schedule.user.full_name+'</span>');
           }
+          $('.'+class_name).addClass('service_', schedule.id);
         }
         start_hour = 0;
         padding_hours = parseFloat(schedule.hours_after_service).toFixed();
@@ -29,6 +31,7 @@ var SchedulesApp = React.createClass({
           class_name = 's_' + schedule_day.format('MM_DD_') + schedule_day.format('ddd').toLowerCase() + '_' + schedule_day.format('HH');
           schedule_day = moment( schedule.datetime );          
           $('.'+class_name).find('.padding').addClass('active').append('<span>'+schedule.user.full_name+'</span>' );
+          $('.'+class_name).addClass('service_'+schedule.id);
         }
       });
     });
@@ -84,7 +87,7 @@ var ScheduleRow = React.createClass({
             var class_name = '';
             var row_text = '';
             if( day !== 'hour' ){
-              class_name = 's_' + week_day.format('MM_DD')+ '_' + day + '_' + hour.format('HH');
+              class_name = 'day_cell ' + 's_' + week_day.format('MM_DD')+ '_' + day + '_' + hour.format('HH');
               week_day.add(1, 'd');
             } else {
               class_name = day + '_' + hour.format('HH');
@@ -100,41 +103,42 @@ var ScheduleRow = React.createClass({
 });
 
 var ScheduleCell = React.createClass({
+  setState: function () {
+    return { isHovering: false };
+  },
+  handleMouseOver: function () {
+    this.setState({ isHovering: true });
+  },
+  handleMouseOut: function () {
+    this.setState({ isHovering: false });
+  },
   render: function() {
+    var classes = cx([
+      this.isHovering && 'test'
+    ]);
     return (<td className={this.props.class_name}>
+      <div className={cx(classes)} onMouseOver={this.handleMouseOver.bind(this)} onMouseOut={this.handleMouseOut.bind(this)} >
       <div className="recurrent"></div>
       <div className="one_time"></div>
       <div className="padding"></div>
-      <div className="text">{this.props.text}</div></td>);
+      <div className="text">{this.props.text}</div></div></td>);
   }
 });
-var fill_schedules =  function( schedules ){
-    var curr_day = new Date;
-    var first_day = curr_day.getDate() - curr_day.getDay();
-    var last_day = first_day + 6;
-
-    var week_first_day = new Date( curr_day.setDate( first_day ) );
-    var week_last_day = new Date( curr_day.setDate( last_day ) );
-    _.each( schedules, function( schedule ){
-      var schedule_day = moment( schedule.datetime );
-
-      var schedule_hours = parseFloat(schedule.estimated_hours);
-      var schedule_padding_hours = parseFloat(schedule.hours_after_service);
-
-      var schedule_time = moment( schedule.datetime ).add( schedule_hours.toFixed(), 'hour');
-      var schedule_padding_time = moment( schedule.datetime ).add( ( parseInt(schedule_hours.toFixed()) + parseInt(schedule_padding_hours.toFixed()) ), 'hour');
-
-      if( moment( active_day.format() ).isBetween( schedule_day.format(), schedule_time.format() ) ){
-        row_text = schedule.id + ' - ' +schedule.user.full_name;
-        service_type = schedule.service_type_id;
-      }
-
-      if( moment( active_day.format() ).isBetween( schedule_time.format(), schedule_padding_time.format() ) ){
-        row_text = 'padding';
-        service_type = 4;
-      }
-
-  });
-};
 
 React.render( <SchedulesApp />, document.getElementById( "SchedulesApp" ) );
+
+$('#legend div').on('click', function(){
+  var schedule = $(this).data('schedule');
+  if( $(this).hasClass('no_schedule') ){
+    $(this).removeClass('no_schedule');
+    $('#SchedulesApp .'+schedule).fadeIn();
+  } else {
+    $(this).addClass('no_schedule');
+    $('#SchedulesApp .'+schedule).fadeOut();
+  }
+});
+
+$('#SchedulesApp .day_cell').hover( function(){
+  var position = $(this).offset();
+  $('#popup').css( {top: position.top, left: position.left} );
+});

@@ -5,8 +5,6 @@ module AliadaHelper
      range_end = (service.tz_aware_datetime + (1).hour).to_i
      return (range_begin .. range_end).step(15.minutes)
    end
-   
-
 
    def end_hours_range(service)
      end_hours_minimum = service.estimated_hours - 2
@@ -21,5 +19,4 @@ module AliadaHelper
     
      return (range_begin .. range_end).step(15.minutes)
    end
-
 end

@@ -62,10 +62,12 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
       var extra_items = _.map($(this).find(':checked'), function(checkbox){
         return "+" + $(checkbox).siblings('label').find('h4').text();
       });
+
       mixpanel.track("IS-Selected Items Changed", {
-	  "items": extra_items,
-	  "hours": extras_hours
+        "items": extra_items,
+        "hours": extras_hours
       });
+
       aliada.ko.extra_items(extra_items);
       aliada.ko.extras_hours(extras_hours);
   });

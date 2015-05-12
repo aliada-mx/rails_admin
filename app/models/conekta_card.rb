@@ -64,9 +64,6 @@ class ConektaCard < PaymentProvider
       
       payment
     rescue Conekta::Error, Conekta::ProcessingError => exception
-      Raygun.track_exception(exception)
-
-      
       object.create_charge_failed_ticket(user, product.amount, exception)
       
       raise exception

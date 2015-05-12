@@ -48,7 +48,7 @@ class User < ActiveRecord::Base
   validates_length_of :password, within: Devise.password_length, allow_blank: true
 
   after_initialize do
-    self.points ||= 0 if self.respond_to? :points
+    self.credits ||= 0 if self.respond_to? :credits
     self.role ||= 'client'
   end
 
@@ -96,9 +96,13 @@ class User < ActiveRecord::Base
   end
 
   def amount_owed
-    debts.inject(0) do |amount, debt|
-      amount += debt.amount unless debt.paid?
+    total = 0
+    debts.all.each do |debt|
+      unless debt.paid?
+        total += debt.amount
+      end
     end
+    total
   end
 
   def charge!(product, service)

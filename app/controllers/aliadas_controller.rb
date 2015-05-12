@@ -12,6 +12,7 @@ class AliadasController < ApplicationController
   
   def finish
     @aliada = Aliada.find_by(authentication_token: params[:token])
+
     @service_to_finish = Service.where(id: params[:service], 
                                        aliada_id: @aliada.id).first
     if @service_to_finish.present?
@@ -30,10 +31,13 @@ class AliadasController < ApplicationController
   end
 
   def services 
-   
     @aliada = Aliada.find_by(authentication_token: params[:token])
+
     
     if @aliada 
+
+      @aliada.track_webapp_view(request)
+
       #must implement today or tomorrow after 6pm, etc...
       now = ActiveSupport::TimeZone["Mexico City"].now
       date_to_show = if now.hour < 18

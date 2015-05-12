@@ -36,3 +36,6 @@ profiles/
 .DS_Store
 # rbenv ruby version
 .ruby-version
+
+#React cache files
+.module-cache

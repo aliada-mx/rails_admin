@@ -1,0 +1,44 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api-3t.sandbox.paypal.com/nvp
+    body:
+      encoding: US-ASCII
+      string: USER=info-facilitator_api1.aliada.mx&PWD=MV9G7EALB8RCAAU6&SIGNATURE=AFcWxV21C7fd0v3bYYYRCpSSRl31AjwMqHVrIeMxI0WXKyrloxpo3NHi&SUBJECT=&VERSION=88.0&TOKEN=EC-2W536552LW614674D&PAYERID=CVUVAVQWYK9E6&PAYMENTREQUEST_0_AMT=195.00&PAYMENTREQUEST_0_TAXAMT=0.00&PAYMENTREQUEST_0_SHIPPINGAMT=0.00&PAYMENTREQUEST_0_CURRENCYCODE=MXN&PAYMENTREQUEST_0_DESC=Servicio%20adeudado%20de%20aliada.mx%20990&METHOD=DoExpressCheckoutPayment
+    headers:
+      Accept:
+      - "*/*; q=0.5, application/xml"
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '417'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 08 May 2015 22:31:32 GMT
+      Server:
+      - Apache
+      Connection:
+      - close
+      Content-Length:
+      - '823'
+      Set-Cookie:
+      - X-PP-SILOVER=; Expires=Thu, 01 Jan 1970 00:00:01 GMT
+      - X-PP-SILOVER=name%3DSANDBOX3.API.1%26silo_version%3D880%26app%3Dappdispatcher_apit%26TIME%3D1144606037;
+        domain=.paypal.com; path=/; Secure; HttpOnly
+      Content-Type:
+      - text/plain; charset=utf-8
+    body:
+      encoding: UTF-8
+      string: TOKEN=EC%2d2W536552LW614674D&SUCCESSPAGEREDIRECTREQUESTED=false&TIMESTAMP=2015%2d05%2d08T22%3a31%3a35Z&CORRELATIONID=bc3efe7565988&ACK=Success&VERSION=88%2e0&BUILD=16566018&INSURANCEOPTIONSELECTED=false&SHIPPINGOPTIONISDEFAULT=false&PAYMENTINFO_0_TRANSACTIONID=4ML760136R947280V&PAYMENTINFO_0_TRANSACTIONTYPE=expresscheckout&PAYMENTINFO_0_PAYMENTTYPE=instant&PAYMENTINFO_0_ORDERTIME=2015%2d05%2d08T22%3a31%3a34Z&PAYMENTINFO_0_AMT=195%2e00&PAYMENTINFO_0_FEEAMT=11%2e80&PAYMENTINFO_0_TAXAMT=0%2e00&PAYMENTINFO_0_CURRENCYCODE=MXN&PAYMENTINFO_0_PAYMENTSTATUS=Completed&PAYMENTINFO_0_PENDINGREASON=None&PAYMENTINFO_0_REASONCODE=None&PAYMENTINFO_0_PROTECTIONELIGIBILITY=Ineligible&PAYMENTINFO_0_PROTECTIONELIGIBILITYTYPE=None&PAYMENTINFO_0_SECUREMERCHANTACCOUNTID=R377NQ62F88LL&PAYMENTINFO_0_ERRORCODE=0&PAYMENTINFO_0_ACK=Success
+    http_version: 
+  recorded_at: Fri, 08 May 2015 22:32:07 GMT
+recorded_with: VCR 2.9.3

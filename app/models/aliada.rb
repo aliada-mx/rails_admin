@@ -98,6 +98,26 @@ class Aliada < User
     aliada_show_webapp_link(self)
   end
 
+  def track_webapp_view(request)
+    return if Rails.env == 'test'
+
+    tracker = Mixpanel::Tracker.new(Setting.mixpanel_token)
+    agent = Agent.new request.env['HTTP_USER_AGENT']
+
+    options = { 
+      'agent_name' => agent.name,
+      'agent_version' => agent.version,
+      'agent_engine' => agent.engine,
+      'agent_os' => agent.os,
+      'agent_engine_version' => agent.engine_version,
+      'REMOTE_ADDR' => request.env['REMOTE_ADDR'],
+      'aliada_name' => self.name,
+      'environment' => Rails.env,
+    }
+
+    tracker.track(self.name, 'aliada viewed webapp', options)
+  end
+
   rails_admin do
     label_plural 'aliadas'
     navigation_label 'Personas'

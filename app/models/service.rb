@@ -35,6 +35,7 @@ class Service < ActiveRecord::Base
   has_many :schedules, ->{ order(:datetime ) }
   has_many :tickets, as: :relevant_object
   has_many :payments, as: :payeable
+  has_many :paypal_charges, as: :payable
   has_many :scores, -> { order(:updated_at) }
   has_many :debts
 
@@ -61,7 +62,6 @@ class Service < ActiveRecord::Base
   scope :con_horas_reportadas, -> { where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL') }
   scope :cobro_fallido, -> { joins(:debts).where('debts.service_id = services.id')
                                           .where('services.status != ?','paid') }
-
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
@@ -176,6 +176,7 @@ class Service < ActiveRecord::Base
       estimated_hours * service_type.price_per_hour
     end
   end
+  alias_method :amount, :cost
 
   def in_the_past?
     self.datetime_was < Time.zone.now
@@ -594,8 +595,8 @@ class Service < ActiveRecord::Base
   end
 
   def amount_owed
-    debts.inject(0) do |amount, debt|
-      amount += debt.amount unless debt.paid?
+    debts.inject(0) do |total, debt|
+      total += debt.amount unless debt.paid?
     end
   end
 
