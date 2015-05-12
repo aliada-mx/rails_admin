@@ -166,12 +166,12 @@ class Service < ActiveRecord::Base
   end
   
   def cost
-    if finished?
-      amount_to_bill
-    elsif owed?
+    if owed?
       amount_owed
     elsif paid?
       billed_hours * service_type.price_per_hour
+    elsif finished?
+      amount_to_bill
     else
       estimated_hours * service_type.price_per_hour
     end

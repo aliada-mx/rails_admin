@@ -159,9 +159,7 @@ class Schedule < ActiveRecord::Base
       field :status do
         queryable false
       end
-      field :user_link do
-        virtual?
-      end
+      field :user 
 
       field :aliada 
 

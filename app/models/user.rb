@@ -97,7 +97,7 @@ class User < ActiveRecord::Base
 
   def amount_owed
     total = 0
-    debts.all.each do |debt|
+    debts.each do |debt|
       unless debt.paid?
         total += debt.amount
       end
