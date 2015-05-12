@@ -70,6 +70,7 @@ Rails.application.routes.draw do
 
   # Convenience shortcut
   get 'mi-cuenta', to: 'users#user_account', as: :user_account_shortcut
+  get 'historial', to: 'users#previous_services_shortcut', as: :previous_services_shortcut
 
   # Availability
   post 'aliadas-availability', to: 'aliadas_availability#for_calendar', as: :aliadas_availability

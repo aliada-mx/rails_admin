@@ -47,6 +47,9 @@ class UsersController < ApplicationController
     redirect_to edit_users_path(current_user.id)
   end
 
+  def previous_services_shortcut
+    redirect_to previous_services_users_path(current_user.id)
+  end
 
   private
     def set_user
