@@ -1,63 +1,96 @@
 .header
-  %h4= @aliada.full_name
-  %p= "Esta semana llevas #{@aliada.current_week_reported_hours} horas"
+  %h4.header__user= @aliada.full_name
+  %p.header__hours= "Esta semana llevas #{@aliada.current_week_reported_hours} horas"
 
 .section
-  .section--header
+  .section__header
     %h4 Servicios por terminar
   - @unfinished_services.each do |service|
-    .service.service__yellow{id: "service_#{service.id}"}
-      %p= I18n.l service.tz_aware_datetime, format: "%A %e de %B a las %I %P"
-      %h5= service.user.full_name
-      %p ¿Cuanto tiempo duro el servicio?
-      = form_tag finish_service_path do
-        %input{type: 'hidden', value: service.id, name: :service}
-        %select{name: :hour}
-          - (1..10).each do |hour|
-            %option{value: hour}= pluralize(hour, 'Hora', 'Horas')
-        %select{name: :min}
-          - (5..59).step(5).each do |minute|
-            %option{value: minute}= pluralize(minute, 'Minuto', 'Minutos')
-        %input{type: 'submit', name: 'Pay', value: 'Guardar'}
+    .service.service--yellow{id: "service_#{service.id}"}
+      .service__head
+        %h3.date= I18n.l service.tz_aware_datetime, format: "%A %e de %B a las %I %P"
+        %h5.client= service.user.full_name
+      .set-hours
+        %p ¿Cuanto tiempo duro el servicio?
+        = form_tag finish_service_path do
+          %input{type: 'hidden', value: service.id, name: :service}
+          .set-hours__unit
+            .select
+              .arrow
+              %select{name: :hour}
+                - (0..10).each do |hour|
+                  %option{value: hour}= pluralize(hour, 'Hora', 'Horas')
+          .set-hours__unit
+            .select
+              .arrow
+              %select{name: :min}
+                - (5..59).step(5).each do |minute|
+                  %option{value: minute}= pluralize(minute, 'Minuto', 'Minutos')
+          .set-hours__unit
+            %input{type: 'submit', name: 'Pay', value: 'Guardar', class: 'button button--full button--yellow'}
 
-%h1 Servicios proximos
-- @upcoming_services.each do |service|
-  %h1=  I18n.l service.tz_aware_datetime, format: "%A %e de %B  a las %I %P"
-  %h4
-    #{service.estimated_hours.floor} horas
-    #{(60*(service.estimated_hours-service.estimated_hours.floor)).floor} minutos
-  %h3
-    #{service.address.street}
-    #{service.address.number}
-    interior:
-    #{service.address.interior_number}
-  %h4
-    %b Colonia:
-    #{service.address.colony},
-    #{service.address.city}
-  %img{:src => "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{service.address.latitude},#{service.address.longitude}&zoom=#{service.address.map_zoom}&markers=#{service.address.latitude},#{service.address.longitude}&markers=color:blue%7Clabel:S%7C#{service.address.references_latitude},#{service.address.references_longitude}"}
-  %h5= service.address.references
-  %h3
-    %b Cliente:
-    #{service.user.first_name}
-    #{service.user.last_name}
-  %h5
-    %b tel:
-    #{service.user.phone}
-  %h5 Entre calles: #{service.address.between_streets}
-  %h5 Instrucciones:  #{service.special_instructions}
-  %h5 Articulos Limpieza:   #{service.cleaning_supplies_instructions}
-  %h5 Basura: #{service.garbage_instructions}
-  %h5 Atencion a: #{service.attention_instructions}
-  %h5 Limpiar con: #{service.equipment_instructions}
-  %h5 No tocar: #{service.forbidden_instructions}
-  %h5 Otras instrucciones: #{service.special_instructions}
-  - if !service.confirmed
-    = form_tag((confirm_service_path)) do
-      %input{:type=>"hidden", :value=>service.id, :name => :service}
-      %input.action-button-pink{  :type => "submit", :name => "confirmation", :value => "Si voy" }
-  %br
-  %br
+.section
+  .section__header
+    %h4 Servicios proximos
+  - @upcoming_services.each do |service|
+    .service.service--purple
+      .service__head
+        %h3.date=  I18n.l service.tz_aware_datetime, format: '%A %e de %B  a las %I %P'
+        %h5.client= service.user.first_name + ' ' + service.user.last_name
+        %h5.phone= service.user.phone
+      .service__details
+        .service__attribute
+          %span Duración
+          %p
+            #{service.estimated_hours.floor} horas
+            #{(60 * (service.estimated_hours-service.estimated_hours.floor)).floor} minutos
+        .service__attribute
+          %span Dirección
+          %p= service.address.street
+        .service__attribute
+          %span Número exterior
+          %p= service.address.number
+        .service__attribute
+          %span Número interior
+          %p= service.address.interior_number ? service.address.interior_number : 'Sin número interior'
+        .service__attribute
+          %span Entre calles
+          %p= service.address.between_streets
+        .service__attribute
+          %span Colonia
+          %p #{service.address.colony}, #{service.address.city}
+        .service__attribute
+          %img{src: "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{service.address.latitude},#{service.address.longitude}&zoom=#{service.address.map_zoom}&markers=#{service.address.latitude},#{service.address.longitude}&markers=color:blue%7Clabel:S%7C#{service.address.references_latitude},#{service.address.references_longitude}"}
+        .service__attribute
+          %span Referencias
+          %p= service.address.references
+        .service__attribute
+          %span Instrucciones
+          %p= service.special_instructions
+        .service__attribute
+          %span Articulos de limpieza
+          %p= service.cleaning_supplies_instructions
+        .service__attribute
+          %span Basura
+          %p= service.garbage_instructions
+        .service__attribute
+          %span Atencion a
+          %p= service.attention_instructions
+        .service__attribute
+          %span Limpiar con
+          %p= service.equipment_instructions
+        .service__attribute
+          %span No tocar
+          %p= service.forbidden_instructions
+        .service__attribute
+          %span Otras instrucciones
+          %p= service.special_instructions
+      .service__actions
+        - if !service.confirmed
+          .service__confirm
+            = form_tag((confirm_service_path)) do
+              %input{type: 'hidden', value: service.id, name: :service}
+              %input{type: 'submit', name: 'confirmation', value: 'Si voy', class: 'button button--full button--purple'}
 
 = append :extra_head do
-  = stylesheet_link_tag 'aliadas_dashboard', media: 'all', 'data-turbolinks-track' => true
+  = stylesheet_link_tag 'aliadas_dashboard', media: 'all'
