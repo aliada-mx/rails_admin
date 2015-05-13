@@ -28,6 +28,9 @@
   @if $color == $green or $color == $purple
     @return transparent
 
+  @if $color == $white
+    @return $purple
+
   @return $color
 
 @function action-button-text-color($color)
