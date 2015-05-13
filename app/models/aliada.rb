@@ -83,9 +83,9 @@ class Aliada < User
     Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week.advance(:days => 1)).not_canceled
   end
 
-  def current_week_reported_hours
-    services = self.current_week_services
+  def current_week_hours_worked
     sum = 0
+    services = self.current_week_services
     services.each do |s|
       if s.hours_worked
         sum = sum + s.hours_worked
