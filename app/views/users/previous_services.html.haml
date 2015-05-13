@@ -8,9 +8,10 @@
       %thead
         %tr
           %th Fecha
-          %th Duración 
+          %th Duración(hrs)
           %th Aliada Asignada
           %th Estado
+          %th Cobrado
           %th Costo 
           %th Calificación
           - if current_user.admin?
@@ -24,32 +25,37 @@
 
         - @services.each do |service|
           %tr{class: service.owed? ? 'warning' : '', id: "service_#{service.id}"  }
-            %td
-              = l service.tz_aware_datetime, format: :short
-              - if current_user.admin?
-                = service.tz_aware_datetime.weekday
-            %td
+            %td.datetime
+              = l service.tz_aware_datetime, format: :default_with_hour
+            %td.duration
               - if service.paid?
-                = service.billed_hours
-                hrs trabajadas
+                = ensure_leading_zero service.billed_hours
               - else
                 - if service.finished?
-                  = "#{ number_to_human service.billable_hours } hrs trabajadas"
+                  = ensure_leading_zero service.billable_hours
                 - else
-                  = "#{ number_to_human service.estimated_hours } hrs estimadas"
+                  = ensure_leading_zero service.estimated_hours
 
-            %td
-              = "#{service.aliada.first_name} #{service.aliada.last_name}"
-
+            %td.aliada
             %td{class: service.owed? ? 'warning' : ''  }
+              = service.status_for_history
+            %td
+              = "$#{ service.cost }"
+
+            %td.status{class: service.owed? ? 'warning' : ''  }
               - if service.owed?
                 %span.action-button-pink.open-payment-dialog{data: {service_id: service.id, amount: service.cost }}
                   #{ service.canceled? ? 'Cancelación tardía' : 'Por Pagar'  }
               - else
                 = service.status_in_spanish
 
-            %td
-              = "$#{ service.cost }"
+            %td.paid_at
+              - if service.paid? && service.paid_at
+                = l service.paid_at, format: :default
+              - else
+                \-
+            %td.cost
+              = "$#{ service.cost.to_i }"
 
             %td.rating{class: service.finished? || service.paid? ? '' : 'disabled' }
               = form_tag score_service_users_path(@user, service), class: "score_service" do

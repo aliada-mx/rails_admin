@@ -156,23 +156,23 @@ class Schedule < ActiveRecord::Base
       sort_by :datetime
 
       field :datetime
+
       field :status do
         queryable false
       end
-      field :user_link do
-        virtual?
-      end
+
+      field :user 
 
       field :aliada 
 
       field :service
 
       field :recurrence
+
       field :created_at
 
       scopes [:siguientes, :todos, :reservadas, :disponible]
     end
-
   end
 
   private

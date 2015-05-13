@@ -9,6 +9,7 @@ class Payment < ActiveRecord::Base
   validates_presence_of :user
 
   scope :conekta_payments, -> { where(payment_provider_type: 'ConektaCard') }
+  scope :paid, -> { where(status: 'paid') }
 
   # State machine
   state_machine :status, :initial => 'unpaid' do
@@ -67,6 +68,22 @@ class Payment < ActiveRecord::Base
     end
 
     list do
+      search_scope do
+        Proc.new do |scope, query|
+          query_without_accents = I18n.transliterate(query)
+
+          scope.joins(:user).merge(UnscopedUser.with_name_phone_email(query_without_accents))
+        end
+      end
+
+      field :status do
+        queryable false
+      end
+
+      field :user
+      field :amount
+      field :payeable
+
       include_fields :user, :amount, :status
     end
   end

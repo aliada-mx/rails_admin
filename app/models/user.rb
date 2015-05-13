@@ -97,7 +97,7 @@ class User < ActiveRecord::Base
 
   def amount_owed
     total = 0
-    debts.all.each do |debt|
+    debts.each do |debt|
       unless debt.paid?
         total += debt.amount
       end
@@ -217,24 +217,25 @@ class User < ActiveRecord::Base
     navigation_icon 'icon-user'
     label_plural 'usuarios'
 
-    edit do
+    configure :user_next_services_path do
+      read_only true
+      visible do
+        value.present?
+      end
 
-      field :role
-      field :user_next_services_path do
-        read_only true
-        visible do
-          value.present?
-        end
+      formatted_value do
+        view = bindings[:view]
+        user = bindings[:object]
 
-        formatted_value do
-          view = bindings[:view]
-          user = bindings[:object]
-
-          if user.persisted?
-            view.link_to(user.id, value, target: '_blank')
-          end
+        if user.persisted?
+          view.link_to(user.id, value, target: '_blank')
         end
       end
+    end
+
+    edit do
+      field :role
+      field :user_next_services_path
 
       field :addresses
 
@@ -270,19 +271,7 @@ class User < ActiveRecord::Base
           label 'Creditos'
         end
 
-        field :default_payment_provider do
-          visible do
-            value.present?
-          end
-
-          formatted_value do
-            if value.present?
-              Mixins::RailsAdminModelsHelpers.rails_admin_edit_link(value)
-            end
-          end
-
-          read_only true
-        end
+        field :payment_provider_choices
 
         field :conekta_customer_id do
           read_only true
@@ -351,7 +340,8 @@ class User < ActiveRecord::Base
     end
 
     show do
-      exclude_fields :payment_provider_choices
+      exclude_fields :payment_provider_choices, :versions, :code, :sign_in_count
+      include_fields :user_next_services_path
     end
   end
 end

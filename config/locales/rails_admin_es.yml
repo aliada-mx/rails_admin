@@ -9,6 +9,7 @@ es:
       extras: 'extra de servicio'
       payment: 'cobro'
       payment_method: 'métodos de pago'
+      payment_provider_choice: 'Forma de pago elegida'
       postal_code: 'códigos postale'
       recurrence: 'recurrencia'
       recurrences: 'recurrencias'
@@ -113,6 +114,7 @@ es:
         payment_provider: proveedor del cobro
         amount: monto
         user: usuario
+        payeable: cobrable
       payment_method:
         <<: *common_attributes
       postal_code:
@@ -170,7 +172,7 @@ es:
         cancelation_fee_charged: '¿Cargo por cancelación tardía hecho?'
         confirmed: 'Confirmado'
         rooms_hours: 'Horas por cuartos'
-        reported_hours: 'Horas reportadas'
+        hours_worked: 'Horas trabajadas'
       ticket:
         relevant_object: Registro
         message: error
@@ -192,6 +194,9 @@ es:
       users:
         <<: *common_attributes
         <<: *user_attributes
+      payment_provider_choice:
+        <<: *common_attributes
+        default: 'Activa'
   admin:
     home:
       name: Inicio

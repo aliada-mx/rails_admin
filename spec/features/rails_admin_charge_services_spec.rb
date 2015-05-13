@@ -4,8 +4,7 @@ feature 'Charge many services in the admin' do
   let(:admin){ create(:admin) }
 
   let!(:service_1){ create(:service, status: 'finished', 
-                           aliada_reported_begin_time: starting_datetime,
-                           aliada_reported_end_time: starting_datetime + 4.hours) }
+                           hours_worked: 4) }
   let!(:service_2){ create(:service, status: 'finished') }
   let!(:service_3){ create(:service, status: 'paid') }
 

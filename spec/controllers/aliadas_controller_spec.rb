@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 feature 'AliadasController' do
-  
   let!(:conekta_card){ create(:conekta_card) }
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 14:00:00') }
   let!(:user) { create(:user) }
@@ -184,15 +183,14 @@ feature 'AliadasController' do
     it 'saves the worked hours on a service' do
       visit ('aliadas/servicios/'+ aliada.authentication_token)
 
-      within "#service_#{service.id}" do
-        select '3'
-        select "30"
-      end
-      click_on('Guardar :)')
+      select_by_value(3, from: "service_#{service.id}_hours")
+      select_by_value(30, from: "service_#{service.id}_mins")
+
+      click_on('Guardar')
 
       service.reload
       expect(service.hours_worked).to eql BigDecimal.new('3.5')
-      expect(page).to have_content('3.5')
+      expect(page).to have_content('3 horas 30 minutos')
     end
   end
 end

@@ -95,6 +95,15 @@ describe 'User' do
 
       expect(user.balance).to eql( -100 )
     end
+
+    it 'should only register one debt per service' do
+      product = OpenStruct.new({amount: 100, 
+                                category: 'service'})
+      user.register_debt(product, service)
+      user.register_debt(product, service)
+
+      expect(user.debts.count).to be 1
+    end
   end
 
   describe 'charge!' do

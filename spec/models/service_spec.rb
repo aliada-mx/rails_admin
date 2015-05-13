@@ -130,39 +130,25 @@ feature 'Service' do
     end
   end
 
-  describe '#amount_by_reported_hours' do
+  describe '#amount_by_hours_worked' do
     it 'returns the amount result of calculating hours and multiplying by price' do
       s = Service.create(price: 65,
-                         aliada_reported_begin_time: Time.now, 
-                         aliada_reported_end_time: Time.now + 3.hour,
+                         hours_worked: 3, 
                          datetime: starting_datetime,
-                         estimated_hours: 3,
-                         service_type: recurrent_service
-                         )
-      expect(s.amount_by_reported_hours).to be 195.0
-    end
-    it 'returns 0 with invalid begin and end' do
-      s = Service.create(price: 65,
-                         service_type: one_time_service,
-                         aliada_reported_begin_time: Time.now, 
-                         aliada_reported_end_time: Time.now - 3.hour,
-                         datetime: starting_datetime,
-                         estimated_hours: 3
-                         )
-      expect(s.amount_by_reported_hours).to be 0
+                         service_type: recurrent_service)
+      expect(s.amount_by_hours_worked).to eql 195.to_d
     end
   end
 
-  describe '#charge_service!' do
+  describe '#charge!' do
 
     it 'Raises an exception if a token is not passed' do
       user.create_payment_provider_choice(conekta_card)
       service.price= 65
       service.status = 'finished'
       service.user_id = user.id
-      service.aliada_reported_begin_time = Time.now
+      service.hours_worked = 3
      
-      service.aliada_reported_end_time = Time.now + 3.hours
       service.datetime = starting_datetime
       service.estimated_hours = 3
       
@@ -180,9 +166,7 @@ feature 'Service' do
       service.price= 65
       service.status = 'finished'
       service.user_id = user.id
-      service.aliada_reported_begin_time = Time.zone.now
-      
-      service.aliada_reported_end_time = Time.zone.now + 3.hours
+      service.hours_worked = 3
       service.datetime = starting_datetime
       service.estimated_hours = 3
       
@@ -204,9 +188,8 @@ feature 'Service' do
       expect(service.amount_to_bill).to eql 315
     end
 
-    it 'calculates using the reported hours when these are set and the billable_hours are not' do
-      service.aliada_reported_begin_time = starting_datetime
-      service.aliada_reported_end_time = starting_datetime + 4.hours
+    it 'calculates using the hours worked when these are set and the billable_hours are not' do
+      service.hours_worked = 4
     
       expect(service.amount_to_bill).to eql 420
     end
@@ -228,10 +211,8 @@ feature 'Service' do
       expect(service.friendly_total_hours).to eql '3 horas 30 minutos'
     end
 
-    it 'uses the reported hours if the billable_hours are empty' do
-      service.aliada_reported_begin_time = starting_datetime
-      service.aliada_reported_end_time = starting_datetime + 4.hours + 30.minutes
-      
+    it 'uses the hours worked if the billable_hours are empty' do
+      service.hours_worked = 4.5
 
       expect(service.friendly_total_hours).to eql '4 horas 30 minutos'
     end

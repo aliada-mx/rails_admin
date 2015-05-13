@@ -21,4 +21,8 @@ module ApplicationHelper
   def in_time_zone_formatted(datetime)
     I18n.l(datetime.in_time_zone('Etc/GMT+6'), format: :future)
   end
+
+  def ensure_leading_zero(number)
+    sprintf "%.1f", number
+  end
 end

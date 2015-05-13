@@ -244,6 +244,7 @@ GEM
     mime-types (2.4.3)
     mini_portile (0.6.2)
     minitest (5.6.0)
+    mixpanel-ruby (2.1.0)
     mono_logger (1.1.0)
     multi_json (1.11.0)
     multi_xml (0.5.5)
@@ -451,6 +452,7 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    user-agent (1.0.0)
     uuidtools (2.1.5)
     vcr (2.9.3)
     vegas (0.1.11)
@@ -500,6 +502,7 @@ DEPENDENCIES
   launchy
   lograge
   migration_data
+  mixpanel-ruby
   mysql2
   nestive
   newrelic_rpm
@@ -537,6 +540,7 @@ DEPENDENCIES
   turbolinks
   uglifier (>= 1.3.0)
   unicorn
+  user-agent
   vcr
   web-console (~> 2.0)
   webmock

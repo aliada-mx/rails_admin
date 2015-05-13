@@ -1,6 +1,6 @@
 .header
   %h4.header__user= @aliada.full_name
-  %p.header__hours= "Esta semana llevas #{@aliada.current_week_reported_hours} horas"
+  %p.header__hours= "Esta semana llevas #{ seconds_to_hours_minutes_in_spanish @aliada.current_week_hours_worked.hours }"
 
 .section
   .section__header
@@ -17,13 +17,13 @@
           .set-hours__unit
             .select
               .arrow
-              %select{name: :hour}
+              %select{name: :hour, id:  "service_#{service.id}_hours"}
                 - (0..10).each do |hour|
                   %option{value: hour}= pluralize(hour, 'Hora', 'Horas')
           .set-hours__unit
             .select
               .arrow
-              %select{name: :min}
+              %select{name: :min, id:  "service_#{service.id}_mins"}
                 - (5..59).step(5).each do |minute|
                   %option{value: minute}= pluralize(minute, 'Minuto', 'Minutos')
           .set-hours__unit

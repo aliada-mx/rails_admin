@@ -23,6 +23,8 @@ class Ability
             end
           elsif action == :user_account
             true if current_user
+          elsif action == :previous_services_shortcut
+            true if current_user
           end
         elsif subject_class == Score
           if action == :score_service
