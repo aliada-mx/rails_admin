@@ -113,6 +113,7 @@ es:
         payment_provider: proveedor del cobro
         amount: monto
         user: usuario
+        payeable: cobrable
       payment_method:
         <<: *common_attributes
       postal_code:
@@ -170,7 +171,7 @@ es:
         cancelation_fee_charged: '¿Cargo por cancelación tardía hecho?'
         confirmed: 'Confirmado'
         rooms_hours: 'Horas por cuartos'
-        reported_hours: 'Horas reportadas'
+        hours_worked: 'Horas trabajadas'
       ticket:
         relevant_object: Registro
         message: error

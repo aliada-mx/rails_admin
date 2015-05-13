@@ -36,9 +36,13 @@
 
       .action-link
         %div
-          =link_to("Cancelar todas las visitas próximas", edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id, cancelar: :true), {})
+          =link_to(edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id, cancelar: :true), class: 'action-button-white size-medium') do
+            %span.icon-cancel-circle.icon-button
+            Cancelar todas las visitas próximas
         %div
-          =link_to("Modifcar todas las visitas próximas", edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id), {})
+          =link_to(edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id), class: 'action-button-white size-medium') do
+            %span.icon-pencil.icon-button
+            Modifcar todas las visitas próximas
 
 
     %table.table-cards

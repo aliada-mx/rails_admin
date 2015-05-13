@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 feature 'AliadasController' do
-  
   let!(:conekta_card){ create(:conekta_card) }
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 14:00:00') }
   let!(:user) { create(:user) }
@@ -192,7 +191,7 @@ feature 'AliadasController' do
 
       service.reload
       expect(service.hours_worked).to eql BigDecimal.new('3.5')
-      expect(page).to have_content('3.5')
+      expect(page).to have_content('3 horas 30 minutos')
     end
   end
 end

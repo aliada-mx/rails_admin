@@ -81,11 +81,21 @@ module Presenters
     def canceled_version
       canceled_version = nil
       versions.each do |version|
-        if version.changeset.has_key?( 'status' ) && version.changeset['status'].include?( 'canceled' )
+        if version.object_changes.include?( 'canceled' )
           canceled_version = version
         end
       end
       canceled_version
+    end
+
+    def paid_version
+      paid_version = nil
+      versions.each do |version|
+        if version.object_changes.include?( 'paid' )
+          paid_version = version
+        end
+      end
+      paid_version
     end
 
     def friendly_date
@@ -132,8 +142,8 @@ module Presenters
       if bill_by_billable_hours?
        seconds_to_hours_minutes_in_spanish(billable_hours.hours)
 
-      elsif bill_by_reported_hours?
-       seconds_to_hours_minutes_in_spanish(reported_hours.hours)
+      elsif bill_by_hours_worked?
+       seconds_to_hours_minutes_in_spanish(hours_worked.hours)
 
      else
        raise "Faltan horas en friendly total_hours del servicio #{self.id}"
@@ -198,6 +208,14 @@ module Presenters
     # Category for debts
     def category
       'service'
+    end
+
+    def paid_at
+      if payments.paid.any?
+        payments.paid.first.created_at 
+      elsif paid_version
+        paid_version.created_at
+      end
     end
   end
 end
