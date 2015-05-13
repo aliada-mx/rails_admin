@@ -256,4 +256,43 @@ feature 'Service' do
       expect(schedule).to be_available
     end
   end
+
+  describe '#pay' do
+    before do
+      service.status = 'finished'
+    end
+
+    it 'sets the billed_hours based on the billable_hours' do
+      service.billable_hours = 7
+      service.pay!
+      
+      expect(service).to be_paid
+      expect(service.billed_hours).to eql 7
+    end
+  end
+
+  describe 'transition to paid' do
+    before do
+      service.status = 'finished'
+      service.save
+    end
+    
+    it 'sets the billed hours using the billed hours over the hours worked' do
+      service.billed_hours = 8
+      service.hours_worked = 6
+      service.status = 'paid'
+      service.save!
+
+      expect(service.billed_hours).to eql 8
+    end
+
+    it 'sets the billed hours using the hours worked if the billable does not exist' do
+      service.billed_hours = nil
+      service.hours_worked = 6
+      service.status = 'paid'
+      service.save!
+
+      expect(service.billed_hours).to eql 6
+    end
+  end
 end

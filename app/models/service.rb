@@ -130,6 +130,31 @@ class Service < ActiveRecord::Base
   delegate :periodicity, to: :service_type
   delegate :wdays_count_to_end_of_recurrency, to: :recurrence
 
+  before_save :detect_statuses_change
+
+  def detect_statuses_change
+    if status_changed?
+      case status
+      when 'paid'
+        set_billed_hours
+      end
+    end
+  end
+
+  def set_billed_hours
+    return if billed_hours.present? && !billed_hours.zero?
+
+    self.billed_hours = if billable_hours && !billable_hours.zero?
+                          billable_hours 
+                        elsif hours_worked && !hours_worked.zero?
+                          hours_worked
+                        elsif estimated_hours
+                          estimated_hours 
+                        else 
+                          0
+                        end
+  end
+
   def timezone
     'Mexico City'
   end
