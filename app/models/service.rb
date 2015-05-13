@@ -683,15 +683,21 @@ class Service < ActiveRecord::Base
 
       group :horas_de_servicio do
         field :estimated_hours
-        field :aliada_reported_begin_time
-        field :aliada_reported_end_time
+        field :hours_worked do
+          help 'Horas reportadas por la aliada'
+        end
 
-        field :billable_hours
+        field :billable_hours do
+          help 'Horas llenadas por un admin'
+        end
+
         field :billed_hours do
           read_only true
           visible do
             value.present? && !value.zero?
           end
+
+          help 'Horas cobradas'
         end
 
         field :hours_after_service
