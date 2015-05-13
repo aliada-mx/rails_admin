@@ -9,6 +9,7 @@ class Payment < ActiveRecord::Base
   validates_presence_of :user
 
   scope :conekta_payments, -> { where(payment_provider_type: 'ConektaCard') }
+  scope :paid, -> { where(status: 'paid') }
 
   # State machine
   state_machine :status, :initial => 'unpaid' do

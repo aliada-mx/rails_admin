@@ -65,6 +65,7 @@ class Service < ActiveRecord::Base
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
+  scope :paid, -> { where("services.status = 'paid'") }
 
   # Validations
   validate :datetime_is_hour_o_clock

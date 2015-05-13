@@ -16,11 +16,12 @@
   table
     thead
       th
-        color: $light_gray
+        color: $dark_gray
         +rem(font-size, $smallish-font)
         cursor: pointer
-        &:after
-          +arrow(down)
+        text-decoration: underline
+        &:hover
+          color: $light_gray
     tbody
       tr
         td.warning
@@ -51,8 +52,12 @@
     padding: .5rem 1.1rem 0
     background: image-url('stars.png')
 
-  input.unchecked:hover ~ span
-    background: image-url('star-full.png')
+  input
+    &:hover ~ span
+      background: image-url('star-full.png')
+
+    &.checked:hover ~ span
+      background: image-url('star-over-full.png')
 
   input.checked ~ span
     background: image-url('star-full.png')

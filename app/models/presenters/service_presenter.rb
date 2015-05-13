@@ -88,6 +88,16 @@ module Presenters
       canceled_version
     end
 
+    def paid_version
+      paid_version = nil
+      versions.each do |version|
+        if version.object_changes.include?( 'paid' )
+          paid_version = version
+        end
+      end
+      paid_version
+    end
+
     def friendly_date
       I18n.l(tz_aware_datetime, format: :friendly_date) if datetime
     end
@@ -198,6 +208,14 @@ module Presenters
     # Category for debts
     def category
       'service'
+    end
+
+    def paid_at
+      if payments.paid.any?
+        payments.paid.first.created_at 
+      elsif paid_version
+        paid_version.created_at
+      end
     end
   end
 end
