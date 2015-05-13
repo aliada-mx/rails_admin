@@ -109,8 +109,9 @@ class Service < ActiveRecord::Base
     end
 
     after_transition on: :finish do |service, transition|
-      if service.bill_by_reported_hours?
-        hours = service.reported_hours
+      if service.bill_by_hours_worked?
+        hours = service.hours_worked
+
         if hours < 3
           service.billable_hours = 3
         else
@@ -290,26 +291,14 @@ class Service < ActiveRecord::Base
     end
   end
 
-  def reported_hours
-    if bill_by_hours_worked?
-      hours_worked
-    elsif bill_by_reported_hours?
-      (self.aliada_reported_end_time - self.aliada_reported_begin_time) / 3600.0
-    end
-  end
-  
   #calculates the price to be charged for a service
-  def amount_by_reported_hours
-    amount = reported_hours * service_type.price_per_hour
+  def amount_by_hours_worked
+    amount = hours_worked * service_type.price_per_hour
     if amount > 0 then amount else 0 end
   end
 
   def amount_by_billable_hours
     billable_hours * service_type.price_per_hour
-  end
-
-  def bill_by_reported_hours?
-    (aliada_reported_begin_time.present? && aliada_reported_end_time.present?) || hours_worked.present?
   end
 
   def bill_by_hours_worked?
@@ -330,9 +319,9 @@ class Service < ActiveRecord::Base
 
       amount_by_billable_hours.ceil
 
-    elsif bill_by_reported_hours?
+    elsif bill_by_hours_worked?
 
-      amount_by_reported_hours.ceil
+      amount_by_hours_worked.ceil
 
     else
       0
@@ -670,7 +659,7 @@ class Service < ActiveRecord::Base
       field :aliada_webapp_link
       field :aliada_reported_begin_time
       field :aliada_reported_end_time
-      field :reported_hours
+      field :hours_worked
       field :schedules_count
       field :estimated_hours
       field :recurrence
@@ -694,15 +683,21 @@ class Service < ActiveRecord::Base
 
       group :horas_de_servicio do
         field :estimated_hours
-        field :aliada_reported_begin_time
-        field :aliada_reported_end_time
+        field :hours_worked do
+          help 'Horas reportadas por la aliada'
+        end
 
-        field :billable_hours
+        field :billable_hours do
+          help 'Horas llenadas por un admin'
+        end
+
         field :billed_hours do
           read_only true
           visible do
             value.present? && !value.zero?
           end
+
+          help 'Horas cobradas'
         end
 
         field :hours_after_service
