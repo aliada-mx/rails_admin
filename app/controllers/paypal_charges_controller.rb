@@ -13,7 +13,8 @@ class PaypalChargesController < ApplicationController
   end
 
   def paypal_ipn
-    PaypalIPN.create!(api_raw_response: request.raw_post)
+    PaypalIpn.create!(api_raw_response: request.raw_post)
+    render nothing: true
   end
 
   def paypal_return
