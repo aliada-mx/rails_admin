@@ -271,19 +271,7 @@ class User < ActiveRecord::Base
           label 'Creditos'
         end
 
-        field :default_payment_provider do
-          visible do
-            value.present?
-          end
-
-          formatted_value do
-            if value.present?
-              Mixins::RailsAdminModelsHelpers.rails_admin_edit_link(value)
-            end
-          end
-
-          read_only true
-        end
+        field :payment_provider_choices
 
         field :conekta_customer_id do
           read_only true
