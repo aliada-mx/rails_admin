@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 describe 'Schedule Filler' do
   # Preconditions:
-  let(:starting_datetime){ Time.zone.parse('09 Apr 2015 00:00:00') }
+  let(:starting_datetime){ Time.zone.parse('10 Apr 2015 00:00:00') }
   let(:recurrence_service_datetime) { Time.zone.parse('10 Apr 2015 13:00:00') }
   total_available_hours = 8
   total_service_hours = 3
@@ -71,7 +71,7 @@ describe 'Schedule Filler' do
       expect(Schedule.available.in_the_future.count).to be (total_available_hours - total_service_hours)
       expect(Schedule.booked.in_the_future.count).to be total_service_hours
       # Check the specific date of the future schedule
-      today_in_the_future = starting_datetime + Setting.time_horizon_days.days + 1.day
+      today_in_the_future = starting_datetime + Setting.time_horizon_days.days
 
       #Compensate for UTC 
       recurrence_in_the_future = today_in_the_future.change(hour: client_recurrence.utc_hour(today_in_the_future))

@@ -57,9 +57,9 @@ class ConektaCard < PaymentProvider
 
   def charge!(product, user, object)
     begin
-      conekta_charge = charge_in_conekta!(product, user)
+      @conekta_charge = charge_in_conekta!(product, user)
      
-      payment = Payment.create_from_conekta_charge(conekta_charge,user,self,object)
+      payment = Payment.create_from_conekta_charge(@conekta_charge,user,self,object)
       payment.pay!
       
       payment
@@ -97,6 +97,7 @@ class ConektaCard < PaymentProvider
     temporary_token = payment_method_options[:conekta_temporary_token]
     create_customer(user, temporary_token)
     preauthorize!(user, service)
+    refund
   end
 
   def preauthorize!(user, object)
@@ -107,7 +108,11 @@ class ConektaCard < PaymentProvider
 
     self.preauthorized = true
     self.save!
-    self
+    @conekta_charge
+  end
+
+  def refund
+    @conekta_charge.refund()
   end
 
   rails_admin do

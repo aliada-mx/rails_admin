@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 class PaymentProviderChoice < ActiveRecord::Base
+  include Mixins::RailsAdminModelsHelpers
+
   belongs_to :payment_provider, polymorphic: true
   belongs_to :user, inverse_of: :payment_provider_choices
 
@@ -20,11 +22,23 @@ class PaymentProviderChoice < ActiveRecord::Base
   def provider
     payment_provider
   end
+
+  def payment_provider_link
+    rails_admin_edit_link(payment_provider, name: payment_provider.friendly_name, klass: 'conekta_card')
+  end
   
   rails_admin do
     label_plural 'Formas de pago elegidas'
     parent PaymentMethod
     navigation_icon 'icon-hand-right'
+
+    edit do
+      field :payment_provider_link do
+        virtual?
+        read_only true
+      end
+      field :default
+    end
 
     list do
       field :name do

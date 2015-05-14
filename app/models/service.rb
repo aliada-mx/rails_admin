@@ -112,13 +112,8 @@ class Service < ActiveRecord::Base
 
     after_transition on: :finish do |service, transition|
       if service.bill_by_hours_worked?
-        hours = service.hours_worked
+        service.billable_hours = service.hours_worked
 
-        if hours < 3
-          service.billable_hours = 3
-        else
-          service.billable_hours = hours
-        end
         service.save!
       end
     end
@@ -131,6 +126,31 @@ class Service < ActiveRecord::Base
   delegate :one_timer_from_recurrent?, to: :service_type
   delegate :periodicity, to: :service_type
   delegate :wdays_count_to_end_of_recurrency, to: :recurrence
+
+  before_save :detect_statuses_change
+
+  def detect_statuses_change
+    if status_changed?
+      case status
+      when 'paid'
+        set_billed_hours
+      end
+    end
+  end
+
+  def set_billed_hours
+    return if billed_hours.present? && !billed_hours.zero?
+
+    self.billed_hours = if billable_hours && !billable_hours.zero?
+                          billable_hours 
+                        elsif hours_worked && !hours_worked.zero?
+                          hours_worked
+                        elsif estimated_hours
+                          estimated_hours 
+                        else 
+                          0
+                        end
+  end
 
   def timezone
     'Mexico City'

@@ -26,4 +26,7 @@ class StaticPagesController < ApplicationController
 
   def pattern_dictionary
   end
+
+  def jobs
+  end
 end

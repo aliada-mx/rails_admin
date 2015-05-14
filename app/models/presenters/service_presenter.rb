@@ -217,6 +217,34 @@ module Presenters
         paid_version.created_at
       end
     end
+
+
+   def static_google_map_url
+     options = {maps_url: 'http://maps.googleapis.com/maps/api/staticmap',
+                size: '320x320',
+                center_longitude: address.map_center_longitude,
+                center_latitude: address.map_center_latitude,
+                map_zoom: address.map_zoom,
+                marker_latitude: address.latitude,
+                marker_longitude: address.longitude,
+                reference_marker_color: 'blue',
+                reference_marker_label: 'S%7C',
+                reference_latitude: address.references_latitude,
+                reference_longitude: address.references_longitude}
+
+     template = "%{maps_url}"\
+                 "?size=%{size}"\
+                 "&center=%{center_latitude},"\
+                         "%{center_longitude}"\
+                 "&zoom=%{map_zoom}"\
+                 "&markers=%{marker_latitude},"\
+                          "%{marker_longitude}"\
+                 "&markers=color:%{reference_marker_color}"\
+                          "label:{reference_marker_label},"\
+                               "%{reference_latitude},"\
+                               "%{reference_longitude}"
+     url = template % options
+   end
   end
 end
 
