@@ -80,6 +80,7 @@ Rails.application.routes.draw do
     get 'aliadas/servicios/:token', to: 'aliadas#services', as: :aliadas_services
     post 'aliadas/servicios/finish/:token', to: 'aliadas#finish', as: :finish_service
     post 'aliadas/servicios/confirm/:token', to: 'aliadas#confirm', as: :confirm_service
+    post 'aliadas/servicios/unassign/:token', to: 'aliadas#unassign', as: :unassign_service
   end
   
   # Utilities

@@ -81,8 +81,6 @@ feature 'AliadasController' do
       visit  ('aliadas/servicios/'+ aliada.authentication_token)
       page.has_content?('Tus servicios')
     end
-    
-   
 
     it 'Shows tomorrows services if it is tommorrow' do
       aliada = create(:aliada)
@@ -191,6 +189,31 @@ feature 'AliadasController' do
       service.reload
       expect(service.hours_worked).to eql BigDecimal.new('3.5')
       expect(page).to have_content('3 horas 30 minutos')
+    end
+  end
+
+  describe '#unassign' do
+    let!(:service_to_confirm){ create(:service,
+                           aliada: aliada,
+                           status: 'aliada_assigned',
+                           user: user,
+                           recurrence: recurrence,
+                           zone: zone,
+                           service_type: one_time_service,
+                           datetime: starting_datetime + 1.day, 
+                           estimated_hours: 3
+                           ) }
+    before do
+      Timecop.travel(starting_datetime + 10.hours)
+    end
+
+    it 'changes the service status' do
+      visit('aliadas/servicios/'+ aliada.authentication_token)
+
+      click_on('No voy')
+
+      service_to_confirm.reload
+      expect(service_to_confirm).to be_aliada_missing
     end
   end
 end

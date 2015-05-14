@@ -23,6 +23,7 @@ es:
       zones: 'zonas'
       extra: 'extra'
       incomplete_service: 'registro inconcluso'
+      debt: 'deuda'
     attributes:
       common: &common_attributes
         <<: *model_names
@@ -41,6 +42,7 @@ es:
         estimated_hours: 'horas estimadas'
         weekday_hour_in_spanish: 'Día y hora'
         total_hours: 'estimadas + horas de colchón'
+        debts: 'deudas'
       address: &address_attributes
         user: usuario
         postal_code: código postal

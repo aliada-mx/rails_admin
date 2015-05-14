@@ -49,6 +49,7 @@ class Service < ActiveRecord::Base
   scope :canceled, -> { where("services.status = 'canceled_in_time' OR services.status = 'canceled_out_of_time'", 'canceled') }
   scope :finished, -> { where("services.status = 'finished'") }
   scope :not_canceled, -> { where("services.status != 'canceled_in_time' AND services.status != 'canceled_out_of_time' AND services.status != 'canceled'") }
+  scope :not_aliada_missing, -> { where("services.status != 'aliada_missing'") }
   scope :ordered_by_created_at, -> { order(:created_at) }
   scope :ordered_by_datetime, -> { order(:datetime) }
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
@@ -82,7 +83,7 @@ class Service < ActiveRecord::Base
   # State machine
   state_machine :status, :initial => 'created' do
     transition 'created' => 'aliada_assigned', :on => :assign
-    transition 'created' => 'aliada_missing', :on => :mark_as_missing
+    transition ['created', 'aliada_assigned' ] => 'aliada_missing', :on => :unassign
     transition ['finished', 'aliada_assigned' ] => 'paid', :on => :pay
     transition ['created', 'aliada_assigned'] => 'finished', :on => :finish
     
@@ -713,6 +714,7 @@ class Service < ActiveRecord::Base
       end
 
       field :tickets
+      field :debts
 
       group :detalles_al_registrar do
         active false
