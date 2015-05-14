@@ -14,6 +14,7 @@ feature 'ConektaCardsController' do
   context 'on the user profile' do
     before do
       allow_any_instance_of(User).to receive(:default_payment_provider).and_return(previous_conekta_card)
+      allow_any_instance_of(ConektaCard).to receive(:refund).and_return(true)
       clear_session
     end
 

@@ -173,6 +173,8 @@ feature 'ServiceController' do
         expect(Payment.count).to be 0
         expect(ConektaCard.count).to be 0
         expect(PaymentProviderChoice.count).to be 0
+
+        allow_any_instance_of(ConektaCard).to receive(:refund).and_return(true)
       end
 
       it 'creates a pre-acthorization payment when choosing conekta' do
