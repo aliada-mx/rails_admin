@@ -70,11 +70,17 @@ $(function() {
   var map_center_longitude = aliada.ko.map_center_longitude() || aliada.ko.longitude();
 
   var $map_container = $('#map-container');
+  // Initialize map
   var marker_map = aliada.initialize_map($map_container[0], map_center_latitude, map_center_longitude, aliada.ko.map_zoom());
   var map = marker_map.map;
   var marker = marker_map.marker;
 
+  // Save default zoom 
+  aliada.ko.map_zoom(map.getZoom());
+
+  // Set center
   update_map_center(map, map_center_latitude, map_center_longitude);
+  // Set marker
   move_marker(marker, aliada.ko.latitude(), aliada.ko.longitude())
 
   // Map event listeners

@@ -23,39 +23,40 @@
 
 %h1 Servicios proximos    
 - @upcoming_services.each do |service|
-  %h1=  I18n.l service.tz_aware_datetime, format: "%A %e de %B  a las %I %P"
-  %h4
-    #{service.estimated_hours.floor} horas
-    #{(60*(service.estimated_hours-service.estimated_hours.floor)).floor} minutos
-  %h3 
-    #{service.address.street} 
-    #{service.address.number}
-    interior:
-    #{service.address.interior_number}
-  %h4
-    %b Colonia: 
-    #{service.address.colony},
-    #{service.address.city}
-  %img{:src => "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{service.address.map_center_longitude},#{service.address.map_center_longitude}&zoom=#{service.address.map_zoom}&markers=#{service.address.latitude},#{service.address.longitude}&markers=color:blue%7Clabel:S%7C#{service.address.references_latitude},#{service.address.references_longitude}"}
-  %h5= service.address.references 
-  %h3 
-    %b Cliente:
-    #{service.user.first_name}
-    #{service.user.last_name}
-  %h5 
-    %b tel: 
-    #{service.user.phone}
-  %h5 Entre calles: #{service.address.between_streets}
-  %h5 Instrucciones:  #{service.special_instructions}
-  %h5 Articulos Limpieza:   #{service.cleaning_supplies_instructions}
-  %h5 Basura: #{service.garbage_instructions}
-  %h5 Atencion a: #{service.attention_instructions}
-  %h5 Limpiar con: #{service.equipment_instructions}
-  %h5 No tocar: #{service.forbidden_instructions}
-  %h5 Otras instrucciones: #{service.special_instructions}
-  - if !service.confirmed 
-    = form_tag((confirm_service_path)) do
-      %input{:type=>"hidden", :value=>service.id, :name => :service}
-      %input.action-button-pink{  :type => "submit", :name => "confirmation", :value => "Si voy" }
-  %br
-  %br
+  .service{id: "service_#{service.id}"}
+    %h1=  I18n.l service.tz_aware_datetime, format: "%A %e de %B  a las %I %P"
+    %h4
+      #{service.estimated_hours.floor} horas
+      #{(60*(service.estimated_hours-service.estimated_hours.floor)).floor} minutos
+    %h3 
+      #{service.address.street} 
+      #{service.address.number}
+      interior:
+      #{service.address.interior_number}
+    %h4
+      %b Colonia: 
+      #{service.address.colony},
+      #{service.address.city}
+    %img{:src => service.static_google_map_url}
+    %h5= service.address.references 
+    %h3 
+      %b Cliente:
+      #{service.user.first_name}
+      #{service.user.last_name}
+    %h5 
+      %b tel: 
+      #{service.user.phone}
+    %h5 Entre calles: #{service.address.between_streets}
+    %h5 Instrucciones:  #{service.special_instructions}
+    %h5 Articulos Limpieza:   #{service.cleaning_supplies_instructions}
+    %h5 Basura: #{service.garbage_instructions}
+    %h5 Atencion a: #{service.attention_instructions}
+    %h5 Limpiar con: #{service.equipment_instructions}
+    %h5 No tocar: #{service.forbidden_instructions}
+    %h5 Otras instrucciones: #{service.special_instructions}
+    - if !service.confirmed 
+      = form_tag((confirm_service_path)) do
+        %input{:type=>"hidden", :value=>service.id, :name => :service}
+        %input.action-button-pink{  :type => "submit", :name => "confirmation", :value => "Si voy" }
+    %br
+    %br
