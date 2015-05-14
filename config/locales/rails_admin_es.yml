@@ -9,6 +9,7 @@ es:
       extras: 'extra de servicio'
       payment: 'cobro'
       payment_method: 'métodos de pago'
+      payment_provider_choice: 'Forma de pago elegida'
       postal_code: 'códigos postale'
       recurrence: 'recurrencia'
       recurrences: 'recurrencias'
@@ -193,6 +194,9 @@ es:
       users:
         <<: *common_attributes
         <<: *user_attributes
+      payment_provider_choice:
+        <<: *common_attributes
+        default: 'Activa'
   admin:
     home:
       name: Inicio

@@ -10,7 +10,7 @@ class ScheduleFiller
   end
 
   def self.fill_schedule
-    today_in_the_future = Time.zone.now.beginning_of_day + Setting.time_horizon_days.days + 1.day
+    today_in_the_future = Time.zone.now.beginning_of_day + Setting.time_horizon_days.days
     
     ActiveRecord::Base.transaction do
       begin

@@ -36,6 +36,12 @@ class User < ActiveRecord::Base
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable
 
+  scope :owes_services, -> { joins(:debts)
+                            .joins(:services)
+                            .where("services.status != 'paid'")
+                            .where("debts.service_id = services.id")
+                            .distinct(:user) }
+
   before_validation :ensure_password
   before_validation :set_default_role
   before_save :fill_full_name
@@ -48,7 +54,7 @@ class User < ActiveRecord::Base
   validates_length_of :password, within: Devise.password_length, allow_blank: true
 
   after_initialize do
-    self.credits ||= 0 if self.respond_to? :credits
+    self.points ||= 0 if self.respond_to? :points
     self.role ||= 'client'
   end
 
@@ -212,6 +218,10 @@ class User < ActiveRecord::Base
     UserMailer.user_address_changed(self, new_address, prev_address)
   end
 
+  def send_owed_services_email
+    UserMailer.debt_reminder(self).deliver!
+  end
+
   rails_admin do
     navigation_label 'Personas'
     navigation_icon 'icon-user'
@@ -271,19 +281,7 @@ class User < ActiveRecord::Base
           label 'Creditos'
         end
 
-        field :default_payment_provider do
-          visible do
-            value.present?
-          end
-
-          formatted_value do
-            if value.present?
-              Mixins::RailsAdminModelsHelpers.rails_admin_edit_link(value)
-            end
-          end
-
-          read_only true
-        end
+        field :payment_provider_choices
 
         field :conekta_customer_id do
           read_only true

@@ -101,4 +101,14 @@ class UserMailer < ApplicationMailer
     
     template_id: template_id
   end
+
+  def debt_reminder(user)
+    template_id = Setting.sendgrid_templates_ids[:debt_reminder]
+
+    sendgrid_template_mail to: user.email, 
+                           subject: 'Saldo pendiente',
+                           substitutions:
+                             {'-user_full_name-' => [ user.full_name]},
+                           template_id: template_id
+  end
 end
