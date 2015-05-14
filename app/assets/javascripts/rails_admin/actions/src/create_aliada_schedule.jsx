@@ -8,6 +8,8 @@ var SchedulesApp = React.createClass({
     $.ajax({
       url: url_aliada, dataType: 'json'
     }).done( function( data ) {
+      schedules_array = data;
+      var schedule_group = 0;
       _.each( data, function( schedule ){
         var schedule_day = moment( schedule.datetime );
         var schedule_hours = parseFloat(schedule.estimated_hours).toFixed();
@@ -22,7 +24,8 @@ var SchedulesApp = React.createClass({
           if( schedule.service_type_id === 2){
             $('.'+class_name).find('.one_time').addClass('active').append('<span>'+schedule.user.full_name+'</span>');
           }
-          $('.'+class_name).addClass('service_', schedule.id);
+          $('.'+class_name).addClass('sg_' + schedule_group);
+          $('.'+class_name).addClass('service_' + schedule.id );
         }
         start_hour = 0;
         padding_hours = parseFloat(schedule.hours_after_service).toFixed();
@@ -31,8 +34,10 @@ var SchedulesApp = React.createClass({
           class_name = 's_' + schedule_day.format('MM_DD_') + schedule_day.format('ddd').toLowerCase() + '_' + schedule_day.format('HH');
           schedule_day = moment( schedule.datetime );          
           $('.'+class_name).find('.padding').addClass('active').append('<span>'+schedule.user.full_name+'</span>' );
+          $('.'+class_name).addClass('sg_'+schedule_group);
           $('.'+class_name).addClass('service_'+schedule.id);
         }
+        schedule_group++;
       });
     });
   },
@@ -78,7 +83,7 @@ var ScheduleRow = React.createClass({
     var first_day = curr_day.getDate() - curr_day.getDay();
     var week_first_day = new Date( curr_day.setDate( first_day ) );
     var week_day = moment( week_first_day );
-
+    $('#range_date .info').text( moment( week_first_day ).format('DD MMMM') + ' al ' + moment( week_first_day ).add(6, 'd').format('DD MMMM') );
     return (
       <tr>
         {
@@ -103,7 +108,7 @@ var ScheduleRow = React.createClass({
 });
 
 var ScheduleCell = React.createClass({
-  setState: function () {
+  getInitialState: function () {
     return { isHovering: false };
   },
   handleMouseOver: function () {
@@ -113,11 +118,11 @@ var ScheduleCell = React.createClass({
     this.setState({ isHovering: false });
   },
   render: function() {
-    var classes = cx([
-      this.isHovering && 'test'
-    ]);
+    var classes = cx({
+      'test': this.state.isHovering
+    });
     return (<td className={this.props.class_name}>
-      <div className={cx(classes)} onMouseOver={this.handleMouseOver.bind(this)} onMouseOut={this.handleMouseOut.bind(this)} >
+      <div className={ classes } onMouseOver={ this.handleMouseOver.bind(this) } onMouseOut={ this.handleMouseOut.bind(this) } >
       <div className="recurrent"></div>
       <div className="one_time"></div>
       <div className="padding"></div>
@@ -138,7 +143,45 @@ $('#legend div').on('click', function(){
   }
 });
 
-$('#SchedulesApp .day_cell').hover( function(){
-  var position = $(this).offset();
-  $('#popup').css( {top: position.top, left: position.left} );
+$('#SchedulesApp .day_cell').hover(
+  function(){
+    var class_list = $(this).attr('class').split(/\s+/);
+    if( class_list[2] ){
+      $( '.'+class_list[2] ).addClass('sg_hover');
+    }
+  },
+  function(){
+    $('.sg_hover').removeClass('sg_hover');
+  }
+);
+
+$('#popup .close_btn').on('click', function(){
+  $('#popup').fadeOut();
+});
+$('#SchedulesApp .day_cell').on('click', function(){
+  var class_list = $(this).attr('class').split(/\s+/);
+  if( class_list[2] ){
+    var position = $(this).position();
+    var width = $(this).width();
+    if( class_list[3] ){
+      var service_id = class_list[3].split('_');
+      service_id = parseInt(service_id[1]);
+      var schedule_service = _.findWhere( schedules_array, { id: service_id } );
+      if ( schedule_service.service_type_id === 1 ){
+        $('#popup .type span a').text('Recurrente');
+      }
+      if ( schedule_service.service_type_id === 2 ){
+        $('#popup .type span a').text('Solo una vez');
+      }
+      $('#popup .type span a').attr('href', '/aliadadmin/service/'+schedule_service.id );
+      $('#popup .user span a').text( schedule_service.user.full_name );
+      $('#popup .user span a').attr('href', '/aliadadmin/user/'+schedule_service.user_id );
+      $('#popup .estimated_hour span').text( schedule_service.estimated_hours );
+      $('#popup .padding_hour span').text( schedule_service.hours_after_service );
+      $('#popup .time span').text( moment( schedule_service.datetime ).format("dddd, MMMM Do YYYY, h:mm:ss a") );
+      
+      console.log( schedule_service );
+    }
+    $('#popup').fadeIn().css({ top: position.top, left: position.left + width });
+  }
 });

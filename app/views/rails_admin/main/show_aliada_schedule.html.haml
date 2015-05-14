@@ -1,7 +1,28 @@
 %div.container.full_width
  %div.page-header
   %div#popup
-   %p Hola
+   %div.close_btn
+    %span.icon.icon-remove
+   %div.info
+    %p.type
+     Tipo servicio:
+     %span
+      %a{:target => '_blank'}
+    %p.user
+     Cliente:
+     %span
+      %a{:target => '_blank'}
+    %p.time
+     Fecha:
+     %span
+    %p.estimated_hour
+     Tiempo estimado:
+     %span
+    %p.padding_hour
+     Horas colchon:
+     %span
+    %div
+     %button.edit_schedule Editar
   %div#legend
    %div.recurrent{:data => {:schedule => "recurrent"}}
     %span
@@ -12,11 +33,21 @@
    %div.padding{:data => {:schedule => "padding"}}
     %span
     %p Hora Colchon
+  %div#range_date
+   %h4
+    %span.select_range.range_prev.icon.icon-chevron-left
+    Semana de: 
+    %span.info
+    %span.select_range.range_next.icon.icon-chevron-right
   %div#SchedulesApp
 :css
   .container.full_width{ width: 100% !important; }
-  #popup{ position: absolute; width: 180px; height: 40px; background-color: rgba(255, 200, 66, 0.8); border-radius: 5px; padding: 5px 10px; }
-  #popup p{ color:#333; text-align: center; }
+  #popup{ position: absolute; width: 180px;  background-color: rgba(255, 200, 66, 0.9); border-radius: 5px; padding: 5px 10px; display: none; }
+  #popup .close_btn{ float: right; cursor: pointer}
+  #popup .info{ margin: 20px 0 0 0;}
+  #popup p{ color:#333; font-size: 12px; font-weight: bold; }
+  #popup p span{ color:#666; font-size: 12px; font-weight: normal; display:block; }
+  #popup .edit_schedule{ border-radius: 3px; box-sizing: border-box; display: inline-block; text-align: center; background-color: #9678D2; border: 1px solid #876cbd; color: white; cursor: pointer; padding: 3px 15px;}
   #legend { float: right; }
   #legend div{ float: left; margin: 0 5px; cursor: pointer; }
   #legend div:hover p{ text-decoration: underline; }
@@ -26,7 +57,9 @@
   #legend div.padding span{ background: rgba(234, 240, 241, 1); }
   #legend div p{ float: right; }
   #legend div.no_schedule p{ text-decoration: line-through; color: #ddd; }
-  #SchedulesApp { clear: both; }
+  #range_date, #SchedulesApp { clear: both; }
+  #range_date{ text-align: center;}
+  #range_date .select_range{ cursor: pointer;}
   #SchedulesApp table { width: 100%; }
   #SchedulesApp table thead th { text-align: center; }
   #SchedulesApp td { min-height: 50px; padding: 0 1px; margin: 0; }
@@ -34,11 +67,13 @@
   #SchedulesApp td div span{ text-align: center; display: table-cell; height: 50px; vertical-align: middle; width: 100%;}
   #SchedulesApp td div:hover{ }
   #SchedulesApp .day_cell { width: 14%; }
-  #SchedulesApp .test { border: 1px solid #f00; background: #f00; opacity: 0.5; }
-  #SchedulesApp .test2 { border: 1px solid #ff0; }
-  .recurrent.active{ background: rgba(150, 120, 210, 0.5); }
-  .one_time.active{ background: rgba(0, 196, 179, 0.5); }
-  .padding.active{ background: rgba(234, 240, 241, 1); }
+  #SchedulesApp .test { background: #f00; opacity: 0.5; }
+  .recurrent.active{ background: rgba(150, 120, 210, 0.5); cursor:pointer;}
+  .one_time.active{ background: rgba(0, 196, 179, 0.5); cursor:pointer;}
+  .padding.active{ background: rgba(234, 240, 241, 1); cursor:pointer;}
+  .sg_hover{ background: rgba(150, 150, 200, 0.5); color: #fff;  }
+  .sg_hover .padding.active{ color: #000; }
+
 = javascript_include_tag 'react'
 = javascript_include_tag 'react-addons'
 = javascript_include_tag 'moment'
@@ -47,5 +82,6 @@
   var url_aliada = '/rails_admin/aliada/get_schedule/#{@aliada.id}';
   var begin_time = #{begin_time = 7.hour.to_i};
   var end_time = #{end_time = 20.hour.to_i};
+  var schedules_array = {};
 
 = javascript_include_tag 'rails_admin/actions/build/create_aliada_schedule'

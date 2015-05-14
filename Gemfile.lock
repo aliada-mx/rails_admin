@@ -501,11 +501,7 @@ DEPENDENCIES
   launchy
   lograge
   migration_data
-<<<<<<< HEAD
-=======
   mixpanel-ruby
-  mysql2
->>>>>>> fd18f58576a6223563b99e041d7bcb6d2ca0b553
   nestive
   newrelic_rpm
   nyan-cat-formatter
