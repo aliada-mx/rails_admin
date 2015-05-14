@@ -54,7 +54,7 @@ class User < ActiveRecord::Base
   validates_length_of :password, within: Devise.password_length, allow_blank: true
 
   after_initialize do
-    self.credits ||= 0 if self.respond_to? :credits
+    self.points ||= 0 if self.respond_to? :points
     self.role ||= 'client'
   end
 
