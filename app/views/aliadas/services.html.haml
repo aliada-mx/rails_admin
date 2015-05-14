@@ -36,7 +36,7 @@
     %b Colonia: 
     #{service.address.colony},
     #{service.address.city}
-  %img{:src => "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{service.address.latitude},#{service.address.longitude}&zoom=#{service.address.map_zoom}&markers=#{service.address.latitude},#{service.address.longitude}&markers=color:blue%7Clabel:S%7C#{service.address.references_latitude},#{service.address.references_longitude}"}
+  %img{:src => "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{service.address.map_center_longitude},#{service.address.map_center_longitude}&zoom=#{service.address.map_zoom}&markers=#{service.address.latitude},#{service.address.longitude}&markers=color:blue%7Clabel:S%7C#{service.address.references_latitude},#{service.address.references_longitude}"}
   %h5= service.address.references 
   %h3 
     %b Cliente:
