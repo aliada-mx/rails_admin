@@ -197,6 +197,7 @@ es:
       payment_provider_choice:
         <<: *common_attributes
         default: 'Activa'
+        payment_provider_link: Forma de pago
   admin:
     home:
       name: Inicio

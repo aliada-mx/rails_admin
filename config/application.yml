@@ -58,7 +58,7 @@ defaults: &defaults
     
 development:
   <<: *defaults
-  host: 'aliada.ngrok.com'
+  host: 'localhost:3000'
   paypal_sandbox: true
 
 test:
