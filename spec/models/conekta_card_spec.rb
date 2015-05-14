@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 describe 'ConektaCard' do
   include TestingSupport::SharedExpectations::ConektaCardExpectations
-
   let!(:card){ create(:conekta_card) } 
   let!(:service){ create(:service) }
   let!(:user){ create(:user, 
@@ -42,6 +41,8 @@ describe 'ConektaCard' do
     end
 
     it 'creates another card for user' do
+      allow_any_instance_of(ConektaCard).to receive(:refund).and_return(true)
+
       expect(user.payment_provider_choices).to be_empty
       expect(ConektaCard.first).to eql card
 
@@ -56,6 +57,18 @@ describe 'ConektaCard' do
       expects_it_to_be_complete_and_valid(new_conekta_card)
 
       expect(user.reload.payment_provider_choices.first.provider).to eql new_conekta_card
+    end
+
+    it 'preauthorizes a card' do
+      card.token = token
+      expect(card).not_to be_preauthorized
+
+      VCR.use_cassette('preauthorize', match_requests_on: [ :conekta_refund, :conekta_charge ], :record => :new_episodes ) do
+        card.preauthorize!(user, service)
+      end
+
+      card.reload
+      expect(card).to be_preauthorized
     end
   end
 end
