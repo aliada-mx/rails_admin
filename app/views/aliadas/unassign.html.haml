@@ -1,4 +1,18 @@
 
-¿Estás segura que no puedes ir?
-Te recordamos que tienes 
+%div
+  ¿Estás segura que no puedes ir?
+
+%div
+  = if @aliada.show_unassignment_warning
+    Te recordamos que haz dicho #{ @aliada.services_unassigned_this_month } veces que no irás a un servicio este mes.
+    %br
+    Lo que puede ser motivo para ser dara de baja en aliada.
+
+%div
+  = form_tag(unassign_service_path, method: :get) do
+    %input{type: 'hidden', value: @service.id, name: :service}
+    %input{type: 'submit', name: 'unassign', value: 'Confirmo que no voy', class: 'button button--full button--gray'}
+  
+
+  
 

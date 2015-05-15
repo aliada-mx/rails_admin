@@ -154,12 +154,18 @@ feature 'AliadasController' do
       Timecop.travel(starting_datetime + 10.hours)
     end
 
+    it 'redirects to confirmation page' do
+      visit(aliadas_services_path(aliada.authentication_token))
+
+      click_on('No voy')
+
+      expect(page.current_path).to aliada_finish_service_path(aliada.authentication_token)
+    end
+
     it 'changes the service status' do
       visit(aliadas_services_path(aliada.authentication_token))
 
       click_on('No voy')
-      save_and_open_page
-      binding.pry
 
       service_to_confirm.reload
       expect(service_to_confirm).to be_aliada_missing

@@ -9,12 +9,12 @@ module Presenters
       services.not_canceled.finished.count
     end
 
-    def unassignments_left
-      service_unassignments
+    def services_unassigned_this_month
+      services.unassigned.where(datetime: this_month_range).count
     end
 
-    def services_unassigned_this_month
-      services.unassigned.count
+    def show_unassignment_warning
+      services_unassigned_this_month <= Setting.aliada_unassignments_per_month - 1
     end
   end
 end

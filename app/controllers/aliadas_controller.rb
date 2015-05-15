@@ -5,7 +5,7 @@ class AliadasController < ApplicationController
   before_filter :set_aliada
   
   def confirm
-    @service_to_confirm = Service.find_by(id: params[:service], aliada_id: @aliada.id)
+    @service_to_confirm = Service.find_by(id: params[:service_id], aliada_id: @aliada.id)
     @service_to_confirm.confirmed = true
     @service_to_confirm.save!
     
@@ -13,16 +13,14 @@ class AliadasController < ApplicationController
   end
 
   def unassign
-    @aliada.services.find(params[:service])
-
-    @aliada.service_unassignments_left
+    @aliada.services.find(params[:service_id])
+    @service_to_unassign = Service.find(params[:service_id])
 
     if request.post?
-      @service_to_unassign = 
 
       @service_to_unassign.unassign!
 
-      redirect_to :back
+      return redirect_to aliadas_services_path(@aliada.authentication_token)
     end
   end
   
@@ -60,9 +58,6 @@ class AliadasController < ApplicationController
 
   def worked_services 
     @aliada.track_webapp_view(request, params)
-    #
-    #must implement today or tomorrow after 6pm, etc...
-    today = ActiveSupport::TimeZone["Mexico City"].today
 
     @services_to_finish = @aliada.services.where(status: 'aliada_assigned')
                                           .order('datetime ASC')
