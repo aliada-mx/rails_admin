@@ -37,36 +37,28 @@ class AliadasController < ApplicationController
     end
   end
 
-  def services 
-    @aliada.track_webapp_view(request)
+  def next_services 
+    @aliada.track_webapp_view(request, params)
 
     #must implement today or tomorrow after 6pm, etc...
-    now = ActiveSupport::TimeZone["Mexico City"].now
+    now = ActiveSupport::TimeZone["Etc/GMT+6"].now
+
     date_to_show = if now.hour < 18
-                     ActiveSupport::TimeZone["Mexico City"].today 
-                   else
-                     ActiveSupport::TimeZone["Mexico City"].today + 1.day
-                   end
-   
-    #pulls unfinished services from the database, so we only present the worked services to the aliada
-    @unfinished_services = @aliada.services.where(status: 'aliada_assigned').where("datetime <= ?", now.utc)
-    @upcoming_services = @aliada.services.joins(:address).order('datetime ASC').where(:datetime => date_to_show.beginning_of_day..date_to_show.end_of_day).not_canceled.not_aliada_missing
+                      ActiveSupport::TimeZone["Etc/GMT+6"].today 
+                    else
+                      ActiveSupport::TimeZone["Etc/GMT+6"].today + 1.day
+                    end
+
+    @upcoming_services = @aliada.services.joins(:address)
+                                         .order('datetime ASC')
+                                         .where(:datetime => date_to_show.beginning_of_day..date_to_show.end_of_day)
+                                         .not_canceled.not_aliada_missing
   end
 
-  def services 
-    @aliada.track_webapp_view(request)
+  def worked_services 
+    @aliada.track_webapp_view(request, params)
 
-    #must implement today or tomorrow after 6pm, etc...
-    now = ActiveSupport::TimeZone["Mexico City"].now
-    date_to_show = if now.hour < 18
-                     ActiveSupport::TimeZone["Mexico City"].today 
-                   else
-                     ActiveSupport::TimeZone["Mexico City"].today + 1.day
-                   end
-   
-    #pulls unfinished services from the database, so we only present the worked services to the aliada
-    @unfinished_services = @aliada.services.where(status: 'aliada_assigned').where("datetime <= ?", now.utc)
-    @upcoming_services = @aliada.services.joins(:address).order('datetime ASC').where(:datetime => date_to_show.beginning_of_day..date_to_show.end_of_day).not_canceled.not_aliada_missing
+    @unfinished_services = @aliada.services.where(status: 'aliada_assigned').where("datetime <= ?", Time.zone.now)
   end
 
   private

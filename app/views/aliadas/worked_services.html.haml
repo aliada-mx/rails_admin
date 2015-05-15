@@ -1,0 +1,35 @@
+.header
+  %h4.header__user= @aliada.full_name
+  %p.header__hours= "Esta semana llevas #{ seconds_to_hours_minutes_in_spanish @aliada.current_week_hours_worked.hours }"
+
+-if @unfinished_services.any?
+  .section
+    .section__header
+      %h4 Servicios por terminar
+    - @unfinished_services.each do |service|
+      .service.service--yellow{id: "service_#{service.id}"}
+        .service__head
+          %h3.date= I18n.l service.tz_aware_datetime, format: "%A %e de %B a las %I %P"
+          %h5.client= service.user.full_name
+        .set-hours
+          %p ¿Cuanto tiempo duro el servicio?
+          = form_tag finish_service_path do
+            %input{type: 'hidden', value: service.id, name: :service}
+            .set-hours__unit
+              .select
+                .arrow
+                %select{name: :hour, id:  "service_#{service.id}_hours"}
+                  - (0..10).each do |hour|
+                    %option{value: hour}= pluralize(hour, 'Hora', 'Horas')
+            .set-hours__unit
+              .select
+                .arrow
+                %select{name: :min, id:  "service_#{service.id}_mins"}
+                  - (5..59).step(5).each do |minute|
+                    %option{value: minute}= pluralize(minute, 'Minuto', 'Minutos')
+            .set-hours__unit
+              %input{type: 'submit', name: 'Pay', value: 'Guardar', class: 'button button--full button--yellow'}
+
+
+= append :extra_head do
+  = stylesheet_link_tag 'aliadas_dashboard', media: 'all'

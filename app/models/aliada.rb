@@ -98,9 +98,7 @@ class Aliada < User
     aliada_show_webapp_link(self)
   end
 
-  def track_webapp_view(request)
-    return if Rails.env == 'test'
-
+  def track_webapp_view(request, params)
     tracker = Mixpanel::Tracker.new(Setting.mixpanel_token)
     agent = Agent.new request.env['HTTP_USER_AGENT']
 
@@ -113,6 +111,7 @@ class Aliada < User
       'REMOTE_ADDR' => request.env['REMOTE_ADDR'],
       'aliada_name' => self.name,
       'environment' => Rails.env,
+      'action' => params[:action],
     }
 
     tracker.track(self.name, 'aliada viewed webapp', options)
