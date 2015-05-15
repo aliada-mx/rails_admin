@@ -179,8 +179,6 @@ $('#SchedulesApp .day_cell').on('click', function(){
       $('#popup .estimated_hour span').text( schedule_service.estimated_hours );
       $('#popup .padding_hour span').text( schedule_service.hours_after_service );
       $('#popup .time span').text( moment( schedule_service.datetime ).format("dddd, MMMM Do YYYY, h:mm:ss a") );
-      
-      console.log( schedule_service );
     }
     $('#popup').fadeIn().css({ top: position.top, left: position.left + width });
   }
