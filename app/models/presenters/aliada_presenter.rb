@@ -8,5 +8,13 @@ module Presenters
     def services_worked
       services.not_canceled.finished.count
     end
+
+    def unassignments_left
+      service_unassignments
+    end
+
+    def services_unassigned_this_month
+      services.unassigned.count
+    end
   end
 end

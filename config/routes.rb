@@ -80,7 +80,7 @@ Rails.application.routes.draw do
   devise_scope :aliadas do
     get 'aliadas/servicios/:token', to: 'aliadas#next_services', as: :aliadas_services
     get 'aliadas/servicios-trabajados/:token', to: 'aliadas#worked_services', as: :aliadas_worked_services
-    post 'aliadas/servicios/finish/:token', to: 'aliadas#finish', as: :finish_service
+    patch 'aliadas/servicios/finish/:token', to: 'aliadas#finish', as: :finish_service
     post 'aliadas/servicios/confirm/:token', to: 'aliadas#confirm', as: :confirm_service
     post 'aliadas/servicios/unassign/:token', to: 'aliadas#unassign', as: :unassign_service
   end

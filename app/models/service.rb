@@ -20,7 +20,7 @@ class Service < ActiveRecord::Base
 
   validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
   # accessors for forms
-  attr_accessor :postal_code, :payment_method_id, :conekta_temporary_token, :timezone, :hour, :weekday
+  attr_accessor :postal_code, :payment_method_id, :conekta_temporary_token, :timezone, :weekday
 
   belongs_to :address
   belongs_to :user, inverse_of: :services, foreign_key: :user_id

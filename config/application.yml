@@ -55,6 +55,8 @@ defaults: &defaults
   mixpanel_api_secret: '6e7c48e609c2bae83c6aac30c548006b'
 
   paypal_sandbox: false
+
+  aliada_unassignments_per_month: 2
     
 development:
   <<: *defaults

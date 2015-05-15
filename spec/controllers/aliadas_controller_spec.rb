@@ -158,6 +158,8 @@ feature 'AliadasController' do
       visit(aliadas_services_path(aliada.authentication_token))
 
       click_on('No voy')
+      save_and_open_page
+      binding.pry
 
       service_to_confirm.reload
       expect(service_to_confirm).to be_aliada_missing
@@ -165,7 +167,6 @@ feature 'AliadasController' do
   end
 
   describe '#worked_services' do
-
     it 'saves the worked hours on a service' do
       visit(aliadas_worked_services_path(aliada.authentication_token))
 

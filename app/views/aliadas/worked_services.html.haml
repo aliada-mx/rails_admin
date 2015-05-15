@@ -1,34 +1,39 @@
 .header
-  %h4.header__user= @aliada.full_name
-  %p.header__hours= "Esta semana llevas #{ seconds_to_hours_minutes_in_spanish @aliada.current_week_hours_worked.hours }"
+  %h4.header__user
+    = @aliada.full_name
+  %p.header__hours
+    Esta semana llevas #{ seconds_to_hours_minutes_in_spanish @aliada.current_week_hours_worked.hours }
+  = link_to aliadas_services_path(@aliada.authentication_token) do
+    ver próximos servicios
 
--if @unfinished_services.any?
+-if @services_to_finish.any?
   .section
     .section__header
       %h4 Servicios por terminar
-    - @unfinished_services.each do |service|
+    - @services_to_finish.each do |service|
       .service.service--yellow{id: "service_#{service.id}"}
         .service__head
-          %h3.date= I18n.l service.tz_aware_datetime, format: "%A %e de %B a las %I %P"
-          %h5.client= service.user.full_name
+          %h3.date
+            = I18n.l service.tz_aware_datetime, format: "%A %e de %B a las %I %P"
+          %h5.client
+            = service.user.full_name
         .set-hours
           %p ¿Cuanto tiempo duro el servicio?
-          = form_tag finish_service_path do
-            %input{type: 'hidden', value: service.id, name: :service}
-            .set-hours__unit
-              .select
-                .arrow
-                %select{name: :hour, id:  "service_#{service.id}_hours"}
-                  - (0..10).each do |hour|
-                    %option{value: hour}= pluralize(hour, 'Hora', 'Horas')
-            .set-hours__unit
-              .select
-                .arrow
-                %select{name: :min, id:  "service_#{service.id}_mins"}
-                  - (5..59).step(5).each do |minute|
-                    %option{value: minute}= pluralize(minute, 'Minuto', 'Minutos')
-            .set-hours__unit
-              %input{type: 'submit', name: 'Pay', value: 'Guardar', class: 'button button--full button--yellow'}
+          = render partial: 'aliadas/hours_worked_service_form', locals: {service: service}
+
+-if @worked_services.any?
+  .section__header
+    %h4 Servicios terminados
+  - @worked_services.each do |service|
+    .service.service--yellow{id: "service_#{service.id}"}
+      .service__head
+        %h3.date
+          = I18n.l service.tz_aware_datetime, format: "%A %e de %B a las %I %P"
+        %h5.client
+          = service.user.full_name
+      .set-hours
+        %p ¿Cuanto tiempo duro el servicio?
+        = render partial: 'aliadas/hours_worked_service_form', locals: {service: service}
 
 
 = append :extra_head do

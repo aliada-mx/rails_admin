@@ -1,0 +1,12 @@
+= form_for service, url: finish_service_path(@aliada.authentication_token) do |service_form|
+  = service_form.hidden_field :id
+  .set-hours__unit
+    .select
+      .arrow
+      = service_form.select :hour, options_for_select((0..10).map { |hour| [ pluralize(hour, 'Hora', 'Horas'), hour ] }, service.hour)
+  .set-hours__unit
+    .select
+      .arrow
+      = service_form.select :min, options_for_select((0..59).step(5).map { |min| [ pluralize(min, 'Minuto', 'Minutos'), min ] }, service.min)
+  .set-hours__unit
+    %input{type: 'submit', name: 'Pay', value: 'Guardar', class: 'button button--full button--yellow'}

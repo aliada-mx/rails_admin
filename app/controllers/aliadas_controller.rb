@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 class AliadasController < ApplicationController
+  include AliadaSupport::DatetimeSupport
 
   before_filter :set_aliada
   
@@ -12,29 +13,31 @@ class AliadasController < ApplicationController
   end
 
   def unassign
-    @service_to_unassign = @aliada.services.find(params[:service])
+    @aliada.services.find(params[:service])
 
-    @service_to_unassign.unassign!
+    @aliada.service_unassignments_left
 
-    redirect_to :back
+    if request.post?
+      @service_to_unassign = 
+
+      @service_to_unassign.unassign!
+
+      redirect_to :back
+    end
   end
   
   def finish
-    @service_to_finish = @aliada.services.find(params[:service])
+    @service_to_finish = @aliada.services.find(params[:service][:id])
                                        
-    if @service_to_finish.present?
+    hours = params[:service][:hour].to_i
+    min = params[:service][:min].to_i
+    hours = hours + (min/60.0)
+    
+    @service_to_finish.hours_worked = hours
+    @service_to_finish.finish
+    @service_to_finish.save!
 
-      hours = params[:hour].to_i
-      min = params[:min].to_i
-      hours = hours + (min/60.0)
-      
-      @service_to_finish.hours_worked = hours
-      @service_to_finish.finish
-
-      redirect_to :back
-    else
-      render text: 'Ruta invalida, ponte  en contacto con aliada' 
-    end
+    redirect_to :back
   end
 
   def next_services 
@@ -57,8 +60,19 @@ class AliadasController < ApplicationController
 
   def worked_services 
     @aliada.track_webapp_view(request, params)
+    #
+    #must implement today or tomorrow after 6pm, etc...
+    today = ActiveSupport::TimeZone["Mexico City"].today
 
-    @unfinished_services = @aliada.services.where(status: 'aliada_assigned').where("datetime <= ?", Time.zone.now)
+    @services_to_finish = @aliada.services.where(status: 'aliada_assigned')
+                                          .order('datetime ASC')
+                                          .where("datetime <= ?", Time.zone.now)
+
+    @worked_services = @aliada.services.where(status: 'finished')
+                                       .order('datetime ASC')
+                                       .where('hours_worked IS NOT NULL')
+                                       .where('hours_worked != 0')
+                                       .where(:datetime => this_week_range)
   end
 
   private

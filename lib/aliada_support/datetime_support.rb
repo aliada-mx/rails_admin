@@ -61,5 +61,17 @@ module AliadaSupport
 
       string.strip
     end
+
+    def this_week_range
+      now = ActiveSupport::TimeZone["Mexico City"].now
+
+      (now.beginning_of_week..now.end_of_week.advance(:days => 1))
+    end
+
+    def this_month_range
+      now = ActiveSupport::TimeZone["Mexico City"].now
+
+      (now.beginning_of_month..now.end_of_month)
+    end
   end
 end
