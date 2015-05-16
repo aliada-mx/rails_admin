@@ -20,7 +20,7 @@ class Aliada < User
                           foreing_key: :user_id,
                           association_foreign_key: :aliada_id
 
-  # TODO optimize to get all aliadas even those without services but the ones with services 
+  # TODO optimize to get all aliadas even those without services but the ones with services
   # must have services.datetime >= Time.zone.now.beginning_of_day
   scope :for_booking, ->(aliadas_ids) {where(id: aliadas_ids).eager_load(:services).eager_load(:zones)}
   # For rails admin
@@ -35,7 +35,7 @@ class Aliada < User
 
   # We override the default_scope class method so the user default scope from
   # which we inherited does not override ours
-  def self.default_scope 
+  def self.default_scope
     where('users.role = ?', 'aliada')
   end
 
@@ -46,7 +46,7 @@ class Aliada < User
                  .last
   end
 
-  # TODO use real physical closeness 
+  # TODO use real physical closeness
   def closeness_to_service(service)
     closest_service = previous_service(service)
 
@@ -79,7 +79,16 @@ class Aliada < User
   end
 
   def current_week_services
-    today = ActiveSupport::TimeZone["Mexico City"].today
+    today = ActiveSupport::TimeZone["Etc/GMT+6"].now
+    #binding.pry
+    puts 'Current Week: ', today, today.beginning_of_week, today.end_of_week.advance(:days => 1)
+    Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week.advance(:days => 1)).not_canceled
+  end
+
+  def week_services( date )
+    today = ActiveSupport::TimeZone["Etc/GMT+6"].parse(date)
+    #binding.pry
+    puts 'Week Services: ', today, today.beginning_of_week, today.end_of_week.advance(:days => 1)
     Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week.advance(:days => 1)).not_canceled
   end
 
@@ -93,7 +102,7 @@ class Aliada < User
     end
     return sum
   end
-  
+
   def aliada_webapp_link
     aliada_show_webapp_link(self)
   end
@@ -104,7 +113,7 @@ class Aliada < User
     tracker = Mixpanel::Tracker.new(Setting.mixpanel_token)
     agent = Agent.new request.env['HTTP_USER_AGENT']
 
-    options = { 
+    options = {
       'agent_name' => agent.name,
       'agent_version' => agent.version,
       'agent_engine' => agent.engine,
