@@ -63,7 +63,7 @@ describe 'ConektaCard' do
       card.token = token
       expect(card).not_to be_preauthorized
 
-      VCR.use_cassette('preauthorize', match_requests_on: [ :conekta_refund, :conekta_charge ], :record => :new_episodes ) do
+      VCR.use_cassette('preauthorize', match_requests_on: [ :conekta_charge ]) do
         card.preauthorize!(user, service)
       end
 

@@ -32,9 +32,8 @@
         %h5.client
           = service.user.full_name
       .set-hours
-        %p ¿Cuanto tiempo duro el servicio?
-        = render partial: 'aliadas/hours_worked_service_form', locals: {service: service}
-
+      = link_to edit_service_hours_worked_path(@aliada.authentication_token, service.id) do
+        Editar servicio
 
 = append :extra_head do
   = stylesheet_link_tag 'aliadas_dashboard', media: 'all'

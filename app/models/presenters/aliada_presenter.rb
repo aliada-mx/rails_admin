@@ -10,7 +10,7 @@ module Presenters
     end
 
     def services_unassigned_this_month
-      services.unassigned.where(datetime: this_month_range).count
+      service_unassignments.where(created_at: this_month_range).count
     end
 
     def show_unassignment_warning

@@ -29,22 +29,6 @@ feature 'AliadasController' do
     Timecop.return
     clear_session
   end
-
-  describe '#finish' do
-    it 'saves the billable hours calculated with reported hours' do
-      params = {
-        hour: 3,
-        min: 0,
-        service: service.id,
-      }
-
-      with_rack_test_driver do
-        page.driver.submit :post, finish_service_path(aliada.authentication_token), params
-      end
-
-      expect(service.reload.billable_hours).to eql 3
-    end
-  end
   
   describe '#services' do
     
@@ -141,43 +125,58 @@ feature 'AliadasController' do
 
   describe '#unassign' do
     let!(:service_to_confirm){ create(:service,
-                           aliada: aliada,
-                           status: 'aliada_assigned',
-                           user: user,
-                           recurrence: recurrence,
-                           zone: zone,
-                           service_type: one_time_service,
-                           datetime: starting_datetime + 1.day, 
-                           estimated_hours: 3
-                           ) }
+                                       aliada: aliada,
+                                       status: 'aliada_assigned',
+                                       user: user,
+                                       recurrence: recurrence,
+                                       zone: zone,
+                                       service_type: one_time_service,
+                                       datetime: starting_datetime + 1.day, 
+                                       estimated_hours: 3)}
     before do
       Timecop.travel(starting_datetime + 10.hours)
     end
 
     it 'redirects to confirmation page' do
-      visit(aliadas_services_path(aliada.authentication_token))
+      visit aliadas_services_path(aliada.authentication_token)
 
       click_on('No voy')
 
-      expect(page.current_path).to aliada_finish_service_path(aliada.authentication_token)
+      expect(page.current_path).to eql unassign_service_path(aliada.authentication_token)
     end
 
     it 'changes the service status' do
-      visit(aliadas_services_path(aliada.authentication_token))
-
-      click_on('No voy')
+      visit unassign_service_path(aliada.authentication_token, service_id: service_to_confirm.id)
+      
+      click_on('Confirmo que no voy')
 
       service_to_confirm.reload
       expect(service_to_confirm).to be_aliada_missing
+      expect(ServiceUnassignment.count).to eql 1
     end
   end
 
   describe '#worked_services' do
     it 'saves the worked hours on a service' do
-      visit(aliadas_worked_services_path(aliada.authentication_token))
+      visit aliadas_worked_services_path(aliada.authentication_token)
 
       select_by_value(3, from: "service_#{service.id}_hours")
-      select_by_value(30, from: "service_#{service.id}_mins")
+      select_by_value(30, from: "service_#{service.id}_min")
+
+      click_on('Guardar')
+
+      service.reload
+      expect(service.hours_worked).to eql BigDecimal.new('3.5')
+      expect(page).to have_content('3 horas 30 minutos')
+    end
+  end
+
+  describe '#edit_service_hours_worked' do
+    it 'lets the aliada edit a service' do
+      visit edit_service_hours_worked_path(aliada.authentication_token, service.id)
+
+      select_by_value(3, from: "service_#{service.id}_hours")
+      select_by_value(30, from: "service_#{service.id}_min")
 
       click_on('Guardar')
 

@@ -12,9 +12,12 @@ class AliadasController < ApplicationController
     redirect_to :back
   end
 
+  def edit_service_hours_worked
+    @service = @aliada.services.find(params[:service_id])
+  end
+
   def unassign
-    @aliada.services.find(params[:service_id])
-    @service_to_unassign = Service.find(params[:service_id])
+    @service_to_unassign = @aliada.services.find(params[:service_id])
 
     if request.post?
 
@@ -35,7 +38,7 @@ class AliadasController < ApplicationController
     @service_to_finish.finish
     @service_to_finish.save!
 
-    redirect_to :back
+    redirect_to aliadas_worked_services_path(@aliada.authentication_token)
   end
 
   def next_services 

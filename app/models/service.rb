@@ -56,6 +56,7 @@ class Service < ActiveRecord::Base
   scope :join_users_and_aliadas, -> { joins('INNER JOIN users ON users.id = services.user_id OR users.id = services.aliada_id') }
   scope :join_users, -> { joins(:user) }
   scope :paid, -> { where("services.status = 'paid'") }
+  scope :unassigned, -> { where("services.status = 'unassigned'") }
 
   # Rails admin tabs
   scope 'mañana', -> { join_users.on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
@@ -116,6 +117,10 @@ class Service < ActiveRecord::Base
 
         service.save!
       end
+    end
+
+    after_transition on: :unassign do |service, transition|
+      ServiceUnassignment.create(service: service, aliada: service.aliada)
     end
   end
 

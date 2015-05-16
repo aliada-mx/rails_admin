@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150515044659) do
+ActiveRecord::Schema.define(version: 20150515232611) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -329,8 +329,8 @@ ActiveRecord::Schema.define(version: 20150515044659) do
   end
 
   create_table "service_unassignments", force: true do |t|
-    t.integer  "service_id"
     t.integer  "aliada_id"
+    t.integer  "service_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

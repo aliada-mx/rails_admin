@@ -1,18 +1,13 @@
-
 %div
   ¿Estás segura que no puedes ir?
 
 %div
-  = if @aliada.show_unassignment_warning
-    Te recordamos que haz dicho #{ @aliada.services_unassigned_this_month } veces que no irás a un servicio este mes.
+  = if @aliada.show_unassignment_warning and @service_to_unassign.in_less_than_24_hours
+    Te recordamos que a la proxima que vez que canceles con menos de 24 horas de anticipación
     %br
-    Lo que puede ser motivo para ser dara de baja en aliada.
+    Se te dará de baja en aliada.
 
 %div
-  = form_tag(unassign_service_path, method: :get) do
-    %input{type: 'hidden', value: @service.id, name: :service}
+  = form_tag(unassign_service_path, method: :post) do
+    %input{type: 'hidden', value: @service_to_unassign.id, name: :service_id}
     %input{type: 'submit', name: 'unassign', value: 'Confirmo que no voy', class: 'button button--full button--gray'}
-  
-
-  
-

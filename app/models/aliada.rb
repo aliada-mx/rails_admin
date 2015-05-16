@@ -7,7 +7,7 @@ class Aliada < User
   has_many :aliada_zones
   has_many :zones, through: :aliada_zones
   has_many :documents, inverse_of: :aliada, foreign_key: :user_id
-  has_many :unassignments
+  has_many :service_unassignments
   has_many :recurrences
   has_many :aliada_working_hours
   has_many :schedules, foreign_key: :aliada_id

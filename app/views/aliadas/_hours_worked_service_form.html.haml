@@ -3,10 +3,10 @@
   .set-hours__unit
     .select
       .arrow
-      = service_form.select :hour, options_for_select((0..10).map { |hour| [ pluralize(hour, 'Hora', 'Horas'), hour ] }, service.hour)
+      = service_form.select :hour, options_for_select((0..10).map { |hour| [ pluralize(hour, 'Hora', 'Horas'), hour ] }, service.hour), {}, id: "service_#{service.id}_hours"
   .set-hours__unit
     .select
       .arrow
-      = service_form.select :min, options_for_select((0..59).step(5).map { |min| [ pluralize(min, 'Minuto', 'Minutos'), min ] }, service.min)
+      = service_form.select :min, options_for_select((0..59).step(5).map { |min| [ pluralize(min, 'Minuto', 'Minutos'), min ] }, service.min), {}, id: "service_#{service.id}_min"
   .set-hours__unit
-    %input{type: 'submit', name: 'Pay', value: 'Guardar', class: 'button button--full button--yellow'}
+    %input{type: 'submit', value: 'Guardar', class: 'button button--full button--yellow'}
