@@ -1,0 +1,85 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://szrMg5UXExCA7JJriEdH:@api.conekta.io/charges?amount=300&card=tok_test_visa_4242&currency=MXN&description=Pre-autorizaci%C3%B3n%20de%20tarjeta%205&details%5Bemail%5D=user-39@aliada.mx&details%5Bname%5D=Test%20User&details%5Bphone%5D=123456&reference_id=5
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - Conekta/v1 RubyBindings/0.5.2
+      X-Conekta-Client-User-Agent:
+      - '{"bindings_version":"0.5.2","lang":"ruby","lang_version":"2.2.2","publisher":"conekta","uname":{"sysname":"Darwin","nodename":"grillermo.local","release":"13.4.0","version":"Darwin
+        Kernel Version 13.4.0: Wed Dec 17 19:05:52 PST 2014; root:xnu-2422.115.10~1/RELEASE_X86_64","machine":"x86_64","model":"MacBookPro10,1"}}'
+      Accept:
+      - application/vnd.conekta-v1.0.0+json
+      Accept-Language:
+      - es
+      Content-Length:
+      - '0'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Conekta-Media-Type:
+      - conekta-v1.0.0; format=json
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sat, 16 May 2015 03:30:33 GMT
+      Etag:
+      - '"3eb25348260f75f5739360faa3967f5a"'
+      Server:
+      - nginx/1.1.19
+      Status:
+      - 200 OK
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Request-Id:
+      - bc6e45c67daa42ce757c6ed0b8b06cff
+      X-Runtime:
+      - '4.917806'
+      Content-Length:
+      - '1244'
+      Connection:
+      - keep-alive
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJpZCI6IjU1NTZiOWQ0MjQxMjI5NzhmYTAwNmFmMSIsImxpdmVtb2RlIjpm
+        YWxzZSwiY3JlYXRlZF9hdCI6MTQzMTc0NzAyOCwic3RhdHVzIjoicGFpZCIs
+        ImN1cnJlbmN5IjoiTVhOIiwiZGVzY3JpcHRpb24iOiJQcmUtYXV0b3JpemFj
+        acOzbiBkZSB0YXJqZXRhIDUiLCJyZWZlcmVuY2VfaWQiOiI1IiwiZmFpbHVy
+        ZV9jb2RlIjpudWxsLCJmYWlsdXJlX21lc3NhZ2UiOm51bGwsIm1vbnRobHlf
+        aW5zdGFsbG1lbnRzIjpudWxsLCJvYmplY3QiOiJjaGFyZ2UiLCJhbW91bnQi
+        OjMwMCwicGFpZF9hdCI6MTQzMTc0NzAzMywiZmVlIjozMDAsImN1c3RvbWVy
+        X2lkIjoiIiwicmVmdW5kcyI6W10sInBheW1lbnRfbWV0aG9kIjp7Im5hbWUi
+        OiJKb3JnZSBMb3BleiIsImV4cF9tb250aCI6IjEyIiwiZXhwX3llYXIiOiIx
+        OSIsImF1dGhfY29kZSI6IjAwMDAwMCIsIm9iamVjdCI6ImNhcmRfcGF5bWVu
+        dCIsInR5cGUiOiJjcmVkaXQiLCJsYXN0NCI6IjQyNDIiLCJicmFuZCI6InZp
+        c2EiLCJpc3N1ZXIiOiIiLCJhY2NvdW50X3R5cGUiOiIiLCJjb3VudHJ5Ijoi
+        VVMiLCJmcmF1ZF9zY29yZSI6MjksImZyYXVkX2luZGljYXRvcnMiOlt7ImRl
+        c2NyaXB0aW9uIjoiRW4gbGFzIMO6bHRpbWFzIDYgaG9yYXMgbGEgcGVyc29u
+        YSBoYSBpbnRlbnRhZG8gcmVhbGl6YXIgY29tcHJhcyBjb24gbcOhcyBkZSB1
+        bmEgdGFyamV0YSBkaXN0aW50YTsgcG9yIHNlZ3VyaWRhZCBzZSBoYSBibG9x
+        dWVhZG8gbGEgY29tcHJhLiIsIndlaWdodCI6bnVsbH0seyJkZXNjcmlwdGlv
+        biI6IkVsIGRpc3Bvc2l0aXZvIGNvbiBlbCBxdWUgc2UgaGl6byBsYSBjb21w
+        cmEgc2UgZW5jdWVudHJhIGZ1ZXJhIGRlIE3DqXhpY28geSBsYSBwZXJzb25h
+        IHRpZW5lIGFzb2NpYWRhIGEgZWxsYSBkaXN0aW50YXMgdGFyamV0YXMsIGNv
+        cnJlb3MsIGRpcmVjY2lvbmVzIElQLCBldGMuIEVzdGUgcGF0csOzbiBlcyBt
+        dXkgY29tw7puIGVuIGF0YXF1ZXM7IHBvciBzZWd1cmlkYWQgc2UgaGEgYmxv
+        cXVlYWRvIGxhIGNvbXByYS4iLCJ3ZWlnaHQiOm51bGx9LHsiZGVzY3JpcHRp
+        b24iOiJMYSB0cmFuc2FjY2nDs24gc2UgaGEgYXByb2JhZG8gYSB0cmF2w6lz
+        IGRlIHVuIHBhZ28gdsOtYSBsYSBtb2RhbGlkYWQgUGFnYSBNw7N2aWwgZGUg
+        QmFub3J0ZS4iLCJ3ZWlnaHQiOm51bGx9XX0sImRldGFpbHMiOnsibmFtZSI6
+        IlRlc3QgVXNlciIsInBob25lIjoiMTIzNDU2IiwiZW1haWwiOiJ1c2VyLTM5
+        QGFsaWFkYS5teCIsImxpbmVfaXRlbXMiOltdfX0=
+    http_version: 
+  recorded_at: Sat, 16 May 2015 03:30:39 GMT
+recorded_with: VCR 2.9.3

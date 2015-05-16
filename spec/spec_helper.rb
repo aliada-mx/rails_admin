@@ -26,12 +26,6 @@ VCR.configure do |config|
 
     real_request.uri == recorded_request.uri || (charge_regex.match(real_request.uri) && charge_regex.match(recorded_request.uri))
   end
-
-  config.register_request_matcher :conekta_refund do |real_request, recorded_request|
-    charge_regex = /^https:\/\/.*:@api.conekta.io\/charges\/\d\/refund\?amount=\d+/
-
-    real_request.uri == recorded_request.uri || (charge_regex.match(real_request.uri) && charge_regex.match(recorded_request.uri))
-  end
 end
 
 

@@ -28,24 +28,6 @@ feature 'AliadasController' do
     clear_session
   end
 
-  describe '#finish' do
-    it 'saves the billable hours calculated with reported hours' do
-      params = {
-        begin_hour: starting_datetime.hour,
-        begin_min: 0,
-        end_hour: ( starting_datetime + 3.hours ).hour,
-        end_min: 0,
-        service: service.id,
-      }
-
-      with_rack_test_driver do
-        page.driver.submit :post, finish_service_path(aliada.authentication_token), params
-      end
-
-      expect(service.reload.billable_hours).to eql 3
-    end
-  end
-  
   describe '#services' do
     
     it 'checks the aliada has a valid token' do
