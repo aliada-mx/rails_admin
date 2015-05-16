@@ -218,8 +218,12 @@ class User < ActiveRecord::Base
     UserMailer.user_address_changed(self, new_address, prev_address)
   end
 
-  def send_owed_services_email
+  def send_debt_reminder_email
     UserMailer.debt_reminder(self).deliver!
+  end
+
+  def send_second_debt_reminder_email
+    UserMailer.second_debt_reminder(self).deliver!
   end
 
   rails_admin do

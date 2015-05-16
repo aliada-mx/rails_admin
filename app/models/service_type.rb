@@ -3,7 +3,6 @@ class ServiceType < ActiveRecord::Base
   NAMES = [
     ['Recurrente','recurrent'],
     ['Una sola vez', 'one-time'],
-    ['Una sola vez derivado de una recurrencia', 'one-time-from-recurrent'],
   ]
 
   scope :ordered, -> { order(:position) }
