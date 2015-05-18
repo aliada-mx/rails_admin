@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   draw :aliada_webapp
   draw :utilities
   draw :paypal_ipn
+  draw :shortcuts
 
   # Resque-web
   require "resque_web"
