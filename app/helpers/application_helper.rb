@@ -25,4 +25,12 @@ module ApplicationHelper
   def ensure_leading_zero(number)
     sprintf "%.1f", number
   end
+
+  def controller?(*controller)
+    controller.include?(params[:controller])
+  end
+
+  def action?(*action)
+    action.include?(params[:action])
+  end
 end

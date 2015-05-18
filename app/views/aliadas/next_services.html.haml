@@ -1,10 +1,5 @@
-.header
-  %h4.header__user
-    = @aliada.full_name
-  %p.header__hours
-    Esta semana llevas #{ seconds_to_hours_minutes_in_spanish @aliada.current_week_hours_worked.hours }
-  = link_to aliadas_worked_services_path(@aliada.authentication_token) do
-    ver servicios trabajados
+= render partial: 'aliadas/header'
+= render partial: 'aliadas/tabs'
 
 - if @upcoming_services.any?
   .section

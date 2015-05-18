@@ -1,0 +1,13 @@
+.tabs
+  .tabs__tab
+    .tabs__tab__inner.alpha
+      = link_to aliadas_services_path(@aliada.authentication_token),
+                class: (controller?('aliadas') && action?('next_services') ? 'active' : nil) do
+        = image_tag 'list-green-16.png', alt: 'Servicios'
+        Servicios
+  .tabs__tab
+    .tabs__tab__inner
+      = link_to aliadas_worked_services_path(@aliada.authentication_token),
+                class: (controller?('aliadas') && action?('worked_services') ? 'active' : nil) do
+        = image_tag 'clock-green-16.png', alt: 'Horas'
+        Horas
