@@ -1,5 +1,4 @@
 = render partial: 'aliadas/header'
-= render partial: 'aliadas/tabs'
 
 - if @upcoming_services.any?
   .section
@@ -64,10 +63,9 @@
               = form_tag(confirm_service_path) do
                 %input{type: 'hidden', value: service.id, name: :service_id}
                 %input{type: 'submit', name: 'confirmation', value: 'Si voy', class: 'button button--full button--purple'}
-            .service__unassign
-              = form_tag(unassign_service_path, method: :get) do
-                %input{type: 'hidden', value: service.id, name: :service_id}
-                %input{type: 'submit', name: 'unassign', value: 'No voy', class: 'button button--full button--gray'}
+          .service__unassign
+            = form_tag(unassign_service_path, method: :get) do
+              %input{type: 'hidden', value: service.id, name: :service_id}
+              %input{type: 'submit', name: 'unassign', value: 'No voy', class: 'button button--full button--gray'}
 
-= append :extra_head do
-  = stylesheet_link_tag 'aliadas_dashboard', media: 'all'
+= render partial: 'aliadas/footer'

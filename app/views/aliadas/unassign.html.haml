@@ -1,3 +1,5 @@
+= render partial: 'aliadas/header'
+
 %div
   ¿Estás segura que no puedes ir?
 
@@ -11,3 +13,5 @@
   = form_tag(unassign_service_path, method: :post) do
     %input{type: 'hidden', value: @service_to_unassign.id, name: :service_id}
     %input{type: 'submit', name: 'unassign', value: 'Confirmo que no voy', class: 'button button--full button--gray'}
+
+= render partial: 'aliadas/footer'
