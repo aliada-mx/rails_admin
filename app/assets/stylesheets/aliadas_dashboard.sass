@@ -15,10 +15,14 @@ $separator-color: #E3E3E3
   padding: 10px
   font-size: 14px
   color: #4E4E4E
+  text-decoration: none
 
   &--full
     display: block
-    width: 100%
+    text-align: center
+    padding:
+      left: 0
+      right: 0
 
   &--yellow
     background: $yellow
@@ -34,6 +38,10 @@ $separator-color: #E3E3E3
     background: $medium_gray
     border-color: darken($medium_gray, 10%)
     color: $white
+
+input.button
+  &--full
+    width: 100%
 
 body
   background: #F8F8F8
@@ -162,6 +170,12 @@ body
     border-top: 1px solid #EAEAEA
     margin-top: 10px
     padding-top: 15px
+
+    &__action
+      margin-top: 10px
+
+      &:first-child
+        margin-top: 0
 
 .set-hours
   p

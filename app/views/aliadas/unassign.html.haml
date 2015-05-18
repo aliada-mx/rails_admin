@@ -22,4 +22,7 @@
     .service__actions
       = form_tag(unassign_service_path, method: :post) do
         %input{type: 'hidden', value: @service_to_unassign.id, name: :service_id}
-        %input{type: 'submit', name: 'unassign', value: 'Confirmo que no voy', class: 'button button--full button--gray'}
+        .service__actions__action
+          %input{type: 'submit', name: 'unassign', value: 'Confirmo que no voy', class: 'button button--full button--gray'}
+        .service__actions__action
+          = link_to 'Regresar', :back, class: 'button button--gray button--full'
