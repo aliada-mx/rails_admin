@@ -13,7 +13,7 @@ es:
       postal_code: 'códigos postale'
       recurrence: 'recurrencia'
       recurrences: 'recurrencias'
-      aliada_working_hour: 'horario de Aliada'
+      aliada_working_hour: 'Horas de horario de aliada'
       schedule: 'hora de servicio'
       score: 'calificación'
       service: 'servicio'
