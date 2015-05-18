@@ -1,13 +1,16 @@
 !!!
 %html
   %head
-    %title 
-      = area :title, 'Aliada' 
+    %title
+      = area :title, 'Aliada'
     %meta{ name: 'description', content: '' }
     %meta{ name: 'keywords', content: '' }
     %meta{ name: 'viewport', content: 'width=device-width, initial-scale=1, user-scalable=yes' }
     = csrf_meta_tags
     = area :extra_head
-    = favicon_link_tag 
+    = favicon_link_tag
+    = stylesheet_link_tag 'aliadas_dashboard', media: 'all'
   %body{class: area(:body_class){ '' } }
+    = render partial: 'aliadas/header'
     = yield
+    = render partial: 'aliadas/footer'
