@@ -97,7 +97,7 @@ aliada.services.initial.initialize_calendar_times = function() {
   // Update calendar when leaving second step so it has enough time to be ready 
   // becase thats when we have a postal code to ask for the availability
   $(document).on('leaving_step_2', function() {
-    if (_.isNumber(aliada.ko.postal_code_number())) {
+    if (_.isNumber(parseInt(aliada.ko.postal_code_number() ))) {
       update_calendar()
     }
   });
