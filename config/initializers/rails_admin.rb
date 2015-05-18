@@ -4,7 +4,7 @@ RailsAdmin::Config::Actions.register(:create_aliada_working_hours, RailsAdmin::C
 
 RailsAdmin::Config::Fields::Types::register(:show_aliada_schedule, RailsAdmin::Config::Actions::ShowAliadaSchedule)
 
-RailsAdmin::Config::Actions.register(:modify_schedules_batch, RailsAdmin::Config::Actions::ModifySchedulesBatch)
+# RailsAdmin::Config::Actions.register(:modify_schedules_batch, RailsAdmin::Config::Actions::ModifySchedulesBatch)
 
 RailsAdmin::Config::Actions.register(:charge_services, RailsAdmin::Config::Actions::ChargeServices)
  
@@ -51,9 +51,9 @@ RailsAdmin.config do |config|
       end
     end
 
-    modify_schedules_batch do
-      visible true
-    end
+    # modify_schedules_batch do
+    #   visible true
+    # end
 
     charge_services do
       visible do
