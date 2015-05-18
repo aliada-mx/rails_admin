@@ -33,4 +33,8 @@ module ApplicationHelper
   def action?(*action)
     action.include?(params[:action])
   end
+
+  def format_date(date)
+    I18n.l date, format: '%A %e de %B  a las %I %P'
+  end
 end

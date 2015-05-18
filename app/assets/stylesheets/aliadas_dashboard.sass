@@ -71,7 +71,7 @@ body
 
       a
         display: block
-        padding: 15px 0
+        padding: 12px 0
         text-decoration: none
         color: #4E4E4E
         font-size: 15px
@@ -120,6 +120,12 @@ body
 
   &--purple
     border-left-color: $purple
+
+  &--clean
+    border-left: 0
+
+    .service__actions, .service__details
+      border: 0
 
   &__head
     margin-bottom: 10px
@@ -196,3 +202,18 @@ body
     -webkit-appearance: none
     -moz-appearance: none
     appearance: none
+
+.unassign
+  &__header
+    padding-left: 15px
+    margin-bottom: 10px
+
+  &__warning
+    margin: 15px
+
+    &__card
+      font-size: 13px
+      background: #F8E71C
+      border-radius: 3px
+      padding: 10px
+      box-shadow: 0 1px 1px rgba(0, 0, 0, .05)

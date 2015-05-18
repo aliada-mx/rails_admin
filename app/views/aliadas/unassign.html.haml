@@ -1,13 +1,25 @@
-%div
-  ¿Estás segura que no puedes ir?
-
-%div
-  = if @aliada.show_unassignment_warning and @service_to_unassign.in_less_than_24_hours
-    Te recordamos que a la proxima que vez que canceles con menos de 24 horas de anticipación
-    %br
-    Se te dará de baja en aliada.
-
-%div
-  = form_tag(unassign_service_path, method: :post) do
-    %input{type: 'hidden', value: @service_to_unassign.id, name: :service_id}
-    %input{type: 'submit', name: 'unassign', value: 'Confirmo que no voy', class: 'button button--full button--gray'}
+.unassign
+  .unassign__header
+    %h4 ¿Estás segura que no puedes ir?
+  - if @aliada.show_unassignment_warning and @service_to_unassign.in_less_than_24_hours
+    .unassign__warning
+      .unassign__warning__card
+        %p Te recordamos que de volver a cancelar un servicio con menos de 24 de anticipación se te dara de baja. :(
+  .service.service--clean
+    .service__head
+      %h3.date= format_date @service_to_unassign.tz_aware_datetime
+      %h5.client= @service_to_unassign.user.full_name
+    .service__details
+      .service__attribute
+        %span Dirección
+        %p= @service_to_unassign.address.street
+      .service__attribute
+        %span Número exterior
+        %p= @service_to_unassign.address.number
+      .service__attribute
+        %span Colonia
+        %p #{@service_to_unassign.address.colony}, #{@service_to_unassign.address.city}
+    .service__actions
+      = form_tag(unassign_service_path, method: :post) do
+        %input{type: 'hidden', value: @service_to_unassign.id, name: :service_id}
+        %input{type: 'submit', name: 'unassign', value: 'Confirmo que no voy', class: 'button button--full button--gray'}

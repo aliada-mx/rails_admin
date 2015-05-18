@@ -6,7 +6,7 @@
       .service.service--purple
         .service__head
           %h3.date=  I18n.l service.tz_aware_datetime, format: '%A %e de %B  a las %I %P'
-          %h5.client= service.user.first_name + ' ' + service.user.last_name
+          %h5.client= service.user.full_name
           %h5.phone= service.user.phone
         .service__details
           .service__attribute
