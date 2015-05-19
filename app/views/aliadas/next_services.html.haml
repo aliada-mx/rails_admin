@@ -7,7 +7,9 @@
         .service__head
           %h3.date=  format_date service.tz_aware_datetime
           %h5.client= service.user.full_name
-          %h5.phone= number_to_phone service.user.phone, delimiter: " "
+          %h5.phone
+            = image_tag 'phone-gray-12.png', alt: ''
+            = number_to_phone service.user.phone, delimiter: " "
         .service__details
           .service__attribute
             %span Duración
