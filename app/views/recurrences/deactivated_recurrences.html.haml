@@ -16,6 +16,9 @@
         %div
           Status:
           = recurrence.status
+        %div
+          =link_to(edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id) ) do
+            Editar recurrencia
         = recurrence.friendly_time
         con
         = recurrence.aliada.name

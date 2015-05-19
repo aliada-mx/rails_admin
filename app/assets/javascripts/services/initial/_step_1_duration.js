@@ -21,7 +21,7 @@ aliada.services.initial.step_1_duration = function(aliada, ko){
 
 
   aliada.ko.hours = ko.computed(function(){
-      var hours = 1.5; // Starting with 1 room and 1 bathroom
+      var hours = 2.5; // Starting with 1 room and 1 bathroom
       var extras_hours = aliada.ko.extras_hours();
       hours += extras_hours
 
