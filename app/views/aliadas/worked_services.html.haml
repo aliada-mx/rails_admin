@@ -12,15 +12,16 @@
           = render partial: 'aliadas/hours_worked_service_form', locals: {service: service}
 
 -if @worked_services.any?
-  .section__header
-    %h4 Servicios terminados
-  - @worked_services.each do |service|
-    .service.service--pink{id: "service_#{service.id}"}
-      .service__head
-        %h3.date= format_date service.tz_aware_datetime
-        %h5.client= service.user.full_name
-      .service__worked-hours
-        %p #{pluralize(service.hour, 'Hora', 'Horas')} y #{pluralize(service.min, 'Minuto', 'Minutos')}
-      .set-hours
-        .set-hours__unit
-          = link_to 'Editar servicio', edit_service_hours_worked_path(@aliada.authentication_token, service.id), class: 'button button--full'
+  .section
+    .section__header
+      %h4 Servicios terminados
+    - @worked_services.each do |service|
+      .service.service--pink{id: "service_#{service.id}"}
+        .service__head
+          %h3.date= format_date service.tz_aware_datetime
+          %h5.client= service.user.full_name
+        .service__worked-hours
+          %p #{pluralize(service.hour, 'Hora', 'Horas')} y #{pluralize(service.min, 'Minuto', 'Minutos')}
+        .set-hours
+          .set-hours__unit
+            = link_to 'Editar servicio', edit_service_hours_worked_path(@aliada.authentication_token, service.id), class: 'button button--full'
