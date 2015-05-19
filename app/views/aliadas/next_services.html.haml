@@ -5,9 +5,9 @@
     - @upcoming_services.each do |service|
       .service.service--purple
         .service__head
-          %h3.date=  I18n.l service.tz_aware_datetime, format: '%A %e de %B  a las %I %P'
+          %h3.date=  format_date service.tz_aware_datetime
           %h5.client= service.user.full_name
-          %h5.phone= service.user.phone
+          %h5.phone= number_to_phone service.user.phone, delimiter: " "
         .service__details
           .service__attribute
             %span Duración
@@ -22,39 +22,47 @@
             %p= service.address.number
           .service__attribute
             %span Número interior
-            %p= service.address.interior_number ? service.address.interior_number : 'Sin número interior'
+            %p= service.address.interior_number.empty? ? 'Sin número interior' : service.address.interior_number
           .service__attribute
             %span Entre calles
             %p= service.address.between_streets
+          - unless service.address.references.blank?
+            .service__attribute
+              %span Referencias
+              %p= service.address.references
           .service__attribute
             %span Colonia
             %p #{service.address.colony}, #{service.address.city}
           .service__attribute
             %img{src: "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{service.address.latitude},#{service.address.longitude}&zoom=#{service.address.map_zoom}&markers=#{service.address.latitude},#{service.address.longitude}&markers=color:blue%7Clabel:S%7C#{service.address.references_latitude},#{service.address.references_longitude}"}
-          .service__attribute
-            %span Referencias
-            %p= service.address.references
-          .service__attribute
-            %span Instrucciones
-            %p= service.special_instructions
-          .service__attribute
-            %span Articulos de limpieza
-            %p= service.cleaning_supplies_instructions
-          .service__attribute
-            %span Basura
-            %p= service.garbage_instructions
-          .service__attribute
-            %span Atencion a
-            %p= service.attention_instructions
-          .service__attribute
-            %span Limpiar con
-            %p= service.equipment_instructions
-          .service__attribute
-            %span No tocar
-            %p= service.forbidden_instructions
-          .service__attribute
-            %span Otras instrucciones
-            %p= service.special_instructions
+          - unless service.special_instructions.blank?
+            .service__attribute
+              %span Instrucciones
+              %p= service.special_instructions
+          - unless service.cleaning_supplies_instructions.blank?
+            .service__attribute
+              %span Articulos de limpieza
+              %p= service.cleaning_supplies_instructions
+          - unless service.garbage_instructions.blank?
+            .service__attribute
+              %span Basura
+              %p= service.garbage_instructions
+          - unless service.attention_instructions.blank?
+            .service__attribute
+              %span Atencion a
+              %p= service.attention_instructions
+          - unless service.equipment_instructions.blank?
+            .service__attribute
+              %span Limpiar con
+              %p= service.equipment_instructions
+          - unless service.forbidden_instructions.blank?
+            .service__attribute
+              %span No tocar
+              %p= service.forbidden_instructions
+          - unless service.special_instructions.blank?
+            .service__attribute
+              %span Otras instrucciones
+              %p= service.special_instructions
         .service__actions
           - if !service.confirmed
             .service__confirm
