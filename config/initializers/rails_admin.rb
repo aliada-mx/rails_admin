@@ -22,6 +22,8 @@ RailsAdmin.config do |config|
     RailsAdmin::Config::Fields::Types::register(self)
   end
 
+  config.label_methods = [:title, :name]
+
   config.authorize_with :cancan, AdminAbility
   config.current_user_method(&:current_user)
 
