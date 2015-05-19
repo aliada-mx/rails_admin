@@ -24,11 +24,11 @@
             %p= service.address.number
           .service__attribute
             %span Número interior
-            %p= service.address.interior_number.present? ? 'Sin número interior' : service.address.interior_number
+            %p= service.address.interior_number.present? ? service.address.interior_number : 'Sin número interior'
           .service__attribute
             %span Entre calles
             %p= service.address.between_streets
-          - unless service.address.references.blank?
+          - if service.address.references.present?
             .service__attribute
               %span Referencias
               %p= service.address.references
