@@ -24,7 +24,7 @@
             %p= service.address.number
           .service__attribute
             %span Número interior
-            %p= service.address.interior_number.empty? ? 'Sin número interior' : service.address.interior_number
+            %p= service.address.interior_number.present? ? 'Sin número interior' : service.address.interior_number
           .service__attribute
             %span Entre calles
             %p= service.address.between_streets
@@ -37,31 +37,31 @@
             %p #{service.address.colony}, #{service.address.city}
           .service__attribute
             %img{src: "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{service.address.latitude},#{service.address.longitude}&zoom=#{service.address.map_zoom}&markers=#{service.address.latitude},#{service.address.longitude}&markers=color:blue%7Clabel:S%7C#{service.address.references_latitude},#{service.address.references_longitude}"}
-          - unless service.special_instructions.blank?
+          - if service.special_instructions.present?
             .service__attribute
               %span Instrucciones
               %p= service.special_instructions
-          - unless service.cleaning_supplies_instructions.blank?
+          - if service.cleaning_supplies_instructions.present?
             .service__attribute
               %span Articulos de limpieza
               %p= service.cleaning_supplies_instructions
-          - unless service.garbage_instructions.blank?
+          - if service.garbage_instructions.present?
             .service__attribute
               %span Basura
               %p= service.garbage_instructions
-          - unless service.attention_instructions.blank?
+          - if service.attention_instructions.present?
             .service__attribute
               %span Atencion a
               %p= service.attention_instructions
-          - unless service.equipment_instructions.blank?
+          - if service.equipment_instructions.present?
             .service__attribute
               %span Limpiar con
               %p= service.equipment_instructions
-          - unless service.forbidden_instructions.blank?
+          - if service.forbidden_instructions.present?
             .service__attribute
               %span No tocar
               %p= service.forbidden_instructions
-          - unless service.special_instructions.blank?
+          - if service.special_instructions.present?
             .service__attribute
               %span Otras instrucciones
               %p= service.special_instructions
