@@ -41,9 +41,9 @@ class AliadasController < ApplicationController
       #must implement today or tomorrow after 6pm, etc...
       now = ActiveSupport::TimeZone["Mexico City"].now
       date_to_show = if now.hour < 18
-                       ActiveSupport::TimeZone["Mexico City"].today 
+                       now
                      else
-                       ActiveSupport::TimeZone["Mexico City"].today + 1.day
+                       now + 1.day
                      end
      
       #pulls unfinished services from the database, so we only present the worked services to the aliada
