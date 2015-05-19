@@ -7,6 +7,11 @@ class Service < ActiveRecord::Base
 
   has_paper_trail
 
+  NOT_RENDERED_REASONS = [
+    [ 'El cliente no abrió', 'client_fault' ],
+    [ 'La aliada no se presentó', 'aliadas_fault' ],
+  ]
+
   STATUSES = [
     ['Creado','created'],
     ['Aliada asignada', 'aliada_assigned'],
@@ -126,6 +131,10 @@ class Service < ActiveRecord::Base
   delegate :wdays_count_to_end_of_recurrency, to: :recurrence
 
   before_save :detect_statuses_change
+
+  def not_rendered_reason_enum
+    NOT_RENDERED_REASONS
+  end
 
   def detect_statuses_change
     if status_changed?
@@ -699,7 +708,11 @@ class Service < ActiveRecord::Base
       field :service_type
       field :recurrence
 
-      field :cancelation_fee_charged
+      group :cancelacion do
+        field :cancelation_fee_charged
+        field :not_rendered_reason
+        field :incident
+      end
 
       group :horas_de_servicio do
         field :estimated_hours
