@@ -1,7 +1,7 @@
 - if @upcoming_services.any?
   .section
     .section__header
-      %h4 Servicios proximos
+      %h4 Proximos Servicios
     - @upcoming_services.each do |service|
       .service.service--purple
         .service__head
@@ -9,7 +9,7 @@
           %h5.client= service.user.full_name
           %h5.phone
             = image_tag 'phone-gray-12.png', alt: ''
-            = number_to_phone service.user.phone, delimiter: " "
+            = link_to number_to_phone(service.user.phone, delimiter: " "), "tel:#{service.user.phone}"
         .service__details
           .service__attribute
             %span Duración

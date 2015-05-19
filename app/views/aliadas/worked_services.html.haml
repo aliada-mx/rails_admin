@@ -1,7 +1,7 @@
 -if @services_to_finish.any?
   .section
     .section__header
-      %h4 Servicios por terminar
+      %h4 Servicios por Terminar
     - @services_to_finish.each do |service|
       .service.service--yellow{id: "service_#{service.id}"}
         .service__head
@@ -14,7 +14,7 @@
 -if @worked_services.any?
   .section
     .section__header
-      %h4 Servicios terminados
+      %h4 Servicios Terminados
     - @worked_services.each do |service|
       .service.service--pink{id: "service_#{service.id}"}
         .service__head
