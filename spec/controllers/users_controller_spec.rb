@@ -44,5 +44,33 @@ feature 'UserController' do
       expect(user.encrypted_password).to_not eql previous_password
     end
   end
+
+  describe '#previous_services' do
+    let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
+    let!(:service) { create(:service, datetime: starting_datetime - 1.day,
+                                      user: user,
+                                      status: 'finished') }
+
+    before do
+      Timecop.freeze(starting_datetime)
+
+      allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
+      login_as(user)
+
+      visit previous_services_users_path user
+    end
+    
+    after do
+      Timecop.return
+    end
+
+    it 'lets the user see previous services' do
+      service_formatted_date = I18n.l service.tz_aware_datetime, format: :default_with_hour
+
+      within ".service_history_table" do
+        expect(page).to have_content service_formatted_date
+      end
+    end
+  end
 end
 

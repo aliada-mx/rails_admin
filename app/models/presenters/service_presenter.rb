@@ -258,6 +258,14 @@ module Presenters
                                "%{reference_longitude}"
      url = template % options
    end
+
+   def status_for_history
+      if owed?
+        canceled? ? 'Cancelación tardía' : 'Adeudado'
+      else
+        status_in_spanish
+      end
+    end
   end
 end
 

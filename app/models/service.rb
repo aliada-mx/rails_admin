@@ -708,7 +708,7 @@ class Service < ActiveRecord::Base
       field :recurrence
       field :created_at
 
-      scopes ['mañana', :todos, :confirmados, :sin_confirmar, :con_horas_reportadas, :cobro_fallido]
+      scopes ['mañana', :todos, :confirmados, :sin_confirmar, :con_horas_reportadas, :adeudados]
     end
 
     edit do
