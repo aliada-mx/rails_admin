@@ -166,7 +166,9 @@ feature 'AliadasController' do
       click_on('Guardar')
 
       service.reload
-      expect(service.hours_worked).to eql BigDecimal.new('3.5')
+      expect(service.hours_worked).to eql BigDecimal.new('3.0')
+      expect(service.minutes_worked).to eql 30
+      expect(service.time_worked).to eql BigDecimal.new('3.5')
       expect(page).to have_content('3 horas 30 minutos')
     end
   end
@@ -181,7 +183,9 @@ feature 'AliadasController' do
       click_on('Guardar')
 
       service.reload
-      expect(service.hours_worked).to eql BigDecimal.new('3.5')
+      expect(service.hours_worked).to eql BigDecimal.new('3.0')
+      expect(service.minutes_worked).to eql 30
+      expect(service.time_worked).to eql BigDecimal.new('3.5')
       expect(page).to have_content('3 horas 30 minutos')
     end
   end

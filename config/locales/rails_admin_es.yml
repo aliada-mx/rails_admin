@@ -175,6 +175,7 @@ es:
         confirmed: 'Confirmado'
         rooms_hours: 'Horas por cuartos'
         hours_worked: 'Horas trabajadas'
+        minutes_worked: 'Minutos trabajados'
       ticket:
         relevant_object: Registro
         message: error

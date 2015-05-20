@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150519004946) do
+ActiveRecord::Schema.define(version: 20150519223735) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -368,6 +368,7 @@ ActiveRecord::Schema.define(version: 20150519004946) do
     t.decimal  "hours_worked"
     t.string   "not_rendered_reason"
     t.text     "incident"
+    t.integer  "minutes_worked",                                          default: 0
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree

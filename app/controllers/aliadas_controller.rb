@@ -20,7 +20,6 @@ class AliadasController < ApplicationController
     @service_to_unassign = @aliada.services.find(params[:service_id])
 
     if request.post?
-
       @service_to_unassign.unassign!
 
       return redirect_to aliadas_services_path(@aliada.authentication_token)
@@ -30,11 +29,8 @@ class AliadasController < ApplicationController
   def finish
     @service_to_finish = @aliada.services.find(params[:service][:id])
                                        
-    hours = params[:service][:hour].to_i
-    min = params[:service][:min].to_i
-    hours = hours + (min/60.0)
-    
-    @service_to_finish.hours_worked = hours
+    @service_to_finish.hours_worked = params[:service][:hour]
+    @service_to_finish.minutes_worked = params[:service][:min]
     @service_to_finish.finish
     @service_to_finish.save!
 
@@ -48,9 +44,9 @@ class AliadasController < ApplicationController
     now = ActiveSupport::TimeZone["Etc/GMT+6"].now
 
     date_to_show = if now.hour < 18
-                      ActiveSupport::TimeZone["Etc/GMT+6"].today 
+                      now
                     else
-                      ActiveSupport::TimeZone["Etc/GMT+6"].today + 1.day
+                      now + 1.day
                     end
 
     @upcoming_services = @aliada.services.joins(:address)

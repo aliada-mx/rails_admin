@@ -113,14 +113,16 @@ class Service < ActiveRecord::Base
 
     after_transition on: :finish do |service, transition|
       if service.bill_by_hours_worked?
-        service.billable_hours = service.hours_worked
+        service.billable_hours = service.time_worked
 
         service.save!
       end
     end
 
     after_transition on: :unassign do |service, transition|
-      ServiceUnassignment.create(service: service, aliada: service.aliada)
+      if service.in_less_than_24_hours
+        ServiceUnassignment.create(service: service, aliada: service.aliada)
+      end
     end
   end
 
@@ -149,12 +151,16 @@ class Service < ActiveRecord::Base
     self.billed_hours = if billable_hours && !billable_hours.zero?
                           billable_hours 
                         elsif hours_worked && !hours_worked.zero?
-                          hours_worked
+                          time_worked
                         elsif estimated_hours
                           estimated_hours 
                         else 
                           0
                         end
+  end
+
+  def time_worked
+    ( hours_worked || 0 ) + ( minutes_worked / 60.0 )
   end
 
   def timezone
@@ -320,7 +326,7 @@ class Service < ActiveRecord::Base
 
   #calculates the price to be charged for a service
   def amount_by_hours_worked
-    amount = hours_worked * service_type.price_per_hour
+    amount = time_worked * service_type.price_per_hour
     if amount > 0 then amount else 0 end
   end
 
@@ -714,6 +720,9 @@ class Service < ActiveRecord::Base
         field :hours_worked do
           help 'Horas reportadas por la aliada'
         end
+        field :minutes_worked do
+          help 'Minutos reportados por la aliada'
+        end
 
         field :billable_hours do
           help 'Horas llenadas por un admin'
@@ -731,11 +740,6 @@ class Service < ActiveRecord::Base
         field :hours_after_service
         field :rooms_hours
         field :schedules
-
-        field :hours_worked do
-          label 'Horas trabajadas'
-          help 'Reportadas por la aliada'
-        end
       end
 
       field :tickets

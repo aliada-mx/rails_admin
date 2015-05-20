@@ -4,7 +4,7 @@
   - if @aliada.show_unassignment_warning and @service_to_unassign.in_less_than_24_hours
     .unassign__warning
       .unassign__warning__card
-        %p Te recordamos que de volver a cancelar un servicio con menos de 24 de anticipación se te dara de baja. :(
+        %p Te recordamos que de volver a cancelar un servicio con menos de 24 horas de anticipación se te dara de baja. :(
   .service.service--clean
     .service__head
       %h3.date= format_date @service_to_unassign.tz_aware_datetime

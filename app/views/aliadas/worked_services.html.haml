@@ -1,7 +1,7 @@
 -if @services_to_finish.any?
   .section
     .section__header
-      %h4 Servicios por Terminar
+      %h4 Servicios con horas por reportar
     - @services_to_finish.each do |service|
       .service.service--yellow{id: "service_#{service.id}"}
         .service__head
@@ -14,7 +14,7 @@
 -if @worked_services.any?
   .section
     .section__header
-      %h4 Servicios Terminados
+      %h4 Servicios con horas reportadas
     - @worked_services.each do |service|
       .service.service--pink{id: "service_#{service.id}"}
         .service__head
@@ -24,4 +24,4 @@
           %p #{pluralize(service.hour, 'Hora', 'Horas')} y #{pluralize(service.min, 'Minuto', 'Minutos')}
         .set-hours
           .set-hours__unit
-            = link_to 'Editar servicio', edit_service_hours_worked_path(@aliada.authentication_token, service.id), class: 'button button--full'
+            = link_to 'Editar horas', edit_service_hours_worked_path(@aliada.authentication_token, service.id), class: 'button button--full'
