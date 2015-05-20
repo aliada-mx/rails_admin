@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   rescue_from AliadaExceptions::AvailabilityNotFound do |exception|
-    Raygun.track_exception(exception, custom_data: exception)
+    Raygun.track_exception(exception)
     render json: { status: :error, code: :availability_not_found, message: 'Lo sentimos no encontramos disponibilidad :('}
   end
 

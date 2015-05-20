@@ -57,8 +57,6 @@ aliada.services.initial.step_4_payment = function(aliada, ko){
           .then(create_service)
           .then(go_to_success_or_redirect)
           .caught(ConektaFailed, function(exception){
-            report_error(exception)
-
             aliada.dialogs.conekta_error(exception.message);
           })
           .caught(ServiceCreationFailed, function(exception){
