@@ -19,7 +19,6 @@ class AliadaWorkingHour < ActiveRecord::Base
   belongs_to :user
   belongs_to :aliada
   belongs_to :zone
-  has_many :services, inverse_of: :recurrence 
   has_many :schedules
   belongs_to :address
 
@@ -100,10 +99,13 @@ class AliadaWorkingHour < ActiveRecord::Base
   end
 
   rails_admin do
-    label_plural 'Horas de trabajo disponibles'
+    label_plural 'Horas de horario de aliada'
     parent Aliada
     navigation_icon 'icon-time'
-    visible false
+
+    list do
+      include_fields :aliada, :hour, :weekday, :status
+    end
   end
 end
 

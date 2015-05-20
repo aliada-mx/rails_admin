@@ -29,7 +29,7 @@ feature 'AliadasController' do
     Timecop.return
     clear_session
   end
-  
+
   describe '#services' do
     
     it 'checks the aliada has a valid token' do

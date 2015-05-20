@@ -8,7 +8,7 @@
           %h3.date= format_date service.tz_aware_datetime
           %h5.client= service.user.full_name
         .set-hours
-          %p ¿Cuanto tiempo duro el servicio?
+          %p ¿Cuanto tiempo duró el servicio?
           = render partial: 'aliadas/hours_worked_service_form', locals: {service: service}
 
 -if @worked_services.any?

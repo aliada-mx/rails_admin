@@ -3,7 +3,6 @@ class ServiceType < ActiveRecord::Base
   NAMES = [
     ['Recurrente','recurrent'],
     ['Una sola vez', 'one-time'],
-    ['Una sola vez derivado de una recurrencia', 'one-time-from-recurrent'],
   ]
 
   scope :ordered, -> { order(:position) }
@@ -12,6 +11,10 @@ class ServiceType < ActiveRecord::Base
   default_scope { order(:created_at) }
 
   validates :name, inclusion: {in: NAMES.map{ |pairs| pairs[1] } }
+
+  def title
+    NAMES.select { |n| n.second == name }.first.first
+  end
 
   def name_enum
     NAMES
@@ -25,22 +28,14 @@ class ServiceType < ActiveRecord::Base
     ServiceType.where(name: 'one-time').first 
   end
 
-  def self.one_time_from_recurrent
-    ServiceType.where(name: 'one-time-from-recurrent').first 
-  end
-
   def recurrent?
     name == 'recurrent'
   end
 
   def one_timer?
-    name == 'one-time' || name == 'one-time-from-recurrent'
+    name == 'one-time'
   end
  
-  def one_timer_from_recurrent?
-    name == 'one-time-from-recurrent'
-  end
-
   def benefits_list
     benefits.present? ? benefits.split(',') : []
   end

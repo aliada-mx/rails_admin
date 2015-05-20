@@ -98,7 +98,7 @@ $(document).ready(function() {
     e.preventDefault();
     var current_step = aliada.ko.current_step();
 
-    // Only invalid user info stops the process on step 2
+    // invalid user info stops the process 
     switch (current_step) {
       case 2:
         if (!aliada.ko.is_valid_step()) {

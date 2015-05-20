@@ -13,7 +13,7 @@ es:
       postal_code: 'códigos postale'
       recurrence: 'recurrencia'
       recurrences: 'recurrencias'
-      aliada_working_hour: 'horario de Aliada'
+      aliada_working_hour: 'Horas de horario de aliada'
       schedule: 'hora de servicio'
       score: 'calificación'
       service: 'servicio'
@@ -172,6 +172,8 @@ es:
         aliada_reported_begin_time: 'Hora reportada de inicio'
         aliada_reported_end_time: 'Hora reportada final'
         cancelation_fee_charged: '¿Cargo por cancelación tardía hecho?'
+        not_rendered_reason: 'Razón por la que no se dió el servicio'
+        incident: 'Notas'
         confirmed: 'Confirmado'
         rooms_hours: 'Horas por cuartos'
         hours_worked: 'Horas trabajadas'
@@ -306,7 +308,7 @@ es:
         menu: "Cobrar servicio"
         title: "Cobrar servicio"
         breadcrumb: "Cobrar servicio"
-      show_aliada_calendar:
+      show_aliada_schedule:
         menu: "Semana de la aliada"
         title: "Semana de la aliada"
         breadcrumb: "Semana de la aliada"

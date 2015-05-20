@@ -111,4 +111,14 @@ class UserMailer < ApplicationMailer
                              {'-user_full_name-' => [ user.full_name]},
                            template_id: template_id
   end
+
+  def second_debt_reminder(user)
+    template_id = Setting.sendgrid_templates_ids[:debt_second_reminder]
+
+    sendgrid_template_mail to: user.email, 
+                           subject: 'Notificación de suspensión de servicios',
+                           substitutions:
+                             {'-user_full_name-' => [ user.full_name]},
+                           template_id: template_id
+  end
 end

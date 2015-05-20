@@ -3,7 +3,6 @@
 // With the intent of becoming a true automated test
 
 
-aliada.ko.postal_code_number(11800)
 aliada.ko.first_name('first')
 aliada.ko.email('email'+Math.floor(Math.random() * 1000)+'@test.com')
 aliada.ko.last_name('last')

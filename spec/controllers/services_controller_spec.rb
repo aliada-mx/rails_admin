@@ -10,8 +10,6 @@ feature 'ServiceController' do
   let!(:aliada) { create(:aliada, first_name: 'Aide', zones: [ zone ]) }
   let!(:recurrent_service) { create(:service_type) }
   let!(:one_time_service) { create(:service_type, name: 'one-time') }
-  let!(:one_time_from_recurrent) { create(:service_type, name: 'one-time-from-recurrent') }
-
   let!(:postal_code) { create(:postal_code, 
                               :zoned, 
                               zone: zone,

@@ -26,7 +26,6 @@ VCR.configure do |config|
 
     real_request.uri == recorded_request.uri || (charge_regex.match(real_request.uri) && charge_regex.match(recorded_request.uri))
   end
-
 end
 
 
