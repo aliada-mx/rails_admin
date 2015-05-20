@@ -64,12 +64,12 @@ class Service < ActiveRecord::Base
   scope :unassigned, -> { where("services.status = 'unassigned'") }
 
   # Rails admin tabs
-  scope 'mañana', -> { join_users.on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
-  scope :todos, -> { join_users }
-  scope :one_timers, -> { join_users.where(service_type: ServiceType.one_time ) }
-  scope :recurrent, -> { join_users.where(service_type: ServiceType.recurrent ) }
-  scope :con_horas_reportadas, -> { join_users.where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL') }
-  scope :adeudados, -> { join_users.joins(:debts).where('debts.service_id = services.id')
+  scope 'mañana', -> { on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
+  scope :todos, -> {  }
+  scope :one_timers, -> { where(service_type: ServiceType.one_time ) }
+  scope :recurrent, -> { where(service_type: ServiceType.recurrent ) }
+  scope :con_horas_reportadas, -> { where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL') }
+  scope :adeudados, -> { joins(:debts).where('debts.service_id = services.id')
                                    .where('services.status != ?','paid') }
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
