@@ -69,8 +69,8 @@ class Service < ActiveRecord::Base
   scope :one_timers, -> { join_users.where(service_type: ServiceType.one_time ) }
   scope :recurrent, -> { join_users.where(service_type: ServiceType.recurrent ) }
   scope :con_horas_reportadas, -> { join_users.where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL') }
-  scope :cobro_fallido, -> { join_users.joins(:debts).where('debts.service_id = services.id')
-                                          .where('services.status != ?','paid') }
+  scope :adeudados, -> { join_users.joins(:debts).where('debts.service_id = services.id')
+                                   .where('services.status != ?','paid') }
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
