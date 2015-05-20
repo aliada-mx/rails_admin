@@ -14,7 +14,7 @@ module Presenters
     end
 
     def show_unassignment_warning
-      services_unassigned_this_month <= Setting.aliada_unassignments_per_month - 1
+      services_unassigned_this_month >= Setting.aliada_unassignments_per_month - 1
     end
   end
 end

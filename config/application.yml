@@ -57,7 +57,7 @@ defaults: &defaults
 
   paypal_sandbox: false
 
-  aliada_unassignments_per_month: 2
+    aliada_unassignments_per_month: 2
     
 development:
   <<: *defaults

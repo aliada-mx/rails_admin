@@ -3,6 +3,7 @@ class AliadasController < ApplicationController
   include AliadaSupport::DatetimeSupport
 
   before_filter :set_aliada
+  before_filter :set_demo
   
   def confirm
     @service_to_confirm = Service.find_by(id: params[:service_id], aliada_id: @aliada.id)
