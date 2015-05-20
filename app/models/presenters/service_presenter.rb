@@ -150,6 +150,19 @@ module Presenters
       end
     end
 
+    def hour
+      if hours_worked
+        ( hours_worked.hours / 3600 ).to_i
+      else
+        0
+      end
+    end
+    attr_writer :hour
+
+    def min
+      minutes_worked
+    end
+
     def extras_hours
       extras.inject(0){ |hours,extra| hours += extra.hours || 0 }
     end

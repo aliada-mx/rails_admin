@@ -20,6 +20,8 @@ feature 'AliadasController' do
                          ) }
   before do
     Timecop.freeze(starting_datetime)
+    allow_any_instance_of(Aliada).to receive(:track_webapp_view).and_return(nil)
+
     clear_session
   end
 
@@ -60,11 +62,9 @@ feature 'AliadasController' do
                          )
       servicio2 = create(:service, aliada_id: aliada.id, address_id: address2.id,
                          user_id: client.id, datetime: DateTime.now)
-      visit  ('aliadas/servicios/'+ aliada.authentication_token)
+      visit(aliadas_services_path(aliada.authentication_token))
       page.has_content?('Tus servicios')
     end
-    
-   
 
     it 'Shows tomorrows services if it is tommorrow' do
       aliada = create(:aliada)
@@ -102,7 +102,8 @@ feature 'AliadasController' do
                          user_id: client.id, datetime: ActiveSupport::TimeZone['Mexico City'].parse('2015-09-03 17:00').utc)
       
       Timecop.freeze('2015-09-04 12:00') do
-        visit  ('aliadas/servicios/'+ aliada.authentication_token)
+        visit(aliadas_services_path(aliada.authentication_token))
+
         expect(page).to   have_content 'Roma Norte'
         expect(page).to have_content 'Metro insurgentes'
         expect(page).to have_content 'Tabasco'
@@ -114,65 +115,77 @@ feature 'AliadasController' do
       
     end 
     
-    xit 'shows unfinished services and lets us charge them' do
-      aliada = create(:aliada)
-      client = create(:user, phone: '54545454', first_name: 'Juan', last_name:'Perez Tellez')
-      VCR.use_cassette('conekta_charge', match_requests_on: [:conekta_charge]) do
-        client.create_payment_provider_choice(conekta_card)
-        address1 = create(:address, city: 'Cuauhtemoc',
-                          street: 'Tabasco', number: '232', 
-                          interior_number: 'torre A 802',
-                          between_streets: 'colima y tonala',
-                          colony: 'Roma Norte',
-                          state: 'DF',
-                          latitude: 19.98,
-                          longitude: 20.45)
-        address2 = create(:address, city: 'Coyoacan',
-                          street: 'Tamales', number: '32', 
-                          interior_number: '802',
-                          between_streets: 'Insurgentes',
-                          colony: 'Doctores',
-                          state: 'DF',
-                          latitude: 19.99,
-                          references: 'Metro insurgentes',
-                          references_latitude: 19.991,
-                          references_longitude: 20.451,
-                          map_zoom: 2,
-                          longitude: 20.45) 
-        servicio1 = create(:service, aliada_id: aliada.id, address_id: address1.id,
-                           bathrooms: 2,
-                           bedrooms: 3,
-                           status: 'aliada_assigned',
-                           service_type: one_time_service,
-                           user_id: client.id, 
-                           datetime: (DateTime.now-1))
-        servicio2 = create(:service, aliada_id: aliada.id+1, address_id: address2.id,
-                           user_id: client.id, status: 'aliada_assigned', datetime: DateTime.now-1)
-        visit  ('aliadas/servicios/'+ aliada.authentication_token)
-
-        page.has_content?('Tus servicios')
-        
-        click_on('Guardar :)')
-        expect(Payment.all.count).to be 1
-      end
-    end
-    
     it 'Shows message if token invalid' do
-      visit ('aliadas/servicios/'+ user.authentication_token)
+      visit(aliadas_services_path('invalid-token'))
+
       expect(page).to have_content('Ruta invalida')
     end
 
-    it 'saves the worked hours on a service' do
-      visit ('aliadas/servicios/'+ aliada.authentication_token)
+  end
 
-      within "#service_#{service.id}" do
-        select '3'
-        select "30"
-      end
-      click_on('Guardar :)')
+  describe '#unassign' do
+    let!(:service_to_confirm){ create(:service,
+                                       aliada: aliada,
+                                       status: 'aliada_assigned',
+                                       user: user,
+                                       recurrence: recurrence,
+                                       zone: zone,
+                                       service_type: one_time_service,
+                                       datetime: starting_datetime + 1.day, 
+                                       estimated_hours: 3)}
+    before do
+      Timecop.travel(starting_datetime + 10.hours)
+    end
+
+    it 'redirects to confirmation page' do
+      visit aliadas_services_path(aliada.authentication_token)
+
+      click_on('No voy')
+
+      expect(page.current_path).to eql unassign_service_path(aliada.authentication_token)
+    end
+
+    it 'changes the service status' do
+      visit unassign_service_path(aliada.authentication_token, service_id: service_to_confirm.id)
+      
+      click_on('Confirmo que no voy')
+
+      service_to_confirm.reload
+      expect(service_to_confirm).to be_aliada_missing
+      expect(ServiceUnassignment.count).to eql 1
+    end
+  end
+
+  describe '#worked_services' do
+    it 'saves the worked hours on a service' do
+      visit aliadas_worked_services_path(aliada.authentication_token)
+
+      select_by_value(3, from: "service_#{service.id}_hours")
+      select_by_value(30, from: "service_#{service.id}_min")
+
+      click_on('Guardar')
 
       service.reload
-      expect(service.hours_worked).to eql BigDecimal.new('3.5')
+      expect(service.hours_worked).to eql BigDecimal.new('3.0')
+      expect(service.minutes_worked).to eql 30
+      expect(service.time_worked).to eql BigDecimal.new('3.5')
+      expect(page).to have_content('3 horas 30 minutos')
+    end
+  end
+
+  describe '#edit_service_hours_worked' do
+    it 'lets the aliada edit a service' do
+      visit edit_service_hours_worked_path(aliada.authentication_token, service.id)
+
+      select_by_value(3, from: "service_#{service.id}_hours")
+      select_by_value(30, from: "service_#{service.id}_min")
+
+      click_on('Guardar')
+
+      service.reload
+      expect(service.hours_worked).to eql BigDecimal.new('3.0')
+      expect(service.minutes_worked).to eql 30
+      expect(service.time_worked).to eql BigDecimal.new('3.5')
       expect(page).to have_content('3 horas 30 minutos')
     end
   end

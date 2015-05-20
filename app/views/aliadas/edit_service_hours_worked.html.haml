@@ -1,0 +1,13 @@
+.section
+  .section__header
+    %h4 Editar Horas de Servicio
+    %p Selecciona las nuevas horas de servicio, para cancelar presiona el boton ‘Cancelar’.
+  .service.service--yellow
+    .service__head
+      %h3.date=  format_date @service.tz_aware_datetime
+      %h5.client= @service.user.full_name
+      %h5.phone= number_to_phone @service.user.phone, delimiter: " "
+    .set-hours
+      = render partial: 'aliadas/hours_worked_service_form', locals: { service: @service }
+      .set-hours__unit
+        = link_to 'Cancelar', :back, class: 'button button--full'

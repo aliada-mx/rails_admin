@@ -7,7 +7,7 @@ class Aliada < User
   has_many :aliada_zones
   has_many :zones, through: :aliada_zones
   has_many :documents, inverse_of: :aliada, foreign_key: :user_id
-
+  has_many :service_unassignments
   has_many :recurrences
   has_many :aliada_working_hours
   has_many :schedules, foreign_key: :aliada_id
@@ -94,8 +94,8 @@ class Aliada < User
     sum = 0
     services = self.current_week_services
     services.each do |s|
-      if s.hours_worked
-        sum = sum + s.hours_worked
+      if s.time_worked
+        sum = sum + s.time_worked
       end
     end
     return sum
@@ -105,9 +105,7 @@ class Aliada < User
     aliada_show_webapp_link(self)
   end
 
-  def track_webapp_view(request)
-    return if Rails.env == 'test'
-
+  def track_webapp_view(request, params)
     tracker = Mixpanel::Tracker.new(Setting.mixpanel_token)
     agent = Agent.new request.env['HTTP_USER_AGENT']
 
@@ -120,6 +118,7 @@ class Aliada < User
       'REMOTE_ADDR' => request.env['REMOTE_ADDR'],
       'aliada_name' => self.name,
       'environment' => Rails.env,
+      'action' => params[:action],
     }
 
     tracker.track(self.name, 'aliada viewed webapp', options)

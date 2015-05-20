@@ -25,7 +25,7 @@ class Service < ActiveRecord::Base
 
   validates :status, inclusion: {in: STATUSES.map{ |pairs| pairs[1] } }
   # accessors for forms
-  attr_accessor :postal_code, :payment_method_id, :conekta_temporary_token, :timezone, :hour, :weekday
+  attr_accessor :postal_code, :payment_method_id, :conekta_temporary_token, :timezone, :weekday
 
   belongs_to :address
   belongs_to :user, inverse_of: :services, foreign_key: :user_id
@@ -54,23 +54,26 @@ class Service < ActiveRecord::Base
   scope :canceled, -> { where("services.status = 'canceled_in_time' OR services.status = 'canceled_out_of_time'", 'canceled') }
   scope :finished, -> { where("services.status = 'finished'") }
   scope :not_canceled, -> { where("services.status != 'canceled_in_time' AND services.status != 'canceled_out_of_time' AND services.status != 'canceled'") }
+  scope :not_aliada_missing, -> { where("services.status != 'aliada_missing'") }
   scope :ordered_by_created_at, -> { order(:created_at) }
   scope :ordered_by_datetime, -> { order(:datetime) }
   scope :with_recurrence, -> { where('services.recurrence_id IS NOT ?', nil) }
   scope :join_users_and_aliadas, -> { joins('INNER JOIN users ON users.id = services.user_id OR users.id = services.aliada_id') }
+  scope :join_users, -> { joins(:user) }
+  scope :paid, -> { where("services.status = 'paid'") }
+  scope :unassigned, -> { where("services.status = 'unassigned'") }
 
   # Rails admin tabs
-  scope 'mañana', -> { on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
-  scope :todos, -> { }
-  scope :one_timers, -> { where(service_type: ServiceType.one_time ) }
-  scope :recurrent, -> { where(service_type: ServiceType.recurrent ) }
-  scope :con_horas_reportadas, -> { where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL') }
-  scope :cobro_fallido, -> { joins(:debts).where('debts.service_id = services.id')
+  scope 'mañana', -> { join_users.on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
+  scope :todos, -> { join_users }
+  scope :one_timers, -> { join_users.where(service_type: ServiceType.one_time ) }
+  scope :recurrent, -> { join_users.where(service_type: ServiceType.recurrent ) }
+  scope :con_horas_reportadas, -> { join_users.where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL') }
+  scope :cobro_fallido, -> { join_users.joins(:debts).where('debts.service_id = services.id')
                                           .where('services.status != ?','paid') }
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
-  scope :paid, -> { where("services.status = 'paid'") }
 
   # Validations
   validate :datetime_is_hour_o_clock
@@ -86,7 +89,7 @@ class Service < ActiveRecord::Base
   # State machine
   state_machine :status, :initial => 'created' do
     transition 'created' => 'aliada_assigned', :on => :assign
-    transition 'created' => 'aliada_missing', :on => :mark_as_missing
+    transition ['created', 'aliada_assigned' ] => 'aliada_missing', :on => :unassign
     transition ['finished', 'aliada_assigned' ] => 'paid', :on => :pay
     transition ['created', 'aliada_assigned'] => 'finished', :on => :finish
     
@@ -115,9 +118,15 @@ class Service < ActiveRecord::Base
 
     after_transition on: :finish do |service, transition|
       if service.bill_by_hours_worked?
-        service.billable_hours = service.hours_worked
+        service.billable_hours = service.time_worked
 
         service.save!
+      end
+    end
+
+    after_transition on: :unassign do |service, transition|
+      if service.in_less_than_24_hours
+        ServiceUnassignment.create(service: service, aliada: service.aliada)
       end
     end
   end
@@ -151,12 +160,16 @@ class Service < ActiveRecord::Base
     self.billed_hours = if billable_hours && !billable_hours.zero?
                           billable_hours 
                         elsif hours_worked && !hours_worked.zero?
-                          hours_worked
+                          time_worked
                         elsif estimated_hours
                           estimated_hours 
                         else 
                           0
                         end
+  end
+
+  def time_worked
+    ( hours_worked || 0 ) + ( minutes_worked / 60.0 )
   end
 
   def timezone
@@ -322,7 +335,7 @@ class Service < ActiveRecord::Base
 
   #calculates the price to be charged for a service
   def amount_by_hours_worked
-    amount = hours_worked * service_type.price_per_hour
+    amount = time_worked * service_type.price_per_hour
     if amount > 0 then amount else 0 end
   end
 
@@ -666,6 +679,7 @@ class Service < ActiveRecord::Base
 
       field :user_link do
         virtual?
+        sortable ('users.first_name')
       end
 
       field :datetime
@@ -719,6 +733,9 @@ class Service < ActiveRecord::Base
         field :hours_worked do
           help 'Horas reportadas por la aliada'
         end
+        field :minutes_worked do
+          help 'Minutos reportados por la aliada'
+        end
 
         field :billable_hours do
           help 'Horas llenadas por un admin'
@@ -736,14 +753,10 @@ class Service < ActiveRecord::Base
         field :hours_after_service
         field :rooms_hours
         field :schedules
-
-        field :hours_worked do
-          label 'Horas trabajadas'
-          help 'Reportadas por la aliada'
-        end
       end
 
       field :tickets
+      field :debts
 
       group :detalles_al_registrar do
         active false

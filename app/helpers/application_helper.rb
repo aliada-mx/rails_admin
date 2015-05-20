@@ -25,4 +25,16 @@ module ApplicationHelper
   def ensure_leading_zero(number)
     sprintf "%.1f", number
   end
+
+  def controller?(*controller)
+    controller.include?(params[:controller])
+  end
+
+  def action?(*action)
+    action.include?(params[:action])
+  end
+
+  def format_date(date)
+    I18n.l date, format: '%A %e de %B  a las %I %P'
+  end
 end

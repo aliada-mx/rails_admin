@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150519004946) do
+ActiveRecord::Schema.define(version: 20150519223735) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -328,6 +328,13 @@ ActiveRecord::Schema.define(version: 20150519004946) do
     t.boolean  "hidden",         default: false
   end
 
+  create_table "service_unassignments", force: true do |t|
+    t.integer  "aliada_id"
+    t.integer  "service_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "services", force: true do |t|
     t.integer  "address_id"
     t.integer  "user_id"
@@ -361,6 +368,7 @@ ActiveRecord::Schema.define(version: 20150519004946) do
     t.decimal  "hours_worked"
     t.string   "not_rendered_reason"
     t.text     "incident"
+    t.integer  "minutes_worked",                                          default: 0
   end
 
   add_index "services", ["address_id"], name: "index_services_on_address_id", using: :btree

@@ -37,7 +37,10 @@
                   = ensure_leading_zero service.estimated_hours
 
             %td.aliada
-              = "#{service.aliada.first_name} #{service.aliada.last_name}"
+            %td{class: service.owed? ? 'warning' : ''  }
+              = service.status_for_history
+            %td
+              = "$#{ service.cost }"
 
             %td.status{class: service.owed? ? 'warning' : ''  }
               - if service.owed?

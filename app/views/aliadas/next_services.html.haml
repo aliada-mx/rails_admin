@@ -1,0 +1,77 @@
+- if @upcoming_services.any?
+  .section
+    .section__header
+      %h4 Proximos Servicios
+    - @upcoming_services.each do |service|
+      .service.service--purple
+        .service__head
+          %h3.date=  format_date service.tz_aware_datetime
+          %h5.client= service.user.full_name
+          %h5.phone
+            = image_tag 'phone-gray-12.png', alt: ''
+            = link_to number_to_phone(service.user.phone, delimiter: " "), "tel:#{service.user.phone}"
+        .service__details
+          .service__attribute
+            %span Duración
+            %p
+              #{service.estimated_hours.floor} horas
+              #{(60 * (service.estimated_hours-service.estimated_hours.floor)).floor} minutos
+          .service__attribute
+            %span Dirección
+            %p= service.address.street
+          .service__attribute
+            %span Número exterior
+            %p= service.address.number
+          .service__attribute
+            %span Número interior
+            %p= service.address.interior_number.present? ? service.address.interior_number : 'Sin número interior'
+          .service__attribute
+            %span Entre calles
+            %p= service.address.between_streets
+          - if service.address.references.present?
+            .service__attribute
+              %span Referencias
+              %p= service.address.references
+          .service__attribute
+            %span Colonia
+            %p #{service.address.colony}, #{service.address.city}
+          .service__attribute
+            %img{src: "http://maps.googleapis.com/maps/api/staticmap?size=320x320&center=#{service.address.latitude},#{service.address.longitude}&zoom=#{service.address.map_zoom}&markers=#{service.address.latitude},#{service.address.longitude}&markers=color:blue%7Clabel:S%7C#{service.address.references_latitude},#{service.address.references_longitude}"}
+          - if service.special_instructions.present?
+            .service__attribute
+              %span Instrucciones
+              %p= service.special_instructions
+          - if service.cleaning_supplies_instructions.present?
+            .service__attribute
+              %span Articulos de limpieza
+              %p= service.cleaning_supplies_instructions
+          - if service.garbage_instructions.present?
+            .service__attribute
+              %span Basura
+              %p= service.garbage_instructions
+          - if service.attention_instructions.present?
+            .service__attribute
+              %span Atencion a
+              %p= service.attention_instructions
+          - if service.equipment_instructions.present?
+            .service__attribute
+              %span Limpiar con
+              %p= service.equipment_instructions
+          - if service.forbidden_instructions.present?
+            .service__attribute
+              %span No tocar
+              %p= service.forbidden_instructions
+          - if service.special_instructions.present?
+            .service__attribute
+              %span Otras instrucciones
+              %p= service.special_instructions
+        .service__actions
+          - if !service.confirmed
+            .service__actions__action
+              = form_tag(confirm_service_path) do
+                %input{type: 'hidden', value: service.id, name: :service_id}
+                %input{type: 'submit', name: 'confirmation', value: 'Si voy', class: 'button button--full button--purple'}
+          .service__actions__action
+            = form_tag(unassign_service_path, method: :get) do
+              %input{type: 'hidden', value: service.id, name: :service_id}
+              %input{type: 'submit', name: 'unassign', value: 'No voy', class: 'button button--full'}

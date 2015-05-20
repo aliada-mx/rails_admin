@@ -21,7 +21,7 @@ feature 'Charge many services in the admin' do
 
   describe '#charge_services' do
     context 'skipping the actual job' do
-      it 'enques de mass charging' do
+      it 'enques the mass charging' do
         login_as(admin)
 
         with_rack_test_driver do
