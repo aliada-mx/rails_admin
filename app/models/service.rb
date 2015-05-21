@@ -18,7 +18,6 @@ class Service < ActiveRecord::Base
     ['Sin aliada', 'aliada_missing'],
     ['Terminado', 'finished'],
     ['Pagado', 'paid'],
-    ['Cancelado', 'canceled'],
     ['Cancelado a tiempo', 'canceled_in_time'],
     ['Cancelado a destiempo', 'canceled_out_of_time']
   ]
@@ -68,9 +67,12 @@ class Service < ActiveRecord::Base
   scope :todos, -> {  }
   scope :one_timers, -> { where(service_type: ServiceType.one_time ) }
   scope :recurrent, -> { where(service_type: ServiceType.recurrent ) }
-  scope :con_horas_reportadas, -> { where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL') }
+  scope :sin_intento_de_cobro, -> { where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL OR billable_hours != 0')
+                                   .where("status != 'paid'") 
+                                   .where("services.id NOT IN (SELECT DISTINCT debts.service_id FROM debts)") }
+                                   
   scope :adeudados, -> { joins(:debts).where('debts.service_id = services.id')
-                                   .where('services.status != ?','paid') }
+                                      .where('services.status != ?','paid') }
 
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
@@ -708,7 +710,7 @@ class Service < ActiveRecord::Base
       field :recurrence
       field :created_at
 
-      scopes ['mañana', :todos, :confirmados, :sin_confirmar, :con_horas_reportadas, :adeudados]
+      scopes ['mañana', :todos, :confirmados, :sin_confirmar, :sin_intento_de_cobro, :adeudados]
     end
 
     edit do

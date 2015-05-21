@@ -11,7 +11,7 @@ namespace :db do
                                       .where('tickets.category = ?','conekta_charge_failure') 
     services.each do |service|
 
-      unless service.debts.any?
+      if service.debts.blank?
         services_with_status_corrected.push service
 
         Debt.find_or_create_by!(service: service,
