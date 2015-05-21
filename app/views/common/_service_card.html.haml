@@ -40,12 +40,12 @@
           Datos de contacto: #{service.user.contact_data}
     .foot
       .actions
-        = link_to edit_service_users_path(service.user, service, cancelar: true), class: 'action-button size-large' do
+        = link_to edit_service_users_path(service.user, service, cancelar: true), class: 'action-button size-medium' do
           %span.icon-cancel-circle.icon-button
-          Cancelar servicio
-        = link_to edit_service_users_path(service.user, service), class: 'action-button size-large' do
+          Cancelar visita
+        = link_to edit_service_users_path(service.user, service), class: 'action-button size-medium' do
           %span.icon-pencil.icon-button
-          Modificar servicio
+          Modificar visita
 
       .numbers
         .hours #{ seconds_to_hours_minutes_in_spanish service.estimated_hours.hours }

@@ -30,7 +30,6 @@ class Recurrence < ActiveRecord::Base
      :garbage_instructions,
      :special_instructions]
 
-
   has_paper_trail
 
   validates_presence_of [:weekday, :hour]

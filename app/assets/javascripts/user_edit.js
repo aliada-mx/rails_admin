@@ -2,7 +2,6 @@
 //= require modules/conekta
 //= require modules/dialogs
 
-
 $(function() {
   var $conekta_card_form = $('.edit_conekta_card');
 

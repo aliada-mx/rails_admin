@@ -41,13 +41,13 @@ class AliadasController < ApplicationController
     @aliada.track_webapp_view(request, params)
 
     #must implement today or tomorrow after 6pm, etc...
-    now = ActiveSupport::TimeZone["Etc/GMT+6"].now
+    now = ActiveSupport::TimeZone["Mexico City"].now
 
-    date_to_show = if now.hour < 18
-                      now
-                    else
-                      now + 1.day
-                    end
+    if now.hour < 18
+      date_to_show = now
+    else
+      date_to_show = now + 1.day
+    end
 
     @upcoming_services = @aliada.services.joins(:address)
                                          .order('datetime ASC')
