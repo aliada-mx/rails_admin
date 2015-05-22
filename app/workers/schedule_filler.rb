@@ -6,12 +6,16 @@ class ScheduleFiller
   end
 
   def self.perform
+    Rails.logger.info "schedule_filler - step: Starting"
     self.fill_schedule
   end
 
   def self.fill_schedule
-    today_in_the_future = Time.zone.now.beginning_of_day + Setting.time_horizon_days.days
+    now = Time.zone.now.beginning_of_day
+    today_in_the_future = now + Setting.time_horizon_days.days
     
+    Rails.logger.info "schedule_filler - step: fill_schedule - today_in_the_future: #{ today_in_the_future } - today_in_the_future_weekday: #{ today_in_the_future.weekday } - now: #{ now }"
+
     ActiveRecord::Base.transaction do
       begin
         fill_aliadas_availability today_in_the_future
@@ -42,22 +46,28 @@ class ScheduleFiller
 
   # aliada's recurrences, to build the whole availability
   def self.fill_aliadas_availability today_in_the_future
+    Rails.logger.info "schedule_filler - step: fill_aliadas_availability"
+
+    beginning_of_recurrence = nil
+
     AliadaWorkingHour.active.each do |awh|
 
       if today_in_the_future.weekday == awh.utc_weekday(today_in_the_future)
+
+        Rails.logger.info "schedule_filler - step: iterating_in_awh - aliada: #{awh.aliada.full_name} - weekday: #{awh.weekday}"
 
         #Compensate for UTC 
         beginning_of_recurrence = today_in_the_future.change(hour: awh.utc_hour(today_in_the_future))
 
         if not Schedule.find_by(datetime: beginning_of_recurrence, aliada_id: awh.aliada_id)
-
           Schedule.create(datetime: beginning_of_recurrence,
                           aliada_id:  awh.aliada_id,
                           aliada_working_hour: awh)
-
         end
       end
     end
+
+    Rails.logger.info "schedule_filler - step: last_schedule_created - beginning_of_recurrence: #{beginning_of_recurrence }"
   end
 
   # creates service inside aliada's schedule, based on the client's recurrence

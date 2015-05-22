@@ -28,7 +28,6 @@ class IncompleteService < ActiveRecord::Base
       label '¿Completado?'
     end
 
-
     list do
       sort_by :created_at
       include_fields :email, :postal_code_number, :postal_code_not_found, :is_complete?, :created_at
