@@ -2,6 +2,7 @@
 describe 'AliadaSupport::DatetimeSupport' do
   let(:object) { Object.new }
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 13:00:00') }
+  let(:user) { double(admin?: false) }
 
   before do
     object.extend(AliadaSupport::DatetimeSupport)
@@ -22,13 +23,13 @@ describe 'AliadaSupport::DatetimeSupport' do
 
   describe '#starting_datetime_to_book_services' do
     it 'returns tommorrow if now is before the 22 utc' do
-      expect(object.starting_datetime_to_book_services).to eql starting_datetime + 1.day
+      expect(object.starting_datetime_to_book_services(user)).to eql starting_datetime + 1.day
     end
 
     it 'returns tommorrow if now is after the 22 utc' do
       Timecop.travel(starting_datetime + 10.hours)
     
-      expect(object.starting_datetime_to_book_services).to eql starting_datetime + 2.day
+      expect(object.starting_datetime_to_book_services(user)).to eql starting_datetime + 2.day
     end
   end
 end

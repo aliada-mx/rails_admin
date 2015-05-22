@@ -47,26 +47,26 @@ feature 'Service' do
 
   describe '#book_an_aliada' do
     it 'allows it to mark one time service schedules´ as booked', recurrent: false do
-      available_schedules = Schedule.for_booking(zone, starting_datetime_to_book_services)
+      available_schedules = Schedule.for_booking(zone, starting_datetime_to_book_services(user))
       expect(available_schedules.count).to be 4
       expect(Schedule.booked.count).to be 0
 
-      service.book_an_aliada
+      service.book_an_aliada(nil)
 
       expect(Schedule.padding.count).to be 1
       expect(Schedule.booked.count).to be 3
-      expect(Schedule.for_booking(zone, starting_datetime_to_book_services).available.count).to be 0
+      expect(Schedule.for_booking(zone, starting_datetime_to_book_services(user)).available.count).to be 0
     end
 
     it 'allows it to mark recurrent service schedules´ as booked', recurrent: true do
-      available_schedules = Schedule.for_booking(zone, starting_datetime_to_book_services).available
+      available_schedules = Schedule.for_booking(zone, starting_datetime_to_book_services(user)).available
       expect(available_schedules.count).to be 16
       expect(Schedule.booked.count).to be 0
 
       service.service_type = recurrent_service
       service.save!
 
-      service.book_an_aliada
+      service.book_an_aliada(nil)
 
       expect(Schedule.booked.count).to be 12
       expect(Schedule.padding.count).to be 4

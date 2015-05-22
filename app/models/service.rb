@@ -281,8 +281,8 @@ class Service < ActiveRecord::Base
     estimated_hours + hours_after_service
   end
 
-  def book_one_timer(aliada_id: nil)
-    available_after = starting_datetime_to_book_services
+  def book_one_timer(current_user, aliada_id: nil)
+    available_after = starting_datetime_to_book_services(current_user)
 
     # TODO create a method to reschedule a one time
     original_service_type_id = self.service_type_id
@@ -303,8 +303,8 @@ class Service < ActiveRecord::Base
     aliada_availability.book(self)
   end
 
-  def book_an_aliada(aliada_id: nil)
-    available_after = starting_datetime_to_book_services
+  def book_an_aliada(current_user, aliada_id: nil)
+    available_after = starting_datetime_to_book_services(current_user)
 
     aliadas_availability = AvailabilityForService.find_aliadas_availability(self, available_after, aliada_id: aliada_id)
 
@@ -415,7 +415,7 @@ class Service < ActiveRecord::Base
     end
   end
 
-  def self.create_new!(service_params, user)
+  def self.create_new!(service_params, user, current_user)
     ActiveRecord::Base.transaction do
       service_params[:datetime] = Service.parse_date_time(service_params)
       chosen_aliada_id = service_params[:aliada_id].to_i
@@ -430,7 +430,7 @@ class Service < ActiveRecord::Base
 
       service.save!
 
-      service.book_an_aliada(aliada_id: chosen_aliada_id)
+      service.book_an_aliada(current_user, aliada_id: chosen_aliada_id)
       service.ensure_updated_recurrence!
 
       user.send_confirmation_email(service)
@@ -460,7 +460,7 @@ class Service < ActiveRecord::Base
       user.ensure_first_payment!(service_params, service)
       user.save!
 
-      service.book_an_aliada
+      service.book_an_aliada(nil)
       service.ensure_updated_recurrence!
 
       user.create_promotional_code code_type
@@ -506,7 +506,7 @@ class Service < ActiveRecord::Base
   end
 
   # We can't use the name 'update' because thats a builtin method
-  def update_existing!(service_params)
+  def update_existing!(service_params, current_user)
     ActiveRecord::Base.transaction do
       chosen_aliada_id = service_params[:aliada_id].to_i
       
@@ -519,7 +519,7 @@ class Service < ActiveRecord::Base
       # The new atributtes will be used by the availability finders
       self.attributes = service_params
 
-      reschedule!(chosen_aliada_id) if needs_rescheduling
+      reschedule!(chosen_aliada_id, current_user) if needs_rescheduling
 
       self.save!
     end
@@ -542,10 +542,10 @@ class Service < ActiveRecord::Base
     end
   end
 
-  def reschedule!(aliada_id)
+  def reschedule!(aliada_id, current_user)
     previous_schedules = self.schedules.in_the_future.to_a
 
-    aliada_availability = book_one_timer(aliada_id: aliada_id)
+    aliada_availability = book_one_timer(current_user, aliada_id: aliada_id)
 
     # We might have not used some or all those schedules the service had, so enable them back
     current_schedules = aliada_availability.schedules

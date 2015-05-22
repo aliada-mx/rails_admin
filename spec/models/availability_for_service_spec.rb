@@ -12,7 +12,7 @@ describe 'AvailabilityForService' do
     ending_datetime = starting_datetime + 6.hour
 
     before do
-      @user = double(banned_aliadas: [])
+      @user = double(banned_aliadas: [], admin?: false)
       @recurrence = double(periodicity: double(days: 7))
     end
 
@@ -38,9 +38,10 @@ describe 'AvailabilityForService' do
                           periodicity: nil,
                           timezone: 'UTC',
                           recurrent?: false)
+
         @finder = AvailabilityForService.new(@service, starting_datetime)
 
-        @service_datetime = starting_datetime_to_book_services.change(hour: 7)
+        @service_datetime = starting_datetime_to_book_services(@user).change(hour: 7)
       end
 
       after do
