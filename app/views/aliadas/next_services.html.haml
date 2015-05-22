@@ -61,6 +61,12 @@
             .service__attribute
               %span Otras instrucciones
               %p= service.special_instructions
+          - if service.extras.any?
+            .service__attribute
+              %span Extras
+              - service.extras.ordered.each do |extra|
+                %p= extra.name
+
         .service__actions
           - if !service.confirmed
             .service__actions__action
