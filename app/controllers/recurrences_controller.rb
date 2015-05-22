@@ -22,7 +22,7 @@ class RecurrencesController < ApplicationController
     recurrence = @user.recurrences.find(params[:recurrence_id])
 
     if params[:update_button]
-      recurrence.update_existing!(recurrence_params)
+      recurrence.update_existing!(recurrence_params, current_user)
     elsif params[:cancel_button]
       recurrence.cancel_all!
     end

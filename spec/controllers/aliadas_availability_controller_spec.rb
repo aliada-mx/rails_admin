@@ -25,7 +25,7 @@ feature 'AliadasAvailabilityController' do
       Timecop.freeze(starting_datetime)
 
       @available_date = (starting_datetime + 1.day).strftime('%Y-%m-%d')
-      clear_session
+      login_as(user)
     end
 
     after do
@@ -57,8 +57,6 @@ feature 'AliadasAvailabilityController' do
         create_one_timer!(starting_datetime + 1.day + 4.hour, hours: 1, conditions: {aliada: aliada, 
                                                                                      service: service,
                                                                                      status: 'booked'} )
-        login_as(user)
-
         with_rack_test_driver do
           page.driver.submit :post, aliadas_availability_path, {hours: 5, service_type_id: one_time.id, postal_code_number: postal_code.number, service_id: service.id}
         end
@@ -80,8 +78,6 @@ feature 'AliadasAvailabilityController' do
       end
 
       it 'return the time with -1 hour' do
-        login_as(user)
-
         with_rack_test_driver do
           page.driver.submit :post, aliadas_availability_path, { hours: 4, service_type_id: one_time.id, postal_code_number: postal_code.number }
         end

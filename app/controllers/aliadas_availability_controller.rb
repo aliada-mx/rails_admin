@@ -30,7 +30,7 @@ class AliadasAvailabilityController < ApplicationController
       return render json: { status: :success, dates_times: [] }
     end
 
-    available_after = starting_datetime_to_book_services
+    available_after = starting_datetime_to_book_services(current_user)
 
     availability = find_availability(hours, zone, available_after, aliada_id, service_type, object: object)
 

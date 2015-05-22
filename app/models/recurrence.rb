@@ -144,7 +144,7 @@ class Recurrence < ActiveRecord::Base
   end
 
   # We can't use the name 'update' because thats a builtin method
-  def update_existing!(recurrence_params)
+  def update_existing!(recurrence_params, current_user)
     ActiveRecord::Base.transaction do
       recurrence_params = parse_params(recurrence_params)
 
@@ -154,7 +154,7 @@ class Recurrence < ActiveRecord::Base
       
       update_all(recurrence_params)
 
-      reschedule!(chosen_aliada_id) if needs_rescheduling
+      reschedule!(chosen_aliada_id, current_user) if needs_rescheduling
 
       save_all!
     end
@@ -178,10 +178,10 @@ class Recurrence < ActiveRecord::Base
     true
   end
 
-  def reschedule!(chosen_aliada_id)
+  def reschedule!(chosen_aliada_id, current_user)
     previous_services = services_to_reschedule
     
-    aliada_availability = book(chosen_aliada_id)
+    aliada_availability = book(chosen_aliada_id, current_user)
 
     # We might have not used some or all those schedules the service had, so enable them back
     aliada_availability.enable_unused_schedules
@@ -189,9 +189,9 @@ class Recurrence < ActiveRecord::Base
     previous_services.map(&:cancel)
   end
 
-  def book(chosen_aliada_id)
+  def book(chosen_aliada_id, current_user)
 
-    available_after = starting_datetime_to_book_services
+    available_after = starting_datetime_to_book_services(current_user)
 
     aliadas_availability = AvailabilityForService.find_aliadas_availability(self, available_after, aliada_id: chosen_aliada_id)
 

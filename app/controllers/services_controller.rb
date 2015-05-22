@@ -41,7 +41,10 @@ class ServicesController < ApplicationController
   end
 
   def create_new
-    service = Service.create_new!(service_params, @user)
+    # Can be an admin or the @user himself
+    user_requesting_service = current_user
+
+    service = Service.create_new!(service_params, @user, user_requesting_service)
 
     return render json: { status: :success, service_id: service.id }
   end
@@ -63,7 +66,7 @@ class ServicesController < ApplicationController
     next_services_path = next_services_users_path(user_id: @user.id, service_id: service.id)
 
     if params[:update_button]
-      service.update_existing!(service_params)
+      service.update_existing!(service_params, current_user)
     elsif params[:cancel_button]
       service.cancel_all!
     end

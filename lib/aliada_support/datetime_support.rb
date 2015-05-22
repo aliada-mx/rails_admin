@@ -19,8 +19,10 @@ module AliadaSupport
 
     # A safe datetime we can start booking services
     # too soon and we won't have enough time to organize the aliadas
-    def starting_datetime_to_book_services
+    def starting_datetime_to_book_services(current_user)
       now = Time.zone.now
+
+      return now if current_user && current_user.admin?
 
       tomorrow = (now + 1.day).beginning_of_aliadas_day
       in_two_days = tomorrow + 1.day

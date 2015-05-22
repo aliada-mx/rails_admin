@@ -37,11 +37,11 @@
       .action-link
         =link_to(edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id, cancelar: :true), class: 'action-button-white size-medium') do
           %span.icon-cancel-circle.icon-button
-          Cancelar servicio
+          Cancelar todas las visitas
 
         =link_to(edit_recurrence_users_path(user_id: @user.id, recurrence_id: recurrence.id), class: 'action-button-white size-medium') do
           %span.icon-pencil.icon-button
-          Modifcar servicio
+          Modifcar todas las visitas
 
 
     %table.table-cards
