@@ -29,4 +29,7 @@ class StaticPagesController < ApplicationController
 
   def jobs
   end
+
+  def trabajos
+  end
 end
