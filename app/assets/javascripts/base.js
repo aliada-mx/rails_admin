@@ -2,6 +2,7 @@
 //= require jquery-ui.min.js
 //= require jquery.blockUI
 //= require jquery.form.min
+//= require underscore
 //= require modernizr.custom.63321
 //
 //= require knockout
@@ -9,7 +10,6 @@
 //= require knockout_custom_bindings
 //
 //= require isMobile
-//= require underscore
 //= require bluebird.min
 //= require vex
 //= require vex.dialog
