@@ -20,7 +20,7 @@ class AliadasController < ApplicationController
     @service_to_unassign = @aliada.services.find(params[:service_id])
 
     if request.post?
-      @service_to_unassign.unassign!
+      @service_to_unassign.unassign
 
       return redirect_to aliadas_services_path(@aliada.authentication_token)
     end
