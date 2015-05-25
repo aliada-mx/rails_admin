@@ -318,7 +318,7 @@ feature 'ServiceController' do
           expect(@previous_service_interval.schedules.all?{ |schedule| schedule.reload.booked? }).to eql true
         end
 
-        it 'charges a fee if the cancelation happens > 24 hours before' do
+        it 'charges a fee if the cancelation happens < 24 hours before' do
           expect_any_instance_of(Service).to receive(:charge_cancelation_fee!).and_call_original
           expect_any_instance_of(ConektaCard).to receive(:charge!).and_return(Payment.new(status: 'paid'))
           expect(Payment.count).to be 0
@@ -329,6 +329,27 @@ feature 'ServiceController' do
 
           expect(user_service.reload).to be_canceled
           expect(user_service.reload.cancelation_fee_charged).to be true
+        end
+
+        it 'creates a fee debt if the cancelation happens < 24 hours before and the card charge fails' do
+          expect_any_instance_of(Service).to receive(:charge_cancelation_fee!).and_call_original
+          expect_any_instance_of(ConektaCard).to receive(:charge!).and_raise(Conekta::Error)
+          allow_any_instance_of(User).to receive(:default_payment_provider_choice).and_return(conekta_card)
+          expect(Debt.count).to be 0
+
+          Timecop.travel(starting_datetime - 23.hours)
+
+          click_button 'Cancelar servicio'
+
+          expect(user_service.reload).to be_canceled
+          expect(Debt.count).to eql 1
+
+          debt = Debt.first
+
+          expect(debt.user).to eql user
+          expect(debt.category).to eql 'cancelation_fee'
+          expect(debt.service).to eql user_service
+          expect(debt.payment_provider_choice).to eql conekta_card
         end
 
         # TODO move to recurrence controller spec

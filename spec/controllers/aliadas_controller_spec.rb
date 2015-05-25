@@ -174,19 +174,24 @@ feature 'AliadasController' do
   end
 
   describe '#edit_service_hours_worked' do
+    before do
+      service.status = 'finished'
+      service.save!
+    end
+
     it 'lets the aliada edit a service' do
       visit edit_service_hours_worked_path(aliada.authentication_token, service.id)
 
-      select_by_value(3, from: "service_#{service.id}_hours")
+      select_by_value(4, from: "service_#{service.id}_hours")
       select_by_value(30, from: "service_#{service.id}_min")
 
       click_on('Guardar')
 
       service.reload
-      expect(service.hours_worked).to eql BigDecimal.new('3.0')
+      expect(service.hours_worked).to eql BigDecimal.new('4.0')
       expect(service.minutes_worked).to eql 30
-      expect(service.time_worked).to eql BigDecimal.new('3.5')
-      expect(page).to have_content('3 horas 30 minutos')
+      expect(service.time_worked).to eql BigDecimal.new('4.5')
+      expect(page).to have_content('4 horas 30 minutos')
     end
   end
 end
