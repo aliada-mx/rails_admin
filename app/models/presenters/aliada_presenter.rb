@@ -18,11 +18,10 @@ module Presenters
     end
 
     def current_week_time_worked
-      services = self.current_week_services
       hours_worked = 0
       minutes_worked = 0
 
-      self.services.each do |service|
+      current_week_services.each do |service|
         if service.hours_worked
           hours_worked += service.hours_worked
         end
