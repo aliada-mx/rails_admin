@@ -3,6 +3,8 @@
     = @aliada.full_name
   %p.header__hours
     Esta semana llevas #{ @aliada.current_week_time_worked }
+  - if @aliada.birthday_today?
+    ¡Feliz cumpleaños!
 
 .tabs
   .tabs__tab

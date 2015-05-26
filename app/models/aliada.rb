@@ -178,6 +178,7 @@ class Aliada < User
       field :last_name
       field :email
       field :phone
+      field :birthday
       field :documents
 
       field :recurrences

@@ -3,7 +3,7 @@ feature 'AliadasController' do
   let!(:conekta_card){ create(:conekta_card) }
   let(:starting_datetime) { Time.zone.parse('01 Jan 2015 14:00:00') }
   let!(:user) { create(:user) }
-  let!(:aliada) { create(:aliada) }
+  let!(:aliada) { create(:aliada, birthday: starting_datetime) }
   let!(:zone) { create(:zone) }
   let!(:recurrence){ create(:recurrence, weekday: starting_datetime.weekday, hour: starting_datetime.hour ) }
   let!(:recurrent_service) { create(:service_type, name: 'recurrent') }
@@ -121,6 +121,11 @@ feature 'AliadasController' do
       expect(page).to have_content('Ruta invalida')
     end
 
+    it 'displays a message on the aliada birthday' do
+      visit(aliadas_services_path(aliada.authentication_token))
+
+      expect(page).to have_content 'Feliz cumpleaños'
+    end
   end
 
   describe '#unassign' do
