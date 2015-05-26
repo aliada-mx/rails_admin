@@ -64,8 +64,7 @@ class AliadasController < ApplicationController
 
     @worked_services = @aliada.services.where(status: 'finished')
                                        .order('datetime ASC')
-                                       .where('hours_worked IS NOT NULL')
-                                       .where('hours_worked != 0')
+                                       .where('hours_worked IS NOT NULL OR hours_worked != 0')
                                        .where(:datetime => this_week_range)
   end
 
