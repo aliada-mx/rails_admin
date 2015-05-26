@@ -155,11 +155,10 @@ feature 'ServiceController' do
     end
 
     it 'changes the recurrence attributes' do
-      expect_any_instance_of(Recurrence).to receive(:reschedule!).and_call_original
+      expect_any_instance_of(Recurrence).not_to receive(:reschedule!)
 
-      fill_hidden_input 'recurrence_estimated_hours', with: '5.0'
-      fill_hidden_input 'recurrence_date', with: next_day_of_service.strftime('%Y-%m-%d')
-      fill_hidden_input 'recurrence_time', with: next_day_of_service.strftime('%H:%M')
+      fill_in 'entrance_instructions', with: 'Entry in the back'
+      fill_in 'cleaning_supplies_instructions', with: 'Cleaning down the sink'
 
       click_button 'Guardar cambios'
 
