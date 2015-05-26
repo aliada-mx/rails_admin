@@ -17,6 +17,15 @@ module Presenters
       services_unassigned_this_month >= Setting.aliada_unassignments_per_month - 1
     end
 
+    def birthday_today?
+      if birthday 
+        birthday_in_time_zone = birthday.in_time_zone('Mexico City')
+        now_in_timezone = Time.zone.now.in_time_zone('Mexico City')
+        
+        birthday_in_time_zone.month == now_in_timezone.month && birthday_in_time_zone.day == now_in_timezone.day
+      end
+    end
+
     def current_week_time_worked
       hours_worked = 0
       minutes_worked = 0

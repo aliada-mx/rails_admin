@@ -92,6 +92,7 @@ es:
         average_score: 'Calificación promedio'
         friendly_average_score: 'Calificación promedio'
         services_worked: 'Servicios trabajados'
+        birthday: 'Cumpleaños'
       service_type:
         <<: *common_attributes
         periodicity: periodicidad
