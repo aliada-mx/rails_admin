@@ -156,6 +156,15 @@ class Service < ActiveRecord::Base
     end
   end
 
+  # Remove these methods when services have an editable address
+  # right now the user zone is the service zone
+  def zone
+    user.zone || Zone.find_by_id( read_attribute(:zone_id) )
+  end
+  def zone_id
+    zone.try(:id)
+  end
+
   def set_billed_hours
     return if billed_hours.present? && !billed_hours.zero?
 
