@@ -24,17 +24,21 @@ namespace :db do
                                              recurrence_id: recurrence.id})
 
         datetime = recurrence.next_recurrence_now_in_time_zone.change(hour: recurrence.hour)
-        service = Service.find_by(datetime: datetime,
-                                  user_id: recurrence.user_id,
-                                  aliada_id: recurrence.aliada_id)
 
-        if not service
-          Service.create!(recurrence_shared_attributes.merge({ datetime: datetime }))
-          fixed += 1
+        4.times do |i|
+
+          service = Service.find_by(datetime: datetime,
+                                    user_id: recurrence.user_id,
+                                    aliada_id: recurrence.aliada_id)
+          if not service
+            Service.create!(recurrence_shared_attributes.merge({ datetime: datetime }))
+            fixed += 1
+          end
+
+          datetime += 7.days
         end
       end
       puts "fixed #{fixed}"
-      raise ActiveRecord::Rollback
     end
 
   end

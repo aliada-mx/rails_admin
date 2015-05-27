@@ -196,7 +196,28 @@ feature 'AliadasController' do
       expect(service.hours_worked).to eql BigDecimal.new('4.0')
       expect(service.minutes_worked).to eql 30
       expect(service.time_worked).to eql BigDecimal.new('4.5')
+      expect(service.billable_hours).to eql BigDecimal.new('4.5')
       expect(page).to have_content('4 horas, 30 minutos')
+    end
+
+    it 'lets the aliada edit the hours once it has been edited' do
+      service.hours_worked = 4
+      service.minutes_worked = 30
+      service.save!
+
+      visit edit_service_hours_worked_path(aliada.authentication_token, service.id)
+
+      select_by_value(5, from: "service_#{service.id}_hours")
+      select_by_value(30, from: "service_#{service.id}_min")
+
+      click_on('Guardar')
+
+      service.reload
+      expect(service.hours_worked).to eql BigDecimal.new('5.0')
+      expect(service.minutes_worked).to eql 30
+      expect(service.time_worked).to eql BigDecimal.new('5.5')
+      expect(service.billable_hours).to eql BigDecimal.new('5.5')
+      expect(page).to have_content('5 horas, 30 minutos')
     end
   end
 end

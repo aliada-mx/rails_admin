@@ -119,11 +119,7 @@ class Service < ActiveRecord::Base
     end
 
     after_transition on: :finish do |service, transition|
-      if service.bill_by_hours_worked?
-        service.billable_hours = service.time_worked
-
-        service.save!
-      end
+      service.ensure_updated_billable_hours
     end
 
     after_transition on: :unassign do |service, transition|
@@ -177,6 +173,15 @@ class Service < ActiveRecord::Base
                         else 
                           0
                         end
+  end
+
+  def ensure_updated_billable_hours
+    if bill_by_hours_worked? and billable_hours != time_worked
+
+      self.billable_hours = time_worked
+
+      self.save!
+    end
   end
 
   def time_worked

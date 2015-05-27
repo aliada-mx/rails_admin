@@ -32,6 +32,7 @@ class AliadasController < ApplicationController
     @service_to_finish.hours_worked = params[:service][:hour]
     @service_to_finish.minutes_worked = params[:service][:min]
     @service_to_finish.finish
+    @service_to_finish.ensure_updated_billable_hours
     @service_to_finish.save!
 
     redirect_to aliadas_worked_services_path(@aliada.authentication_token)
