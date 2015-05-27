@@ -16,6 +16,9 @@ RailsAdmin::Config::Actions.register(:enable_schedules, RailsAdmin::Config::Acti
 
 RailsAdmin::Config::Actions.register(:book_schedules, RailsAdmin::Config::Actions::BookSchedules)
 
+# Require custom field types
+Dir[Rails.root.join("lib/rails_admin/config/fields/types/*.rb")].each {|f| require f }
+
 RailsAdmin.config do |config|
   # By default rails admin does not support Inet fields so we force it
   class RailsAdmin::Config::Fields::Types::Inet < RailsAdmin::Config::Fields::Base
