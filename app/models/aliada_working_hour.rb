@@ -47,9 +47,14 @@ class AliadaWorkingHour < ActiveRecord::Base
 
   def self.mass_create(aliada_id, new_recurrences)
     new_recurrences.each do |recurrence|
-      awh = AliadaWorkingHour.find_or_create_by(aliada_id: aliada_id, weekday: recurrence[:weekday], hour: recurrence[:hour], periodicity: 7, total_hours: 1, user_id: nil)
+      awh = AliadaWorkingHour.find_or_create_by(aliada_id: aliada_id,
+                                                weekday: recurrence[:weekday],
+                                                hour: recurrence[:hour],
+                                                periodicity: 7,
+                                                total_hours: 1,
+                                                user_id: nil)
       # fill 30 days of schedules
-      awh.create_schedules_until_horizon        
+      awh.create_schedules_until_horizon
     end
   end
 
@@ -75,24 +80,21 @@ class AliadaWorkingHour < ActiveRecord::Base
   end
 
   def create_schedules_until_horizon
+    datetime = next_recurrence_with_hour_now_in_utc
 
-    starting_datetime = next_recurrence_with_hour_now_in_utc
-
-    recurrence_days = wdays_until_horizon(self.wday, starting_from: starting_datetime)
+    recurrence_days = wdays_until_horizon(self.wday, starting_from: datetime)
 
     schedules = []
     recurrence_days.times do |i|
-      schedule = Schedule.find_or_initialize_by(aliada_id: self.aliada_id, datetime: starting_datetime)
+      schedule = Schedule.find_or_initialize_by(aliada_id: self.aliada_id, datetime: datetime)
 
-      if schedule.new_record? && self.aliada_id
-        schedule.aliada_working_hour_id = self.id
-        schedule.save!
-      else
-        schedule.aliada_working_hour_id = self.id
-      end
+      schedule.aliada_working_hour_id = self.id
+
+      schedule.save!
+
       schedules.push(schedule)
 
-      starting_datetime += self.periodicity.days
+      datetime += self.periodicity.days
     end
 
     schedules

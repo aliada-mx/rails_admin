@@ -71,7 +71,6 @@ class AvailabilityForService
     clear_incomplete_availabilites
     clear_not_enough_availabilities
     restore_service_schedules_original_state
-    mark_padding_hours
 
     @report.push({message: 'Not found any availability'}) if @aliadas_availability.empty?
     @aliadas_availability
@@ -121,23 +120,6 @@ class AvailabilityForService
       interval_key = wday_hour(@continuous_schedules)
 
       @aliadas_availability[@current_aliada_id].delete(interval_key)
-    end
-
-    # To track if our schedules are padding
-    def mark_padding_hours
-      return if @aliadas_availability.blank?
-
-      @aliadas_availability.each do |aliada_id, wday_hour_intervals|
-        wday_hour_intervals.each do |wday_hour, intervals_hash|
-          intervals_hash.each do |interval_key, interval|
-            if interval.size > @requested_service_hours
-              padding = interval.size.to_i - @requested_service_hours.to_i
-
-              interval[padding * -1..-1].map(&:as_padding) if padding > 0
-            end
-          end
-        end
-      end
     end
 
     # Remove the availability without the first requested hour

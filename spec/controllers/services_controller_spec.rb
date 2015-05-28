@@ -109,8 +109,7 @@ feature 'ServiceController' do
         expect(service).to be_present
         expect(service.service_type_id).to eql one_time_service.id
         expect(Schedule.available.count).to be 15
-        expect(Schedule.booked.count).to be 3
-        expect(Schedule.padding.count).to be 2
+        expect(Schedule.booked.count).to be 5
       end
 
       it 'creates a new recurrent service' do
@@ -142,8 +141,7 @@ feature 'ServiceController' do
 
         expect(service.service_type_id).to eql recurrent_service.id
         expect(Schedule.available.count).to be 0
-        expect(Schedule.booked.count).to be 12
-        expect(Schedule.padding.count).to be 8
+        expect(Schedule.booked.count).to be 20
       end
 
       it 'logs in the new user' do
@@ -441,7 +439,6 @@ feature 'ServiceController' do
             service = Service.find(response['service_id'])
 
             expect(service.schedules.in_or_after_datetime(next_day_of_service).count).to eql 5
-            expect(service.schedules.padding.count).to eql 2
             expect(Schedule.available.count).to eql 1
           end
         end
@@ -540,4 +537,3 @@ feature 'ServiceController' do
     end
   end
 end
-

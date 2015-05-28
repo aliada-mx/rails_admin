@@ -67,7 +67,5 @@ namespace :db do
       puts "#{SCHEDULES_CORRECTED.size} schedules corrected "
       puts "#{SCHEDULES_IN_OTHER_SERVICE.size} schedules_in_other_service "
     end
-
-
   end
 end

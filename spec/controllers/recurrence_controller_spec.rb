@@ -129,7 +129,6 @@ feature 'ServiceController' do
 
       expect(recurrence.estimated_hours).to eql 5
       expect(recurrence.schedules.count).to eql 24
-      expect(recurrence.schedules.padding.count).to eql 4
       expect(Schedule.available.count).to eql 0
     end
 
@@ -150,7 +149,6 @@ feature 'ServiceController' do
 
       expect(recurrence.estimated_hours).to eql 3
       expect(recurrence.schedules.in_or_after_datetime(next_day_of_service).count).to eql 20
-      expect(recurrence.schedules.padding.count).to eql 8
       expect(Schedule.available.count).to eql 4
     end
 
@@ -169,7 +167,7 @@ feature 'ServiceController' do
 
       recurrence = Recurrence.find(response['recurrence_id'])
 
-      expect(recurrence.total_hours).to eql 6
+      expect(recurrence.total_hours).to eql 5
     end
 
     it 'cancels the previous services and creates new ones' do
