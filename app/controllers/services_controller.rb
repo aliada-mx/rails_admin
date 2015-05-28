@@ -5,6 +5,7 @@ class ServicesController < ApplicationController
   skip_authorize_resource only: [:initial, :create_initial, :check_email, :check_postal_code, :incomplete_service]
 
   before_filter :set_user
+  before_filter :redirect_if_missing_payment_provider_choice
 
   include ServiceHelper
 

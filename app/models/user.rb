@@ -152,11 +152,11 @@ class User < ActiveRecord::Base
   end
 
   def default_payment_provider_choice
-    payment_provider_choices.default
+    payment_provider_choices.default.first
   end
 
   def default_payment_provider
-    default_payment_provider_choice.provider if payment_provider_choices.any?
+    default_payment_provider_choice.provider if payment_provider_choices.default.any?
   end
 
   def past_aliadas
@@ -184,6 +184,10 @@ class User < ActiveRecord::Base
     if code
       Credit.create(user_id: code.user_id, code_id: code.id, redeemer_id: self.id)
     end
+  end
+
+  def missing_payment_provider_choice?
+    default_payment_provider.blank?
   end
 
   def admin?

@@ -21,6 +21,7 @@ feature 'ServiceController' do
     
   before do
     allow_any_instance_of(Service).to receive(:timezone).and_return('UTC')
+    allow_any_instance_of(User).to receive(:missing_payment_provider_choice?).and_return(false)
     allow(Service).to receive(:timezone).and_return('UTC')
   end
 

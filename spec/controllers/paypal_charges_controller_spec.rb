@@ -29,6 +29,7 @@ feature 'PaypalChargesChargeController' do
        "user_id"=>user.id}
     }
     before do
+      allow_any_instance_of(User).to receive(:missing_payment_provider_choice?).and_return(false)
       expect(service.payments.count).to be 0
       expect(service.paypal_charges.count).to be 0
 

@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-# -*- coding: utf-8 -*-
 feature 'UserController' do
   let!(:conekta_card){ create(:conekta_card)}
   let!(:user){ create(:user, password: '12345678',
@@ -13,6 +12,7 @@ feature 'UserController' do
       login_as(user)
 
       allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
+      allow_any_instance_of(User).to receive(:missing_payment_provider_choice?).and_return(false)
 
       visit edit_users_path user
     end
@@ -54,6 +54,7 @@ feature 'UserController' do
     before do
       Timecop.freeze(starting_datetime)
 
+      allow_any_instance_of(User).to receive(:missing_payment_provider_choice?).and_return(false)
       allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
       login_as(user)
 
