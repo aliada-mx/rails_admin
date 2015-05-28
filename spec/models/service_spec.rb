@@ -53,8 +53,7 @@ feature 'Service' do
 
       service.book_an_aliada(nil)
 
-      expect(Schedule.padding.count).to be 1
-      expect(Schedule.booked.count).to be 3
+      expect(Schedule.booked.count).to be 4
       expect(Schedule.for_booking(zone, starting_datetime_to_book_services(user)).available.count).to be 0
     end
 
@@ -68,8 +67,7 @@ feature 'Service' do
 
       service.book_an_aliada(nil)
 
-      expect(Schedule.booked.count).to be 12
-      expect(Schedule.padding.count).to be 4
+      expect(Schedule.booked.count).to be 16
       expect(available_schedules.count).to be 0
     end
   end
