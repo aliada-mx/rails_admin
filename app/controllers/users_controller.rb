@@ -3,11 +3,20 @@ class UsersController < ApplicationController
   layout 'one_column'
   load_and_authorize_resource
   before_filter :set_user
+  before_filter :redirect_if_missing_payment_provider_choice, except: :edit
 
   def edit
-    conekta_card = @user.default_payment_provider
+    if @user.missing_payment_provider_choice? 
+      flash[:alert] = I18n.t('controllers.user.errors.missing_payment_provider_choice')
+    end
 
-    @saved_card = conekta_card.placeholder_for_form
+    conekta_card = @user.default_payment_provider
+    if conekta_card
+      @saved_card = conekta_card.placeholder_for_form
+    else
+      @saved_card = ConektaCard.new(id: 1).placeholder_for_form
+    end
+
   end
 
   def update
@@ -32,6 +41,7 @@ class UsersController < ApplicationController
 
   def previous_services
     @service_paid = Service.find(params[:service_paid_id]) if params[:service_paid_id]
+
     @services = @user.services.in_the_past.where('status NOT IN (?)',[:canceled_in_time, :canceled])
   end
 

@@ -54,6 +54,7 @@ feature 'ServiceController' do
 
 
     allow_any_instance_of(User).to receive(:default_payment_provider).and_return(conekta_card)
+    allow_any_instance_of(User).to receive(:missing_payment_provider_choice?).and_return(false)
     allow_any_instance_of(Recurrence).to receive(:timezone).and_return('UTC')
 
     login_as(user)

@@ -5,6 +5,7 @@ class RecurrencesController < ApplicationController
   layout 'two_columns'
 
   before_filter :set_user
+  before_filter :redirect_if_missing_payment_provider_choice
 
   def edit
     @any_aliada = OpenStruct.new({id: 0, name: 'Cualquier Aliada'})

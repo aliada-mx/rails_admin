@@ -5,7 +5,7 @@ class PaymentProviderChoice < ActiveRecord::Base
   belongs_to :payment_provider, polymorphic: true
   belongs_to :user, inverse_of: :payment_provider_choices
 
-  scope :default, -> { where(default: true).first }
+  scope :default, -> { where(default: true) }
   scope :ordered_by_created_at, -> { order(:created_at) }
 
   delegate :payment_possible?, to: :payment_provider

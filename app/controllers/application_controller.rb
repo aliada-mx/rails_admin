@@ -66,4 +66,11 @@ class ApplicationController < ActionController::Base
     def force_sign_in_user(user)
       sign_in(:user, user, { :bypass => true })
     end
+
+    def redirect_if_missing_payment_provider_choice
+      if @user && @user.missing_payment_provider_choice? 
+
+        return redirect_to edit_users_path(@user)
+      end
+    end
 end

@@ -235,3 +235,7 @@ es:
               blank: La contraseña no puede estar en blanco
             password_confirmation:
               confirmation: La contraseña de confirmación no coincide
+  controllers:
+    user:
+      errors:
+        missing_payment_provider_choice: 'Tuvimos problemas cobrando tu tarjeta, por favor introduce los datos de una nueva para continuar usando aliada'       
