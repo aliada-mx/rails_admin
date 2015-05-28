@@ -3,6 +3,10 @@ feature 'Admin ability to browse as a user' do
   let!(:user){ create(:user) }
   let!(:admin){ create(:admin) }
 
+  before do
+    allow_any_instance_of(User).to receive(:missing_payment_provider_choice?).and_return(false)
+  end
+
   context 'a logged in admin' do
     it 'can visit another user profile' do
       login_as(admin)
