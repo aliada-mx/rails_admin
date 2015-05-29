@@ -76,7 +76,7 @@ class ConektaCard < PaymentProvider
       currency: 'MXN',
       description: product.description,
       reference_id: product.id,
-      card: self.customer_id || self.token,
+      card: self.token || self.customer_id,
       details: {
         name: user.name,
         email: user.email,
