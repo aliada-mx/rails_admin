@@ -80,13 +80,11 @@ class Aliada < User
 
   def current_week_services
     today = ActiveSupport::TimeZone["Etc/GMT+6"].now
-    #binding.pry
     Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week.advance(:days => 1)).not_canceled
   end
 
   def week_services( date )
     today = ActiveSupport::TimeZone["Etc/GMT+6"].parse(date)
-    #binding.pry
     Service.where(aliada_id: self.id, :datetime => today.beginning_of_week..today.end_of_week.advance(:days => 1)).not_canceled
   end
 

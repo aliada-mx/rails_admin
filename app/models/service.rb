@@ -52,7 +52,7 @@ class Service < ActiveRecord::Base
   scope :on_day, -> (datetime) { where('datetime >= ?', datetime.beginning_of_day).where('datetime <= ?', datetime.end_of_day) } 
   scope :canceled, -> { where("services.status = 'canceled_in_time' OR services.status = 'canceled_out_of_time'", 'canceled') }
   scope :finished, -> { where("services.status = 'finished'") }
-  scope :not_canceled, -> { where("services.status != 'canceled_in_time' AND services.status != 'canceled_out_of_time' AND services.status != 'canceled'") }
+  scope :not_canceled, -> { where("services.status != 'canceled_in_time' AND services.status != 'canceled_out_of_time'") }
   scope :not_aliada_missing, -> { where("services.status != 'aliada_missing'") }
   scope :ordered_by_created_at, -> { order(:created_at) }
   scope :ordered_by_datetime, -> { order(:datetime) }
@@ -61,6 +61,10 @@ class Service < ActiveRecord::Base
   scope :join_users, -> { joins(:user) }
   scope :paid, -> { where("services.status = 'paid'") }
   scope :unassigned, -> { where("services.status = 'unassigned'") }
+  scope :not_canceled_in_time, -> { where("status != 'canceled_in_time'") }
+  scope :owed, -> { joins(:debts).where('debts.service_id = services.id')
+                                 .where('services.status != ?','paid')
+                                 .not_canceled_in_time }
 
   # Rails admin tabs
   scope 'mañana', -> { on_day(Time.zone.now.in_time_zone('Mexico City').beginning_of_aliadas_day + 1.day).not_canceled }
@@ -70,10 +74,7 @@ class Service < ActiveRecord::Base
   scope :sin_intento_de_cobro, -> { where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL OR billable_hours != 0')
                                    .where("status != 'paid'") 
                                    .where("services.id NOT IN (SELECT DISTINCT debts.service_id FROM debts)") }
-                                   
-  scope :adeudados, -> { joins(:debts).where('debts.service_id = services.id')
-                                      .where('services.status NOT IN ( ? )',[ :canceled_in_time, :paid ]) }
-
+  scope :adeudados, -> { owed }
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
 

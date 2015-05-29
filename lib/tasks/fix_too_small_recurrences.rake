@@ -40,6 +40,5 @@ namespace :db do
       end
       puts "fixed #{fixed}"
     end
-
   end
 end

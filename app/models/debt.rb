@@ -11,6 +11,8 @@ class Debt < ActiveRecord::Base
   belongs_to :payment_provider_choice, polymorphic: true
 
   validates :category, inclusion: {in: CATEGORIES.map{ |pairs| pairs[1] } }
+  validates_presence_of :service
+  validates_presence_of :user
 
   def charge!
     #When charging debt, we must ensure the service status is set to paid

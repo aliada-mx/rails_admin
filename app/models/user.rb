@@ -111,6 +111,14 @@ class User < ActiveRecord::Base
     total
   end
 
+  def owed_services
+    services.in_the_past.owed
+  end
+
+  def charge_owed_services
+    Resque.enqueue(ServiceCharger, owed_services.pluck(:id))
+  end
+
   def charge!(product, service)
     points_payment = charge_points(product.amount, service)
 

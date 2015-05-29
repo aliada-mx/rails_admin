@@ -238,4 +238,4 @@ es:
   controllers:
     user:
       errors:
-        missing_payment_provider_choice: 'Tuvimos problemas cobrando tu tarjeta, por favor introduce los datos de una nueva para continuar usando aliada'       
+        missing_payment_provider_choice: Tienes uno o más servicios adeudados y no pudimos cobrarlos con tu tarjeta actual, por favor introduce los datos de una nueva tarjeta o paga los servicios en tu historial de visitas para continuar usando aliada       

@@ -22,7 +22,6 @@ resource :users, path: 'perfil/:user_id', except: [:edit, :show] do
 
   # Payments
   post 'conekta_card/create', to: 'conekta_cards#create', as: :create_conekta_card
-  resources :conekta_cards, only: [ :show, :update ]
 
   post 'paypal/get_redirect_url', to: 'paypal_charges#get_redirect_url', as: :get_paypal_redirect_url
   get 'paypal/return', to: 'paypal_charges#paypal_return', as: :paypal_return

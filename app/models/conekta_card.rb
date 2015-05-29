@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 class ConektaCard < PaymentProvider
+  attr_accessor :conekta_temporary_token
 
   def self.create_for_user!(user, temporary_token, object)
     ActiveRecord::Base.transaction requires_new: true do

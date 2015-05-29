@@ -25,15 +25,18 @@
     .actions
       = user_form.submit 'Guardar', class: 'action-button-pink size-large right'
 
-= form_for @saved_card, url: users_conekta_card_path(@user, @saved_card) do |conekta_form|
+= form_tag create_conekta_card_users_path(@user), id: 'new-conekta-card-form' do
   %h1 Método de pago
   %p
     Agrega o modifica tu método de pago
+  - if @user.owed_services.any?
+    %p
+      *Al agregar esta nueva tarjeta intentaremos cobrar los servicios pendientes
 
   = render partial: 'common/conekta_form', locals: { card_default: @saved_card, read_only: false }
 
   .bottom-buttons-container
-    = conekta_form.submit 'Guardar nueva tarjeta', class: 'action-button-pink size-large left'
+    = submit_tag 'Guardar nueva tarjeta', class: 'action-button-pink size-large left'
 
     = link_to destroy_user_session_path, class: 'action-button-transparent size-large right' do
       Cerrar sesion
@@ -41,3 +44,5 @@
 
 = append :javascript do
   = javascript_include_tag 'user_edit'
+
+
