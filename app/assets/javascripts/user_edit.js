@@ -3,7 +3,7 @@
 //= require modules/dialogs
 
 $(function() {
-  var $conekta_card_form = $('.edit_conekta_card');
+  var $conekta_card_form = $('#new-conekta-card-form');
 
   function add_conekta_card() {
     return new Promise(function(resolve, reject) {

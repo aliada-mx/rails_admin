@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   layout 'one_column'
   load_and_authorize_resource
   before_filter :set_user
-  before_filter :redirect_if_missing_payment_provider_choice, except: :edit
+  before_filter :redirect_if_missing_payment_provider_choice, except: [ :edit, :previous_services ]
 
   def edit
     if @user.missing_payment_provider_choice? 
@@ -14,7 +14,7 @@ class UsersController < ApplicationController
     if conekta_card
       @saved_card = conekta_card.placeholder_for_form
     else
-      @saved_card = ConektaCard.new(id: 1).placeholder_for_form
+      @saved_card = ConektaCard.new.placeholder_for_form
     end
 
   end
@@ -42,7 +42,7 @@ class UsersController < ApplicationController
   def previous_services
     @service_paid = Service.find(params[:service_paid_id]) if params[:service_paid_id]
 
-    @services = @user.services.in_the_past.where('status NOT IN (?)',[:canceled_in_time, :canceled])
+    @services = @user.services.in_the_past.not_canceled_in_time
   end
 
   def canceled_services
