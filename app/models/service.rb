@@ -74,9 +74,7 @@ class Service < ActiveRecord::Base
   scope :sin_intento_de_cobro, -> { where('(aliada_reported_begin_time IS NOT NULL AND aliada_reported_end_time IS NOT NULL) OR hours_worked IS NOT NULL OR billable_hours != 0')
                                    .where("status != 'paid'") 
                                    .where("services.id NOT IN (SELECT DISTINCT debts.service_id FROM debts)") }
-                                   
   scope :adeudados, -> { owed }
-
   scope :confirmados, -> { where('services.confirmed IS TRUE') }
   scope :sin_confirmar, -> { where('services.confirmed IS NOT TRUE') }
 
@@ -217,7 +215,7 @@ class Service < ActiveRecord::Base
   end
   
   def canceled?
-    return self.canceled_in_time? || self.canceled_out_of_time? || self.status == 'canceled'
+    return self.canceled_in_time? || self.canceled_out_of_time?
   end
 
   def cancel
@@ -396,6 +394,10 @@ class Service < ActiveRecord::Base
   def charge!
     return if paid? || canceled? || amount_to_bill.zero?
 
+    if canceled_out_of_time?
+      return charge_cancelation_fee!
+    end
+
     ActiveRecord::Base.transaction do
 
       amount = amount_to_bill
@@ -488,7 +490,7 @@ class Service < ActiveRecord::Base
   end
 
   def not_canceled?
-    self.status != 'canceled'
+    !canceled?
   end
 
   def user_modified_booking(service_params)
