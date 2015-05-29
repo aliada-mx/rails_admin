@@ -37,8 +37,6 @@ namespace :db do
       users_blocked.each do |user|
         puts "https://aliada.mx/perfil/#{user.id}/visitas-proximas  #{user.full_name} #{user.email}"
       end
-
-      raise ActiveRecord::Rollback
     end
   end
 end

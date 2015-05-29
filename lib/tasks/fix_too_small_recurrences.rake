@@ -18,6 +18,8 @@ namespace :db do
       fixed = 0
       broken_recurrences.each do |recurrence|
 
+        puts "https://aliada.mx/perfil/#{recurrence.user.id}/visitas-proximas  #{recurrence.user.full_name} #{recurrence.user.email}"
+
         recurrence_shared_attributes = recurrence.attributes_shared_with_service
         recurrence_shared_attributes.merge!({service_type: ServiceType.recurrent,
                                              status: 'aliada_assigned',
