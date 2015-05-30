@@ -39,6 +39,11 @@ $separator-color: #E3E3E3
     border-color: darken($medium_gray, 10%)
     color: $white
 
+  &--light-gray
+    background: lighten($lightest_gray, 4%)
+    border-color: darken($lightest_gray, 10%)
+    color: lighten($medium_gray, 20%)
+
 input.button
   &--full
     width: 100%
@@ -151,6 +156,7 @@ body
 
     .service__actions, .service__details
       border: 0
+
 
   &__head
     margin-bottom: 10px

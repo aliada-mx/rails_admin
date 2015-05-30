@@ -76,4 +76,6 @@
           .service__actions__action
             = form_tag(unassign_service_path, method: :get) do
               %input{type: 'hidden', value: service.id, name: :service_id}
-              %input{type: 'submit', name: 'unassign', value: 'No voy', class: 'button button--full'}
+
+              - button_color_class = service.confirmed? ? 'button--light-gray' : ''
+              %input{type: 'submit', name: 'unassign', value: 'No voy', class: "button button--full #{button_color_class}"}
