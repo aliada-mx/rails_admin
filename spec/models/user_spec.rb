@@ -86,21 +86,18 @@ describe 'User' do
   describe '#register_debt' do
     before do
       user.create_payment_provider_choice(conekta_card)
+      expect_any_instance_of(Service).to receive(:amount).and_return(100)
     end
 
     it 'reduces the points by the passed amount' do
-      product = OpenStruct.new({amount: 100, 
-                                category: 'service'})
-      user.register_debt(product, service)
+      user.register_debt(service)
 
       expect(user.balance).to eql( -100 )
     end
 
     it 'should only register one debt per service' do
-      product = OpenStruct.new({amount: 100, 
-                                category: 'service'})
-      user.register_debt(product, service)
-      user.register_debt(product, service)
+      user.register_debt(service)
+      user.register_debt(service)
 
       expect(user.debts.count).to be 1
     end
@@ -111,8 +108,7 @@ describe 'User' do
       before do
         user.points = 100
         user.save!
-        @product = OpenStruct.new({amount: 300,
-                                   category: 'service'})
+        expect_any_instance_of(Service).to receive(:amount).and_return(100)
         user.create_payment_provider_choice(conekta_card)
       end
 
@@ -123,7 +119,7 @@ describe 'User' do
 
         it 'leaves the user points negative' do
           
-          user.charge!(@product, service)
+          user.charge!(service)
 
           expect(user.balance).to eql( -200 )
           expect(Debt.all.count).to eql(1)
@@ -133,16 +129,6 @@ describe 'User' do
           expect(debt.user).to eql user
           expect(debt.payment_provider_choice.provider).to eql conekta_card
           expect(debt.category).to eql 'service'
-        end
-      end
-
-      context 'with the default_payment_provider succesfully charging' do
-         
-        it 'only charges the amount reduced by the points' do
-          @product.amount = 200
-          allow_any_instance_of(ConektaCard).to receive(:charge!).with(@product, user, service)
-
-          user.charge!(@product, service)
         end
       end
     end

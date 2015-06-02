@@ -22,7 +22,11 @@
         text-decoration: underline
         &:hover
           color: $light_gray
-    tbody
+        &.payment-header
+          width: 110px
+        &.scores-header
+          width: 130px
+    tbody, tfoot
       tr
         td.warning
           color: $error

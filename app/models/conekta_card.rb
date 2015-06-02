@@ -56,27 +56,27 @@ class ConektaCard < PaymentProvider
     update_from_api_card(card_attributes)
   end
 
-  def charge!(product, user, object)
+  def charge!(user, object)
     begin
-      @conekta_charge = charge_in_conekta!(product, user)
+      @conekta_charge = charge_in_conekta!(object, user)
      
       payment = Payment.create_from_conekta_charge(@conekta_charge,user,self,object)
       payment.pay!
       
       payment
     rescue Conekta::Error, Conekta::ProcessingError => exception
-      object.create_charge_failed_ticket(user, product.amount, exception)
+      object.create_charge_failed_ticket(user, object.amount, exception)
       
       raise exception
     end
   end
 
-  def charge_in_conekta!(product, user)
+  def charge_in_conekta!(object, user)
     conekta_charge = Conekta::Charge.create({
-      amount: (product.amount * 100).floor,
+      amount: (object.amount * 100).floor,
       currency: 'MXN',
-      description: product.description,
-      reference_id: product.id,
+      description: object.description,
+      reference_id: object.id,
       card: self.token || self.customer_id,
       details: {
         name: user.name,

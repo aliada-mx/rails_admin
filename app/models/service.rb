@@ -399,14 +399,7 @@ class Service < ActiveRecord::Base
     end
 
     ActiveRecord::Base.transaction do
-
-      amount = amount_to_bill
-      product = OpenStruct.new({amount: amount,
-                                description: 'Servicio aliada',
-                                category: 'service',
-                                id: id})
-      
-      payment = user.charge!(product, self)
+      payment = user.charge!(self)
 
       if payment && payment.paid?
         pay!

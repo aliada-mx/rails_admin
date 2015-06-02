@@ -3,12 +3,16 @@ module PaypalChargeHelper
     base.extend(PaypalChargeHelper)
   end
 
-  def build_paypal_requests(service)
+  def build_paypal_requests(services)
+    services_ids = services.pluck(:id).join(', ')
+    services_amount = services.inject(0){ |sum,service| sum += service.amount_to_bill }
+    services_description = "Servicio#{ services.count > 1 ? 's' : ''} de aliada #{services_ids}"
+
     payment_request = Paypal::Payment::Request.new(
       :currency_code => :MXN,   # if nil, PayPal use USD as default
-      :description   => service.description,    # item description
-      :quantity      => 1,      # item quantity
-      :amount        => service.amount,   # item value
+      :description   => services_description,
+      :quantity      => services.count,
+      :amount        => services_amount,
     )
 
     request = Paypal::Express::Request.new(
@@ -20,7 +24,7 @@ module PaypalChargeHelper
       NOTIFYURL: Rails.application.routes.url_helpers.paypal_ipn_url(host: Setting.host),
       NotifyURL: Rails.application.routes.url_helpers.paypal_ipn_url(host: Setting.host),
       ipnNotificationUrl: Rails.application.routes.url_helpers.paypal_ipn_url(host: Setting.host),
-      custom: service.id.to_s
+      custom: services_ids
     )
 
     [ payment_request, request ]

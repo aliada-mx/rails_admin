@@ -10,10 +10,10 @@
           %th Fecha
           %th Duración(hrs)
           %th Aliada Asignada
-          %th Estado
+          %th.payment-header Estado
           %th Fecha cobro
           %th Costo 
-          %th Calificación
+          %th.scores-header Calificación
           - if current_user.admin?
             %th Admin
       %tbody
@@ -41,8 +41,8 @@
 
             %td.status{class: service.owed? ? 'warning' : ''  }
               - if service.owed?
-                %span.action-button-pink.open-payment-dialog{data: {service_id: service.id, amount: service.cost }}
-                  #{ service.canceled? ? 'Cancelación tardía' : 'Por Pagar'  }
+                %span.action-button-pink.open-payment-dialog{data: {services_ids: [ service.id ], amount: service.cost }} 
+                  #{ service.canceled? ? 'Cancelación tardía' : 'Pagar visita'  }
               - else
                 = service.status_in_spanish
 
@@ -76,6 +76,21 @@
                     %div
                       = link_to service.rails_admin_edit_path, target: '_blank' do
                         Editar
+        -if @user.owed_services.count > 1
+          %tfoot
+            %td
+            %td
+            %td
+            %td
+              %span.action-button-pink{services_ids: @owed_services_ids, amount: @owed_services_cost }
+                Pagar todas
+            %td
+            %td
+            %td
+            %td
+            - if current_user.admin?
+              %td
+
 
 = append :javascript do
   = javascript_include_tag 'previous_services'

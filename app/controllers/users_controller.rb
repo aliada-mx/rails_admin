@@ -43,6 +43,9 @@ class UsersController < ApplicationController
     @service_paid = Service.find(params[:service_paid_id]) if params[:service_paid_id]
 
     @services = @user.services.in_the_past.not_canceled_in_time
+
+    @owed_services_ids = @user.owed_services.pluck(:id)
+    @owed_services_cost = @user.amount_owed
   end
 
   def canceled_services

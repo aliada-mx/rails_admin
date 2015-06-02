@@ -10,9 +10,9 @@ describe 'ConektaCard' do
                       email: 'user-39@aliada.mx',
                       conekta_customer_id: "cus_M3V9nERCq9qDLZdD1") } 
   let(:token){ 'tok_test_visa_4242' }
-  let(:fake_product){ double(amount: 300,
-                             description: 'fake test product',
-                             id: 1)}
+  let(:service){ double(amount: 300,
+                        description: 'fake test service',
+                        id: 1)}
 
 
   context 'offline testing' do
@@ -28,7 +28,7 @@ describe 'ConektaCard' do
       VCR.use_cassette('conekta_charge') do
         card.token = token
         
-        conekta_charge = card.charge_in_conekta!(fake_product,user)
+        conekta_charge = card.charge_in_conekta!(service,user)
         charge = eval(conekta_charge.inspect)
 
         expect(charge['amount']).to eql 30000
@@ -36,7 +36,7 @@ describe 'ConektaCard' do
         expect(charge['livemode']).to eql false
         expect(charge['object']).to eql 'charge'
         expect(charge['reference_id']).to eql '1'
-        expect(charge['description']).to eql 'fake test product'
+        expect(charge['description']).to eql 'fake test service'
       end
     end
 

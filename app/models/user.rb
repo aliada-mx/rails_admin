@@ -93,8 +93,8 @@ class User < ActiveRecord::Base
     points_charger.charge!
   end
 
-  def register_debt(product, service)
-    default_payment_provider.register_debt(product,self,service)
+  def register_debt(service)
+    default_payment_provider.register_debt(self,service)
   end
 
   def balance
@@ -119,17 +119,17 @@ class User < ActiveRecord::Base
     Resque.enqueue(ServiceCharger, owed_services.pluck(:id))
   end
 
-  def charge!(product, service)
-    points_payment = charge_points(product.amount, service)
+  def charge!(service)
+    points_payment = charge_points(service.amount, service)
 
-    product.amount = points_payment.left_to_charge
+    service.amount = points_payment.left_to_charge
     begin
-      payment = default_payment_provider.charge!(product, self, service)
+      payment = default_payment_provider.charge!(self, service)
     rescue Conekta::Error, Conekta::ProcessingError => e
       raise e
     ensure
       if payment.nil? && !service.owed?
-        register_debt(product, service)
+        register_debt(service)
       end
     end
     payment
