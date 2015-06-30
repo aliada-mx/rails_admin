@@ -14,7 +14,6 @@ $(function() {
       }
     });
   }
-  bind_selectable()
 
   $(document).on('pjax:end', bind_selectable)
 });
