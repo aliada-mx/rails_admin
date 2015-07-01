@@ -34,6 +34,8 @@ RailsAdmin is a Rails engine that provides an easy-to-use interface for managing
   # Note, this won't work with existing filterable, searchable fields as merge will create an AND condition with the scope's WHERE s
   # see https://gist.github.com/j-mcnally/250eaaceef234dd8971b if you want OR conditions
 ```
+* If a model defines an attribute edited_in_rails_admin (virtual or real): rails admin will set it to true to objects edited throught its UI. 
+
 
 
 ## Features
