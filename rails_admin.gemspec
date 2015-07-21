@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<rails>, ["~> 4.0"])
       s.add_runtime_dependency(%q<remotipart>, ["~> 1.0"])
       s.add_runtime_dependency(%q<safe_yaml>, ["~> 1.0"])
-      s.add_runtime_dependency(%q<sass-rails>, ["< 6", ">= 4.0"])
+      s.add_runtime_dependency(%q<sass-rails>, ["<= 6", ">= 4.0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0"])
     else
       s.add_dependency(%q<builder>, ["~> 3.1"])
@@ -49,7 +49,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rails>, ["~> 4.0"])
       s.add_dependency(%q<remotipart>, ["~> 1.0"])
       s.add_dependency(%q<safe_yaml>, ["~> 1.0"])
-      s.add_dependency(%q<sass-rails>, ["< 6", ">= 4.0"])
+      s.add_dependency(%q<sass-rails>, ["<= 6", ">= 4.0"])
       s.add_dependency(%q<bundler>, ["~> 1.0"])
     end
   else
@@ -65,7 +65,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rails>, ["~> 4.0"])
     s.add_dependency(%q<remotipart>, ["~> 1.0"])
     s.add_dependency(%q<safe_yaml>, ["~> 1.0"])
-    s.add_dependency(%q<sass-rails>, ["< 6", ">= 4.0"])
+    s.add_dependency(%q<sass-rails>, ["<= 6", ">= 4.0"])
     s.add_dependency(%q<bundler>, ["~> 1.0"])
   end
 end
