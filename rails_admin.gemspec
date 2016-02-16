@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/sferik/rails_admin"
   s.licenses = ["MIT"]
   s.required_ruby_version = Gem::Requirement.new(">= 1.9.3")
-  s.rubygems_version = "2.4.3"
+  s.rubygems_version = "2.4.5.1"
   s.summary = "Admin for Rails"
 
   if s.respond_to? :specification_version then
