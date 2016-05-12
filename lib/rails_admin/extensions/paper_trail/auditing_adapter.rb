@@ -88,7 +88,7 @@ module RailsAdmin
             sort_reverse = 'true'
           end
 
-          model_name = model.model.name
+          model_name = model.model.base_class.name
 
           current_page = page.presence || '1'
 
