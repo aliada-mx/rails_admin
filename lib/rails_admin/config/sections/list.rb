@@ -39,6 +39,12 @@ module RailsAdmin
         register_instance_option :row_css_class do
           ''
         end
+
+        register_instance_option :search_scope do 
+          Proc.new do |scope, query|
+            scope
+          end
+        end
       end
     end
   end

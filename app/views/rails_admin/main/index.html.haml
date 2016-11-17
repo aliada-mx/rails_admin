@@ -97,13 +97,13 @@
             - if checkboxes
               %td= check_box_tag "bulk_ids[]", object.id, false
             - if @other_left_link ||= other_left && index_path(params.except('set').merge(params[:set].to_i != 1 ? {set: (params[:set].to_i - 1)} : {}))
-              %td.other.left= link_to "...", @other_left_link, class: 'pjax'
+              %td.not-checkbox.other.left= link_to "...", @other_left_link, class: 'pjax'
             - properties.map{ |property| property.bind(:object, object) }.each do |property|
               - value = property.pretty_value
-              %td{class: "#{property.css_class} #{property.type_css_class}", title: strip_tags(value.to_s)}= value
+              %td.not-checkbox{class: "#{property.css_class} #{property.type_css_class}", title: strip_tags(value.to_s)}= value
             - if @other_right_link ||= other_right && index_path(params.merge(set: (params[:set].to_i + 1)))
-              %td.other.right= link_to "...", @other_right_link, class: 'pjax'
-            %td.last.links
+              %td.not-checkbox.other.right= link_to "...", @other_right_link, class: 'pjax'
+            %td.not-checkbox.last.links
               %ul.inline.list-inline= menu_for :member, @abstract_model, object, true
 
     - if @model_config.list.limited_pagination

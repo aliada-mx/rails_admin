@@ -32,6 +32,16 @@ module RailsAdmin
       raise(RailsAdmin::ObjectNotFound) unless (@object = @abstract_model.get(params[:id]))
     end
 
+    def set_edited_in_rails_admin
+      # For existing models
+      @object.edited_in_rails_admin = true if @object && @object.respond_to?( :edited_in_rails_admin )
+
+      # For new models
+      if 'new' == params[:action] && request.method == 'POST' && params[params[:model_name]]
+        params[params[:model_name]][:edited_in_rails_admin] = true
+      end
+    end
+
     def to_model_name(param)
       param.split('~').collect(&:camelize).join('::')
     end
