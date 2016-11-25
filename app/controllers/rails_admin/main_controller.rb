@@ -9,7 +9,7 @@ module RailsAdmin
     before_action :get_model, except: RailsAdmin::Config::Actions.all(:root).collect(&:action_name)
     before_action :get_object, only: RailsAdmin::Config::Actions.all(:member).collect(&:action_name)
     before_action :check_for_cancel
-    before_filter :set_edited_in_rails_admin
+    before_action :set_edited_in_rails_admin
 
     RailsAdmin::Config::Actions.all.each do |action|
       class_eval <<-EOS, __FILE__, __LINE__ + 1
