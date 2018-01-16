@@ -31,9 +31,10 @@
     button: null,
     input: null,
     select: null,
+    filtering_select: null,
 
     _create: function() {
-      var filtering_select = this.element.siblings(
+      this.filtering_select = this.element.siblings(
         '[data-input-for="' + this.element.attr('id') + '"]'
       );
 
@@ -45,7 +46,7 @@
         this.button = filtering_select.children('.input-group-btn');
       } else {
         this.element.hide();
-        filtering_select = this._inputGroup(this.element.attr('id'));
+        this.filtering_select = this._inputGroup(this.element.attr('id'));
         this.input = this._inputField();
         this.button = this._buttonField();
       }
@@ -56,7 +57,7 @@
       this._overloadRenderItem();
       this._autocompleteDropdownEvent(this.button);
 
-      return filtering_select.append(this.input)
+      return this.filtering_select.append(this.input)
         .append(this.button)
         .insertAfter(this.element);
     },
@@ -201,7 +202,7 @@
       return $('<div>')
         .addClass('input-group filtering-select col-sm-2')
         .attr('data-input-for', inputFor)
-        .css('float', 'left');
+        .css('float', this.element.css("float"));
     },
 
     _initAutocomplete: function() {
@@ -286,6 +287,7 @@
       this.input.remove();
       this.button.remove();
       this.element.show();
+      this.filtering_select.remove();
       $.Widget.prototype.destroy.call(this);
     }
   });
